@@ -1,0 +1,61 @@
+.nonheader{
+  margin-top:50px;
+}
+.summaryblock1{
+  border-right:1pt solid lightgrey !important;
+}
+#previousblock, #merkleroot, #blockhash, #nextblock{
+  word-break: break-all;
+}
+
+
+.emptypagelink{
+  position: relative;
+    display: block;
+    padding: .5rem .75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #007bff;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    cursor: not-allowed;
+}
+
+.arrows{
+  position: relative;
+    display: block;
+    padding: .5rem .75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #007bff;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    cursor: pointer;
+}
+
+.page-link{
+  cursor: pointer !important;
+}
+
+#refreshpage{
+padding:10px;
+
+}
+#transactionsection
+{
+  border:1px solid rgba(0,0,0,.125);
+  background: #f8f8f8; overflow:auto;width:auto;
+  width: 100%;
+}
+.txrows{
+  border-bottom:1pt solid lightgrey;
+}
+.txrows > td{
+  padding: 15px;
+  font-size: 18px;
+  text-align: left;
+}
+#back{
+  color:white;
+  text-align: center;
+}

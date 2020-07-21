@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <script>
+      window.jQuery = window.$ = require('jquery');
+    </script>
+    <link rel="stylesheet" href="../assets/css/blockheight.css">
+    <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+
+      <title id="title">
+
+      </title>
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light" style="box-shadow:0px 15px 10px -15px #111; max-height:70px;width:100% !important;">
+  					<a class="navbar-brand"  id="logo" href="#">
+  						<img src="../assets/images/logo.png" class="d-inline-block align-top" alt="" loading="lazy" style="max-height:70px;">
+  					</a>
+   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav mr-auto">
+
+
+      </ul>
+      <form class="form-inline my-2 my-lg-0">
+   <ul class="navbar-nav mr-auto">
+        <li class="nav-item active">
+          <a class="nav-link" href="#">Contact <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">Help</a>
+        </li>
+      </ul>
+      </form>
+    </div>
+  </nav>
+
+  <div class="container nonheader">
+    <div class="row">
+        <div class="col-md-12 col-lg-12">
+            <h4>Block</h4><h5 id="blocktitle"></h5>
+            <a id="blockhash"></a>
+            <hr>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-lg-12">
+<h4>Summary</h4>
+          </div>
+          </div>
+    <div class="row">
+        <div class="col-md-6 col-lg-6 summaryblock1">
+          <table>
+<tr><td><b>Previous Block</b></td><td><a id="previousblock"></a></td></tr>
+<tr><td><b>Block Version</b></td><td><a id="blockversion"></a></td></tr>
+<tr><td><b>Nonce</b></td><td><a id="bhnonce"></a></td></tr>
+          </table>
+
+
+        </div>
+        <div class="col-md-6 col-lg-6">
+          <table>
+<tr><td><b>Next Block</b></td><td><a id="nextblock"></a></td></tr>
+<tr><td><b>Block Bits</b></td><td><a id="blockbits"></a></td></tr>
+<tr><td><b>Timestamp (UTC)</b></td><td><a id="timestamp"></a></td></tr>
+<tr><td><b>Merkle Root</b></td><td><a id="merkleroot"></a></td></tr>
+          </table>
+
+
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+<div class="col-md-12 col-lg-12 text-center">
+<div id="refreshpage"></div>
+<table id="transactionsection">
+
+</table>
+<br />
+    </div>
+  </div>
+    <div class="row">
+      <div class="col-md-12 col-lg-12 text-center">
+      <nav aria-label="transactions navigation">
+        <ul class="pagination justify-content-center" id="pagination">
+        </ul>
+      </nav>
+      Enter page number<input style="margin-left:10px;margin-right:10px;" size="5" type="text" id="enteredpagenumber"></input><input class="btn btn-primary" type="button" id="pagebutton" value="Go"></input>
+    </div>
+    <div id="back"></div>
+  </div>
+    </div>
+
+
+
+  </body>
+  <script src="auth.js"></script>
+  <script src="httpsreq.js"></script>
+  <script src="blockheight.js"></script>
+  </html>
