@@ -69,6 +69,13 @@
   <div id="maincontent" class="container nonheader">
     <div class="row">
         <div class="col-md-12 col-lg-12">
+            <center><input style="margin-left:10px;margin-right:10px;" placeholder="BlockHash / TXID / Address / BlockHeight" size="50" type="text" id="search"></input><input class="btn btn-primary" type="button" id="searchbtn" value="Search"></input>
+            <div id="searchmsg"></div></center>
+        </div>
+    </div>
+    <div id="searchnegative">
+    <div class="row">
+        <div class="col-md-12 col-lg-12">
             <h4>Transaction</h4>
             <a id="txid"></a>
             <hr>
@@ -107,10 +114,12 @@
   </table>
 </div>
         </div>
+      </div>
         <div id="back"></div>
   </body>
   <script src="credentials.js"></script>
   <script src="auth.js"></script>
   <script src="httpsreq.js"></script>
   <script src="transaction.js"></script>
+  <script src="search.js"></script>
 </html>

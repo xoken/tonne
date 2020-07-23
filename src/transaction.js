@@ -9,7 +9,10 @@ const logo = document.getElementById('logo').href = indexPath;
 //transactionparam = global.location.search.replace(result, '');
 
 var params = new URL(global.location).searchParams;
+if (params.get('transaction')!=undefined) {
 transactionparam = params.get('transaction');
+}
+
 
 
 //note to self : remove the following code if you enable httpsauth();

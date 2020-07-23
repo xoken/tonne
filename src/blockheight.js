@@ -9,24 +9,16 @@ var result;
 var currentblockhash,numberoftransactions;
 var batches,currentbatchnum=1,numberofpages,pagearray=[0],index,pagearrlength=5,selected=1,txcache=[],numofdisplayedpages,serverpagenumber=1,txfinished=0,fixedarrlength=5;
 var txnumber,transactionsperpage = 10;
-result = global.location.search.match(/\?blockhash\=/i);
-if(result=='?blockhash='){
-blockparam = global.location.search.replace(result, '');
-flag=0;
-}
-else {
-  result = global.location.search.match(/\?blockheight\=/i);
-blockparam = global.location.search.replace(result, '');
-flag=1;
-}
 
 var params = new URL(global.location).searchParams;
  if (params.get('blockhash')!=undefined) {
    blockparam = params.get('blockhash');
+   console.log(blockparam);
    flag=0;
  }
  else if (params.get('blockheight')) {
    blockparam = params.get('blockheight');
+    console.log(blockparam);
    flag=1;
  }
 
@@ -56,8 +48,8 @@ document.getElementById('blockbits').innerHTML = rjdecoded.block.header.blockBit
 document.getElementById('timestamp').innerHTML = date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear()+" - "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
 document.getElementById('bhnonce').innerHTML = rjdecoded.block.header.nonce;
 if(params.get('txindex')!=undefined){
-
-selected = Math.ceil((params.get('txindex')+1)/transactionsperpage);
+console.log(params.get('txindex'));
+selected = Math.ceil((parseInt(params.get('txindex'),10)+1)/transactionsperpage);
 console.log(selected+"selected back");
 currentbatchnum = Math.ceil(selected / fixedarrlength);
 console.log(currentbatchnum+"currentbatchnum back");

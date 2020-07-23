@@ -8,6 +8,7 @@ var roptions = {
     'Accept' : 'application/json'
   }
 }
+var responsecode;
 
 function httpsreq(key,resourcepath,functionname){
   var chunktemp='';
@@ -22,6 +23,9 @@ const rreq = https.request(roptions, (rres) => {
     console.log(roptions);
     console.log('STATUS: '+rres.statusCode);
     console.log('HEADERS: '+JSON.stringify(rres.headers));
+    if(parseInt(rres.statusCode,10)==404){
+      searchresultsmessage();
+    }
     rres.setEncoding('utf8');
     rres.on('data', (chunk) => {
       chunktemp += chunk;

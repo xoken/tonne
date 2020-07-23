@@ -10,10 +10,11 @@ var size;
 var syncedblocksheight;
 var numberofpages,pagearray,index,pagearrlength=9,selected = 1;
 
+var params = new URL(global.location).searchParams;
+ if (params.get('blockhei')!=undefined) {
+   blockhei = parseInt(params.get('blockhei'),10);
+ }
 
-
-result = global.location.search.match(/\?blockhei\=/i);
-blockhei = global.location.search.replace(result, '');
 
 function summary(){
 syncedblocksheight = rjdecoded.chainInfo.blocksSynced;
@@ -21,7 +22,9 @@ numberofpages = Math.ceil(syncedblocksheight/10);
 pagearray = [1,2,3,4,5,6,7,'-',numberofpages];
 document.getElementById('summarysection').innerHTML = "<tr><td><b>Chainwork</b><br />"+rjdecoded.chainInfo.chainwork+"</td><td><b>Blocks Synced</b><br />"+rjdecoded.chainInfo.blocksSynced+"</td><td><b>Chain Tip</b><br />"+rjdecoded.chainInfo.chainTip+"</td></tr><tr><td><b>Chain</b><br />"+rjdecoded.chainInfo.chain+"</td><td><b>Synced Block Hash</b><br /><a style='word-break:break-all;'>"+rjdecoded.chainInfo.syncedBlockHash+"</a></td><td><b>Chain Tip Hash</b><br /><a style='word-break:break-all;'>"+rjdecoded.chainInfo.chainTipHash+"</a></td></tr>";
 if (blockhei!='') {
-  selected = (numberofpages - Math.ceil(blockhei/10));
+  //selected = (numberofpages - Math.ceil(blockhei/10));
+  selected = numberofpages - Math.ceil((blockhei - (syncedblocksheight % 10))/10);
+  console.log(selected);
   if (selected <= (pagearrlength-2)) {
     index = 1;
   }

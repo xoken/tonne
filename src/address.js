@@ -6,9 +6,11 @@ var addsummarysection = document.getElementById('addressummary');
 var txlist = document.getElementById('txlist');
 var addressCache = [],cachecounter=0,outputsperpage=20,pagearray=[],fixedpagearrlength=5,pagearrlength=5;
 var selected = 1,batches,totalpagesavailable,currentbatchnum=1,nextcursor='';
-result = global.location.search.match(/\?address\=/i);
 
-address = global.location.search.replace(result, '');
+var params = new URL(global.location).searchParams;
+ if (params.get('address')!=undefined) {
+   address = params.get('address');
+ }
 
 document.getElementById('address').innerHTML = address;
 document.getElementById('title').innerHTML = "Address - "+address;
@@ -52,6 +54,7 @@ function printresults(){
 
 function pagearrayinit(){
   caching();
+  if(addressCache.length > 0){
   var tempindex=1;
   if (addressCache.length<=outputsperpage) {
     totalpagesavailable = Math.ceil(addressCache.length/outputsperpage);
@@ -70,6 +73,10 @@ function pagearrayinit(){
   currentbatchnum = Math.ceil(selected / fixedpagearrlength);
   printpagination();
   printresults();
+}
+else {
+  searchresultsmessage();
+}
 }
 
 function caching(){
@@ -128,7 +135,7 @@ else {
     }
 
 }
-if (pagearray[pagearrlength-1]!=totalpagesavailable) {
+if (pagearray[pagearrlength-1]!=totalpagesavailable || nextcursor!=null) {
   pagescontainer.insertAdjacentHTML('beforeend', "<li class='page-item active'><a class='arrows' id='rightarrow'>></a></li>");
 }
 addlistener();
