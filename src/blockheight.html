@@ -40,8 +40,33 @@
       </form>
     </div>
   </nav>
-
-  <div class="container nonheader">
+  <div id="authpop">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 col-lg-12">
+          <div class="form-group">
+            <label for="username">Enter Username</label>
+            <input type="text" class="form-control" id="username" placeholder="Enter username">
+          </div>
+          <div class="form-group">
+            <label for="password">Enter Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Password">
+          </div>
+            <div class="form-group">
+              <label for="hostname">Enter hostname</label>
+              <input type="text" class="form-control" id="hostname" placeholder="hostname"></div>
+              <div class="form-group">
+                <label for="port">Enter Port number</label>
+                <input type="text" class="form-control" id="portnumber" placeholder="port number"></div>
+                <center>
+                  <input class="btn btn-primary" type="button" id="submitcredentials" value="Authenticate"></input>
+                  <div id="authmessage"></div>
+                </center>
+              </div>
+            </div>
+      </div>
+  </div>
+  <div id="maincontent" class="container nonheader">
     <div class="row">
         <div class="col-md-12 col-lg-12">
             <h4>Block</h4><h5 id="blocktitle"></h5>
@@ -100,6 +125,7 @@
 
 
   </body>
+  <script src="credentials.js"></script>
   <script src="auth.js"></script>
   <script src="httpsreq.js"></script>
   <script src="blockheight.js"></script>

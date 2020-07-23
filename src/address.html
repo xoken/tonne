@@ -40,8 +40,33 @@
       </form>
     </div>
   </nav>
-
-  <div class="container nonheader">
+  <div id="authpop">
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12 col-lg-12">
+          <div class="form-group">
+            <label for="username">Enter Username</label>
+            <input type="text" class="form-control" id="username" placeholder="Enter username">
+          </div>
+          <div class="form-group">
+            <label for="password">Enter Password</label>
+            <input type="password" class="form-control" id="password" placeholder="Password">
+          </div>
+            <div class="form-group">
+              <label for="hostname">Enter hostname</label>
+              <input type="text" class="form-control" id="hostname" placeholder="hostname"></div>
+              <div class="form-group">
+                <label for="port">Enter Port number</label>
+                <input type="text" class="form-control" id="portnumber" placeholder="port number"></div>
+                <center>
+                  <input class="btn btn-primary" type="button" id="submitcredentials" value="Authenticate"></input>
+                  <div id="authmessage"></div>
+                </center>
+              </div>
+            </div>
+      </div>
+  </div>
+  <div id="maincontent" class="container nonheader">
     <div class="row">
         <div class="col-md-12 col-lg-12">
             <h4>Address</h4><br />
@@ -49,11 +74,7 @@
             <hr>
         </div>
     </div>
-    <div class="row">
-        <div class="col-md-12 col-lg-12">
-<h4>Summary</h4>
-          </div>
-          </div>
+
     <div class="row">
         <div class="col-md-12 col-lg-12 summaryblock1">
           <table id="addressummary">
@@ -61,7 +82,7 @@
           </table>
         </div>
         </div>
-        <hr />
+
         <div class="row">
 <div class="col-md-12 col-lg-12">
   <h5><a id="nooftransactions"></a>Transactions</h5>
@@ -74,7 +95,17 @@
   </table>
 </div>
         </div>
+        <div class="row">
+<div class="col-md-12 col-lg-12">
+  <nav aria-label="transactions navigation">
+    <ul class="pagination justify-content-center" id="pagination">
+    </ul>
+  </nav>
+</div>
+        </div>
+          <div id="back"></div>
   </body>
+  <script src="credentials.js"></script>
   <script src="auth.js"></script>
   <script src="httpsreq.js"></script>
   <script src="address.js"></script>

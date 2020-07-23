@@ -24,3 +24,24 @@ word-break: break-all;
 .tdpadd{
   padding-left: 10px;
 }
+#authpop{
+  position:sticky;
+  top:100px;
+  -webkit-box-shadow: 0px 5px 12px 0px rgba(0,0,0,0.75);
+-moz-box-shadow: 0px 5px 12px 0px rgba(0,0,0,0.75);
+box-shadow: 0px 5px 12px 0px rgba(0,0,0,0.75);
+background-color:white;
+height:auto !important;
+left:0;
+right:0;
+z-index:9999;
+width:fit-content;
+margin:auto;
+padding:50px;
+display:none;
+@media(max-width:768px){
+width:90%;
+margin:auto 5%;
+
+}
+}

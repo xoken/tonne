@@ -1,33 +1,49 @@
-const path = require('path');
 const indexPath = path.join('file://', __dirname, 'index.html');
 const heightpagePath = path.join('file://', __dirname, 'blockheight.html');
 
 const resultsrow = document.getElementById('rowstoinsert');
 const blockhand = document.getElementsByClassName('blockheights');
 const logo = document.getElementById('logo').href = indexPath;
-var date;
+var date,result,backpagenum,blockhei='';
 var heightlist='';
 var size;
 var syncedblocksheight;
-var numberofpages,pagearray,index,pagearrlength,selected = 1;
+var numberofpages,pagearray,index,pagearrlength=9,selected = 1;
 
+
+
+result = global.location.search.match(/\?blockhei\=/i);
+blockhei = global.location.search.replace(result, '');
 
 function summary(){
 syncedblocksheight = rjdecoded.chainInfo.blocksSynced;
 numberofpages = Math.ceil(syncedblocksheight/10);
 pagearray = [1,2,3,4,5,6,7,'-',numberofpages];
-pagearrlength = pagearray.length;
-updatepagearray();
 document.getElementById('summarysection').innerHTML = "<tr><td><b>Chainwork</b><br />"+rjdecoded.chainInfo.chainwork+"</td><td><b>Blocks Synced</b><br />"+rjdecoded.chainInfo.blocksSynced+"</td><td><b>Chain Tip</b><br />"+rjdecoded.chainInfo.chainTip+"</td></tr><tr><td><b>Chain</b><br />"+rjdecoded.chainInfo.chain+"</td><td><b>Synced Block Hash</b><br /><a style='word-break:break-all;'>"+rjdecoded.chainInfo.syncedBlockHash+"</a></td><td><b>Chain Tip Hash</b><br /><a style='word-break:break-all;'>"+rjdecoded.chainInfo.chainTipHash+"</a></td></tr>";
+if (blockhei!='') {
+  selected = (numberofpages - Math.ceil(blockhei/10));
+  if (selected <= (pagearrlength-2)) {
+    index = 1;
+  }
+  else if (selected >= (numberofpages-(pagearrlength-2))) {
+    index = pagearrlength;
+  }
+}
+updatepagearray();
 updateheightlist();
+printpagination();
 httpsreq('Bearer '+localStorage.getItem("sessionkey")+'','v1/block/heights/?'+heightlist+'','printresults');
 }
 
+
+if (localStorage.getItem("username")!=undefined || localStorage.getItem("username")!='') {
 checksession();
+}
+
 function checksession(){
 if((localStorage.getItem("callsremaining") == null) || (localStorage.getItem("callsremaining") <= 3)){
-  //httpsauth();
-  setTimeout(checksession, 2000);
+  httpsauth();
+  setTimeout(checksession, 3000);
 }
 else {
   httpsreq('Bearer '+localStorage.getItem("sessionkey")+'','v1/chain/info','summary');
@@ -53,7 +69,7 @@ pagebutton.addEventListener('click', function(){
     updatepagearray();
   }
 })
-printpagination();
+
 
 function updateheightlist(){
   var tempheight = syncedblocksheight - ((selected - 1) * 10);

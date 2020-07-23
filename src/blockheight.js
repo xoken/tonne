@@ -1,15 +1,13 @@
-const path = require('path');
 const indexPath = path.join('file://', __dirname, 'index.html');
 const heightpagePath = path.join('file://', __dirname, 'blockheight.html');
 const trasactionPath = path.join('file://', __dirname, 'transaction.html');
 const refreshpage = document.getElementById('refreshpage');
 const logo = document.getElementById('logo').href = indexPath;
-//var sjdecoded,rjdecoded;
-var blockparam;
+var blockparam,backblock;
 var flag;
 var result;
 var currentblockhash,numberoftransactions;
-var batches,currentbatchnum=1,numberofpages,pagearray=[0],index,pagearrlength,selected,txcache=[],numofdisplayedpages,serverpagenumber=1,txfinished=0,fixedarrlength;
+var batches,currentbatchnum=1,numberofpages,pagearray=[0],index,pagearrlength=5,selected=1,txcache=[],numofdisplayedpages,serverpagenumber=1,txfinished=0,fixedarrlength=5;
 var txnumber,transactionsperpage = 10;
 result = global.location.search.match(/\?blockhash\=/i);
 if(result=='?blockhash='){
@@ -21,6 +19,17 @@ else {
 blockparam = global.location.search.replace(result, '');
 flag=1;
 }
+
+var params = new URL(global.location).searchParams;
+ if (params.get('blockhash')!=undefined) {
+   blockparam = params.get('blockhash');
+   flag=0;
+ }
+ else if (params.get('blockheight')) {
+   blockparam = params.get('blockheight');
+   flag=1;
+ }
+
 
 
 //note to self : remove the following code if you enable httpsauth();
@@ -34,6 +43,7 @@ else {
 function printresults(){
 currentblockhash = rjdecoded.block.hash;
 numberoftransactions = rjdecoded.block.txCount;
+document.getElementById('back').innerHTML = "<a class='btn btn-primary' href='"+indexPath+"?blockhei="+rjdecoded.block.height+"'>Back</a>";
 date = new Date(rjdecoded.block.header.blockTimestamp*1000);
 document.getElementById('nextblock').innerHTML = "<a href='"+heightpagePath+"?blockhash="+rjdecoded.block.nextBlockHash+"'>"+rjdecoded.block.nextBlockHash+"</a>";
 document.getElementById('blocktitle').innerHTML = "#"+rjdecoded.block.height;
@@ -45,11 +55,40 @@ document.getElementById('merkleroot').innerHTML = rjdecoded.block.header.merkleR
 document.getElementById('blockbits').innerHTML = rjdecoded.block.header.blockBits;
 document.getElementById('timestamp').innerHTML = date.getDate() + "/" + (date.getMonth()+1) + "/" + date.getFullYear()+" - "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
 document.getElementById('bhnonce').innerHTML = rjdecoded.block.header.nonce;
-httpsreq('Bearer '+localStorage.getItem("sessionkey")+'','v1/block/txids/'+currentblockhash+'/?pagenumber=1&pagesize=50','paginationinitialisation');
+if(params.get('txindex')!=undefined){
+
+selected = Math.ceil((params.get('txindex')+1)/transactionsperpage);
+console.log(selected+"selected back");
+currentbatchnum = Math.ceil(selected / fixedarrlength);
+console.log(currentbatchnum+"currentbatchnum back");
+
+  numberofpages = Math.ceil(numberoftransactions/transactionsperpage);
+
+  if (numberofpages<=pagearrlength) {
+    numofdisplayedpages = numberofpages;
+    pagearrlength = numberofpages;
+  }
+  else {
+    numofdisplayedpages = pagearrlength;
+  }
+  for(var i=0;i<pagearrlength;i++)
+  {
+    pagearray[i] = i+1;
+  }
+  batches = Math.ceil(numberofpages/fixedarrlength);
+
+
+
+httpsreq('Bearer '+localStorage.getItem("sessionkey")+'','v1/block/txids/'+currentblockhash+'/?pagenumber='+currentbatchnum+'&pagesize=50','enterednumcaching');
+
+}
+else {
+  currentbatchnum = 1;
+  httpsreq('Bearer '+localStorage.getItem("sessionkey")+'','v1/block/txids/'+currentblockhash+'/?pagenumber='+currentbatchnum+'&pagesize=50','paginationinitialisation');
+}
 }
 
 refreshpage.innerHTML = "<a class='btn btn-primary' href='"+global.location+"'>Refresh Page</a><br />";
-document.getElementById('back').innerHTML = "<a class='btn btn-primary' href='"+indexPath+"'>Back</a>";
 
 const pagescontainer = document.getElementById('pagination');
 var txsection = document.getElementById('transactionsection');
@@ -63,7 +102,12 @@ pagebutton.addEventListener('click', function(){
     if (txcache[((selected-1)*transactionsperpage)+1]!=undefined) {
       var tempindex,tempind;
       if(currentbatchnum==batches){
-    pagearrlength = numberofpages % fixedarrlength;
+        if((numberofpages % fixedarrlength)==0) {
+          pagearrlength = fixedarrlength;
+        }
+        else {
+          pagearrlength = numberofpages % fixedarrlength;
+        }
     }
     else {
       pagearrlength = fixedarrlength;
@@ -245,8 +289,7 @@ function transactionprinting(){
 }
 
 function paginationinitialisation(){
-  fixedarrlength = pagearrlength = 5;
-  selected = 1;
+
   if (Object.keys(rjdecoded.txids).length>0) {
     if (numberoftransactions>=transactionsperpage) {
     numberofpages = Math.ceil(numberoftransactions/transactionsperpage);

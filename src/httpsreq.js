@@ -1,7 +1,7 @@
 var rjdecoded;
 var roptions = {
-  hostname: '',
-  port: ,
+  hostname: localStorage.getItem("hostname"),
+  port: localStorage.getItem("port"),
   method: 'GET',
   protocol:'https:',
   headers:{
@@ -13,6 +13,7 @@ function httpsreq(key,resourcepath,functionname){
   var chunktemp='';
   if((localStorage.getItem("callsremaining") == null) || (localStorage.getItem("callsremaining") == 3)){
     httpsauth();
+    setTimeout(httpsauth,5000);
   }
   localStorage.setItem("callsremaining",parseInt(localStorage.getItem("callsremaining"),10)-1);
 roptions.headers.Authorization = key;

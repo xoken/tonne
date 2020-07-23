@@ -1,3 +1,87 @@
 .nonheader{
   margin-top:50px;
 }
+
+
+
+.subtable > tbody > tr > td{
+  border:1pt solid lightgrey !important;
+  padding:15px;
+}
+
+
+.txslnum{
+background-color: #ebbc58;
+padding:20px;
+color:white;
+font-weight:bold;
+font-size: 20px;
+}
+
+.spendinfo0 > table > tbody > tr > td{
+background-color:lightgrey;
+border:1pt solid white !important;
+}
+.spendinfo1 > table > tbody > tr > td{
+background-color:white;
+border:1pt solid lightgrey !important;
+}
+.prevoutpoint0 > table > tbody > tr > td{
+background-color:lightgrey;
+border:1pt solid white !important;
+}
+.prevoutpoint1 > table > tbody > tr > td{
+  background-color:white;
+  border:1pt solid lightgrey !important;
+}
+
+
+.emptypagelink{
+  position: relative;
+    display: block;
+    padding: .5rem .75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #007bff;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    cursor: not-allowed;
+}
+
+.arrows{
+  position: relative;
+    display: block;
+    padding: .5rem .75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #007bff;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+    cursor: pointer;
+}
+
+.page-link{
+  cursor: pointer !important;
+}
+
+#authpop{
+  position:sticky;
+  top:100px;
+  -webkit-box-shadow: 0px 5px 12px 0px rgba(0,0,0,0.75);
+-moz-box-shadow: 0px 5px 12px 0px rgba(0,0,0,0.75);
+box-shadow: 0px 5px 12px 0px rgba(0,0,0,0.75);
+background-color:white;
+height:auto !important;
+left:0;
+right:0;
+z-index:9999;
+width:fit-content;
+margin:auto;
+padding:50px;
+display:none;
+@media(max-width:768px){
+width:90%;
+margin:auto 5%;
+
+}
+}
