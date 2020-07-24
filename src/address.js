@@ -1,5 +1,7 @@
 const indexPath = path.join('file://', __dirname, 'index.html');
-const heightpagePath = path.join('file://', __dirname, 'address.html');
+const heightpagePath = path.join('file://', __dirname, 'blockheight.html');
+const transactionPath = path.join('file://', __dirname, 'transaction.html');
+const addressPath = path.join('file://', __dirname, 'address.html');
 var result,address;
 const logo = document.getElementById('logo').href = indexPath;
 var addsummarysection = document.getElementById('addressummary');
@@ -17,7 +19,7 @@ document.getElementById('title').innerHTML = "Address - "+address;
 const pagescontainer = document.getElementById('pagination');
 
 //note to self : remove the following code if you enable httpsauth();
-httpsreq('Bearer '+localStorage.getItem("sessionkey")+'','v1/address/'+address+'/outputs/?pagesize=101','pagearrayinit');
+httpsreq('Bearer '+localStorage.getItem("sessionkey")+'','v1/address/'+address+'/outputs/?pagesize=100','pagearrayinit');
 document.getElementById('back').innerHTML = "<a class='btn btn-primary' style='color:white;' onclick='window.history.back();'>Back</a>";
 
 
@@ -31,14 +33,14 @@ function printresults(){
   for(var i=txnumber;i<addressCache.length;i++){
     console.log(printbreaker);
 
-    txlist.innerHTML += "<tr><td class='txslnum'>#"+(i+1)+" - "+addressCache[i].outputTxHash+"</td></tr><tr><td><table class='subtable'><tr><td><b>Transaction Index:</b> "+addressCache[i].txIndex+"</td><td><b>Value:</b> "+addressCache[i].value+"</td><td><b>Output Index:</b> "+addressCache[i].outputIndex+"</td><td><b>Block Height:</b> "+addressCache[i].blockHeight+"</td></tr><tr><td><b>Block Hash:</b> "+addressCache[i].blockHash+"</td></tr></table></td></tr>";
+    txlist.innerHTML += "<tr><td class='txslnum'>#"+(i+1)+" - <a href='"+transactionPath+"?transaction="+addressCache[i].outputTxHash+"'>"+addressCache[i].outputTxHash+"</a> - outputTxHash</td></tr><tr><td><table class='subtable'><tr><td><b>Transaction Index:</b> "+addressCache[i].txIndex+"</td><td><b>Value:</b> "+addressCache[i].value+"</td><td><b>Output Index:</b> "+addressCache[i].outputIndex+"</td><td><b>Block Height:</b> <a href='"+heightpagePath+"?blockheight="+addressCache[i].blockHeight+"'>"+addressCache[i].blockHeight+"</a></td></tr><tr><td colspan='4'><b>Block Hash:</b> <a href='"+heightpagePath+"?blockhash="+addressCache[i].blockHash+"'>"+addressCache[i].blockHash+"</a></td></tr></table></td></tr>";
     if (addressCache[i].spendInfo!=null) {
       for(var b=0;b<Object.keys(addressCache[i].spendInfo.spendData).length;b++){
-        txlist.innerHTML +="<tr><td class='"+spendinfocolor(spendinfocolorflip)+"'><hr><table class='subtable'><tr><th><p><b>spendData</b></p></th></tr><tr><td><b>Spending Output Index:</b> "+addressCache[i].spendInfo.spendData[b].spendingOutputIndex+"</td><td><b>Value:</b> "+addressCache[i].spendInfo.spendData[b].value+"</td><td><b>Output Address:</b> "+addressCache[i].spendInfo.spendData[b].outputAddress+"</td></tr></table></td></tr>";
+        txlist.innerHTML +="<tr><td class='"+spendinfocolor(spendinfocolorflip)+"'><hr><table class='subtable'><tr><th><p><b>spendData</b></p></th></tr><tr><td><b>Spending Output Index:</b> "+addressCache[i].spendInfo.spendData[b].spendingOutputIndex+"</td><td><b>Value:</b> "+addressCache[i].spendInfo.spendData[b].value+"</td><td><b>Output Address:</b> <a href='"+addressPath+"?address="+addressCache[i].spendInfo.spendData[b].outputAddress+"'>"+addressCache[i].spendInfo.spendData[b].outputAddress+"</a></td></tr></table></td></tr>";
       }
     }
    for(var a=0;a<Object.keys(addressCache[i].prevOutpoint).length;a++){
-      txlist.innerHTML += "<tr><td class='"+prevoutpointcolor(prevoutpointcolorflip)+"'><hr><table class='subtable'><tr><th><p><b>prevOutpoint</p></b></th></tr><tr><td><b>opTxHash:</b> "+addressCache[i].prevOutpoint[a][0].opTxHash+"</td></tr><tr><td><b>opIndex:</b> "+addressCache[i].prevOutpoint[a][0].opIndex+"</td><td>"+addressCache[i].prevOutpoint[a][1]+"</td><td>"+addressCache[i].prevOutpoint[a][2]+"</td></tr></table></td></tr>";
+      txlist.innerHTML += "<tr><td class='"+prevoutpointcolor(prevoutpointcolorflip)+"'><hr><table class='subtable'><tr><th><p><b>prevOutpoint</p></b></th></tr><tr><td colspan='3'><b>opTxHash:</b> <a href='"+heightpagePath+"?blockhash="+addressCache[i].prevOutpoint[a][0].opTxHash+"'>"+addressCache[i].prevOutpoint[a][0].opTxHash+"</a></td></tr><tr><td><b>opIndex:</b> "+addressCache[i].prevOutpoint[a][0].opIndex+"</td><td>"+addressCache[i].prevOutpoint[a][1]+"</td><td>"+addressCache[i].prevOutpoint[a][2]+"</td></tr></table></td></tr>";
     }
 
     txlist.innerHTML += "<br><br>";
@@ -178,7 +180,7 @@ document.getElementById('rightarrow').addEventListener('click',function(){
 if(addressCache[(pagearray[pagearray.length-1]*outputsperpage)+1]==undefined){
   currentbatchnum = Math.ceil(pagearray[0] / fixedpagearrlength);
  currentbatchnum+=1;
-  httpsreq('Bearer '+localStorage.getItem("sessionkey")+'','v1/address/'+address+'/outputs/?pagesize=101&cursor='+nextcursor+'','adddataupdatepagearray');
+  httpsreq('Bearer '+localStorage.getItem("sessionkey")+'','v1/address/'+address+'/outputs/?pagesize=100&cursor='+nextcursor+'','adddataupdatepagearray');
 }
 else{
   currentbatchnum = Math.ceil(pagearray[0] / fixedpagearrlength);

@@ -41,6 +41,11 @@ document.getElementById('nextblock').innerHTML = "<a href='"+heightpagePath+"?bl
 document.getElementById('blocktitle').innerHTML = "#"+rjdecoded.block.height;
 document.getElementById('title').innerHTML = "Block - "+rjdecoded.block.hash;
 document.getElementById('blockhash').innerHTML = "Block - "+rjdecoded.block.hash;
+document.getElementById('txcount').innerHTML = rjdecoded.block.txCount;
+document.getElementById('coinbasetx').innerHTML = rjdecoded.block.coinbaseTx;
+document.getElementById('size').innerHTML = rjdecoded.block.size+" Bytes";
+document.getElementById('coinbasemessage').innerHTML = rjdecoded.block.coinbaseMessage;
+document.getElementById('guessedminer').innerHTML = rjdecoded.block.guessedMiner;
 document.getElementById('previousblock').innerHTML = "<a href='"+heightpagePath+"?blockhash="+rjdecoded.block.header.prevBlock+"'>"+rjdecoded.block.header.prevBlock+"</a>";
 document.getElementById('blockversion').innerHTML = rjdecoded.block.header.blockVersion;
 document.getElementById('merkleroot').innerHTML = rjdecoded.block.header.merkleRoot;

@@ -35,7 +35,10 @@ if (blockhei!='') {
 updatepagearray();
 updateheightlist();
 printpagination();
+setTimeout(callsec, 1);
+function callsec(){
 httpsreq('Bearer '+localStorage.getItem("sessionkey")+'','v1/block/heights/?'+heightlist+'','printresults');
+}
 }
 
 
@@ -154,7 +157,7 @@ addlistener();
 
 function printresults(){
   resultsrow.innerHTML = '';
-  resultsrow.innerHTML ="<tr class='thborder'><th>Height</th><th>Timestamp (UTC)</th><th>Age</th><th>Block Version</th><th>Transactions</th></tr>";
+  resultsrow.innerHTML ="<tr class='thborder'><th>Height</th><th>Timestamp (UTC)</th><th>Age</th><th>Block Version</th><th>Transactions</th><th>Size(Bytes)</th></tr>";
   size = Object.keys(rjdecoded.blocks).length;
   var todaysdate, age;
     for(var i=size-1;i>=0;i--){
@@ -162,7 +165,7 @@ function printresults(){
   date = new Date(rjdecoded.blocks[i].header.blockTimestamp*1000);
   todaysdate = ((Date.now() - rjdecoded.blocks[i].header.blockTimestamp));
   age = new Date(todaysdate);
-  resultsrow.innerHTML += "<tr class='tablerowbottom'><td class='blockheights'><a href='"+heightpagePath+"?blockheight="+rjdecoded.blocks[i].height+"'>"+rjdecoded.blocks[i].height+"</a></td><td>"+date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear()+"<br />"+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()+"</td><td>"+age.getHours()+":"+age.getMinutes()+":"+age.getSeconds()+"</td><td>"+rjdecoded.blocks[i].header.blockVersion+"</td><td>"+rjdecoded.blocks[i].txCount+"</td></tr>";
+  resultsrow.innerHTML += "<tr class='tablerowbottom'><td class='blockheights'><a href='"+heightpagePath+"?blockheight="+rjdecoded.blocks[i].height+"'>"+rjdecoded.blocks[i].height+"</a></td><td>"+date.getDate() + '/' + (date.getMonth()+1) + '/' + date.getFullYear()+"<br />"+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()+"</td><td>"+age.getHours()+":"+age.getMinutes()+":"+age.getSeconds()+"</td><td>"+rjdecoded.blocks[i].header.blockVersion+"</td><td>"+rjdecoded.blocks[i].txCount+"</td><td>"+rjdecoded.blocks[i].size+"</td></tr>";
 
   }
 }

@@ -74,6 +74,7 @@
         </div>
     </div>
     <div id="searchnegative">
+          <div id="back"></div>
     <div class="row">
         <div class="col-md-12 col-lg-12">
             <h4>Block</h4><h5 id="blocktitle"></h5>
@@ -88,20 +89,25 @@
           </div>
     <div class="row">
         <div class="col-md-6 col-lg-6 summaryblock1">
-          <table>
+          <table class="tdborderbottom">
 <tr><td><b>Previous Block</b></td><td><a id="previousblock"></a></td></tr>
 <tr><td><b>Block Version</b></td><td><a id="blockversion"></a></td></tr>
+<tr><td><b>txCount</b></td><td><a id="txcount"></a></td></tr>
 <tr><td><b>Nonce</b></td><td><a id="bhnonce"></a></td></tr>
+<tr><td><b>coinbaseTx</b></td><td><a id="coinbasetx"></a></td></tr>
           </table>
 
 
         </div>
         <div class="col-md-6 col-lg-6">
-          <table>
+          <table class="tdborderbottom">
 <tr><td><b>Next Block</b></td><td><a id="nextblock"></a></td></tr>
 <tr><td><b>Block Bits</b></td><td><a id="blockbits"></a></td></tr>
+<tr><td><b>Size</b></td><td><a id="size"></a></td></tr>
 <tr><td><b>Timestamp (UTC)</b></td><td><a id="timestamp"></a></td></tr>
 <tr><td><b>Merkle Root</b></td><td><a id="merkleroot"></a></td></tr>
+<tr><td><b>coinbaseMessage</b></td><td><a id="coinbasemessage"></a></td></tr>
+<tr><td><b>guessedMiner</b></td><td><a id="guessedminer"></a></td></tr>
           </table>
 
 
@@ -125,7 +131,7 @@
       </nav>
       Enter page number<input style="margin-left:10px;margin-right:10px;" size="5" type="text" id="enteredpagenumber"></input><input class="btn btn-primary" type="button" id="pagebutton" value="Go"></input>
     </div>
-    <div id="back"></div>
+
   </div>
     </div>
 

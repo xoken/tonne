@@ -4,7 +4,11 @@
 .summaryblock1{
   border-right:1pt solid lightgrey !important;
 }
-#previousblock, #merkleroot, #blockhash, #nextblock{
+.tdborderbottom > tbody > tr > td{
+  padding:10px;
+    border-bottom:1pt solid lightgrey !important;
+}
+#previousblock, #merkleroot, #blockhash, #nextblock ,#coinbasetx{
   word-break: break-all;
 }
 
@@ -80,4 +84,7 @@ width:90%;
 margin:auto 5%;
 
 }
+}
+#back{
+  text-align: right;
 }

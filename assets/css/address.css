@@ -7,8 +7,11 @@
 .subtable > tbody > tr > td{
   border:1pt solid lightgrey !important;
   padding:15px;
+  width:100%;
 }
-
+.subtable{
+  width:100%;
+}
 
 .txslnum{
 background-color: #ebbc58;
@@ -19,20 +22,20 @@ font-size: 20px;
 }
 
 .spendinfo0 > table > tbody > tr > td{
-background-color:lightgrey;
-border:1pt solid white !important;
+background-color:#f9ffc4;
+border:1pt solid lightgrey !important;
 }
 .spendinfo1 > table > tbody > tr > td{
-background-color:white;
+background-color:#f9ffc4;
 border:1pt solid lightgrey !important;
 }
 .prevoutpoint0 > table > tbody > tr > td{
-background-color:lightgrey;
+background-color:#efefef;
 border:1pt solid white !important;
 }
 .prevoutpoint1 > table > tbody > tr > td{
-  background-color:white;
-  border:1pt solid lightgrey !important;
+  background-color:#efefef;
+  border:1pt solid white !important;
 }
 
 
@@ -84,4 +87,10 @@ width:90%;
 margin:auto 5%;
 
 }
+}
+#back{
+  text-align: right;
+}
+#txlist{
+  width:100%;
 }

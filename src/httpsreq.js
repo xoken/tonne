@@ -1,16 +1,14 @@
 var rjdecoded;
-var roptions = {
-  hostname: localStorage.getItem("hostname"),
-  port: localStorage.getItem("port"),
-  method: 'GET',
-  protocol:'https:',
-  headers:{
-    'Accept' : 'application/json'
-  }
-}
-var responsecode;
-
 function httpsreq(key,resourcepath,functionname){
+  var roptions = {
+    hostname: localStorage.getItem("hostname"),
+    port: localStorage.getItem("port"),
+    method: 'GET',
+    protocol:'https:',
+    headers:{
+      'Accept' : 'application/json'
+    }
+  }
   var chunktemp='';
   if((localStorage.getItem("callsremaining") == null) || (localStorage.getItem("callsremaining") == 3)){
     httpsauth();
