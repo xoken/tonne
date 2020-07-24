@@ -1,6 +1,6 @@
 # nipkow
 
-## Setup
+## Setup on ubuntu machine
 **Step 1:**
 ```
 sudo apt install npm
