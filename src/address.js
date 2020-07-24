@@ -31,7 +31,6 @@ function printresults(){
   var printbreaker = 1;
   var txnumber = ((selected - 1) * outputsperpage);
   for(var i=txnumber;i<addressCache.length;i++){
-    console.log(printbreaker);
 
     txlist.innerHTML += "<tr><td class='txslnum'>#"+(i+1)+" - <a href='"+transactionPath+"?transaction="+addressCache[i].outputTxHash+"'>"+addressCache[i].outputTxHash+"</a> - outputTxHash</td></tr><tr><td><table class='subtable'><tr><td><b>Transaction Index:</b> "+addressCache[i].txIndex+"</td><td><b>Value:</b> "+addressCache[i].value+"</td><td><b>Output Index:</b> "+addressCache[i].outputIndex+"</td><td><b>Block Height:</b> <a href='"+heightpagePath+"?blockheight="+addressCache[i].blockHeight+"'>"+addressCache[i].blockHeight+"</a></td></tr><tr><td colspan='4'><b>Block Hash:</b> <a href='"+heightpagePath+"?blockhash="+addressCache[i].blockHash+"'>"+addressCache[i].blockHash+"</a></td></tr></table></td></tr>";
     if (addressCache[i].spendInfo!=null) {
@@ -89,6 +88,7 @@ function caching(){
   }
   nextcursor = rjdecoded.nextCursor;
 }
+console.log(addressCache.length);
 }
 
 function adddataupdatepagearray(){
