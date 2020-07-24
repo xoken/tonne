@@ -26,7 +26,7 @@ npm install jquery --save
 
 
 
-##To launch nipkow
+## To launch nipkow
 
 cd into nipkow app's directory and then
 
