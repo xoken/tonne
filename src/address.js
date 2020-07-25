@@ -39,7 +39,7 @@ function printresults(){
       }
     }
    for(var a=0;a<Object.keys(addressCache[i].prevOutpoint).length;a++){
-      txlist.innerHTML += "<tr><td class='"+prevoutpointcolor(prevoutpointcolorflip)+"'><hr><table class='subtable'><tr><th><p><b>prevOutpoint</p></b></th></tr><tr><td colspan='3'><b>opTxHash:</b> <a href='"+heightpagePath+"?blockhash="+addressCache[i].prevOutpoint[a][0].opTxHash+"'>"+addressCache[i].prevOutpoint[a][0].opTxHash+"</a></td></tr><tr><td><b>opIndex:</b> "+addressCache[i].prevOutpoint[a][0].opIndex+"</td><td>"+addressCache[i].prevOutpoint[a][1]+"</td><td>"+addressCache[i].prevOutpoint[a][2]+"</td></tr></table></td></tr>";
+      txlist.innerHTML += "<tr><td class='"+prevoutpointcolor(prevoutpointcolorflip)+"'><hr><table class='subtable'><tr><th><p><b>prevOutpoint</p></b></th></tr><tr><td colspan='3'><b>opTxHash:</b> <a href='"+transactionPath+"?transaction="+addressCache[i].prevOutpoint[a][0].opTxHash+"'>"+addressCache[i].prevOutpoint[a][0].opTxHash+"</a></td></tr><tr><td><b>opIndex:</b> "+addressCache[i].prevOutpoint[a][0].opIndex+"</td><td>"+addressCache[i].prevOutpoint[a][1]+"</td><td>"+addressCache[i].prevOutpoint[a][2]+"</td></tr></table></td></tr>";
     }
 
     txlist.innerHTML += "<br><br>";
@@ -57,7 +57,7 @@ function pagearrayinit(){
   caching();
   if(addressCache.length > 0){
   var tempindex=1;
-  if (addressCache.length<=outputsperpage) {
+  if (addressCache.length>outputsperpage) {
     totalpagesavailable = Math.ceil(addressCache.length/outputsperpage);
   }
   else{
@@ -92,23 +92,17 @@ console.log(addressCache.length);
 }
 
 function adddataupdatepagearray(){
+  var prevcounterval = cachecounter;
   caching();
   var pagenum = pagearray[(pagearray.length-1)];
   currentbatchnum = Math.ceil(pagearray[0] / fixedpagearrlength);
   currentbatchnum+=1;
-  for(var t=0;t<pagearrlength;t++){
+  var numpagesincurbatch = Math.ceil((prevcounterval)/outputsperpage);
+  for(var t=0;t<numpagesincurbatch;t++){
     pagenum+=1;
-
-    if (pagenum<=totalpagesavailable) {
-      pagearray[t] = pagenum;
-    }
-    else {
-      pagearray[t] = '';
-    }
-
+    pagearray[t] = pagenum;
   }
   printpagination();
-  printresults();
 }
 
 function printpagination(){
@@ -175,9 +169,9 @@ currentbatchnum-=1;
 }
 })
 }
-if(pagearray[pagearrlength-1]!=totalpagesavailable){
 document.getElementById('rightarrow').addEventListener('click',function(){
-if(addressCache[(pagearray[pagearray.length-1]*outputsperpage)+1]==undefined){
+  console.log("right arrow clicked");
+if(nextcursor!=null){
   currentbatchnum = Math.ceil(pagearray[0] / fixedpagearrlength);
  currentbatchnum+=1;
   httpsreq('Bearer '+localStorage.getItem("sessionkey")+'','v1/address/'+address+'/outputs/?pagesize=100&cursor='+nextcursor+'','adddataupdatepagearray');
@@ -198,5 +192,4 @@ else{
   printpagination();
 }
 })
-}
 }
