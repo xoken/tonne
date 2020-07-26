@@ -94,10 +94,12 @@ console.log(addressCache.length);
 function adddataupdatepagearray(){
   var prevcounterval = cachecounter;
   caching();
+  totalpagesavailable = Math.ceil(addressCache.length/outputsperpage);
+  batches = Math.ceil(totalpagesavailable/fixedpagearrlength);
   var pagenum = pagearray[(pagearray.length-1)];
   currentbatchnum = Math.ceil(pagearray[0] / fixedpagearrlength);
   currentbatchnum+=1;
-  var numpagesincurbatch = Math.ceil((prevcounterval)/outputsperpage);
+  var numpagesincurbatch = Math.ceil((cachecounter - prevcounterval)/outputsperpage);
   for(var t=0;t<numpagesincurbatch;t++){
     pagenum+=1;
     pagearray[t] = pagenum;
@@ -151,43 +153,47 @@ for (var a = 0; a < clickedpage.length; a++) {
 }
 if (pagearray[0]!=1) {
 document.getElementById('leftarrow').addEventListener('click',function(){
-if (pagearray[0]==1) {
-
-}
-else{
   currentbatchnum = Math.ceil(pagearray[0] / totalpagesavailable);
 currentbatchnum-=1;
-  var tindex=pagearray[0]-fixedpagearrlength;
+  var ltindex=pagearray[0]-fixedpagearrlength;
 
 
   for(var t=0;t<fixedpagearrlength;t++){
-    pagearray[t] = tindex;
-    tindex+=1;
+    pagearray[t] = ltindex;
+    console.log(pagearray[t]+"pagearray[t]");
+    ltindex+=1;
   }
 
   printpagination();
-}
 })
 }
 document.getElementById('rightarrow').addEventListener('click',function(){
   console.log("right arrow clicked");
-if(nextcursor!=null){
-  currentbatchnum = Math.ceil(pagearray[0] / fixedpagearrlength);
- currentbatchnum+=1;
+//  console.log(pagearray[pagearray.length-1]+"pagearray[pagearray.length-1]");
+  console.log(totalpagesavailable+"totalpagesavailable");
+    currentbatchnum = Math.ceil(pagearray[0] / fixedpagearrlength);
+if(pagearray[pagearray.length-1]==totalpagesavailable && nextcursor!=null){
   httpsreq('Bearer '+localStorage.getItem("sessionkey")+'','v1/address/'+address+'/outputs/?pagesize=100&cursor='+nextcursor+'','adddataupdatepagearray');
 }
 else{
-  currentbatchnum = Math.ceil(pagearray[0] / fixedpagearrlength);
+  console.log("elseblock");
  currentbatchnum+=1;
-  var tindex=0;
-  for(var t=(pagearray[fixedpagearrlength-1]+1);t<=(pagearray[pagearrlength-1]+pagearrlength);t++){
-    if (t<=totalpagesavailable) {
-      pagearray[tindex] = t;
-    }
-    else {
-      pagearray[tindex] = '';
-    }
-    tindex+=1;
+  var tindex=pagearray[pagearray.length-1];
+
+  if ((pagearray[pagearray.length-1]+fixedpagearrlength)>totalpagesavailable) {
+
+
+      pagearrlength = totalpagesavailable % fixedpagearrlength;
+
+  }
+  else{
+    pagearrlength = fixedpagearrlength;
+  }
+  for(var t=0;t<pagearrlength;t++){
+        tindex+=1;
+      pagearray[t] = tindex;
+      console.log(pagearray[t]+"pagearray[t]");
+
   }
   printpagination();
 }
