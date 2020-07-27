@@ -28,7 +28,7 @@ searchbutton.addEventListener('click', function(){
       window.location.replace(blhpath+'?blockhash='+searchterm.value+'');
     }
     else{
-      window.location.replace(blhpath+'?transaction='+searchterm.value+'');
+      window.location.replace(txpath+'?transaction='+searchterm.value+'');
     }
 
   }
