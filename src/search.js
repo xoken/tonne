@@ -38,6 +38,14 @@ searchbutton.addEventListener("click", function () {
     } else {
       searchresultsmessage();
     }
+  } else if (searchterm.value.length == 64) {
+    if (searchterm.value.substring(0, 3) == "000") {
+      window.location.replace(blhpath + "?blockhash=" + searchterm.value + "");
+    } else {
+      window.location.replace(txpath + "?transaction=" + searchterm.value + "");
+    }
+  } else {
+    searchresultsmessage();
   }
 });
 

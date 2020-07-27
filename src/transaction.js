@@ -13,11 +13,6 @@ if (params.get("transaction") != undefined) {
   transactionparam = params.get("transaction");
 }
 
-function checknull(val) {
-  if (val != null) {
-  }
-}
-
 //note to self : remove the following code if you enable httpsauth();
 httpsreq(
   "Bearer " + localStorage.getItem("sessionkey") + "",

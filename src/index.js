@@ -68,18 +68,10 @@ if (
   localStorage.getItem("username") != undefined ||
   localStorage.getItem("username") != ""
 ) {
-  checksession();
-}
-
-function checksession() {
   if (
-    localStorage.getItem("callsremaining") == null ||
-    localStorage.getItem("callsremaining") <= 3
+    localStorage.getItem("callsremaining") != null ||
+    localStorage.getItem("callsremaining") > 3
   ) {
-    httpsauth();
-    setTimeout(checksession, 3000);
-  } else {
-    debugger;
     httpsreq(
       "Bearer " + localStorage.getItem("sessionkey") + "",
       "v1/chain/info",
