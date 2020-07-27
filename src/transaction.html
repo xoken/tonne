@@ -1,138 +1,222 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-    <link rel="stylesheet" href="../node_modules/bootstrap/dist/css/bootstrap.min.css">
+    <meta charset="utf-8" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="script-src 'self' 'unsafe-inline';"
+    />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
+    <link
+      rel="stylesheet"
+      href="../node_modules/bootstrap/dist/css/bootstrap.min.css"
+    />
     <script>
-      window.jQuery = window.$ = require('jquery');
+      window.jQuery = window.$ = require("jquery");
     </script>
-    <link rel="stylesheet" href="../assets/css/transaction.css">
+    <link rel="stylesheet" href="../assets/css/transaction.css" />
     <script src="../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 
-      <title id="title">
-
-      </title>
+    <title id="title"> </title>
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-light" style="box-shadow:0px 15px 10px -15px #111; max-height:70px;width:100% !important;">
-            <a class="navbar-brand" id="logo" href="#">
-              <img src="../assets/images/logo.png" class="d-inline-block align-top" alt="" loading="lazy" style="max-height:70px;">
-            </a>
-   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <span class="navbar-toggler-icon"></span>
-    </button>
-  <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav mr-auto">
-
-
-      </ul>
-      <form class="form-inline my-2 my-lg-0">
-   <ul class="navbar-nav mr-auto">
-        <li class="nav-item active">
-          <a class="nav-link" href="#">Contact <span class="sr-only">(current)</span></a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Help</a>
-        </li>
-      </ul>
-      </form>
-    </div>
-  </nav>
-  <div id="authpop">
-    <div class="container">
-      <div class="row">
-        <div class="col-md-12 col-lg-12">
-          <div class="form-group">
-            <label for="username">Enter Username</label>
-            <input type="text" class="form-control" id="username" placeholder="Enter username">
-          </div>
-          <div class="form-group">
-            <label for="password">Enter Password</label>
-            <input type="password" class="form-control" id="password" placeholder="Password">
-          </div>
+    <nav
+      class="navbar navbar-expand-lg navbar-light"
+      style="
+        box-shadow: 0px 15px 10px -15px #111;
+        max-height: 70px;
+        width: 100% !important;
+      "
+    >
+      <a class="navbar-brand" id="logo" href="#">
+        <img
+          src="../assets/images/logo.png"
+          class="d-inline-block align-top"
+          alt=""
+          loading="lazy"
+          style="max-height: 70px;"
+        />
+      </a>
+      <button
+        class="navbar-toggler"
+        type="button"
+        data-toggle="collapse"
+        data-target="#navbarSupportedContent"
+        aria-controls="navbarSupportedContent"
+        aria-expanded="false"
+        aria-label="Toggle navigation"
+      >
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto"></ul>
+        <form class="form-inline my-2 my-lg-0">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="#"
+                >Contact <span class="sr-only">(current)</span></a
+              >
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#">Help</a>
+            </li>
+          </ul>
+        </form>
+      </div>
+    </nav>
+    <div id="authpop">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 col-lg-12">
+            <div class="form-group">
+              <label for="username">Enter Username</label>
+              <input
+                type="text"
+                class="form-control"
+                id="username"
+                placeholder="Enter username"
+              />
+            </div>
+            <div class="form-group">
+              <label for="password">Enter Password</label>
+              <input
+                type="password"
+                class="form-control"
+                id="password"
+                placeholder="Password"
+              />
+            </div>
             <div class="form-group">
               <label for="hostname">Enter hostname</label>
-              <input type="text" class="form-control" id="hostname" placeholder="hostname"></div>
-              <div class="form-group">
-                <label for="port">Enter Port number</label>
-                <input type="text" class="form-control" id="portnumber" placeholder="port number"></div>
-                <center>
-                  <input class="btn btn-primary" type="button" id="submitcredentials" value="Authenticate"></input>
-                  <div id="authmessage"></div>
-                </center>
-              </div>
+              <input
+                type="text"
+                class="form-control"
+                id="hostname"
+                placeholder="hostname"
+              />
             </div>
-      </div>
-  </div>
-  <div id="maincontent" class="container nonheader">
-    <div class="row">
-        <div class="col-md-12 col-lg-12">
-            <center><input style="margin-left:10px;margin-right:10px;" placeholder="BlockHash / TXID / Address / BlockHeight" size="50" type="text" id="search"></input><input class="btn btn-primary" type="button" id="searchbtn" value="Search"></input>
-            <div id="searchmsg"></div></center>
+
+            <div class="form-group">
+              <label for="port">Enter Port number</label>
+              <input
+                type="text"
+                class="form-control"
+                id="portnumber"
+                placeholder="port number"
+              />
+            </div>
+
+            <center>
+              <input
+                class="btn btn-primary"
+                type="button"
+                id="submitcredentials"
+                value="Authenticate"
+              />
+              <div id="authmessage"></div>
+            </center>
+          </div>
         </div>
+      </div>
     </div>
-    <div id="searchnegative">
-      <div id="back"></div>
-    <div class="row">
+    <div id="maincontent" class="container nonheader">
+      <div class="row">
         <div class="col-md-12 col-lg-12">
+          <center>
+            <input
+              style="margin-left: 10px; margin-right: 10px;"
+              placeholder="BlockHash / TXID / Address / BlockHeight"
+              size="50"
+              type="text"
+              id="search"
+            />
+            <input
+              class="btn btn-primary"
+              type="button"
+              id="searchbtn"
+              value="Search"
+            />
+            <div id="searchmsg"></div>
+          </center>
+        </div>
+      </div>
+      <div id="searchnegative">
+        <div id="back"></div>
+        <div class="row">
+          <div class="col-md-12 col-lg-12">
             <h4>Transaction</h4>
             <a id="txid"></a>
-            <hr>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12 col-lg-12">
-<h4>Summary</h4>
+            <hr />
           </div>
+        </div>
+        <div class="row">
+          <div class="col-md-12 col-lg-12">
+            <h4>Summary</h4>
           </div>
-    <div class="row">
-      <div class="col-md-6 col-lg-6 summaryblock1">
-        <table class="tdborderbottom">
-<tr><td><b>Block</b></td><td><a id="blocktitle"></a><br /><a id="blockhash"></a></td></tr>
-<tr><td><b>Transaction Version</b></td><td><a id="txversion"></a></td></tr>
-<tr><td><b>Locktime</b></td><td><a id="txlocktime"></a></td></tr>
-          </table>
         </div>
-        <div class="col-md-6 col-lg-6 summaryblock1">
-          <table class="tdborderbottom">
-            <tr><td><b>txIndex</b></td><td><a id="txindex"></a></td></tr>
-            <tr><td><b>Size</b></td><td><a id="size"></a></td></tr>
-            <tr><td><b>Fees</b></td><td><a id="fees"></a></td></tr>
-          </table>
+        <div class="row">
+          <div class="col-md-6 col-lg-6 summaryblock1">
+            <table class="tdborderbottom">
+              <tr>
+                <td><b>Block</b></td>
+                <td><a id="blocktitle"></a><br /><a id="blockhash"></a></td>
+              </tr>
+              <tr>
+                <td><b>Transaction Version</b></td>
+                <td><a id="txversion"></a></td>
+              </tr>
+              <tr>
+                <td><b>Locktime</b></td>
+                <td><a id="txlocktime"></a></td>
+              </tr>
+            </table>
+          </div>
+          <div class="col-md-6 col-lg-6 summaryblock1">
+            <table class="tdborderbottom">
+              <tr>
+                <td><b>txIndex</b></td>
+                <td><a id="txindex"></a></td>
+              </tr>
+              <tr>
+                <td><b>Size</b></td>
+                <td><a id="size"></a></td>
+              </tr>
+              <tr>
+                <td><b>Fees</b></td>
+                <td><a id="fees"></a></td>
+              </tr>
+            </table>
+          </div>
         </div>
-        </div>
-        <br>
-        <hr>
-        <br>
+        <br />
+        <hr />
+        <br />
         <div class="row">
           <div class="col-md-12 col-lg-12">
             <center><h4>MerkleBranch</h4></center>
-            <table id="merklebranchsection">
-
-            </table>
+            <table id="merklebranchsection"></table>
           </div>
-      </div>
+        </div>
 
         <hr />
         <div class="row">
-<div class="col-md-12 col-lg-12">
-  <h5><a id="noofinputs"></a> Inputs, <a id="noofoutputs"></a> Outputs</h5>
-  <hr />
-  </div>
+          <div class="col-md-12 col-lg-12">
+            <h5>
+              <a id="noofinputs"></a> Inputs, <a id="noofoutputs"></a> Outputs
+            </h5>
+            <hr />
+          </div>
         </div>
         <div class="row">
-<div class="col-md-6 col-lg-6">
-<table id="inputaddress">
-
-</table>
-</div>
-<div class="col-md-6 col-lg-6">
-  <table id="outputaddress">
-
-  </table>
-</div>
+          <div class="col-md-6 col-lg-6">
+            <table id="inputaddress"></table>
+          </div>
+          <div class="col-md-6 col-lg-6">
+            <table id="outputaddress"></table>
+          </div>
         </div>
       </div>
     </div>

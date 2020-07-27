@@ -1,74 +1,73 @@
-.nonheader{
-  margin-top:50px;
+.nonheader {
+  margin-top: 50px;
 }
 
-.summaryblock1 > table{
-  width:100%;
+.summaryblock1 > table {
+  width: 100%;
 }
-.summaryblock1 > table > tbody > tr > td{
-  border:1pt solid lightgrey !important;
-  padding:15px;
+.summaryblock1 > table > tbody > tr > td {
+  border: 1pt solid lightgrey !important;
+  padding: 15px;
 }
 
-.inputvia{
+.inputvia {
   word-break: break-all;
 }
-.tdnum{
+.tdnum {
   vertical-align: top;
-  padding:10px;
+  padding: 10px;
 }
 
-.tdpadd{
+.tdpadd {
   padding-left: 10px;
 }
-#authpop{
-  position:sticky;
-  top:100px;
-  -webkit-box-shadow: 0px 5px 12px 0px rgba(0,0,0,0.75);
--moz-box-shadow: 0px 5px 12px 0px rgba(0,0,0,0.75);
-box-shadow: 0px 5px 12px 0px rgba(0,0,0,0.75);
-background-color:white;
-height:auto !important;
-left:0;
-right:0;
-z-index:9999;
-width:fit-content;
-margin:auto;
-padding:50px;
-display:none;
-@media(max-width:768px){
-width:90%;
-margin:auto 5%;
-
-}
-}
-
-.tdbordright{
-border-right:1pt solid lightgrey !important;
+#authpop {
+  position: sticky;
+  top: 100px;
+  -webkit-box-shadow: 0px 5px 12px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 5px 12px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 5px 12px 0px rgba(0, 0, 0, 0.75);
+  background-color: white;
+  height: auto !important;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  width: fit-content;
+  margin: auto;
+  padding: 50px;
+  display: none;
+  @media (max-width: 768px) {
+    width: 90%;
+    margin: auto 5%;
+  }
 }
 
-.tdborderbottom > tbody > tr > td{
-  border-bottom:1pt solid lightgrey !important;
+.tdbordright {
+  border-right: 1pt solid lightgrey !important;
 }
 
-#blockhash{
+.tdborderbottom > tbody > tr > td {
+  border-bottom: 1pt solid lightgrey !important;
+}
+
+#blockhash {
   word-break: break-all;
 }
-#merklebranchsection{
-  width:100%;
+#merklebranchsection {
+  width: 100%;
 }
-#merklebranchsection > tbody > tr > td{
-  width:fit-content;
-  padding:10px;
-  border-bottom:1pt solid lightgrey !important;
+#merklebranchsection > tbody > tr > td {
+  width: fit-content;
+  padding: 10px;
+  border-bottom: 1pt solid lightgrey !important;
 }
-#back{
+#back {
   text-align: right;
 }
-.outputinputtd > tbody > tr > td{
-  border-bottom:1pt solid lightgrey !important;
-  padding:10px;
+.outputinputtd > tbody > tr > td {
+  border-bottom: 1pt solid lightgrey !important;
+  padding: 10px;
 }
-.tdwordbreak{
+.tdwordbreak {
   word-break: break-all;
 }
