@@ -43,17 +43,9 @@ httpsreq('Bearer '+localStorage.getItem("sessionkey")+'','v1/block/heights/?'+he
 
 
 if (localStorage.getItem("username")!=undefined || localStorage.getItem("username")!='') {
-checksession();
-}
-
-function checksession(){
-if((localStorage.getItem("callsremaining") == null) || (localStorage.getItem("callsremaining") <= 3)){
-  httpsauth();
-  setTimeout(checksession, 3000);
-}
-else {
-  httpsreq('Bearer '+localStorage.getItem("sessionkey")+'','v1/chain/info','summary');
-}
+  if((localStorage.getItem("callsremaining") != null) || (localStorage.getItem("callsremaining") > 3)){
+    httpsreq('Bearer '+localStorage.getItem("sessionkey")+'','v1/chain/info','summary');
+  }
 }
 
 var enteredpagearea = document.getElementById('enteredpagenumber');
