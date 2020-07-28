@@ -36,3 +36,7 @@ cd into nipkow app's directory and then
 ```
 npm start
 ```
+
+```
+npm run electron
+```
