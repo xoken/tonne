@@ -14,28 +14,12 @@ git clone/download nipkow and cd into the nipkow app's directory.
 **Step 3:**
 
 ```
-npm install --save-dev electron
-```
-
-**Step 4:**
-
-```
-npm install bootstrap --save
-```
-
-**Step 5**
-
-```
-npm install jquery --save
+npm install
 ```
 
 ## To launch nipkow
 
 cd into nipkow app's directory and then
-
-```
-npm start
-```
 
 ```
 npm run electron

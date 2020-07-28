@@ -88,7 +88,6 @@ function letteraddlistener() {
     letters[c].addEventListener("click", function () {
       mnemonic.textContent += this.textContent;
       splitwords = mnemonic.textContent.split(" ");
-      splitwords[splitwords.length - 1];
       wordsuggest(
         splitwords[splitwords.length - 1].length,
         splitwords[splitwords.length - 1]
@@ -99,17 +98,17 @@ function letteraddlistener() {
 
 function wordsuggest(len, cont) {
   var count = 0;
+  var tempsuggestion = "";
   suggestion.innerHTML = "";
   if (len != 0) {
     for (var w = 0; w < words.length; w++) {
       if (words[w].substring(0, len) == cont) {
-        suggestion.innerHTML += "<li class='wordlist'>" + words[w] + "</li>";
-        if (count == 49) {
-          console.log("break");
-          break;
-        }
+        tempsuggestion += "<li class='wordlist'>" + words[w] + "</li>";
         count += 1;
       }
+    }
+    if (count <= 30) {
+      suggestion.innerHTML += tempsuggestion;
     }
   }
   wordaddlistener();
@@ -124,6 +123,8 @@ function wordaddlistener() {
       splitwords = tempmnemonic.split(" ");
       splitwords[splitwords.length - 1] = this.textContent;
       mnemonic.textContent = "";
+      document.getElementById("wordsremaining").textContent =
+        "(" + splitwords.length + " of 12)";
       for (var n = 0; n < splitwords.length; n++) {
         mnemonic.textContent += splitwords[n] + " ";
       }
@@ -144,7 +145,12 @@ function backspace() {
       mnemonic.textContent.length - 1
     );
     splitwords = mnemonic.textContent.split(" ");
-    splitwords[splitwords.length - 1];
+    if (mnemonic.textContent.length != 0) {
+      document.getElementById("wordsremaining").textContent =
+        "(" + splitwords.length + " of 12)";
+    } else {
+      document.getElementById("wordsremaining").textContent = "(0 of 12)";
+    }
     wordsuggest(
       splitwords[splitwords.length - 1].length,
       splitwords[splitwords.length - 1]
