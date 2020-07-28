@@ -60,11 +60,11 @@ function mix() {
       data = buf.toString("hex");
       randomnumber = parseInt(data, 16);
       rindex = randomnumber % 26;
-      console.log(rindex);
+      //console.log(rindex);
       temp = alphabetarray[index];
       alphabetarray[index] = alphabetarray[rindex];
       alphabetarray[rindex] = temp;
-      console.log(alphabetarray);
+      //console.log(alphabetarray);
       index -= 1;
       if (0 == counter % 26) {
         mix();
@@ -98,14 +98,17 @@ function letteraddlistener() {
 }
 
 function wordsuggest(len, cont) {
+  var count = 0;
   suggestion.innerHTML = "";
   if (len != 0) {
     for (var w = 0; w < words.length; w++) {
       if (words[w].substring(0, len) == cont) {
         suggestion.innerHTML += "<li class='wordlist'>" + words[w] + "</li>";
-        if (w == 49) {
+        if (count == 49) {
+          console.log("break");
           break;
         }
+        count += 1;
       }
     }
   }
@@ -135,10 +138,16 @@ function wordaddlistener() {
 
 function backspace() {
   if (mnemonic.textContent.length != 0) {
+    var splitwords;
     mnemonic.textContent = mnemonic.textContent.substring(
       0,
       mnemonic.textContent.length - 1
     );
-    wordsuggest(mnemonic.textContent.length, mnemonic.textContent);
+    splitwords = mnemonic.textContent.split(" ");
+    splitwords[splitwords.length - 1];
+    wordsuggest(
+      splitwords[splitwords.length - 1].length,
+      splitwords[splitwords.length - 1]
+    );
   }
 }
