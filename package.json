@@ -1,7 +1,7 @@
 {
-  "name": "explorer",
+  "name": "Nipkow",
   "version": "1.0.0",
-  "description": "Explorer",
+  "description": "Nipkow",
   "main": "main.js",
   "dependencies": {
     "axios": "^0.19.2",
@@ -17,7 +17,7 @@
     "@babel/preset-react": "^7.10.4",
     "babel-loader": "^8.1.0",
     "css-loader": "^4.0.0",
-    "electron": "^9.0.4",
+    "electron": "^9.1.1",
     "electron-reload": "^1.5.0",
     "prettier": "2.0.5",
     "style-loader": "^1.2.1",
