@@ -88,6 +88,8 @@ function letteraddlistener() {
     letters[c].addEventListener("click", function () {
       mnemonic.textContent += this.textContent;
       splitwords = mnemonic.textContent.split(" ");
+      document.getElementById("wordsremaining").textContent =
+        "(" + splitwords.length + " of 12)";
       wordsuggest(
         splitwords[splitwords.length - 1].length,
         splitwords[splitwords.length - 1]
