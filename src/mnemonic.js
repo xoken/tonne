@@ -109,7 +109,7 @@ function wordsuggest(len, cont) {
         count += 1;
       }
     }
-    if (count <= 30) {
+    if (count <= 36) {
       suggestion.innerHTML += tempsuggestion;
     }
   }

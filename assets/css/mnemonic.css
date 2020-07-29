@@ -35,14 +35,8 @@
   min-width: 100px;
 }
 
-#alphabets1 {
-  margin: 5px;
-  text-align: center !important;
-}
-
-#alphabets2 {
-  text-align: center !important;
-  margin: 5px;
+#alphabets {
+  padding: 0px 20px 0px 20px;
 }
 #mnemonic {
   width: 100%;
@@ -59,4 +53,8 @@
 }
 #wordsremaining {
   float: right;
+}
+#suggestions {
+  padding: 0px 20px 0px 20px;
+  text-align: center;
 }
