@@ -1,0 +1,60 @@
+.nonheader {
+  margin-top: 50px;
+}
+.letter {
+  text-align: center;
+  background-color: #b3c8bd;
+  cursor: pointer;
+  display: inline-block;
+  padding: 15px;
+  border-radius: 5px;
+  margin: 10px;
+  color: white;
+  vertical-align: middle;
+  font-size: 18px;
+  width: 57px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.wordlist {
+  text-align: center;
+  background-color: rgb(235, 188, 88);
+  cursor: pointer;
+  display: inline-block;
+  padding: 5px 10px 5px 10px;
+  border-radius: 35px;
+  margin: 5px;
+  color: white;
+  vertical-align: middle;
+  font-size: 18px;
+  min-width: 100px;
+}
+
+#alphabets {
+  padding: 0px 20px 0px 20px;
+}
+#mnemonic {
+  width: 100%;
+  color: black;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  border: 1pt solid lightgrey;
+  min-height: 30px;
+}
+#backspc {
+  float: right;
+  color: white;
+}
+#wordsremaining {
+  float: right;
+}
+#suggestions {
+  padding: 0px 20px 0px 20px;
+  text-align: center;
+}
