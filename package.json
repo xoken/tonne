@@ -11,16 +11,13 @@
     "utf8": "^3.0.0"
   },
   "devDependencies": {
-    "@babel/cli": "^7.10.5",
     "@babel/core": "^7.10.5",
+    "@babel/plugin-transform-runtime": "^7.10.5",
     "@babel/preset-env": "^7.10.4",
-    "@babel/preset-react": "^7.10.4",
     "babel-loader": "^8.1.0",
-    "css-loader": "^4.0.0",
     "electron": "^9.0.4",
     "electron-reload": "^1.5.0",
     "prettier": "2.0.5",
-    "style-loader": "^1.2.1",
     "typescript": "^3.9.7",
     "webpack": "^4.44.0",
     "webpack-cli": "^3.3.12",
@@ -31,5 +28,15 @@
     "electron": "electron ."
   },
   "author": "Harish M P",
-  "license": "ISC"
+  "license": "ISC",
+  "babel": {
+    "presets": [
+      "@babel/preset-env"
+    ],
+    "plugins": [
+      "@babel/transform-runtime",
+      "@babel/plugin-proposal-class-properties"
+    ]
+  },
+  "prettier": {}
 }
