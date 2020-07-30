@@ -4,6 +4,8 @@ var readtext = fs.readFileSync("assets/wordlist/english.txt", {
   encoding: "utf8",
   flag: "r",
 });
+const indexPath = path.join("file://", __dirname, "index.html");
+const logo = (document.getElementById("logo").href = indexPath);
 var words = readtext.split("\n");
 var data,
   randomnumber,
