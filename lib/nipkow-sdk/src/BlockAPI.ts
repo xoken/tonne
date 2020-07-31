@@ -17,7 +17,7 @@ export class BlockAPI {
         params: {
           height: heights,
         },
-        paramsSerializer: (params) =>
+        paramsSerializer: params =>
           Qs.stringify(params, { arrayFormat: 'repeat' }),
       });
       return data;
@@ -41,7 +41,7 @@ export class BlockAPI {
         params: {
           hash: blockHashes,
         },
-        paramsSerializer: (params) =>
+        paramsSerializer: params =>
           Qs.stringify(params, { arrayFormat: 'repeat' }),
       });
       return data;

@@ -21,7 +21,7 @@ export class ScriptHashAPI {
         params: {
           scripthash: scriptHashes,
         },
-        paramsSerializer: (params) =>
+        paramsSerializer: params =>
           Qs.stringify(params, { arrayFormat: 'repeat' }),
       });
       return data;
@@ -49,7 +49,7 @@ export class ScriptHashAPI {
         params: {
           scripthash: scriptHashes,
         },
-        paramsSerializer: (params) =>
+        paramsSerializer: params =>
           Qs.stringify(params, { arrayFormat: 'repeat' }),
       });
       return data;

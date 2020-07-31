@@ -17,7 +17,7 @@ export class TransactionAPI {
         params: {
           id: txIDs,
         },
-        paramsSerializer: (params) =>
+        paramsSerializer: params =>
           Qs.stringify(params, { arrayFormat: 'repeat' }),
       });
       return data;
@@ -41,7 +41,7 @@ export class TransactionAPI {
         params: {
           id: txIDs,
         },
-        paramsSerializer: (params) =>
+        paramsSerializer: params =>
           Qs.stringify(params, { arrayFormat: 'repeat' }),
       });
       return data;
