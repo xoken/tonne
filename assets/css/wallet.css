@@ -25,42 +25,25 @@
 .txbtn:hover {
   background-color: grey;
 }
-#cryptolist {
-  overflow: auto;
-  height: 100%;
-}
-.cryptolistitems {
-  border-bottom: 1px solid lightgrey;
-  border-radius: 5px;
-  cursor: pointer;
-}
-.cryptolistitems > td {
-  padding: 20px;
-  background-color: white;
-  z-index: 999;
-  position: relative;
-}
-.cryptolistitems > td + td {
-  position: relative;
-  left: -100px;
-  color: white;
-  z-index: 0;
-  transition: left 0.15s ease-in-out, z-index 0.15s ease-in-out;
-}
 
 #cryptologo {
   padding: 30px;
-  transition: all 1s ease-out;
 }
 #cryptologo > img {
   min-height: 64px !important;
-  transition: all 1s ease-out;
+  animation-duration: 1.5s;
+  position: relative;
+  animation-name: logoslide;
 }
 
-.border-right {
+.border-left-right {
   border-right: 3px solid transparent;
+  border-left: 3px solid transparent;
   border-image: linear-gradient(white, rgb(235, 188, 88), white);
   border-image-slice: 1;
+  animation-duration: 1.5s;
+  position: relative;
+  animation-name: borderwiden;
 }
 
 #pop {
@@ -79,15 +62,8 @@
   display: none;
   text-align: right;
   height: 80%;
-}
-
-.lightgreybackground {
-  background-color: lightgrey !important;
-}
-
-.originalposofticker {
-  left: 0px !important;
-  z-index: 999 !important;
+  opacity: 0;
+  transition: opacity 0.35s ease-in-out;
 }
 
 .closepop {
@@ -108,4 +84,126 @@
 
 #popupcontent {
   text-align: center;
+}
+#sendcur {
+  background-color: #eab300;
+  animation-duration: 1.5s;
+  position: relative;
+  animation-name: buttonslide;
+}
+
+.form-input {
+  display: block;
+  width: 100%;
+  height: calc(1.5em + 0.75rem + 2px);
+  padding: 0.375rem 0.75rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #495057;
+  background-color: #fff;
+  background-clip: padding-box;
+  border: 1px solid #ced4da;
+  border-radius: 0.25rem;
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+
+@keyframes logoslide {
+  from {
+    top: 20px;
+    opacity: 0.4;
+  }
+
+  to {
+    top: 0px;
+    opacity: 1;
+  }
+}
+
+@keyframes buttonslide {
+  from {
+    top: -20px;
+    opacity: 0.4;
+  }
+
+  to {
+    top: 0px;
+    opacity: 1;
+  }
+}
+
+@keyframes borderwiden {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+.subtable > tbody > tr > td {
+  border: 1pt solid lightgrey !important;
+  padding: 15px;
+  width: 100%;
+}
+.subtable {
+  width: 100%;
+}
+
+.txslnum {
+  background-color: #ebbc58;
+  padding: 20px;
+  color: white;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.spendinfo0 > table > tbody > tr > td {
+  background-color: #f9ffc4;
+  border: 1pt solid lightgrey !important;
+}
+.spendinfo1 > table > tbody > tr > td {
+  background-color: #f9ffc4;
+  border: 1pt solid lightgrey !important;
+}
+.prevoutpoint0 > table > tbody > tr > td {
+  background-color: #efefef;
+  border: 1pt solid white !important;
+}
+.prevoutpoint1 > table > tbody > tr > td {
+  background-color: #efefef;
+  border: 1pt solid white !important;
+}
+
+.emptypagelink {
+  position: relative;
+  display: block;
+  padding: 0.5rem 0.75rem;
+  margin-left: -1px;
+  line-height: 1.25;
+  color: #007bff;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  cursor: not-allowed;
+}
+
+.arrows {
+  position: relative;
+  display: block;
+  padding: 0.5rem 0.75rem;
+  margin-left: -1px;
+  line-height: 1.25;
+  color: #007bff;
+  background-color: #fff;
+  border: 1px solid #dee2e6;
+  cursor: pointer;
+}
+
+.page-link {
+  cursor: pointer !important;
+}
+
+#txlist {
+  width: 100%;
 }
