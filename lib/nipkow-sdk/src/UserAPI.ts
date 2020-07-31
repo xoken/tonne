@@ -8,7 +8,7 @@ export class UserAPI {
     email: string
   ) => {
     try {
-      const { data } = await post('/user', {
+      const { data } = await post('user', {
         data: { username, firstName, lastName, email },
       });
       return data;
@@ -19,7 +19,7 @@ export class UserAPI {
 
   getUser = async (username: string) => {
     try {
-      const { data } = await get(`/user/${username}`);
+      const { data } = await get(`user/${username}`);
       return data;
     } catch (error) {
       throw error;
@@ -28,7 +28,7 @@ export class UserAPI {
 
   getCurrentUser = async () => {
     try {
-      const { data } = await get('/user');
+      const { data } = await get('user');
       return data;
     } catch (error) {
       throw error;
@@ -45,7 +45,7 @@ export class UserAPI {
     apiExpiryTime: Date
   ) => {
     try {
-      const { data } = await put(`/user/${username}`, {
+      const { data } = await put(`user/${username}`, {
         data: {
           password,
           firstName,
@@ -63,7 +63,7 @@ export class UserAPI {
 
   deleteUser = async (username: string) => {
     try {
-      const { data } = await deleteR(`/user/${username}`);
+      const { data } = await deleteR(`user/${username}`);
       return data;
     } catch (error) {
       throw error;

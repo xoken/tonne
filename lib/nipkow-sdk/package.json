@@ -20,7 +20,7 @@
   "peerDependencies": {},
   "husky": {
     "hooks": {
-      "pre-commit": "tsdx lint"
+      "pre-commit": "tsdx lint -- --fix"
     }
   },
   "prettier": {
@@ -34,6 +34,7 @@
   "module": "dist/nipkow-sdk.esm.js",
   "devDependencies": {
     "@types/node": "^14.0.27",
+    "@types/qs": "^6.9.4",
     "husky": "^4.2.5",
     "tsdx": "^0.13.2",
     "tslib": "^2.0.0",
@@ -41,6 +42,7 @@
   },
   "dependencies": {
     "axios": "^0.19.2",
-    "bitcoinjs-lib": "^5.1.10"
+    "bitcoinjs-lib": "^5.1.10",
+    "qs": "^6.9.4"
   }
 }

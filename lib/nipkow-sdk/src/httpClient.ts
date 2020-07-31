@@ -2,7 +2,7 @@ import https from 'https';
 import axios, { AxiosRequestConfig } from 'axios';
 
 const httpReq = axios.create({
-  baseURL: 'https://127.0.0.1:9091/v1/',
+  baseURL: 'https://127.0.0.1:9091/v1',
   httpsAgent: new https.Agent({
     rejectUnauthorized: false,
   }),
@@ -11,9 +11,9 @@ const httpReq = axios.create({
   },
 });
 
-export const get = async (url: string, params?: AxiosRequestConfig) => {
+export const get = async (url: string, config?: AxiosRequestConfig) => {
   try {
-    const response = await httpReq.get(url, params);
+    const response = await httpReq.get(url, config);
     console.log(response);
     return response;
   } catch (error) {
@@ -22,9 +22,13 @@ export const get = async (url: string, params?: AxiosRequestConfig) => {
   }
 };
 
-export const post = async (url: string, data: AxiosRequestConfig) => {
+export const post = async (
+  url: string,
+  data?: any,
+  config?: AxiosRequestConfig
+) => {
   try {
-    const response = await httpReq.post(url, data.data);
+    const response = await httpReq.post(url, data, config);
     console.log(response);
     return response;
   } catch (error) {
@@ -33,9 +37,13 @@ export const post = async (url: string, data: AxiosRequestConfig) => {
   }
 };
 
-export const put = async (url: string, data: AxiosRequestConfig) => {
+export const put = async (
+  url: string,
+  data?: any,
+  config?: AxiosRequestConfig
+) => {
   try {
-    const response = await httpReq.put(url, data);
+    const response = await httpReq.put(url, data, config);
     console.log(response);
     return response;
   } catch (error) {
@@ -44,9 +52,9 @@ export const put = async (url: string, data: AxiosRequestConfig) => {
   }
 };
 
-export const deleteR = async (url: string, data?: AxiosRequestConfig) => {
+export const deleteR = async (url: string, config?: AxiosRequestConfig) => {
   try {
-    const response = await httpReq.delete(url, data);
+    const response = await httpReq.delete(url, config);
     console.log(response);
     return response;
   } catch (error) {
