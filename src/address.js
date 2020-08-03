@@ -27,12 +27,8 @@ document.getElementById("address").innerHTML = address;
 document.getElementById("title").innerHTML = "Address - " + address;
 const pagescontainer = document.getElementById("pagination");
 
-//note to self : remove the following code if you enable httpsauth();
-httpsreq(
-  "Bearer " + localStorage.getItem("sessionkey") + "",
-  "v1/address/" + address + "/outputs/?pagesize=100",
-  "pagearrayinit"
-);
+httpsreq("pagearrayinit", "getOutputsByAddress", address, 100);
+
 document.getElementById("back").innerHTML =
   "<a class='btn btn-primary' style='color:white;' onclick='window.history.back();'>Back</a>";
 
@@ -287,13 +283,10 @@ function addlistener() {
           nextcursor != null
         ) {
           httpsreq(
-            "Bearer " + localStorage.getItem("sessionkey") + "",
-            "v1/address/" +
-              address +
-              "/outputs/?pagesize=100&cursor=" +
-              nextcursor +
-              "",
-            "adddataupdatepagearray"
+            "adddataupdatepagearray",
+            "getOutputsByAddress",
+            100,
+            nextcursor
           );
         } else {
           console.log("elseblock");

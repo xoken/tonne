@@ -13,12 +13,7 @@ if (params.get("transaction") != undefined) {
   transactionparam = params.get("transaction");
 }
 
-//note to self : remove the following code if you enable httpsauth();
-httpsreq(
-  "Bearer " + localStorage.getItem("sessionkey") + "",
-  "v1/transaction/" + transactionparam + "",
-  "printresults"
-);
+httpsreq("printresults", "getTransactionByTxID", transactionparam);
 
 function printresults() {
   var inputs, outputs;

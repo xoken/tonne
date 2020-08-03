@@ -56,11 +56,7 @@ function summary() {
   printpagination();
   setTimeout(callsec, 1);
   function callsec() {
-    httpsreq(
-      "Bearer " + localStorage.getItem("sessionkey") + "",
-      "v1/block/heights/?" + heightlist + "",
-      "printresults"
-    );
+    httpsreq("printresults", "getBlocksByBlockHeights", heightlist);
   }
 }
 
@@ -72,11 +68,7 @@ if (
     localStorage.getItem("callsremaining") != null ||
     localStorage.getItem("callsremaining") > 3
   ) {
-    httpsreq(
-      "Bearer " + localStorage.getItem("sessionkey") + "",
-      "v1/chain/info",
-      "summary"
-    );
+    httpsreq("summary", "getChainInfo");
   }
 }
 
@@ -88,11 +80,7 @@ pagebutton.addEventListener("click", function () {
   if (enteredpagearea.value != "" && enteredpagearea.value <= numberofpages) {
     selected = enteredpagearea.value;
     updateheightlist();
-    httpsreq(
-      "Bearer " + localStorage.getItem("sessionkey") + "",
-      "v1/block/heights/?" + heightlist + "",
-      "printresults"
-    );
+    httpsreq("printresults", "getBlocksByBlockHeights", heightlist);
     console.log(selected);
     if (selected <= pagearrlength - 2) {
       index = 1;
@@ -122,11 +110,7 @@ function addlistener() {
       selected = this.id;
       updateheightlist();
       updatepagearray();
-      httpsreq(
-        "Bearer " + localStorage.getItem("sessionkey") + "",
-        "v1/block/heights/?" + heightlist + "",
-        "printresults"
-      );
+      httpsreq("printresults", "getBlocksByBlockHeights", heightlist);
     });
   }
 }

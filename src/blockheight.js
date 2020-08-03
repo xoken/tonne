@@ -35,17 +35,9 @@ if (params.get("blockhash") != undefined) {
 
 //note to self : remove the following code if you enable httpsauth();
 if (flag == 0) {
-  httpsreq(
-    "Bearer " + localStorage.getItem("sessionkey") + "",
-    "v1/block/hash/" + blockparam + "",
-    "printresults"
-  );
+  httpsreq("printresults", "getBlockByBlockHash", blockparam);
 } else {
-  httpsreq(
-    "Bearer " + localStorage.getItem("sessionkey") + "",
-    "v1/block/height/" + blockparam + "",
-    "printresults"
-  );
+  httpsreq("printresults", "getBlockByBlockHeight", blockparam);
 }
 
 function printresults() {
@@ -129,24 +121,20 @@ function printresults() {
     batches = Math.ceil(numberofpages / fixedarrlength);
 
     httpsreq(
-      "Bearer " + localStorage.getItem("sessionkey") + "",
-      "v1/block/txids/" +
-        currentblockhash +
-        "/?pagenumber=" +
-        currentbatchnum +
-        "&pagesize=50",
-      "enterednumcaching"
+      "enterednumcaching",
+      "getTXIDByHash",
+      currentblockhash,
+      currentbatchnum,
+      50
     );
   } else {
     currentbatchnum = 1;
     httpsreq(
-      "Bearer " + localStorage.getItem("sessionkey") + "",
-      "v1/block/txids/" +
-        currentblockhash +
-        "/?pagenumber=" +
-        currentbatchnum +
-        "&pagesize=50",
-      "paginationinitialisation"
+      "paginationinitialisation",
+      "getTXIDByHash",
+      currentblockhash,
+      currentbatchnum,
+      50
     );
   }
 }
@@ -186,13 +174,11 @@ pagebutton.addEventListener("click", function () {
       transactionprinting();
     } else {
       httpsreq(
-        "Bearer " + localStorage.getItem("sessionkey") + "",
-        "v1/block/txids/" +
-          currentblockhash +
-          "/?pagenumber=" +
-          currentbatchnum +
-          "&pagesize=50",
-        "enterednumcaching"
+        "enterednumcaching",
+        "getTXIDByHash",
+        currentblockhash,
+        currentbatchnum,
+        50
       );
     }
   }
@@ -216,13 +202,11 @@ function addlistener() {
         var tindex = pagearray[0] - fixedarrlength;
         if (txcache[(tindex - 1) * transactionsperpage + 1] == undefined) {
           httpsreq(
-            "Bearer " + localStorage.getItem("sessionkey") + "",
-            "v1/block/txids/" +
-              currentblockhash +
-              "/?pagenumber=" +
-              currentbatchnum +
-              "&pagesize=50",
-            "updateleftpaginationarray"
+            "updateleftpaginationarray",
+            "getTXIDByHash",
+            currentblockhash,
+            currentbatchnum,
+            50
           );
         } else {
           for (var t = 0; t < fixedarrlength; t++) {
@@ -245,13 +229,11 @@ function addlistener() {
           currentbatchnum = Math.ceil(pagearray[0] / fixedarrlength);
           currentbatchnum += 1;
           httpsreq(
-            "Bearer " + localStorage.getItem("sessionkey") + "",
-            "v1/block/txids/" +
-              currentblockhash +
-              "/?pagenumber=" +
-              currentbatchnum +
-              "&pagesize=50",
-            "updatepaginationarray"
+            "updatepaginationarray",
+            "getTXIDByHash",
+            currentblockhash,
+            currentbatchnum,
+            50
           );
         } else {
           currentbatchnum = Math.ceil(pagearray[0] / fixedarrlength);

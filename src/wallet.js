@@ -1,6 +1,5 @@
 const indexPath = path.join("file://", __dirname, "index.html");
 const logo = (document.getElementById("logo").href = indexPath);
-
 var cryptologo = document.getElementById("cryptologo");
 var sendcur = document.getElementById("sendcur");
 var popupcontent = document.getElementById("popupcontent");
@@ -63,11 +62,7 @@ address = "1Gr4RNuuY5pRUxvebTw8mBCW8GzuCAgLwW";
 
 const pagescontainer = document.getElementById("pagination");
 
-httpsreq(
-  "Bearer " + localStorage.getItem("sessionkey") + "",
-  "v1/address/" + address + "/outputs/?pagesize=100",
-  "pagearrayinit"
-);
+httpsreq("pagearrayinit", "getOutputsByAddress", address, 100);
 
 function printresults() {
   txlist.innerHTML = "";
@@ -319,13 +314,10 @@ function addlistener() {
           nextcursor != null
         ) {
           httpsreq(
-            "Bearer " + localStorage.getItem("sessionkey") + "",
-            "v1/address/" +
-              address +
-              "/outputs/?pagesize=100&cursor=" +
-              nextcursor +
-              "",
-            "adddataupdatepagearray"
+            "adddataupdatepagearray",
+            "getOutputsByAddress",
+            100,
+            nextcursor
           );
         } else {
           console.log("elseblock");
