@@ -1,7 +1,6 @@
 import { get, post } from './httpClient';
 import Qs from 'qs';
-
-export class TransactionAPI {
+class TransactionAPI {
   getTransactionByTxID = async (txId: string) => {
     try {
       const { data } = await get(`transaction/${txId}`);
@@ -72,3 +71,5 @@ export class TransactionAPI {
     }
   };
 }
+
+export const transactionAPI = new TransactionAPI();

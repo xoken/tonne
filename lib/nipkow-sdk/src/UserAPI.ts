@@ -1,6 +1,6 @@
 import { get, post, put, deleteR } from './httpClient';
 
-export class UserAPI {
+class UserAPI {
   addUser = async (
     username: string,
     firstName: string,
@@ -70,3 +70,5 @@ export class UserAPI {
     }
   };
 }
+
+export const userAPI = new UserAPI();

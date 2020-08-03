@@ -1,6 +1,6 @@
 import { get } from './httpClient';
 
-export class ChainAPI {
+class ChainAPI {
   getChainInfo = async () => {
     try {
       const { data } = await get(`chain/info`);
@@ -24,3 +24,5 @@ export class ChainAPI {
     }
   };
 }
+
+export const chainAPI = new ChainAPI();

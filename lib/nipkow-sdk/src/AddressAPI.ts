@@ -1,7 +1,7 @@
 import { get } from './httpClient';
 import Qs from 'qs';
 
-export class AddressAPI {
+class AddressAPI {
   getOutputsByAddress = async (address: string, pagesize: number) => {
     try {
       const { data } = await get(`address/${address}/outputs`, {
@@ -56,3 +56,5 @@ export class AddressAPI {
     }
   };
 }
+
+export const addressAPI = new AddressAPI();

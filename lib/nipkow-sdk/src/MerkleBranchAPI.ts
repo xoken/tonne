@@ -1,6 +1,6 @@
 import { get } from './httpClient';
 
-export class MerkleBranchAPI {
+class MerkleBranchAPI {
   getMerkleBranchByTXID = async (txId: string) => {
     try {
       const { data } = await get(`merklebranch/${txId}`);
@@ -10,3 +10,5 @@ export class MerkleBranchAPI {
     }
   };
 }
+
+export const merkleBranchAPI = new MerkleBranchAPI();

@@ -1,6 +1,12 @@
 import * as Bitcoin from 'bitcoinjs-lib';
-export { AuthAPI } from './AuthAPI';
-export { UserAPI } from './UserAPI';
+export { addressAPI } from './AddressAPI';
+export { authAPI } from './AuthAPI';
+export { blockAPI } from './BlockAPI';
+export { chainAPI } from './ChainAPI';
+export { merkleBranchAPI } from './MerkleBranchAPI';
+export { scriptHashAPI } from './ScriptHashAPI';
+export { transactionAPI } from './TransactionAPI';
+export { userAPI } from './UserAPI';
 
 export const generateRandomAddress = () => {
   return Bitcoin.ECPair.makeRandom().toWIF();

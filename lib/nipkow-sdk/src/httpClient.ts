@@ -11,6 +11,18 @@ const httpReq = axios.create({
   },
 });
 
+httpReq.interceptors.request.use(
+  config => {
+    const token = localStorage.getItem('token');
+    config.headers.Authorization = token ? `Bearer ${token}` : '';
+    return config;
+  },
+  error => {
+    console.log(error);
+    return Promise.reject(error);
+  }
+);
+
 export const get = async (url: string, config?: AxiosRequestConfig) => {
   try {
     const response = await httpReq.get(url, config);

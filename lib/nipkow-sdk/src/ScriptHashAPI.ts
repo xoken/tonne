@@ -1,7 +1,7 @@
 import { get } from './httpClient';
 import Qs from 'qs';
 
-export class ScriptHashAPI {
+class ScriptHashAPI {
   getOutputsByScriptHash = async (scriptHash: string, pagesize?: number) => {
     try {
       const { data } = await get(`scripthash/${scriptHash}/outputs`, {
@@ -58,3 +58,5 @@ export class ScriptHashAPI {
     }
   };
 }
+
+export const scriptHashAPI = new ScriptHashAPI();

@@ -1,7 +1,7 @@
 import { get } from './httpClient';
 import Qs from 'qs';
 
-export class BlockAPI {
+class BlockAPI {
   getBlockByBlockHeight = async (height: number) => {
     try {
       const { data } = await get(`block/height/${height}`);
@@ -68,3 +68,5 @@ export class BlockAPI {
     }
   };
 }
+
+export const blockAPI = new BlockAPI();

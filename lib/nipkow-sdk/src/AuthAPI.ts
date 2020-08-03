@@ -1,6 +1,6 @@
 import { post } from './httpClient';
 
-export class AuthAPI {
+class AuthAPI {
   login = async (username: string, password: string) => {
     try {
       const { data } = await post('auth', { username, password });
@@ -10,3 +10,5 @@ export class AuthAPI {
     }
   };
 }
+
+export const authAPI = new AuthAPI();
