@@ -10,7 +10,7 @@ class TransactionAPI {
     }
   };
 
-  getBlocksByBlockHeights = async (txIDs: string[]) => {
+  getTransactionsByTxIDs = async (txIDs: string[]) => {
     try {
       const { data } = await get(`transactions`, {
         params: {
