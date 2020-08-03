@@ -171,6 +171,8 @@ function caching() {
       cachecounter += 1;
     }
     nextcursor = rjdecoded.nextCursor;
+  } else {
+    nextcursor = null;
   }
   console.log(addressCache.length);
 }
@@ -178,17 +180,19 @@ function caching() {
 function adddataupdatepagearray() {
   var prevcounterval = cachecounter;
   caching();
-  totalpagesavailable = Math.ceil(addressCache.length / outputsperpage);
-  batches = Math.ceil(totalpagesavailable / fixedpagearrlength);
-  var pagenum = pagearray[pagearray.length - 1];
-  currentbatchnum = Math.ceil(pagearray[0] / fixedpagearrlength);
-  currentbatchnum += 1;
-  var numpagesincurbatch = Math.ceil(
-    (cachecounter - prevcounterval) / outputsperpage
-  );
-  for (var t = 0; t < numpagesincurbatch; t++) {
-    pagenum += 1;
-    pagearray[t] = pagenum;
+  if (nextcursor != null) {
+    totalpagesavailable = Math.ceil(addressCache.length / outputsperpage);
+    batches = Math.ceil(totalpagesavailable / fixedpagearrlength);
+    var pagenum = pagearray[pagearray.length - 1];
+    currentbatchnum = Math.ceil(pagearray[0] / fixedpagearrlength);
+    currentbatchnum += 1;
+    var numpagesincurbatch = Math.ceil(
+      (cachecounter - prevcounterval) / outputsperpage
+    );
+    for (var t = 0; t < numpagesincurbatch; t++) {
+      pagenum += 1;
+      pagearray[t] = pagenum;
+    }
   }
   printpagination();
 }
@@ -267,43 +271,50 @@ function addlistener() {
       printpagination();
     });
   }
-  document.getElementById("rightarrow").addEventListener("click", function () {
-    console.log("right arrow clicked");
-    //  console.log(pagearray[pagearray.length-1]+"pagearray[pagearray.length-1]");
-    console.log(totalpagesavailable + "totalpagesavailable");
-    currentbatchnum = Math.ceil(pagearray[0] / fixedpagearrlength);
-    if (
-      pagearray[pagearray.length - 1] == totalpagesavailable &&
-      nextcursor != null
-    ) {
-      httpsreq(
-        "Bearer " + localStorage.getItem("sessionkey") + "",
-        "v1/address/" +
-          address +
-          "/outputs/?pagesize=100&cursor=" +
-          nextcursor +
-          "",
-        "adddataupdatepagearray"
-      );
-    } else {
-      console.log("elseblock");
-      currentbatchnum += 1;
-      var tindex = pagearray[pagearray.length - 1];
+  if (
+    pagearray[pagearray.length - 1] != totalpagesavailable ||
+    nextcursor != null
+  ) {
+    document
+      .getElementById("rightarrow")
+      .addEventListener("click", function () {
+        console.log("right arrow clicked");
+        //  console.log(pagearray[pagearray.length-1]+"pagearray[pagearray.length-1]");
+        console.log(totalpagesavailable + "totalpagesavailable");
+        currentbatchnum = Math.ceil(pagearray[0] / fixedpagearrlength);
+        if (
+          pagearray[pagearray.length - 1] == totalpagesavailable &&
+          nextcursor != null
+        ) {
+          httpsreq(
+            "Bearer " + localStorage.getItem("sessionkey") + "",
+            "v1/address/" +
+              address +
+              "/outputs/?pagesize=100&cursor=" +
+              nextcursor +
+              "",
+            "adddataupdatepagearray"
+          );
+        } else {
+          console.log("elseblock");
+          currentbatchnum += 1;
+          var tindex = pagearray[pagearray.length - 1];
 
-      if (
-        pagearray[pagearray.length - 1] + fixedpagearrlength >
-        totalpagesavailable
-      ) {
-        pagearrlength = totalpagesavailable % fixedpagearrlength;
-      } else {
-        pagearrlength = fixedpagearrlength;
-      }
-      for (var t = 0; t < pagearrlength; t++) {
-        tindex += 1;
-        pagearray[t] = tindex;
-        console.log(pagearray[t] + "pagearray[t]");
-      }
-      printpagination();
-    }
-  });
+          if (
+            pagearray[pagearray.length - 1] + fixedpagearrlength >
+            totalpagesavailable
+          ) {
+            pagearrlength = totalpagesavailable % fixedpagearrlength;
+          } else {
+            pagearrlength = fixedpagearrlength;
+          }
+          for (var t = 0; t < pagearrlength; t++) {
+            tindex += 1;
+            pagearray[t] = tindex;
+            console.log(pagearray[t] + "pagearray[t]");
+          }
+          printpagination();
+        }
+      });
+  }
 }
