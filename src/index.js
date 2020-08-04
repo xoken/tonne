@@ -8,7 +8,7 @@ var date,
   result,
   backpagenum,
   blockhei = "";
-var heightlist = "";
+var heightlist = [];
 var size;
 var syncedblocksheight;
 var numberofpages,
@@ -92,13 +92,10 @@ pagebutton.addEventListener("click", function () {
 });
 
 function updateheightlist() {
+  heightlist.length = 0;
   var tempheight = syncedblocksheight - (selected - 1) * 10;
-  heightlist = "";
   for (var c = 0; c < 10; c++) {
-    heightlist += "height=" + tempheight;
-    if (c != 9) {
-      heightlist += "&";
-    }
+    heightlist[c] = tempheight;
     tempheight -= 1;
   }
 }

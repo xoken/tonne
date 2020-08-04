@@ -56,7 +56,6 @@ function httpsreq(functionname, ...reqparameter) {
         });
       break;
     case "getBlocksByBlockHeights":
-      console.log(reqparameter[1] + "reqparameter[1]");
       apis.blockAPI
         .getBlocksByBlockHeights(reqparameter[1])
         .then((data) => {
