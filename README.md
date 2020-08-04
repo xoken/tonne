@@ -24,3 +24,11 @@ cd into nipkow app's directory and then
 ```
 npm run electron
 ```
+
+```
+cd <nipkow app's directory>/lib/nipkow-sdk
+```
+
+```
+npm start
+```
