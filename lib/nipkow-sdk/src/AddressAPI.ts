@@ -29,7 +29,7 @@ class AddressAPI {
           pagesize,
           cursor,
         },
-        paramsSerializer: (params) =>
+        paramsSerializer: params =>
           Qs.stringify(params, { arrayFormat: 'repeat' }),
       });
       return data;
@@ -45,7 +45,7 @@ class AddressAPI {
   ) => {
     try {
       const { data } = await get(`address/${address}/utxos`, {
-        params: { pagesize, string },
+        params: { pagesize, cursor },
       });
       return data;
     } catch (error) {
@@ -63,9 +63,9 @@ class AddressAPI {
         params: {
           address: addresses,
           pagesize,
-          string,
+          cursor,
         },
-        paramsSerializer: (params) =>
+        paramsSerializer: params =>
           Qs.stringify(params, { arrayFormat: 'repeat' }),
       });
       return data;
