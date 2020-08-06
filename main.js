@@ -12,7 +12,7 @@ function createWindow() {
   win.show();
 
   // and load the index.html of the app.
-  win.loadFile("src/index.html");
+  win.loadFile("src/wallet-screen-1.html");
 
   // Open the DevTools.
   //  win.webContents.openDevTools()

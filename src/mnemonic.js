@@ -4,6 +4,9 @@ var readtext = fs.readFileSync("assets/wordlist/english.txt", {
   encoding: "utf8",
   flag: "r",
 });
+document.getElementById("back").innerHTML =
+  "<a class='btn btn-primary' style='color:white;' onclick='window.history.back();'>Back</a>";
+
 const indexPath = path.join("file://", __dirname, "index.html");
 const logo = (document.getElementById("logo").href = indexPath);
 var words = readtext.split("\n");

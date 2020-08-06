@@ -5,6 +5,8 @@ var sendcur = document.getElementById("sendcur");
 var popupcontent = document.getElementById("popupcontent");
 var pop = document.getElementById("pop");
 var receiveraddress = document.getElementById("receiveraddress");
+document.getElementById("back").innerHTML =
+  "<a class='btn btn-primary' style='color:white;' onclick='window.history.back();'>Back</a>";
 
 var cryptolistarray = [
   {

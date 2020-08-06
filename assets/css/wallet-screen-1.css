@@ -1,0 +1,46 @@
+.nonheader {
+  margin-top: 50px;
+}
+
+#authpop {
+  position: sticky;
+  top: 100px;
+  -webkit-box-shadow: 0px 5px 12px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 5px 12px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 5px 12px 0px rgba(0, 0, 0, 0.75);
+  background-color: white;
+  height: auto !important;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  width: fit-content;
+  margin: auto;
+  padding: 50px;
+  display: none;
+  @media (max-width: 768px) {
+    width: 90%;
+    margin: auto 5%;
+  }
+}
+.walletchoice {
+  padding: 30px;
+  margin: 30px;
+  //  width: 200px;
+  color: #b0b0b0;
+  font-size: 22px;
+  font-weight: bold;
+  text-align: center;
+  transition: box-shadow 0.3s ease-in-out;
+}
+.walletchoice:hover {
+  -webkit-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  -moz-box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
+  box-shadow: 0px 2px 5px 0px rgba(0, 0, 0, 0.75);
+}
+.walletchoicecontainer {
+  text-align: center;
+}
+
+a:hover {
+  text-decoration: none !important;
+}
