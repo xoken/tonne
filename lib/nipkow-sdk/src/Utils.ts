@@ -37,7 +37,7 @@ class Utils {
       if (isNaN(index)) {
         continue;
       }
-      var hardened = bit[bit.length - 1] == "'";
+      var hardened = bit[bit.length - 1] === "'";
       var isPriv = !extendedKey.isNeutered();
       var invalidDerivationPath = hardened && !isPriv;
       if (invalidDerivationPath) {
