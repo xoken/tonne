@@ -1,5 +1,7 @@
+import './ReactotronConfig';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
 import './css/App.css';
 import './css/address.css';
 import './css/blockheight.css';
@@ -10,11 +12,16 @@ import './css/transaction.css';
 import './css/wallet.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
+import configureStore from './shared/store/configureStore';
+
+const store = configureStore();
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
+  <Provider store={store}>
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  </Provider>,
   document.getElementById('root')
 );
 

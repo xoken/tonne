@@ -1,5 +1,5 @@
 import * as Bitcoin from 'bitcoinjs-lib';
-import bip39 from 'bip39';
+import * as bip39 from 'bip39';
 
 class Utils {
   generateMnemonic = (): string => {

@@ -7,6 +7,7 @@ function createWindow() {
     show: false,
     webPreferences: {
       nodeIntegration: true,
+      webSecurity: false,
     },
   });
   win.maximize();
@@ -14,14 +15,13 @@ function createWindow() {
 
   // and load the index.html of the app.
   // win.loadFile('src/index.html');
-  const url =
-    process.env.NODE_ENV !== 'production'
-      ? 'http://localhost:3000'
-      : `file://${path.join(__dirname, '/../public/index.html')}`;
+  const url = 'http://localhost:3000/wallet';
+  // const fileUrl = `file://${path.join(__dirname, '/../build/index.html')}`;
+  // console.log(url);
   win.loadURL(url);
 
   // Open the DevTools.
-  //  win.webContents.openDevTools()
+  win.webContents.openDevTools();
 }
 
 // This method will be called when Electron has finished
@@ -46,5 +46,6 @@ app.on('activate', () => {
   }
 });
 app.commandLine.appendSwitch('ignore-certificate-errors', 'true');
+app.commandLine.appendSwitch('disable-features', 'OutOfBlinkCors');
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.

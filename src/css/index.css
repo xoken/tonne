@@ -12,6 +12,11 @@ code {
     monospace;
 }
 
+.wallet-container {
+  display: flex;
+  height: 400px;
+}
+
 @media (max-width: 991px) {
   nav.navbar.navbar-expand-lg.navbar-light {
     padding-top: 0px !important;

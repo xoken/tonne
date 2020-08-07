@@ -1,27 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Route, Link } from 'react-router-dom';
 import Login from './Login';
+import Wallet from './wallet/screens/Wallet';
+import NewWallet from './wallet/screens/NewWallet';
+import ExistingWallet from './wallet/screens/ExistingWallet';
 import logo from './images/logo.png';
 export default class App extends React.Component {
-  componentDidMount() {
-    // this.addScript('./scripts/index.js');
-    // this.addScript('./scripts/credentials.js');
-    // this.addScript('./scripts/auth.js');
-    // this.addScript('./scripts/httpsreq.js');
-    // this.addScript('./scripts/address.js');
-    // this.addScript('./scripts/transaction.js');
-    // this.addScript('./scripts/blockheight.js');
-    // this.addScript('./scripts/mnemonic.js');
-    // this.addScript('./scripts/search.js');
-    // this.addScript('./scripts/wallet.js');
-  }
-
-  // addScript(scriptSrc: string) {
-  //   const script = document.createElement('script');
-  //   script.src = scriptSrc;
-  //   document.body.appendChild(script);
-  // }
-
   render() {
     return (
       <BrowserRouter>
@@ -63,9 +47,12 @@ export default class App extends React.Component {
             </form>
           </div>
         </nav>
-        <Route path="/">
+        <Route exact path="/">
           <Login />
         </Route>
+        <Route exact path="/wallet" component={Wallet} />
+        <Route exact path="/wallet/new" component={NewWallet} />
+        <Route exact path="/wallet/existing" component={ExistingWallet} />
       </BrowserRouter>
     );
   }
