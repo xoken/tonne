@@ -1,10 +1,11 @@
 import React from 'react';
 import { BrowserRouter, Route, Link } from 'react-router-dom';
-import Login from './Login';
+import Login from './explorer/Login';
 import Wallet from './wallet/screens/Wallet';
 import NewWallet from './wallet/screens/NewWallet';
 import ExistingWallet from './wallet/screens/ExistingWallet';
 import logo from './images/logo.png';
+import WalletHome from './wallet/screens/WalletHome';
 export default class App extends React.Component {
   render() {
     return (
@@ -53,6 +54,7 @@ export default class App extends React.Component {
         <Route exact path="/wallet" component={Wallet} />
         <Route exact path="/wallet/new" component={NewWallet} />
         <Route exact path="/wallet/existing" component={ExistingWallet} />
+        <Route exact path="/wallet/home" component={WalletHome} />
       </BrowserRouter>
     );
   }

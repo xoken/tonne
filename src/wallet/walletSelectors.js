@@ -11,3 +11,8 @@ export const getMnemonic = createSelector(
   [getWallet],
   ({ mnemonic }) => mnemonic
 );
+
+export const getCurrentBalance = createSelector(
+  [getWallet],
+  ({ currentBalance }) => currentBalance
+);

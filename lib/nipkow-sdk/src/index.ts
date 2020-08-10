@@ -1,3 +1,6 @@
+import * as networks from './constants/networks';
+import * as derivationPaths from './constants/derivationPaths';
+
 export { addressAPI } from './AddressAPI';
 export { authAPI } from './AuthAPI';
 export { blockAPI } from './BlockAPI';
@@ -6,6 +9,7 @@ export { merkleBranchAPI } from './MerkleBranchAPI';
 export { scriptHashAPI } from './ScriptHashAPI';
 export { transactionAPI } from './TransactionAPI';
 export { userAPI } from './UserAPI';
+export { networks, derivationPaths };
 export { utils } from './Utils';
 
 // import { utils } from "nipkow-sdk";

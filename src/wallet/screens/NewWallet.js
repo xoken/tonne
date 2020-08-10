@@ -1,13 +1,17 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { generateMnemonic } from '../walletActions';
-import { isLoading, getMnemonic } from '../walletSelectors';
+import * as walletActions from '../walletActions';
+import * as walletSelectors from '../walletSelectors';
 
 class NewWallet extends React.Component {
   generateMnemonic = () => {
     const { dispatch } = this.props;
-    dispatch(generateMnemonic());
+    dispatch(walletActions.generateMnemonic());
+  };
+
+  onContinue = () => {
+    this.props.history.push('/wallet/home');
   };
 
   render() {
@@ -28,6 +32,13 @@ class NewWallet extends React.Component {
         >
           Generate Mnemonic
         </button>
+        <button
+          type="button"
+          className="btn btn-primary btn-md"
+          onClick={this.onContinue}
+        >
+          Continue
+        </button>
         <p></p>
       </div>
     );
@@ -36,6 +47,7 @@ class NewWallet extends React.Component {
 
 NewWallet.propTypes = {
   dispatch: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool.isRequired,
   mnemonic: PropTypes.string,
 };
 
@@ -44,8 +56,8 @@ NewWallet.defaultProps = {
 };
 
 const mapStateToProps = (state) => ({
-  isLoading: isLoading(state),
-  mnemonic: getMnemonic(state),
+  isLoading: walletSelectors.isLoading(state),
+  mnemonic: walletSelectors.getMnemonic(state),
 });
 
 export default connect(mapStateToProps)(NewWallet);

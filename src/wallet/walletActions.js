@@ -11,6 +11,16 @@ export const generateMnemonicFailure = createAction(
   'GENERATE_MNEMONIC_FAILURE'
 );
 
+export const getCurrentBalanceRequest = createAction(
+  'GET_CURRENT_BALANCE_REQUEST'
+);
+export const getCurrentBalanceSuccess = createAction(
+  'GET_CURRENT_BALANCE_SUCCESS'
+);
+export const getCurrentBalanceFailure = createAction(
+  'GET_CURRENT_BALANCE_FAILURE'
+);
+
 export const generateMnemonic = () => (
   dispatch,
   getState,
@@ -18,9 +28,43 @@ export const generateMnemonic = () => (
 ) => {
   dispatch(generateMnemonicRequest());
   try {
-    const mnemonic = serviceInjector(WalletService).generateMnemonic();
-    dispatch(generateMnemonicSuccess({ mnemonic }));
+    const info = serviceInjector(WalletService).generateMnemonic();
+    console.log(info);
+    // dispatch(generateMnemonicSuccess({ mnemonic }));
   } catch (error) {
+    console.log(error);
     dispatch(generateMnemonicFailure());
+  }
+};
+
+export const fromMnemonic = (mnemonic) => (
+  dispatch,
+  getState,
+  { serviceInjector }
+) => {
+  dispatch(generateMnemonicRequest());
+  try {
+    const info = serviceInjector(WalletService).generateKeysFromMnemonic(
+      mnemonic
+    );
+    console.log(info);
+    // dispatch(generateMnemonicSuccess({ mnemonic }));
+  } catch (error) {
+    console.log(error);
+    dispatch(generateMnemonicFailure());
+  }
+};
+
+export const getCurrentBalance = () => (
+  dispatch,
+  getState,
+  { serviceInjector }
+) => {
+  dispatch(getCurrentBalanceRequest());
+  try {
+    const balance = serviceInjector(WalletService).getCurrentBalance();
+    dispatch(getCurrentBalanceSuccess({ balance }));
+  } catch (error) {
+    dispatch(getCurrentBalanceFailure());
   }
 };

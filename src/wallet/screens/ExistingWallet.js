@@ -1,48 +1,56 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import * as walletActions from '../walletActions';
+import * as walletSelectors from '../walletSelectors';
 
-export default class ExistingWallet extends React.Component {
+class ExistingWallet extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      mnemonic: '',
+    };
+  }
+
+  onContinue = () => {
+    const { dispatch } = this.props;
+    dispatch(walletActions.fromMnemonic(this.state.mnemonic));
+  };
+
   render() {
     return (
-      <>
-        <div className="container wallet-container">
-          <div className="row align-items-center">
-            <div className="col-sm-6">
-              <div className="card text-center">
-                <div className="card-body">
-                  <h5 className="card-title">I already have a seed phrase</h5>
-                  <p className="card-text">
-                    Import your existing wallet using a 12 word seed phrase
-                  </p>
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={this.onImportWallet}
-                  >
-                    Import wallet
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div className="col-sm-6">
-              <div className="card text-center">
-                <div className="card-body">
-                  <h5 className="card-title">Yes, let's get set up!</h5>
-                  <p className="card-text">
-                    This will create a new wallet and seed phrase
-                  </p>
-                  <button
-                    type="button"
-                    className="btn btn-primary"
-                    onClick={this.onCreateWallet}
-                  >
-                    Create a Wallet
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
+      <div>
+        <h3>Enter Secret Backup Phrase</h3>
+        <div>
+          <textarea
+            rows="2"
+            value={this.state.mnemonic}
+            onChange={(event) =>
+              this.setState({ mnemonic: event.target.value })
+            }
+          />
         </div>
-      </>
+        <button
+          type="button"
+          className="btn btn-primary btn-md"
+          onClick={this.onContinue}
+        >
+          Continue
+        </button>
+      </div>
     );
   }
 }
+
+ExistingWallet.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  isLoading: PropTypes.bool.isRequired,
+};
+
+ExistingWallet.defaultProps = {};
+
+const mapStateToProps = (state) => ({
+  isLoading: walletSelectors.isLoading(state),
+});
+
+export default connect(mapStateToProps)(ExistingWallet);
