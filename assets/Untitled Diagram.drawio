@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-08-12T10:20:05.094Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36" etag="Zmz8uqJ1JymkzWIeTNMy" version="13.6.2" type="github">
+<mxfile host="app.diagrams.net" modified="2020-08-12T10:22:14.340Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36" etag="grVOrC4PC4h8crzhgKky" version="13.6.2" type="github">
   <diagram id="G2U72_mk4-tE0iACLa10" name="Page-1">
     <mxGraphModel dx="1186" dy="668" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -287,6 +287,9 @@
         </mxCell>
         <mxCell id="YPXlL28YaBKqJH8wK1t2-17" value="getBIP32ExtendedKey()" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
           <mxGeometry x="220" y="2640" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="YPXlL28YaBKqJH8wK1t2-18" value="Sequence Diagram" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;spacing=2;" vertex="1" parent="1">
+          <mxGeometry x="40" y="2360" width="240" height="27" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
