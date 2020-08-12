@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-08-12T09:33:59.763Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36" etag="CCKyqieCw_8wF8LJVbTP" version="13.6.2" type="github">
+<mxfile host="app.diagrams.net" modified="2020-08-12T09:37:56.192Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36" etag="pUUkTkaPxDBuqMBNQDTb" version="13.6.2" type="github">
   <diagram id="G2U72_mk4-tE0iACLa10" name="Page-1">
     <mxGraphModel dx="1422" dy="798" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -211,6 +211,20 @@
         </mxCell>
         <mxCell id="WEFgnCn8ByLuufPp5znP-67" value="(Pagination)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;" vertex="1" parent="1">
           <mxGeometry x="210" y="2140" width="70" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="WEFgnCn8ByLuufPp5znP-78" value="List columns here, and specify column order" style="shape=note;size=15;align=left;spacingLeft=10;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="620" y="990" width="180" height="130" as="geometry" />
+        </mxCell>
+        <mxCell id="WEFgnCn8ByLuufPp5znP-79" value="" style="edgeStyle=none;endArrow=none;exitX=0.4;exitY=0;dashed=1;html=1;" edge="1" source="WEFgnCn8ByLuufPp5znP-78" parent="1" target="WEFgnCn8ByLuufPp5znP-31">
+          <mxGeometry x="1" relative="1" as="geometry">
+            <mxPoint x="560" y="940" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="WEFgnCn8ByLuufPp5znP-82" style="rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;" edge="1" parent="1" source="WEFgnCn8ByLuufPp5znP-81" target="WEFgnCn8ByLuufPp5znP-13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="WEFgnCn8ByLuufPp5znP-81" value="Dont show all words at once, only show one word at a time, upon hover, the rest can be first letter followed by *****" style="shape=note;size=15;align=left;spacingLeft=10;html=1;whiteSpace=wrap;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="570" y="570" width="180" height="130" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
