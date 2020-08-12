@@ -1,15 +1,9 @@
 import { createAction } from 'redux-act';
 import WalletService from './walletService';
 
-export const generateMnemonicRequest = createAction(
-  'GENERATE_MNEMONIC_REQUEST'
-);
-export const generateMnemonicSuccess = createAction(
-  'GENERATE_MNEMONIC_SUCCESS'
-);
-export const generateMnemonicFailure = createAction(
-  'GENERATE_MNEMONIC_FAILURE'
-);
+export const initWalletRequest = createAction('INIT_WALLET_REQUEST');
+export const initWalletSuccess = createAction('INIT_WALLET_SUCCESS');
+export const initWalletFailure = createAction('INIT_WALLET_FAILURE');
 
 export const getCurrentBalanceRequest = createAction(
   'GET_CURRENT_BALANCE_REQUEST'
@@ -21,48 +15,29 @@ export const getCurrentBalanceFailure = createAction(
   'GET_CURRENT_BALANCE_FAILURE'
 );
 
-export const generateMnemonic = () => (
+export const initWallet = (bip39Mnemonic) => (
   dispatch,
   getState,
   { serviceInjector }
 ) => {
-  dispatch(generateMnemonicRequest());
+  dispatch(initWalletRequest());
   try {
-    const info = serviceInjector(WalletService).generateMnemonic();
-    console.log(info);
-    // dispatch(generateMnemonicSuccess({ mnemonic }));
+    const info = serviceInjector(WalletService).initWallet(bip39Mnemonic);
+    dispatch(initWalletSuccess(info));
   } catch (error) {
     console.log(error);
-    dispatch(generateMnemonicFailure());
+    dispatch(initWalletFailure());
   }
 };
 
-export const fromMnemonic = (mnemonic) => (
-  dispatch,
-  getState,
-  { serviceInjector }
-) => {
-  dispatch(generateMnemonicRequest());
-  try {
-    const info = serviceInjector(WalletService).generateKeysFromMnemonic(
-      mnemonic
-    );
-    console.log(info);
-    // dispatch(generateMnemonicSuccess({ mnemonic }));
-  } catch (error) {
-    console.log(error);
-    dispatch(generateMnemonicFailure());
-  }
-};
-
-export const getCurrentBalance = () => (
+export const getCurrentBalance = () => async (
   dispatch,
   getState,
   { serviceInjector }
 ) => {
   dispatch(getCurrentBalanceRequest());
   try {
-    const balance = serviceInjector(WalletService).getCurrentBalance();
+    const balance = await serviceInjector(WalletService).getCurrentBalance();
     dispatch(getCurrentBalanceSuccess({ balance }));
   } catch (error) {
     dispatch(getCurrentBalanceFailure());

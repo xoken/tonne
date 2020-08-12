@@ -8,13 +8,14 @@ class ExistingWallet extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      mnemonic: '',
+      bip39Mnemonic: '',
     };
   }
 
   onContinue = () => {
     const { dispatch } = this.props;
-    dispatch(walletActions.fromMnemonic(this.state.mnemonic));
+    const { bip39Mnemonic } = this.state;
+    dispatch(walletActions.initWallet(bip39Mnemonic));
   };
 
   render() {
@@ -24,9 +25,9 @@ class ExistingWallet extends React.Component {
         <div>
           <textarea
             rows="2"
-            value={this.state.mnemonic}
+            value={this.state.bip39Mnemonic}
             onChange={(event) =>
-              this.setState({ mnemonic: event.target.value })
+              this.setState({ bip39Mnemonic: event.target.value })
             }
           />
         </div>

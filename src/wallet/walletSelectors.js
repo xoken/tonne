@@ -9,7 +9,7 @@ export const isLoading = createSelector(
 
 export const getMnemonic = createSelector(
   [getWallet],
-  ({ mnemonic }) => mnemonic
+  ({ bip39Mnemonic }) => bip39Mnemonic
 );
 
 export const getCurrentBalance = createSelector(

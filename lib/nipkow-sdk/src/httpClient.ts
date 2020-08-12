@@ -13,7 +13,9 @@ const httpReq = axios.create({
 
 httpReq.interceptors.request.use(
   config => {
-    const token = localStorage.getItem('token');
+    // const token = localStorage.getItem('token');
+    const token =
+      'ff296c48aaed7b73b6551706225e183b51dc7522f304d29ca5b4a70687d73c2e';
     config.headers.Authorization = token ? `Bearer ${token}` : '';
     return config;
   },

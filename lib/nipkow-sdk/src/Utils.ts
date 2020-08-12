@@ -1,4 +1,12 @@
-import { Network, bip32, BIP32Interface, payments } from 'bitcoinjs-lib';
+import {
+  Network,
+  bip32,
+  BIP32Interface,
+  ECPair,
+  payments,
+} from 'bitcoinjs-lib';
+import derivationPaths from './constants/derivationPaths';
+import * as bip38 from 'bip38';
 import * as bip39 from 'bip39';
 
 class Utils {
@@ -10,15 +18,15 @@ class Utils {
     return bip39.generateMnemonic(strength, rng, wordlist);
   };
 
-  mnemonicToSeedSync = (mnemonic: string, password?: string): Buffer => {
-    return bip39.mnemonicToSeedSync(mnemonic, password);
+  mnemonicToSeedSync = (bip39Mnemonic: string, password?: string): Buffer => {
+    return bip39.mnemonicToSeedSync(bip39Mnemonic, password);
   };
 
   mnemonicToSeed = async (
-    mnemonic: string,
+    bip39Mnemonic: string,
     password?: string
   ): Promise<Buffer> => {
-    return await bip39.mnemonicToSeed(mnemonic, password);
+    return await bip39.mnemonicToSeed(bip39Mnemonic, password);
   };
 
   getSeedHex = (seed: Buffer) => {
@@ -52,7 +60,7 @@ class Utils {
     }
     let extendedKey = bip32RootKey;
     const pathBits = path.split('/');
-    for (var i = 0; i < pathBits.length; i++) {
+    for (let i = 0; i < pathBits.length; i++) {
       const bit = pathBits[i];
       const index = parseInt(bit);
       if (isNaN(index)) {
@@ -89,10 +97,7 @@ class Utils {
   };
 
   getDerivationPath = (): string => {
-    const purpose = 44;
-    const coin = 0;
-    const account = 0;
-    const change = 0;
+    const { purpose, coin, account, change } = derivationPaths.BITCOIN_SV;
     let path = 'm/';
     path += purpose + "'/";
     path += coin + "'/";
@@ -101,23 +106,52 @@ class Utils {
     return path;
   };
 
+  getDerivationPathAccount = (): string => {
+    const { purpose, coin, account } = derivationPaths.BITCOIN_SV;
+    let path = 'm/';
+    path += purpose + "'/";
+    path += coin + "'/";
+    path += account + "'/";
+    return path;
+  };
+
   generateDerivedAddress = (
     bip32ExtendedKey: BIP32Interface,
     index: number,
-    // bip38password?: string,
+    useBip38?: boolean,
+    bip38password: string = '',
     useHardenedAddresses?: boolean
-    // useBip38?: boolean
   ) => {
-    debugger;
     let key;
     if (useHardenedAddresses) {
       key = bip32ExtendedKey.deriveHardened(index);
     } else {
       key = bip32ExtendedKey.derive(index);
     }
-    console.log(key);
-    const addr = payments.p2pkh({ pubkey: key.publicKey }).address!;
-    console.log(addr);
+    const useUncompressed = useBip38;
+    let keyPair = ECPair.fromPrivateKey(key.privateKey!);
+    if (useUncompressed) {
+      keyPair = ECPair.fromPrivateKey(key.privateKey!, { compressed: false });
+    }
+    const address = payments.p2pkh({ pubkey: keyPair.publicKey }).address!;
+    const hasPrivkey = !key.isNeutered();
+    let privkey;
+    if (hasPrivkey) {
+      privkey = keyPair.toWIF();
+      if (useBip38) {
+        privkey = bip38.encrypt(keyPair.privateKey!, false, bip38password);
+      }
+    }
+    const pubkey = keyPair.publicKey.toString('hex');
+    let indexText = this.getDerivationPath() + '/' + index;
+    if (useHardenedAddresses) {
+      indexText = indexText + "'";
+    }
+    return { indexText, address, pubkey, privkey };
+  };
+
+  getCurrentBalance = () => {
+    return 600;
   };
 }
 

@@ -4,7 +4,7 @@ import Login from './explorer/Login';
 import Wallet from './wallet/screens/Wallet';
 import NewWallet from './wallet/screens/NewWallet';
 import ExistingWallet from './wallet/screens/ExistingWallet';
-import logo from './images/logo.png';
+import logo from './shared/images/logo.png';
 import WalletHome from './wallet/screens/WalletHome';
 export default class App extends React.Component {
   render() {

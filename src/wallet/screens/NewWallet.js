@@ -7,7 +7,7 @@ import * as walletSelectors from '../walletSelectors';
 class NewWallet extends React.Component {
   generateMnemonic = () => {
     const { dispatch } = this.props;
-    dispatch(walletActions.generateMnemonic());
+    dispatch(walletActions.initWallet());
   };
 
   onContinue = () => {
@@ -23,7 +23,7 @@ class NewWallet extends React.Component {
           account
         </p>
         <div>
-          <textarea rows="2" value={this.props.mnemonic} readOnly />
+          <textarea rows="2" value={this.props.bip39Mnemonic} readOnly />
         </div>
         <button
           type="button"
@@ -48,16 +48,16 @@ class NewWallet extends React.Component {
 NewWallet.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  mnemonic: PropTypes.string,
+  bip39Mnemonic: PropTypes.string,
 };
 
 NewWallet.defaultProps = {
-  mnemonic: '',
+  bip39Mnemonic: '',
 };
 
 const mapStateToProps = (state) => ({
   isLoading: walletSelectors.isLoading(state),
-  mnemonic: walletSelectors.getMnemonic(state),
+  bip39Mnemonic: walletSelectors.getMnemonic(state),
 });
 
 export default connect(mapStateToProps)(NewWallet);
