@@ -2,7 +2,7 @@ import { get } from './httpClient';
 import Qs from 'qs';
 
 class AddressAPI {
-  getOutputsByAddress = async (address: string, pagesize: number) => {
+  getOutputsByAddress = async (address: string, pagesize?: number) => {
     try {
       const { data } = await get(`address/${address}/outputs`, {
         params: { pagesize },
@@ -13,7 +13,7 @@ class AddressAPI {
     }
   };
 
-  getOutputsByAddresses = async (addresses: string[], pagesize: number) => {
+  getOutputsByAddresses = async (addresses: string[], pagesize?: number) => {
     try {
       const { data } = await get(`addresses/outputs`, {
         params: {
@@ -29,7 +29,7 @@ class AddressAPI {
     }
   };
 
-  getUTXOsByAddress = async (address: string, pagesize: number) => {
+  getUTXOsByAddress = async (address: string, pagesize?: number) => {
     try {
       const { data } = await get(`address/${address}/utxos`, {
         params: { pagesize },
@@ -40,7 +40,7 @@ class AddressAPI {
     }
   };
 
-  getUTXOsByAddresses = async (addresses: string[], pagesize: number) => {
+  getUTXOsByAddresses = async (addresses: string[], pagesize?: number) => {
     try {
       const { data } = await get(`addresses/utxos`, {
         params: {

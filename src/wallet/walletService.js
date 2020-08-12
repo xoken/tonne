@@ -82,15 +82,26 @@ class WalletService {
     const addressess = derivedAddressess.map(
       (derivedAddress) => derivedAddress.address
     );
-    const dummyAddress = '18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9';
-    debugger;
+    addressess.push('14QdCax3sR6ZVMo6smMyUNzN5Fx9zA8Sjj');
+    addressess.push('17VaRoTC8dkb6vHyE37EPZByzpKvK1u2ZU');
+    addressess.push('1NGw8LYZ93g2RiZpiP4eCniU4YmQjH1tP9');
+    addressess.push('1EHM42QUBLSA9AdJGH6XmAMYSnh7rzTPuR');
+    addressess.push('1JbmUfm9fpu5o9BfCATRhbp4NiDR5D3UBX');
+    addressess.push('14gMdTsvq3Q6PnXK5jhn8KVgvWJnxzDV5m');
+    addressess.push('18E2ymquodpWHNhNzo8BC8d6QDwJNsEaYV');
+    addressess.push('1A6NvRKPsswAX8wwPKY4Ti5FBeNCpne1NC');
+    addressess.push('18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9');
+    addressess.push('1GXRNe36nJinKjFWcknnGH3VpDj5hh5AYv');
+    addressess.push('19irWGAyKawyFUNvgXEKGKUuAdtpDyXd1b');
     try {
-      const data = await addressAPI.getOutputsByAddress(dummyAddress);
+      const data = await addressAPI.getOutputsByAddress(addressess, 1000);
+      if (data.nextCursor) {
+        // const data = await addressAPI.getOutputsByAddress(addressess, 1000);
+      }
       console.log(data);
     } catch (error) {
       console.log(error);
     }
-    console.log(addressess);
     return utils.getCurrentBalance();
   };
 }

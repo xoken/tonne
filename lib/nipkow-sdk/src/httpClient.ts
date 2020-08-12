@@ -15,7 +15,7 @@ httpReq.interceptors.request.use(
   config => {
     // const token = localStorage.getItem('token');
     const token =
-      'ff296c48aaed7b73b6551706225e183b51dc7522f304d29ca5b4a70687d73c2e';
+      '8bf23a8b224b4d5a3a4f158aa1e495fcbbb35d1c64b3cc0acc6abfcd7e4e5907';
     config.headers.Authorization = token ? `Bearer ${token}` : '';
     return config;
   },
