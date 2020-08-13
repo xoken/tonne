@@ -1,19 +1,19 @@
-import { createReducer } from 'redux-act';
-import * as actions from './walletActions';
+import { createReducer } from "redux-act";
+import * as actions from "./walletActions";
 
 const INITIAL_STATE = {
   // mnemonicLanguage: '',
-  bip39Mnemonic: '',
+  bip39Mnemonic: "",
   // bip39SplitMnemonic: [],
   // bip39Passphrase: '',
-  bip39SeedHex: '',
+  bip39SeedHex: "",
   // coin: '',
-  bip32RootKeyBase58: '',
-  accountExtendedPrivateKey: '',
-  accountExtendedPublicKey: '',
+  bip32RootKeyBase58: "",
+  accountExtendedPrivateKey: "",
+  accountExtendedPublicKey: "",
   // bip32DerivationPath: '',
-  bip32ExtendedPrivateKey: '',
-  bip32ExtendedPublicKey: '',
+  bip32ExtendedPrivateKey: "",
+  bip32ExtendedPublicKey: "",
   derivedAddressess: [],
   isLoading: false,
   currentBalance: 0,
@@ -35,6 +35,10 @@ export default createReducer(
     [actions.getCurrentBalanceSuccess]: (state, payload) => ({
       ...state,
       currentBalance: payload.balance,
+    }),
+    [actions.getAllTxSuccess]: (state, payload) => ({
+      ...state,
+      allTx: payload.outputs,
     }),
   },
   INITIAL_STATE

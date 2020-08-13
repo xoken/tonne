@@ -1,4 +1,4 @@
-import { utils, networks, addressAPI } from 'nipkow-sdk';
+import { utils, networks, addressAPI } from "nipkow-sdk";
 
 class WalletService {
   constructor(store) {
@@ -82,7 +82,7 @@ class WalletService {
     const addressess = derivedAddressess.map(
       (derivedAddress) => derivedAddress.address
     );
-    const dummyAddress = '18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9';
+    const dummyAddress = "18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9";
     debugger;
     try {
       const data = await addressAPI.getOutputsByAddress(dummyAddress);
@@ -92,6 +92,16 @@ class WalletService {
     }
     console.log(addressess);
     return utils.getCurrentBalance();
+  };
+
+  getAllTx = async () => {
+    const placeholderAdd = "18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9";
+    try {
+      const data = await addressAPI.getOutputsByAddress(placeholderAdd);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
   };
 }
 
