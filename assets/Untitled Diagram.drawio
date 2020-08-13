@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-08-12T10:28:50.689Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36" etag="CzaDCCI1yeQ4rreOCL2D" version="13.6.2" type="github">
+<mxfile host="app.diagrams.net" modified="2020-08-13T12:13:15.876Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36" etag="373DIBl33_XcbM2kWXCQ" version="13.6.2" type="github">
   <diagram id="G2U72_mk4-tE0iACLa10" name="Page-1">
     <mxGraphModel dx="1350" dy="769" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -177,7 +177,7 @@
           <mxGeometry x="60" y="1830" width="230" height="20" as="geometry" />
         </mxCell>
         <mxCell id="WEFgnCn8ByLuufPp5znP-56" value="" style="rounded=0;whiteSpace=wrap;html=1;labelBackgroundColor=none;fillColor=none;align=left;" parent="1" vertex="1">
-          <mxGeometry x="100" y="1890" width="320" height="270" as="geometry" />
+          <mxGeometry x="100" y="1890" width="460" height="270" as="geometry" />
         </mxCell>
         <mxCell id="WEFgnCn8ByLuufPp5znP-57" value="100 BSV" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;labelBackgroundColor=none;" parent="1" vertex="1">
           <mxGeometry x="220" y="1910" width="80" height="20" as="geometry" />
@@ -291,14 +291,23 @@
         <mxCell id="YPXlL28YaBKqJH8wK1t2-18" value="Sequence Diagram" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;spacing=2;" parent="1" vertex="1">
           <mxGeometry x="40" y="2360" width="240" height="27" as="geometry" />
         </mxCell>
-        <mxCell id="9gRpQWwVq7k9JwQIeXjd-1" value="&lt;b&gt;&lt;font color=&quot;#006633&quot;&gt;to/from(address)&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+        <mxCell id="9gRpQWwVq7k9JwQIeXjd-1" value="&lt;b&gt;&lt;font color=&quot;#006633&quot;&gt;to/from(address)&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="273" y="950" width="40" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="9gRpQWwVq7k9JwQIeXjd-2" value="&lt;b&gt;&lt;font color=&quot;#006633&quot;&gt;sent amount/received amount&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+        <mxCell id="9gRpQWwVq7k9JwQIeXjd-2" value="&lt;b&gt;&lt;font color=&quot;#006633&quot;&gt;sent amount/received amount&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="390" y="950" width="40" height="20" as="geometry" />
         </mxCell>
-        <mxCell id="9gRpQWwVq7k9JwQIeXjd-3" value="&lt;b&gt;&lt;font color=&quot;#006633&quot;&gt;Transaction ID&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+        <mxCell id="9gRpQWwVq7k9JwQIeXjd-3" value="&lt;b&gt;&lt;font color=&quot;#006633&quot;&gt;Transaction ID&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="490" y="950" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nPiLUeXVizchjzGkamvN-1" value="&lt;b&gt;&lt;font color=&quot;#006633&quot;&gt;to/from(address)&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="250" y="2030" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nPiLUeXVizchjzGkamvN-2" value="&lt;b&gt;&lt;font color=&quot;#006633&quot;&gt;sent amount/received amount&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="360" y="2030" width="40" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="nPiLUeXVizchjzGkamvN-3" value="&lt;b&gt;&lt;font color=&quot;#006633&quot;&gt;Transaction ID&lt;/font&gt;&lt;/b&gt;" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="460" y="2040" width="40" height="20" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
