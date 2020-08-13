@@ -26,7 +26,6 @@ class WalletHome extends React.Component {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch(walletActions.getCurrentBalance());
-
     dispatch(walletActions.getAllTx());
   }
 

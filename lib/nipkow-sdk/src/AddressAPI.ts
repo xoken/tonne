@@ -2,10 +2,14 @@ import { get } from './httpClient';
 import Qs from 'qs';
 
 class AddressAPI {
-  getOutputsByAddress = async (address: string, pagesize: number) => {
+  getOutputsByAddress = async (
+    address: string,
+    pagesize: number,
+    cursor: number
+  ) => {
     try {
       const { data } = await get(`address/${address}/outputs`, {
-        params: { pagesize },
+        params: { pagesize, cursor },
       });
       return data;
     } catch (error) {
@@ -13,12 +17,17 @@ class AddressAPI {
     }
   };
 
-  getOutputsByAddresses = async (addresses: string[], pagesize: number) => {
+  getOutputsByAddresses = async (
+    addresses: string[],
+    pagesize: number,
+    cursor: number
+  ) => {
     try {
       const { data } = await get(`addresses/outputs`, {
         params: {
           address: addresses,
           pagesize,
+          cursor,
         },
         paramsSerializer: params =>
           Qs.stringify(params, { arrayFormat: 'repeat' }),
@@ -29,10 +38,14 @@ class AddressAPI {
     }
   };
 
-  getUTXOsByAddress = async (address: string, pagesize: number) => {
+  getUTXOsByAddress = async (
+    address: string,
+    pagesize: number,
+    cursor: string
+  ) => {
     try {
       const { data } = await get(`address/${address}/utxos`, {
-        params: { pagesize },
+        params: { pagesize, cursor },
       });
       return data;
     } catch (error) {
@@ -40,12 +53,17 @@ class AddressAPI {
     }
   };
 
-  getUTXOsByAddresses = async (addresses: string[], pagesize: number) => {
+  getUTXOsByAddresses = async (
+    addresses: string[],
+    pagesize: number,
+    cursor: string
+  ) => {
     try {
       const { data } = await get(`addresses/utxos`, {
         params: {
           address: addresses,
           pagesize,
+          cursor,
         },
         paramsSerializer: params =>
           Qs.stringify(params, { arrayFormat: 'repeat' }),

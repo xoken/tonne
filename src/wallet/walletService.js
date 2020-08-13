@@ -95,7 +95,7 @@ class WalletService {
   };
 
   getAllTx = async () => {
-    const placeholderAdd = "18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9";
+    const placeholderAdd = "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX";
     try {
       const data = await addressAPI.getOutputsByAddress(placeholderAdd);
       console.log(data);
