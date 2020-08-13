@@ -100,6 +100,7 @@ class WalletService {
   };
 
   recursive = async (addressess, cursor, currBal = 0) => {
+    // const dummyAddress = '18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9';
     try {
       const data = await addressAPI.getOutputsByAddress(
         addressess,
@@ -121,6 +122,16 @@ class WalletService {
       }
     } catch (error) {
       throw error;
+    }
+  };
+
+  getAllTx = async () => {
+    const placeholderAdd = '12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX';
+    try {
+      const data = await addressAPI.getOutputsByAddress(placeholderAdd);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
     }
   };
 }

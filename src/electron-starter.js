@@ -1,9 +1,11 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, screen } = require('electron');
 const path = require('path');
-
+var widthHeight;
 function createWindow() {
   // Create the browser window.
   let win = new BrowserWindow({
+    width: Math.ceil(widthHeight.width * 0.7),
+    height: Math.ceil(widthHeight.height * 0.7),
     show: false,
     webPreferences: {
       nodeIntegration: true,
@@ -28,7 +30,10 @@ function createWindow() {
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
 //app.whenReady().then(createWindow)
-app.on('ready', createWindow);
+app.on('ready', () => {
+  widthHeight = screen.getPrimaryDisplay().workAreaSize;
+  createWindow();
+});
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
