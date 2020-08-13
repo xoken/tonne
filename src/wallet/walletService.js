@@ -1,5 +1,4 @@
 import { utils, networks, addressAPI } from 'nipkow-sdk';
-
 class WalletService {
   constructor(store) {
     this.store = store;
@@ -108,7 +107,7 @@ class WalletService {
         cursor
       );
       console.log(data);
-      const dummyData = { nextCursor: '5', outputs: [1, 2, 3, 4, 5] };
+      const dummyData = { nextCursor: "5", outputs: [1, 2, 3, 4, 5] };
       const balance = dummyData.outputs.reduce(
         (acc, currValue, currIndex, array) => {
           return acc + currValue;
@@ -126,10 +125,11 @@ class WalletService {
   };
 
   getAllTx = async () => {
-    const placeholderAdd = '12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX';
+    const placeholderAdd = "12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX";
     try {
-      const data = await addressAPI.getOutputsByAddress(placeholderAdd);
+      const data = await addressAPI.getOutputsByAddress(placeholderAdd, 5);
       console.log(data);
+      return data;
     } catch (error) {
       console.log(error);
     }

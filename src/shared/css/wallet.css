@@ -27,6 +27,9 @@
 .txbtn:hover {
   background-color: grey;
 }
+.centerall{
+  text-align: center;
+}
 
 .cryptologo {
   padding: 30px;

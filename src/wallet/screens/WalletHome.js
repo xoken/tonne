@@ -23,6 +23,213 @@ class WalletHome extends React.Component {
     this.props.history.goBack();
   };
 
+  addressCache = [];
+  cachecounter = 0;
+  outputsperpage = 20;
+  pagearray = [];
+  fixedpagearrlength = 5;
+  pagearrlength = 5;
+  selected = 1;
+  batches;
+  totalpagesavailable;
+  currentbatchnum = 1;
+  nextcursor = "";
+  txlist = [];
+  rjdecoded;
+  pagescontainer = [];
+
+  spendata(i) {
+    if (this.addressCache[i].spendInfo != null) {
+      var spinfo = [];
+      for (
+        var b = 0;
+        b < Object.keys(this.addressCache[i].spendInfo.spendData).length;
+        b++
+      ) {
+        spinfo.push(
+          <tr key={this.addressCache[i].outputTxHash + "" + b}>
+            <td>
+              <table className="subtable">
+                <tr>
+                  <th>
+                    <p>
+                      <b>spendData</b>
+                    </p>
+                  </th>
+                </tr>
+                <tr>
+                  <td>
+                    <b>Value:</b>
+                    {this.addressCache[i].spendInfo.spendData[b].value}
+                  </td>
+                  <td>
+                    <b>Output Address:</b>{" "}
+                    <div>
+                      {
+                        this.addressCache[i].spendInfo.spendData[b]
+                          .outputAddress
+                      }
+                    </div>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        );
+      }
+      return spinfo;
+    }
+  }
+
+  printresults() {
+    this.txlist.length = 0;
+    var printbreaker = 1;
+    var txnumber = (this.selected - 1) * this.outputsperpage;
+    for (var i = txnumber; i < this.addressCache.length; i++) {
+      this.txlist.push(
+        <tr key={this.addressCache[i].outputTxHash}>
+          <td className="txslnum">
+            #{i + 1} - <div>{this.addressCache[i].outputTxHash}</div> -
+            outputTxHash
+            <br />
+            <table>{this.spendata(i)}</table>
+          </td>
+        </tr>
+      );
+
+      if (printbreaker === this.outputsperpage) {
+        break;
+      }
+
+      printbreaker += 1;
+    }
+  }
+
+  printpagination() {
+    if (this.currentbatchnum === this.batches) {
+      if (this.totalpagesavailable % this.fixedpagearrlength === 0) {
+        this.pagearrlength = this.fixedpagearrlength;
+      } else {
+        this.pagearrlength = this.totalpagesavailable % this.fixedpagearrlength;
+      }
+    } else {
+      this.pagearrlength = this.fixedpagearrlength;
+    }
+    this.pagescontainer.length = 0;
+    if (this.pagearray[0] !== 1) {
+      this.pagescontainer.push(
+        <li key="leftangular" className="page-item active">
+          <a className="arrows" id="leftarrow">
+            &#x3008;
+          </a>
+        </li>
+      );
+    }
+    for (var i = 0; i < this.pagearrlength; i++) {
+      if (this.pagearray[i] === this.selected) {
+        this.pagescontainer.push(
+          <li key={this.pagearray[i]} className="page-item active">
+            <a className="page-link" id={this.pagearray[i]}>
+              {this.pagearray[i]}
+            </a>
+          </li>
+        );
+      } else {
+        this.pagescontainer.push(
+          <li key={this.pagearray[i]} className="page-item">
+            <a className="page-link" id={this.pagearray[i]}>
+              {this.pagearray[i]}
+            </a>
+          </li>
+        );
+      }
+    }
+    if (
+      this.pagearray[this.pagearrlength - 1] !== this.totalpagesavailable ||
+      this.nextcursor != null
+    ) {
+      this.pagescontainer.push(
+        <li key="rightangular" className="page-item active">
+          <a className="arrows" id="rightarrow">
+            &#x3009;
+          </a>
+        </li>
+      );
+    }
+    this.addlistener();
+  }
+
+  addlistener() {
+    /*  var clickedpage = document.getElementsByClassName("page-link");
+    for (var a = 0; a < clickedpage.length; a++) {
+      clickedpage[a].addEventListener("click", function () {
+        this.selected = this.id;
+        this.printpagination();
+        this.printresults();
+      });
+    }
+    if (this.pagearray[0] != 1) {
+      document
+        .getElementById("leftarrow")
+        .addEventListener("click", function () {
+          currentbatchnum = Math.ceil(pagearray[0] / totalpagesavailable);
+          currentbatchnum -= 1;
+          var ltindex = pagearray[0] - fixedpagearrlength;
+
+          for (var t = 0; t < fixedpagearrlength; t++) {
+            pagearray[t] = ltindex;
+            console.log(pagearray[t] + "pagearray[t]");
+            ltindex += 1;
+          }
+
+          printpagination();
+        });
+    }
+    if (
+      pagearray[pagearray.length - 1] != totalpagesavailable ||
+      nextcursor != null
+    ) {
+      document
+        .getElementById("rightarrow")
+        .addEventListener("click", function () {
+          console.log("right arrow clicked");
+          //  console.log(pagearray[pagearray.length-1]+"pagearray[pagearray.length-1]");
+          console.log(totalpagesavailable + "totalpagesavailable");
+          currentbatchnum = Math.ceil(pagearray[0] / fixedpagearrlength);
+          if (
+            pagearray[pagearray.length - 1] == totalpagesavailable &&
+            nextcursor != null
+          ) {
+            httpsreq(
+              "adddataupdatepagearray",
+              "getOutputsByAddress",
+              100,
+              nextcursor
+            );
+          } else {
+            console.log("elseblock");
+            currentbatchnum += 1;
+            var tindex = pagearray[pagearray.length - 1];
+
+            if (
+              pagearray[pagearray.length - 1] + fixedpagearrlength >
+              totalpagesavailable
+            ) {
+              pagearrlength = totalpagesavailable % fixedpagearrlength;
+            } else {
+              pagearrlength = fixedpagearrlength;
+            }
+            for (var t = 0; t < pagearrlength; t++) {
+              tindex += 1;
+              pagearray[t] = tindex;
+              console.log(pagearray[t] + "pagearray[t]");
+            }
+            printpagination();
+          }
+        });
+    }*/
+  }
+
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch(walletActions.getCurrentBalance());
@@ -31,6 +238,11 @@ class WalletHome extends React.Component {
 
   render() {
     const allprops = this.props;
+    if (allprops.allTx !== undefined) {
+      this.rjdecoded = allprops.allTx;
+      console.log(allprops.allTx.outputs + "allprops");
+      console.log(allprops.currentBalance + "allprops");
+    }
     let pop;
     const sendCurPopOpen = this.state.sendCurPopOpen;
     if (sendCurPopOpen) {
@@ -64,8 +276,7 @@ class WalletHome extends React.Component {
 
           <div className="row">
             <div className="col-md-12 col-lg-12">
-              <table id="txlist"></table>
-              {allprops.allTx}
+              <table id="txlist">{this.txlist}</table>
             </div>
           </div>
           <div className="row">
@@ -74,7 +285,9 @@ class WalletHome extends React.Component {
                 <ul
                   className="pagination justify-content-center"
                   id="pagination"
-                ></ul>
+                >
+                  {this.pagescontainer}
+                </ul>
               </nav>
             </div>
           </div>
@@ -125,15 +338,15 @@ WalletHome.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   currentBalance: PropTypes.number.isRequired,
-  allTx: PropTypes.string.isRequired,
+  allTx: PropTypes.any
 };
 
-WalletHome.defaultProps = {};
+WalletHome.defaultProps = { allTx: "" };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   currentBalance: walletSelectors.getCurrentBalance(state),
-  allTx: walletSelectors.getAllTx(state),
+  allTx: walletSelectors.getAllTx(state)
 });
 
 export default connect(mapStateToProps)(WalletHome);
