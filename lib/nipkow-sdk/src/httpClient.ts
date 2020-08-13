@@ -2,7 +2,12 @@ import https from 'https';
 import axios, { AxiosRequestConfig } from 'axios';
 
 const httpReq = axios.create({
-  baseURL: 'https://127.0.0.1:9091/v1',
+  // baseURL:
+  //   'https://' +
+  //   localStorage.getItem('hostname') +
+  //   ':' +
+  //   localStorage.getItem('port') +
+  //   '/v1',
   httpsAgent: new https.Agent({
     rejectUnauthorized: false,
   }),
@@ -13,7 +18,7 @@ const httpReq = axios.create({
 
 httpReq.interceptors.request.use(
   config => {
-    // const token = localStorage.getItem('token');
+    // const token = localStorage.getItem('sessionkey');
     const token =
       '8bf23a8b224b4d5a3a4f158aa1e495fcbbb35d1c64b3cc0acc6abfcd7e4e5907';
     config.headers.Authorization = token ? `Bearer ${token}` : '';

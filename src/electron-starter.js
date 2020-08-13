@@ -10,7 +10,7 @@ function createWindow() {
       webSecurity: false,
     },
   });
-  win.maximize();
+  // win.maximize();
   win.show();
 
   // and load the index.html of the app.

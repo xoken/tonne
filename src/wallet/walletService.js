@@ -93,16 +93,35 @@ class WalletService {
     addressess.push('18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9');
     addressess.push('1GXRNe36nJinKjFWcknnGH3VpDj5hh5AYv');
     addressess.push('19irWGAyKawyFUNvgXEKGKUuAdtpDyXd1b');
-    try {
-      const data = await addressAPI.getOutputsByAddress(addressess, 1000);
-      if (data.nextCursor) {
-        // const data = await addressAPI.getOutputsByAddress(addressess, 1000);
-      }
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }
+
+    const bal = await this.recursive(addressess);
+    console.log(bal);
     return utils.getCurrentBalance();
+  };
+
+  recursive = async (addressess, cursor, currBal = 0) => {
+    try {
+      const data = await addressAPI.getOutputsByAddress(
+        addressess,
+        1000,
+        cursor
+      );
+      console.log(data);
+      const dummyData = { nextCursor: '5', outputs: [1, 2, 3, 4, 5] };
+      const balance = dummyData.outputs.reduce(
+        (acc, currValue, currIndex, array) => {
+          return acc + currValue;
+        },
+        currBal
+      );
+      if (!cursor) {
+        this.recursive(addressess, dummyData.nextCursor, balance);
+      } else {
+        return balance;
+      }
+    } catch (error) {
+      throw error;
+    }
   };
 }
 
