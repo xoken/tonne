@@ -1,6 +1,9 @@
 .nonheader {
   margin-top: 50px;
 }
+.generalheadingscolor{
+  color:grey;
+}
 .txbtn {
   display: inline-block;
   font-weight: 400;
@@ -24,6 +27,7 @@
   animation-duration: 1.5s;
   position: relative;
   animation-name: buttonslide;
+  transition: background-color 0.35s ease-in-out;
 }
 .txbtn:hover {
   background-color: grey;

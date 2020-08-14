@@ -2238,7 +2238,11 @@ class ExistingWallet extends React.Component {
         <div className="container nonheader">
           <div className="row">
             <div className="col-lg-12 col-md-12 col-sm-12">
-              <div id="mnemonic" onChange={this.mnemonicupdate}></div>
+              <div
+                id="mnemonic"
+                className="mnemonic"
+                onChange={this.mnemonicupdate}
+              ></div>
               <div id="wordsremaining">(0 of 12)</div>
             </div>
           </div>

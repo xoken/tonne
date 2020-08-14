@@ -1,8 +1,8 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import * as walletActions from '../walletActions';
-import * as walletSelectors from '../walletSelectors';
+import React from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import * as walletActions from "../walletActions";
+import * as walletSelectors from "../walletSelectors";
 
 class NewWallet extends React.Component {
   generateMnemonic = () => {
@@ -11,35 +11,39 @@ class NewWallet extends React.Component {
   };
 
   onContinue = () => {
-    this.props.history.push('/wallet/home');
+    this.props.history.push("/wallet/home");
   };
 
   render() {
     return (
-      <div>
-        <h3>Secret Backup Phrase</h3>
-        <p className="lead">
-          Your secret backup phrase makes it easy to back up and restore your
-          account
-        </p>
-        <div>
-          <textarea rows="2" value={this.props.bip39Mnemonic} readOnly />
+      <div className="container nonheader">
+        <div className="row">
+          <div className="col-lg-12 col-md-12 col-sm-12 centerall">
+            <h5 className="generalheadingscolor">
+              Please write down these words on a piece of paper. This seed will
+              help recover your wallet in the future.
+            </h5>
+            <div>
+              <div className="mnemonic">{this.props.bip39Mnemonic}</div>
+            </div>
+            <button
+              type="button"
+              className="generalbtns"
+              onClick={this.generateMnemonic}
+            >
+              Generate Mnemonic
+            </button>
+            <br />
+            <button
+              type="button"
+              className="generalbtns"
+              onClick={this.onContinue}
+            >
+              Continue
+            </button>
+            <p></p>
+          </div>
         </div>
-        <button
-          type="button"
-          className="btn btn-primary btn-md"
-          onClick={this.generateMnemonic}
-        >
-          Generate Mnemonic
-        </button>
-        <button
-          type="button"
-          className="btn btn-primary btn-md"
-          onClick={this.onContinue}
-        >
-          Continue
-        </button>
-        <p></p>
       </div>
     );
   }
@@ -48,16 +52,16 @@ class NewWallet extends React.Component {
 NewWallet.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  bip39Mnemonic: PropTypes.string,
+  bip39Mnemonic: PropTypes.string
 };
 
 NewWallet.defaultProps = {
-  bip39Mnemonic: '',
+  bip39Mnemonic: ""
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
-  bip39Mnemonic: walletSelectors.getMnemonic(state),
+  bip39Mnemonic: walletSelectors.getMnemonic(state)
 });
 
 export default connect(mapStateToProps)(NewWallet);
