@@ -3,8 +3,13 @@ import { connect } from "react-redux";
 import PropTypes from "prop-types";
 import * as walletActions from "../walletActions";
 import * as walletSelectors from "../walletSelectors";
-
+var globmnorig = "";
+var globmndupl = "";
 class NewWallet extends React.Component {
+  morigfull = "";
+  mnorig = [];
+  mndupl = [];
+  self = this;
   generateMnemonic = () => {
     const { dispatch } = this.props;
     dispatch(walletActions.initWallet());
@@ -14,7 +19,53 @@ class NewWallet extends React.Component {
     this.props.history.push("/wallet/home");
   };
 
+  addmnwordlistener = () => {
+    var mnwords = document.getElementsByClassName("mnword");
+    for (var j = 0; j < mnwords.length; j++) {
+      mnwords[j].addEventListener("mouseenter", function() {
+        this.textContent = globmnorig[this.id];
+      });
+      mnwords[j].addEventListener("mouseleave", function() {
+        this.textContent = globmndupl[this.id];
+      });
+    }
+  };
+
+  printmn = () => {
+    document.getElementById("mnemonic").innerHTML = this.morigfull;
+    document.getElementById("unmaskhint").innerHTML =
+      "<h6>Hint: Move your mouse pointer over the masked words to unmask them</h6>";
+  };
+
   render() {
+    this.morigfull = "";
+    this.mnorig.length = 0;
+    this.mndupl.length = 0;
+    if (this.props.bip39Mnemonic !== "undefined") {
+      var mnwordarray = this.props.bip39Mnemonic.split(" ");
+      for (var k = 0; k < mnwordarray.length; k++) {
+        if (mnwordarray[k][0] !== undefined) {
+          this.mndupl[k] = mnwordarray[k][0].toString();
+          for (var l = 1; l < mnwordarray[k].length; l++) {
+            this.mndupl[k] += "*";
+          }
+          this.morigfull +=
+            "<span class='mnword' id='" + k + "'>" + this.mndupl[k] + "</span>";
+        }
+        this.mnorig.push(mnwordarray[k]);
+
+        if (k !== mnwordarray.length) {
+          this.morigfull += "<span class='mnmargin'></span>";
+        }
+      }
+      globmnorig = this.mnorig;
+      globmndupl = this.mndupl;
+      if (document.getElementById("mnemonic") !== null) {
+        this.printmn();
+        this.addmnwordlistener();
+      }
+    }
+
     return (
       <div className="container nonheader">
         <div className="row">
@@ -24,8 +75,10 @@ class NewWallet extends React.Component {
               help recover your wallet in the future.
             </h5>
             <div>
-              <div className="mnemonic">{this.props.bip39Mnemonic}</div>
+              <div className="mnemonic" id="mnemonic"></div>
             </div>
+            <div id="unmaskhint"></div>
+
             <button
               type="button"
               className="generalbtns"

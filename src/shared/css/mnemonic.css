@@ -34,7 +34,12 @@
   font-size: 18px;
   min-width: 100px;
 }
-
+.mnmargin{
+  margin:0px 5px 0px 5px;
+}
+.mnword{
+  
+}
 #alphabets {
   padding: 0px 20px 0px 20px;
 }
@@ -47,7 +52,7 @@
   border: 1pt solid lightgrey;
   min-height: 30px;
   user-select: none;
-  margin:20px 0px 20px 0px; 
+  margin:20px 0px 20px 0px;
 }
 #backspc {
   float: right;
