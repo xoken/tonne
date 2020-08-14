@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrowserRouter, Route, Link } from 'react-router-dom';
-import Login from './explorer/Login';
+import PasswordScreen from './wallet/screens/PasswordScreen';
 import Wallet from './wallet/screens/Wallet';
 import NewWallet from './wallet/screens/NewWallet';
 import ExistingWallet from './wallet/screens/ExistingWallet';
@@ -49,9 +49,7 @@ export default class App extends React.Component {
             </form>
           </div>
         </nav>
-        <Route exact path="/">
-          <Login />
-        </Route>
+        <Route exact path="/" component={PasswordScreen} />
         <Route exact path="/wallet" component={Wallet} />
         <Route exact path="/wallet/new" component={NewWallet} />
         <Route exact path="/wallet/existing" component={ExistingWallet} />
