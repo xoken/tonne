@@ -26,8 +26,8 @@ export const initWallet = (bip39Mnemonic) => (
 ) => {
   dispatch(initWalletRequest());
   try {
-    const info = serviceInjector(WalletService).initWallet(bip39Mnemonic);
-    dispatch(initWalletSuccess(info));
+    const response = serviceInjector(WalletService).initWallet(bip39Mnemonic);
+    dispatch(initWalletSuccess(response));
   } catch (error) {
     console.log(error);
     dispatch(initWalletFailure());
@@ -41,20 +41,8 @@ export const getCurrentBalance = () => async (
 ) => {
   dispatch(getCurrentBalanceRequest());
   try {
-    const {
-      currBal,
-      totalOutputs,
-      currOutputs,
-      currCursor,
-    } = await serviceInjector(WalletService).getCurrentBalance();
-    dispatch(
-      getCurrentBalanceSuccess({
-        currBal,
-        totalOutputs,
-        currOutputs,
-        currCursor,
-      })
-    );
+    const response = await serviceInjector(WalletService).getCurrentBalance();
+    dispatch(getCurrentBalanceSuccess(response));
   } catch (error) {
     dispatch(getCurrentBalanceFailure());
   }

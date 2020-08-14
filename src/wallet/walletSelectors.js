@@ -14,7 +14,7 @@ export const getMnemonic = createSelector(
 
 export const getCurrentBalance = createSelector(
   [getWallet],
-  ({ currBal }) => currBal
+  ({ balance }) => balance
 );
 
 export const getOutputs = createSelector([getWallet], ({ outputs }) => outputs);

@@ -265,7 +265,7 @@ class WalletHome extends React.Component {
       console.log(allprops.allTx.outputs + 'allprops');
       console.log(allprops.currentBalance + 'allprops');
     }
-    const { currBal } = this.props;
+    const { balance } = this.props;
     // let pop;
     // const sendCurPopOpen = this.state.sendCurPopOpen;
     // if (sendCurPopOpen) {
@@ -288,7 +288,7 @@ class WalletHome extends React.Component {
                   <img src={bsvlogo} alt="" />
                 </div>
                 <h5>Your Current Balance is</h5>
-                <h4>{satoshiToBSV(currBal)} BSV</h4>
+                <h4>{satoshiToBSV(balance)} BSV</h4>
                 <div className="txbtn" onClick={this.toggleSendTxPopup}>
                   Send
                 </div>
@@ -342,7 +342,7 @@ class WalletHome extends React.Component {
 WalletHome.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  currBal: PropTypes.number.isRequired,
+  balance: PropTypes.number.isRequired,
   outputs: PropTypes.arrayOf(
     PropTypes.shape({
       date: PropTypes.string.isRequired,
@@ -357,7 +357,7 @@ WalletHome.defaultProps = {
 
 const mapStateToProps = (state) => ({
   isLoading: walletSelectors.isLoading(state),
-  currBal: walletSelectors.getCurrentBalance(state),
+  balance: walletSelectors.getCurrentBalance(state),
   outputs: walletSelectors.getOutputs(state),
 });
 

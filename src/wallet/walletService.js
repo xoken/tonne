@@ -36,26 +36,33 @@ class WalletService {
     const bip32ExtendedPublicKey = utils.getBIP32ExtendedPubKey(
       bip32ExtendedKey
     );
-    const derivedAddressess = this.generateDerivedAddessess(
+    const derivedKeys = this.generateDerivedKeys(
       bip32ExtendedKey,
       0,
       20,
       false
     );
-
     return {
       bip39Mnemonic,
       bip39SeedHex,
       bip32RootKeyBase58,
+      bip32ExtendedKey,
       accountExtendedPrivateKey,
       accountExtendedPublicKey,
       bip32ExtendedPrivateKey,
       bip32ExtendedPublicKey,
-      derivedAddressess,
+      derivedKeys,
     };
   };
 
-  generateDerivedAddessess = (
+  getCurrentBalance = async () => {
+    const {
+      wallet: { derivedKeys },
+    } = this.store.getState();
+    return await this.calculateBalance(derivedKeys);
+  };
+
+  generateDerivedKeys = (
     bip32ExtendedKey,
     indexStart,
     count,
@@ -63,7 +70,63 @@ class WalletService {
     bip38password,
     useHardenedAddresses
   ) => {
-    const derivedAddressess = [];
+    if (indexStart === 0) {
+      const addressess = [];
+      addressess.push({
+        address: '14QdCax3sR6ZVMo6smMyUNzN5Fx9zA8Sjj',
+        isUsed: false,
+      });
+      addressess.push({
+        address: '17VaRoTC8dkb6vHyE37EPZByzpKvK1u2ZU',
+        isUsed: false,
+      });
+      addressess.push({
+        address: '1NGw8LYZ93g2RiZpiP4eCniU4YmQjH1tP9',
+        isUsed: false,
+      });
+      addressess.push({
+        address: '1EHM42QUBLSA9AdJGH6XmAMYSnh7rzTPuR',
+        isUsed: false,
+      });
+      addressess.push({
+        address: '1JbmUfm9fpu5o9BfCATRhbp4NiDR5D3UBX',
+        isUsed: false,
+      });
+      addressess.push({
+        address: '14gMdTsvq3Q6PnXK5jhn8KVgvWJnxzDV5m',
+        isUsed: false,
+      });
+      return addressess;
+    } else if (indexStart === 6) {
+      const addressess = [];
+      addressess.push({
+        address: '18E2ymquodpWHNhNzo8BC8d6QDwJNsEaYV',
+        isUsed: false,
+      });
+      addressess.push({
+        address: '1A6NvRKPsswAX8wwPKY4Ti5FBeNCpne1NC',
+        isUsed: false,
+      });
+      addressess.push({
+        address: '18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9',
+        isUsed: false,
+      });
+      addressess.push({
+        address: '1GXRNe36nJinKjFWcknnGH3VpDj5hh5AYv',
+        isUsed: false,
+      });
+      addressess.push({
+        address: '19irWGAyKawyFUNvgXEKGKUuAdtpDyXd1b',
+        isUsed: false,
+      });
+      addressess.push({
+        address: '18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9',
+        isUsed: false,
+      });
+      return addressess;
+    }
+
+    const derivedKeys = [];
     for (let i = indexStart; i < indexStart + count; i++) {
       const derivedKey = utils.generateDerivedAddress(
         bip32ExtendedKey,
@@ -72,116 +135,102 @@ class WalletService {
         bip38password,
         useHardenedAddresses
       );
-      derivedAddressess.push(derivedKey);
+      derivedKeys.push({ ...derivedKey, isUsed: false });
     }
-    return derivedAddressess;
+    return derivedKeys;
   };
 
-  getOutputs = async () => {
-    const placeholderAdd = '12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX';
-    try {
-      const data = await addressAPI.getOutputsByAddress(placeholderAdd);
-      console.log(data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  getCurrentBalance = async () => {
-    // const {
-    //   wallet: { derivedAddressess },
-    // } = this.store.getState();
-    // const addressess = derivedAddressess.map(
-    //   (derivedAddress) => derivedAddress.address
-    // );
-    const addressess = [];
-    addressess.push('14QdCax3sR6ZVMo6smMyUNzN5Fx9zA8Sjj');
-    addressess.push('17VaRoTC8dkb6vHyE37EPZByzpKvK1u2ZU');
-    addressess.push('1NGw8LYZ93g2RiZpiP4eCniU4YmQjH1tP9');
-    addressess.push('1EHM42QUBLSA9AdJGH6XmAMYSnh7rzTPuR');
-    addressess.push('1JbmUfm9fpu5o9BfCATRhbp4NiDR5D3UBX');
-    addressess.push('14gMdTsvq3Q6PnXK5jhn8KVgvWJnxzDV5m');
-    const x = await this.recursiveFunction(addressess);
-    debugger;
-    return x;
-  };
-
-  recursiveFunction = async (
-    addresses,
-    prevBal = 0,
-    prevAddressWithStatus = []
+  calculateBalance = async (
+    keys,
+    prevBalance = 0,
+    prevOutputs = [],
+    prevKeys = []
   ) => {
-    const { currBal, currOutputs } = await this.getOutputsByAddressesRecursive(
-      addresses
-    );
-    const addressesWithStatus = addresses.map((address) => {
-      const found = currOutputs.some((output) => output.address === address);
-      return { address, isUsed: found };
+    const { balance, outputs } = await this.getOutputsByAddresses(keys);
+    const updatedKeys = keys.map((key) => {
+      const found = outputs.some((output) => output.address === key.address);
+      return { ...key, isUsed: found };
     });
-
-    const newBal = prevBal + currBal;
-    const newAddressWithStatus = [
-      ...prevAddressWithStatus,
-      ...addressesWithStatus,
-    ];
-
-    const isAllAddressUsed = addressesWithStatus.some((newAddress) => {
-      if (newAddress.isUsed === false) {
+    const newBalance = prevBalance + balance;
+    const newKeys = [...prevKeys, ...updatedKeys];
+    const newOutputs = [...prevOutputs, ...outputs];
+    const isAllKeyUsed = updatedKeys.some((key) => {
+      if (key.isUsed === false) {
         return false;
       }
       return true;
     });
-
-    if (isAllAddressUsed) {
-      const newAddress = this.getMoreAddressess();
-      // const newAddress = this.generateDerivedAddessess()
-      return this.recursiveFunction(newAddress, newBal, newAddressWithStatus);
+    const {
+      wallet: { bip32ExtendedKey },
+    } = this.store.getState();
+    if (isAllKeyUsed) {
+      const newDerivedKeys = this.generateDerivedKeys(
+        bip32ExtendedKey,
+        newKeys.length,
+        20,
+        false
+      );
+      return this.calculateBalance(
+        newDerivedKeys,
+        newBalance,
+        newOutputs,
+        newKeys
+      );
     } else {
-      return { currBal: newBal, addressesWithStatus };
+      const countOfUnusedKeys = updatedKeys.reduce((acc, currKey) => {
+        if (!currKey.isUsed) {
+          acc = acc + 1;
+        }
+        return acc;
+      }, 0);
+      if (countOfUnusedKeys < 20) {
+        const remainingDerivedKeys = this.generateDerivedKeys(
+          bip32ExtendedKey,
+          newKeys.length,
+          20 - countOfUnusedKeys,
+          false
+        );
+        return {
+          balance: newBalance,
+          outputs: newOutputs,
+          derivedKeys: [...newKeys, ...remainingDerivedKeys],
+        };
+      }
+      return { balance: newBalance, outputs: newOutputs, derivedKeys: newKeys };
     }
   };
 
-  getMoreAddressess() {
-    const tempAddressess = [
-      '18E2ymquodpWHNhNzo8BC8d6QDwJNsEaYV',
-      '1A6NvRKPsswAX8wwPKY4Ti5FBeNCpne1NC',
-      '1GXRNe36nJinKjFWcknnGH3VpDj5hh5AYv',
-      '19irWGAyKawyFUNvgXEKGKUuAdtpDyXd1b',
-      '12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX',
-    ];
-    return tempAddressess;
-  }
-
-  getOutputsByAddressesRecursive = async (
-    addressess,
+  getOutputsByAddresses = async (
+    keys,
     nextCursor,
-    prevBal = 0,
+    prevBalance = 0,
     prevOutputs = []
   ) => {
+    const addressess = keys.map((key) => key.address);
     try {
       const data = await addressAPI.getOutputsByAddresses(
         addressess,
         1000,
         nextCursor
       );
-      const currOutputs = [...prevOutputs, ...data.outputs];
-      const currBal = data.outputs.reduce((acc, currOutput) => {
+      const balance = data.outputs.reduce((acc, currOutput) => {
         if (!currOutput.spendInfo) {
           acc = acc + currOutput.value;
         }
         return acc;
-      }, prevBal);
+      }, prevBalance);
+      const outputs = [...prevOutputs, ...data.outputs];
       if (data.nextCursor) {
-        return await this.getOutputsByAddressRecursive(
-          addressess,
+        return await this.getOutputsByAddresses(
+          keys,
           data.nextCursor,
-          currBal,
-          currOutputs
+          balance,
+          outputs
         );
       } else {
         return {
-          currBal: currBal,
-          currOutputs: currOutputs,
+          balance,
+          outputs,
         };
       }
     } catch (error) {
