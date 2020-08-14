@@ -12,7 +12,7 @@ class PasswordScreen extends React.Component {
     this.handleContinue = this.handleContinue.bind(this);
   }
   checkForExistingUser = () => {
-    if (localStorage.getItem("mnemonic") === undefined) {
+    if (localStorage.getItem("mnemonic") === null) {
       this.props.history.push("/wallet");
     }
   };
