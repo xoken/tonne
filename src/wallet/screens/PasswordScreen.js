@@ -5,17 +5,28 @@ import * as walletActions from "../walletActions";
 import * as walletSelectors from "../walletSelectors";
 
 class PasswordScreen extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { value: "" };
+    this.handleChange = this.handleChange.bind(this);
+    this.handleContinue = this.handleContinue.bind(this);
+  }
   checkForExistingUser = () => {
-    if (localStorage.getItem("mnemonic") == undefined) {
+    if (localStorage.getItem("mnemonic") === undefined) {
       this.props.history.push("/wallet");
     }
   };
 
-  onContinue = () => {
+  handleChange(event) {
+    this.setState({ value: event.target.value });
+  }
+
+  handleContinue(event) {
     const { dispatch } = this.props;
     dispatch(walletActions.initWallet());
     this.props.history.push("/wallet/home");
-  };
+    event.preventDefault();
+  }
 
   render() {
     this.checkForExistingUser();
@@ -24,22 +35,24 @@ class PasswordScreen extends React.Component {
         <div className="container nonheader">
           <div className="row">
             <div className="col-md-12 col-lg-12 centerall">
-              <div className="form-group">
-                <label>
-                  Your wallet is encrypted with a password. Please enter your
-                  password to unlock it.
-                </label>
-                <label>Password</label>
-                <input
-                  type="password"
-                  className="form-control"
-                  id="password"
-                  placeholder="Password"
-                />
-              </div>
-              <div className="txbtn" onClick={this.onContinue}>
-                Continue
-              </div>
+              <form onSubmit={this.handleContinue}>
+                <div className="form-group">
+                  <label>
+                    Your wallet is encrypted with a password. Please enter your
+                    password to unlock it.
+                  </label>
+                  <label>Password</label>
+                  <input
+                    type="password"
+                    className="form-control"
+                    id="password"
+                    placeholder="Password"
+                    value={this.state.value}
+                    onChange={this.handleChange}
+                  />
+                </div>
+                <input className="txbtn" type="submit" value="Continue" />
+              </form>
             </div>
           </div>
         </div>
