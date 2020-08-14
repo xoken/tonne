@@ -38,7 +38,8 @@ class WalletService {
     );
     const derivedAddressess = this.generateDerivedAddessess(
       bip32ExtendedKey,
-      2,
+      0,
+      20,
       false
     );
 
@@ -56,13 +57,14 @@ class WalletService {
 
   generateDerivedAddessess = (
     bip32ExtendedKey,
+    indexStart,
     count,
     useBip38,
     bip38password,
     useHardenedAddresses
   ) => {
     const derivedAddressess = [];
-    for (let i = 0; i < count; i++) {
+    for (let i = indexStart; i < indexStart + count; i++) {
       const derivedKey = utils.generateDerivedAddress(
         bip32ExtendedKey,
         i,
@@ -86,33 +88,75 @@ class WalletService {
   };
 
   getCurrentBalance = async () => {
-    const {
-      wallet: { derivedAddressess },
-    } = this.store.getState();
-    const addressess = derivedAddressess.map(
-      (derivedAddress) => derivedAddress.address
-    );
-    // addressess.push('14QdCax3sR6ZVMo6smMyUNzN5Fx9zA8Sjj');
-    // addressess.push('17VaRoTC8dkb6vHyE37EPZByzpKvK1u2ZU');
-    // addressess.push('1NGw8LYZ93g2RiZpiP4eCniU4YmQjH1tP9');
-    // addressess.push('1EHM42QUBLSA9AdJGH6XmAMYSnh7rzTPuR');
-    // addressess.push('1JbmUfm9fpu5o9BfCATRhbp4NiDR5D3UBX');
-    // addressess.push('14gMdTsvq3Q6PnXK5jhn8KVgvWJnxzDV5m');
-    // addressess.push('18E2ymquodpWHNhNzo8BC8d6QDwJNsEaYV');
-    // addressess.push('1A6NvRKPsswAX8wwPKY4Ti5FBeNCpne1NC');
-    // addressess.push('18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9');
-    // addressess.push('1GXRNe36nJinKjFWcknnGH3VpDj5hh5AYv');
-    // addressess.push('19irWGAyKawyFUNvgXEKGKUuAdtpDyXd1b');
-    addressess.push('12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX');
-    return await this.getOutputsByAddressRecursive(addressess);
+    // const {
+    //   wallet: { derivedAddressess },
+    // } = this.store.getState();
+    // const addressess = derivedAddressess.map(
+    //   (derivedAddress) => derivedAddress.address
+    // );
+    const addressess = [];
+    addressess.push('14QdCax3sR6ZVMo6smMyUNzN5Fx9zA8Sjj');
+    addressess.push('17VaRoTC8dkb6vHyE37EPZByzpKvK1u2ZU');
+    addressess.push('1NGw8LYZ93g2RiZpiP4eCniU4YmQjH1tP9');
+    addressess.push('1EHM42QUBLSA9AdJGH6XmAMYSnh7rzTPuR');
+    addressess.push('1JbmUfm9fpu5o9BfCATRhbp4NiDR5D3UBX');
+    addressess.push('14gMdTsvq3Q6PnXK5jhn8KVgvWJnxzDV5m');
+    const x = await this.recursiveFunction(addressess);
+    debugger;
+    return x;
   };
 
-  getOutputsByAddressRecursive = async (
+  recursiveFunction = async (
+    addresses,
+    prevBal = 0,
+    prevAddressWithStatus = []
+  ) => {
+    const { currBal, currOutputs } = await this.getOutputsByAddressesRecursive(
+      addresses
+    );
+    const addressesWithStatus = addresses.map((address) => {
+      const found = currOutputs.some((output) => output.address === address);
+      return { address, isUsed: found };
+    });
+
+    const newBal = prevBal + currBal;
+    const newAddressWithStatus = [
+      ...prevAddressWithStatus,
+      ...addressesWithStatus,
+    ];
+
+    const isAllAddressUsed = addressesWithStatus.some((newAddress) => {
+      if (newAddress.isUsed === false) {
+        return false;
+      }
+      return true;
+    });
+
+    if (isAllAddressUsed) {
+      const newAddress = this.getMoreAddressess();
+      // const newAddress = this.generateDerivedAddessess()
+      return this.recursiveFunction(newAddress, newBal, newAddressWithStatus);
+    } else {
+      return { currBal: newBal, addressesWithStatus };
+    }
+  };
+
+  getMoreAddressess() {
+    const tempAddressess = [
+      '18E2ymquodpWHNhNzo8BC8d6QDwJNsEaYV',
+      '1A6NvRKPsswAX8wwPKY4Ti5FBeNCpne1NC',
+      '1GXRNe36nJinKjFWcknnGH3VpDj5hh5AYv',
+      '19irWGAyKawyFUNvgXEKGKUuAdtpDyXd1b',
+      '12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX',
+    ];
+    return tempAddressess;
+  }
+
+  getOutputsByAddressesRecursive = async (
     addressess,
     nextCursor,
     prevBal = 0,
-    prevOutputs = [],
-    prevCursor = null
+    prevOutputs = []
   ) => {
     try {
       const data = await addressAPI.getOutputsByAddresses(
@@ -120,33 +164,24 @@ class WalletService {
         1000,
         nextCursor
       );
-      const currOutputs = prevOutputs.length === 0 ? data.outputs : prevOutputs;
-      const currCursor = prevCursor === null ? data.nextCursor : prevCursor;
-      const totalOutputs = prevOutputs.length + data.outputs.length;
-      const currBal = data.outputs.reduce(
-        (acc, currOutput, currIndex, array) => {
-          if (!currOutput.spendInfo) {
-            acc = acc + currOutput.value;
-          }
-          return acc;
-        },
-        prevBal
-      );
+      const currOutputs = [...prevOutputs, ...data.outputs];
+      const currBal = data.outputs.reduce((acc, currOutput) => {
+        if (!currOutput.spendInfo) {
+          acc = acc + currOutput.value;
+        }
+        return acc;
+      }, prevBal);
       if (data.nextCursor) {
-        debugger;
         return await this.getOutputsByAddressRecursive(
           addressess,
           data.nextCursor,
           currBal,
-          currOutputs,
-          currCursor
+          currOutputs
         );
       } else {
         return {
           currBal: currBal,
-          totalOutputs: totalOutputs,
           currOutputs: currOutputs,
-          currCursor: currCursor,
         };
       }
     } catch (error) {

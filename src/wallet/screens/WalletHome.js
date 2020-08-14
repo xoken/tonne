@@ -16,7 +16,7 @@ class WalletHome extends React.Component {
     const { dispatch } = this.props;
     // dispatch(walletActions.getOutputs());
     dispatch(walletActions.getCurrentBalance());
-    dispatch(walletActions.getAllTx());
+    // dispatch(walletActions.getAllTx());
   }
 
   toggleSendTxPopup = () => {
@@ -265,6 +265,7 @@ class WalletHome extends React.Component {
       console.log(allprops.allTx.outputs + 'allprops');
       console.log(allprops.currentBalance + 'allprops');
     }
+    const { currBal } = this.props;
     // let pop;
     // const sendCurPopOpen = this.state.sendCurPopOpen;
     // if (sendCurPopOpen) {

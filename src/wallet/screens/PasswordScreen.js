@@ -1,24 +1,24 @@
-import React from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import * as walletActions from "../walletActions";
-import * as walletSelectors from "../walletSelectors";
+import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import * as walletActions from '../walletActions';
+import * as walletSelectors from '../walletSelectors';
 
 class PasswordScreen extends React.Component {
   checkForExistingUser = () => {
-    if (localStorage.getItem("mnemonic") == undefined) {
-      this.props.history.push("/wallet");
+    if (localStorage.getItem('mnemonic') === undefined) {
+      this.props.history.push('/wallet');
     }
   };
 
   onContinue = () => {
     const { dispatch } = this.props;
     dispatch(walletActions.initWallet());
-    this.props.history.push("/wallet/home");
+    this.props.history.push('/wallet/home');
   };
 
   render() {
-    this.checkForExistingUser();
+    // this.checkForExistingUser();
     return (
       <>
         <div className="container nonheader">
@@ -50,13 +50,13 @@ class PasswordScreen extends React.Component {
 
 PasswordScreen.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired
+  isLoading: PropTypes.bool.isRequired,
 };
 
 PasswordScreen.defaultProps = {};
 
-const mapStateToProps = state => ({
-  isLoading: walletSelectors.isLoading(state)
+const mapStateToProps = (state) => ({
+  isLoading: walletSelectors.isLoading(state),
 });
 
 export default connect(mapStateToProps)(PasswordScreen);
