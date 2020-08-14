@@ -1,22 +1,25 @@
-import { createReducer } from "redux-act";
-import * as actions from "./walletActions";
+import { createReducer } from 'redux-act';
+import * as actions from './walletActions';
 
 const INITIAL_STATE = {
   // mnemonicLanguage: '',
-  bip39Mnemonic: "",
+  bip39Mnemonic: '',
   // bip39SplitMnemonic: [],
   // bip39Passphrase: '',
-  bip39SeedHex: "",
+  bip39SeedHex: '',
   // coin: '',
-  bip32RootKeyBase58: "",
-  accountExtendedPrivateKey: "",
-  accountExtendedPublicKey: "",
+  bip32RootKeyBase58: '',
+  accountExtendedPrivateKey: '',
+  accountExtendedPublicKey: '',
   // bip32DerivationPath: '',
-  bip32ExtendedPrivateKey: "",
-  bip32ExtendedPublicKey: "",
+  bip32ExtendedPrivateKey: '',
+  bip32ExtendedPublicKey: '',
   derivedAddressess: [],
   isLoading: false,
-  currentBalance: 0,
+  currBal: 0,
+  currOutputs: [],
+  currCursor: null,
+  totalOutputs: 0,
 };
 
 export default createReducer(
@@ -32,13 +35,21 @@ export default createReducer(
       bip32ExtendedPublicKey: payload.bip32ExtendedPublicKey,
       derivedAddressess: payload.derivedAddressess,
     }),
+    [actions.getCurrentBalanceRequest]: (state) => ({
+      ...state,
+      isLoading: true,
+    }),
     [actions.getCurrentBalanceSuccess]: (state, payload) => ({
       ...state,
-      currentBalance: payload.balance,
+      currBal: payload.currBal,
+      currOutputs: payload.currOutputs,
+      currCursor: payload.currCursor,
+      totalOutputs: payload.totalOutputs,
+      isLoading: false,
     }),
-    [actions.getAllTxSuccess]: (state, payload) => ({
+    [actions.getOutputsSuccess]: (state, payload) => ({
       ...state,
-      allTx: payload.outputs,
+      outputs: payload.outputs,
     }),
   },
   INITIAL_STATE

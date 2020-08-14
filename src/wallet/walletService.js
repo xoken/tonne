@@ -75,6 +75,16 @@ class WalletService {
     return derivedAddressess;
   };
 
+  getOutputs = async () => {
+    const placeholderAdd = '12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX';
+    try {
+      const data = await addressAPI.getOutputsByAddress(placeholderAdd);
+      console.log(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   getCurrentBalance = async () => {
     const {
       wallet: { derivedAddressess },
@@ -82,56 +92,65 @@ class WalletService {
     const addressess = derivedAddressess.map(
       (derivedAddress) => derivedAddress.address
     );
-    addressess.push('14QdCax3sR6ZVMo6smMyUNzN5Fx9zA8Sjj');
-    addressess.push('17VaRoTC8dkb6vHyE37EPZByzpKvK1u2ZU');
-    addressess.push('1NGw8LYZ93g2RiZpiP4eCniU4YmQjH1tP9');
-    addressess.push('1EHM42QUBLSA9AdJGH6XmAMYSnh7rzTPuR');
-    addressess.push('1JbmUfm9fpu5o9BfCATRhbp4NiDR5D3UBX');
-    addressess.push('14gMdTsvq3Q6PnXK5jhn8KVgvWJnxzDV5m');
-    addressess.push('18E2ymquodpWHNhNzo8BC8d6QDwJNsEaYV');
-    addressess.push('1A6NvRKPsswAX8wwPKY4Ti5FBeNCpne1NC');
-    addressess.push('18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9');
-    addressess.push('1GXRNe36nJinKjFWcknnGH3VpDj5hh5AYv');
-    addressess.push('19irWGAyKawyFUNvgXEKGKUuAdtpDyXd1b');
-
-    const bal = await this.recursive(addressess);
-    console.log(bal);
-    return utils.getCurrentBalance();
+    // addressess.push('14QdCax3sR6ZVMo6smMyUNzN5Fx9zA8Sjj');
+    // addressess.push('17VaRoTC8dkb6vHyE37EPZByzpKvK1u2ZU');
+    // addressess.push('1NGw8LYZ93g2RiZpiP4eCniU4YmQjH1tP9');
+    // addressess.push('1EHM42QUBLSA9AdJGH6XmAMYSnh7rzTPuR');
+    // addressess.push('1JbmUfm9fpu5o9BfCATRhbp4NiDR5D3UBX');
+    // addressess.push('14gMdTsvq3Q6PnXK5jhn8KVgvWJnxzDV5m');
+    // addressess.push('18E2ymquodpWHNhNzo8BC8d6QDwJNsEaYV');
+    // addressess.push('1A6NvRKPsswAX8wwPKY4Ti5FBeNCpne1NC');
+    // addressess.push('18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9');
+    // addressess.push('1GXRNe36nJinKjFWcknnGH3VpDj5hh5AYv');
+    // addressess.push('19irWGAyKawyFUNvgXEKGKUuAdtpDyXd1b');
+    addressess.push('12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX');
+    return await this.getOutputsByAddressRecursive(addressess);
   };
 
-  recursive = async (addressess, cursor, currBal = 0) => {
-    // const dummyAddress = '18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9';
+  getOutputsByAddressRecursive = async (
+    addressess,
+    nextCursor,
+    prevBal = 0,
+    prevOutputs = [],
+    prevCursor = null
+  ) => {
     try {
-      const data = await addressAPI.getOutputsByAddress(
+      const data = await addressAPI.getOutputsByAddresses(
         addressess,
         1000,
-        cursor
+        nextCursor
       );
-      console.log(data);
-      const dummyData = { nextCursor: '5', outputs: [1, 2, 3, 4, 5] };
-      const balance = dummyData.outputs.reduce(
-        (acc, currValue, currIndex, array) => {
-          return acc + currValue;
+      const currOutputs = prevOutputs.length === 0 ? data.outputs : prevOutputs;
+      const currCursor = prevCursor === null ? data.nextCursor : prevCursor;
+      const totalOutputs = prevOutputs.length + data.outputs.length;
+      const currBal = data.outputs.reduce(
+        (acc, currOutput, currIndex, array) => {
+          if (!currOutput.spendInfo) {
+            acc = acc + currOutput.value;
+          }
+          return acc;
         },
-        currBal
+        prevBal
       );
-      if (!cursor) {
-        this.recursive(addressess, dummyData.nextCursor, balance);
+      if (data.nextCursor) {
+        debugger;
+        return await this.getOutputsByAddressRecursive(
+          addressess,
+          data.nextCursor,
+          currBal,
+          currOutputs,
+          currCursor
+        );
       } else {
-        return balance;
+        return {
+          currBal: currBal,
+          totalOutputs: totalOutputs,
+          currOutputs: currOutputs,
+          currCursor: currCursor,
+        };
       }
     } catch (error) {
       throw error;
-    }
-  };
-
-  getAllTx = async () => {
-    const placeholderAdd = '12c6DSiU4Rq3P4ZxziKxzrL5LmMBrzjrJX';
-    try {
-      const data = await addressAPI.getOutputsByAddress(placeholderAdd);
-      console.log(data);
-    } catch (error) {
-      console.log(error);
     }
   };
 }

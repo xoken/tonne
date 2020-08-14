@@ -1,4 +1,4 @@
-import { createSelector } from "reselect";
+import { createSelector } from 'reselect';
 
 export const getWallet = (state) => state.wallet;
 
@@ -14,7 +14,7 @@ export const getMnemonic = createSelector(
 
 export const getCurrentBalance = createSelector(
   [getWallet],
-  ({ currentBalance }) => currentBalance
+  ({ currBal }) => currBal
 );
 
-export const getAllTx = createSelector([getWallet], ({ allTx }) => allTx);
+export const getOutputs = createSelector([getWallet], ({ outputs }) => outputs);

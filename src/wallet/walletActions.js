@@ -1,23 +1,23 @@
-import { createAction } from "redux-act";
-import WalletService from "./walletService";
+import { createAction } from 'redux-act';
+import WalletService from './walletService';
 
-export const initWalletRequest = createAction("INIT_WALLET_REQUEST");
-export const initWalletSuccess = createAction("INIT_WALLET_SUCCESS");
-export const initWalletFailure = createAction("INIT_WALLET_FAILURE");
+export const initWalletRequest = createAction('INIT_WALLET_REQUEST');
+export const initWalletSuccess = createAction('INIT_WALLET_SUCCESS');
+export const initWalletFailure = createAction('INIT_WALLET_FAILURE');
 
 export const getCurrentBalanceRequest = createAction(
-  "GET_CURRENT_BALANCE_REQUEST"
+  'GET_CURRENT_BALANCE_REQUEST'
 );
 export const getCurrentBalanceSuccess = createAction(
-  "GET_CURRENT_BALANCE_SUCCESS"
+  'GET_CURRENT_BALANCE_SUCCESS'
 );
 export const getCurrentBalanceFailure = createAction(
-  "GET_CURRENT_BALANCE_FAILURE"
+  'GET_CURRENT_BALANCE_FAILURE'
 );
 
-export const getAllTxRequest = createAction("GET_ALL_TX_REQUEST");
-export const getAllTxSuccess = createAction("GET_ALL_TX_SUCCESS");
-export const getAllTxFailure = createAction("GET_ALL_TX_FAILURE");
+export const getOutputsRequest = createAction('GET_OUTPUTS_REQUEST');
+export const getOutputsSuccess = createAction('GET_OUTPUTS_SUCCESS');
+export const getOutputsFailure = createAction('GET_OUTPUTS_FAILURE');
 
 export const initWallet = (bip39Mnemonic) => (
   dispatch,
@@ -41,23 +41,35 @@ export const getCurrentBalance = () => async (
 ) => {
   dispatch(getCurrentBalanceRequest());
   try {
-    const balance = await serviceInjector(WalletService).getCurrentBalance();
-    dispatch(getCurrentBalanceSuccess({ balance }));
+    const {
+      currBal,
+      totalOutputs,
+      currOutputs,
+      currCursor,
+    } = await serviceInjector(WalletService).getCurrentBalance();
+    dispatch(
+      getCurrentBalanceSuccess({
+        currBal,
+        totalOutputs,
+        currOutputs,
+        currCursor,
+      })
+    );
   } catch (error) {
     dispatch(getCurrentBalanceFailure());
   }
 };
 
-export const getAllTx = () => async (
+export const getOutputs = () => async (
   dispatch,
   getState,
   { serviceInjector }
 ) => {
-  dispatch(getAllTxRequest());
+  dispatch(getOutputsRequest());
   try {
-    const outputs = await serviceInjector(WalletService).getAllTx();
-    dispatch(getAllTxSuccess({ outputs }));
+    const outputs = await serviceInjector(WalletService).getOutputs();
+    dispatch(getOutputsSuccess({ outputs }));
   } catch (error) {
-    dispatch(getAllTxFailure());
+    dispatch(getOutputsFailure());
   }
 };

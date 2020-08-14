@@ -4,6 +4,7 @@ import {
   BIP32Interface,
   ECPair,
   payments,
+  TransactionBuilder,
 } from 'bitcoinjs-lib';
 import derivationPaths from './constants/derivationPaths';
 import * as bip38 from 'bip38';
@@ -153,6 +154,20 @@ class Utils {
   getCurrentBalance = () => {
     return 600;
   };
+
+  createTransaction() {
+    var key = bitcoin.ECKey.fromWIF(
+      'L1Kzcyy88LyckShYdvoLFg1FYpB5ce1JmTYtieHrhkN65GhVoq73'
+    );
+    var transaction = new TransactionBuilder();
+    transaction.addInput(
+      'd18e7106e5492baf8f3929d2d573d27d89277f3825d3836aa86ea1d843b5158b',
+      1
+    );
+    transaction.addOutput('12idKQBikRgRuZEbtxXQ4WFYB7Wa3hZzhT', 149000);
+    transaction.sign(0, key);
+    console.log(transaction.build().toHex());
+  }
 }
 
 export const utils = new Utils();
