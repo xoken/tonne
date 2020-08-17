@@ -16,7 +16,7 @@ class NewWallet extends React.Component {
   };
 
   onContinue = () => {
-    this.props.history.push("/wallet/newpassword");
+    this.props.history.push("/newpassword");
   };
 
   addmnwordlistener = () => {
