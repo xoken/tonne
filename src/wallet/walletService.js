@@ -1,4 +1,4 @@
-import { utils, networks, addressAPI } from 'nipkow-sdk';
+import { utils, networks, addressAPI, transactionAPI } from 'nipkow-sdk';
 
 class WalletService {
   constructor(store) {
@@ -94,33 +94,6 @@ class WalletService {
       });
       addressess.push({
         address: '14gMdTsvq3Q6PnXK5jhn8KVgvWJnxzDV5m',
-        isUsed: false,
-      });
-      return addressess;
-    } else if (indexStart === 6) {
-      const addressess = [];
-      addressess.push({
-        address: '18E2ymquodpWHNhNzo8BC8d6QDwJNsEaYV',
-        isUsed: false,
-      });
-      addressess.push({
-        address: '1A6NvRKPsswAX8wwPKY4Ti5FBeNCpne1NC',
-        isUsed: false,
-      });
-      addressess.push({
-        address: '18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9',
-        isUsed: false,
-      });
-      addressess.push({
-        address: '1GXRNe36nJinKjFWcknnGH3VpDj5hh5AYv',
-        isUsed: false,
-      });
-      addressess.push({
-        address: '19irWGAyKawyFUNvgXEKGKUuAdtpDyXd1b',
-        isUsed: false,
-      });
-      addressess.push({
-        address: '18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9',
         isUsed: false,
       });
       return addressess;
@@ -233,6 +206,32 @@ class WalletService {
           outputs,
         };
       }
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  createSendTransaction = async (
+    receiverAddress,
+    amountInSatoshi,
+    transactionFee
+  ) => {
+    try {
+      const {
+        wallet: { outputs, derivedKeys },
+      } = this.store.getState();
+      const utxos = outputs.filter((output) => output.spendInfo === null);
+      const targets = [{ address: receiverAddress, value: amountInSatoshi }];
+      const privateKey = derivedKeys.find(
+        (derivedKey) => derivedKey.isUsed === false
+      );
+      const transactionHex = utils.createSendTransaction(
+        privateKey,
+        utxos,
+        targets,
+        transactionFee
+      );
+      return await transactionAPI.broadcastRawTransaction(transactionHex);
     } catch (error) {
       throw error;
     }

@@ -15,9 +15,15 @@ export const getCurrentBalanceFailure = createAction(
   'GET_CURRENT_BALANCE_FAILURE'
 );
 
-export const getOutputsRequest = createAction('GET_OUTPUTS_REQUEST');
-export const getOutputsSuccess = createAction('GET_OUTPUTS_SUCCESS');
-export const getOutputsFailure = createAction('GET_OUTPUTS_FAILURE');
+export const createSendTransactionRequest = createAction(
+  'CREATE_SEND_TRANSACTION_REQUEST'
+);
+export const createSendTransactionSuccess = createAction(
+  'CREATE_SEND_TRANSACTION_SUCCESS'
+);
+export const createSendTransactionFailure = createAction(
+  'CREATE_SEND_TRANSACTION_FAILURE'
+);
 
 export const initWallet = (bip39Mnemonic) => (
   dispatch,
@@ -48,16 +54,20 @@ export const getCurrentBalance = () => async (
   }
 };
 
-export const getOutputs = () => async (
-  dispatch,
-  getState,
-  { serviceInjector }
-) => {
-  dispatch(getOutputsRequest());
+export const createSendTransaction = (
+  receiverAddress,
+  amountInSatoshi,
+  transactionFee
+) => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(createSendTransactionRequest());
   try {
-    const outputs = await serviceInjector(WalletService).getOutputs();
-    dispatch(getOutputsSuccess({ outputs }));
+    const response = await serviceInjector(WalletService).createSendTransaction(
+      receiverAddress,
+      amountInSatoshi,
+      transactionFee
+    );
+    dispatch(createSendTransactionSuccess(response));
   } catch (error) {
-    dispatch(getOutputsFailure());
+    dispatch(createSendTransactionFailure());
   }
 };

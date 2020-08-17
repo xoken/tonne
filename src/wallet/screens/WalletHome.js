@@ -14,9 +14,7 @@ class WalletHome extends React.Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    // dispatch(walletActions.getOutputs());
     dispatch(walletActions.getCurrentBalance());
-    // dispatch(walletActions.getAllTx());
   }
 
   toggleSendTxPopup = () => {
@@ -299,13 +297,6 @@ class WalletHome extends React.Component {
             <div className="col-md-12 col-lg-12">
               <h3>Recent Transactions</h3>
               <table id="txlist" className="table">
-                <thead>
-                  <tr>
-                    <th scope="col">To / From (Address)</th>
-                    <th scope="col">Sent Amount / Received Amount</th>
-                    <th scope="col">Transaction ID</th>
-                  </tr>
-                </thead>
                 <tbody>{this.renderTransaction()}</tbody>
               </table>
             </div>
@@ -357,7 +348,7 @@ WalletHome.defaultProps = {
 
 const mapStateToProps = (state) => ({
   isLoading: walletSelectors.isLoading(state),
-  balance: walletSelectors.getCurrentBalance(state),
+  balance: walletSelectors.getBalance(state),
   outputs: walletSelectors.getOutputs(state),
 });
 

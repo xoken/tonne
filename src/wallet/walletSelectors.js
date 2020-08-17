@@ -12,9 +12,6 @@ export const getMnemonic = createSelector(
   ({ bip39Mnemonic }) => bip39Mnemonic
 );
 
-export const getCurrentBalance = createSelector(
-  [getWallet],
-  ({ balance }) => balance
-);
+export const getBalance = createSelector([getWallet], ({ balance }) => balance);
 
 export const getOutputs = createSelector([getWallet], ({ outputs }) => outputs);

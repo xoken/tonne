@@ -46,9 +46,9 @@ export default createReducer(
       derivedKeys: payload.derivedKeys,
       isLoading: false,
     }),
-    [actions.getOutputsSuccess]: (state, payload) => ({
+    [actions.getCurrentBalanceFailure]: (state) => ({
       ...state,
-      outputs: payload.outputs,
+      isLoading: false,
     }),
   },
   INITIAL_STATE

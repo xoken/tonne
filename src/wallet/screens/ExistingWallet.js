@@ -2117,15 +2117,16 @@ class ExistingWallet extends React.Component {
         this.alphabetarray[this.rindex] = this.temp;
         //console.log(this.alphabetarray);
         index -= 1;
-        if (0 == this.counter % 26) {
+        if (0 === this.counter % 26) {
           this.mix();
         }
       });
     }
   };
+
   printalphabets = (array) => {
     for (var a = 0; a < array.length; a++) {
-      this.alphabetul += "<li class='letter'>" + array[a] + '</li>';
+      this.alphabetul += "<li className='letter'>" + array[a] + '</li>';
     }
     document.getElementById('alphabets').innerHTML = this.alphabetul;
     this.letteraddlistener();
@@ -2153,10 +2154,11 @@ class ExistingWallet extends React.Component {
     var count = 0;
     var tempsuggestion = '';
     document.getElementById('suggestions').innerHTML = '';
-    if (len != 0) {
+    if (len !== 0) {
       for (var w = 0; w < this.words.length; w++) {
-        if (this.words[w].substring(0, len) == cont) {
-          tempsuggestion += "<li class='wordlist'>" + this.words[w] + '</li>';
+        if (this.words[w].substring(0, len) === cont) {
+          tempsuggestion +=
+            "<li className='wordlist'>" + this.words[w] + '</li>';
           count += 1;
         }
       }
