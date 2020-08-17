@@ -7,7 +7,7 @@ import * as walletSelectors from '../walletSelectors';
 class PasswordScreen extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { value: '' };
+    this.state = { password: '' };
     this.handleChange = this.handleChange.bind(this);
     this.handleContinue = this.handleContinue.bind(this);
   }
@@ -23,7 +23,8 @@ class PasswordScreen extends React.Component {
 
   handleContinue(event) {
     const { dispatch } = this.props;
-    dispatch(walletActions.initWallet());
+    const { password } = this.state.password;
+    dispatch(walletActions.initWallet(password));
     this.props.history.push('/wallet/home');
     event.preventDefault();
   }
@@ -44,7 +45,7 @@ class PasswordScreen extends React.Component {
                   <label>Password</label>
                   <input
                     type="password"
-                    className="form-control"
+                    className="form-control passinputwidth"
                     id="password"
                     placeholder="Password"
                     value={this.state.value}
