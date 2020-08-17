@@ -2224,9 +2224,10 @@ class ExistingWallet extends React.Component {
       bip39Mnemonic: document.getElementById("mnemonic").textContent
     });
     const { dispatch } = this.props;
-    const { bip39Mnemonic } = this.state;
+    const { bip39Mnemonic } = this.state.bip39Mnemonic;
     dispatch(walletActions.initWallet(bip39Mnemonic));
     alert(this.state.bip39Mnemonic);
+    this.props.history.push("/wallet/newpassword");
   };
 
   componentDidMount() {
@@ -2238,11 +2239,7 @@ class ExistingWallet extends React.Component {
         <div className="container nonheader">
           <div className="row">
             <div className="col-lg-12 col-md-12 col-sm-12">
-              <div
-                id="mnemonic"
-                className="mnemonic"
-                onChange={this.mnemonicupdate}
-              ></div>
+              <div id="mnemonic" className="mnemonic"></div>
               <div id="wordsremaining">(0 of 12)</div>
             </div>
           </div>

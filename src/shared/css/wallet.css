@@ -4,6 +4,17 @@
 .generalheadingscolor{
   color:grey;
 }
+.passinputwidth{
+  width:60%;
+}
+.redalert{
+  color:red;
+  font-weight: bold;
+}
+.greenalert{
+  color:green;
+  font-weight: bold;
+}
 .txbtn {
   display: inline-block;
   font-weight: 400;
