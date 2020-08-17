@@ -97,6 +97,33 @@ class WalletService {
         isUsed: false,
       });
       return addressess;
+    } else if (indexStart === 6) {
+      const addressess = [];
+      addressess.push({
+        address: '18E2ymquodpWHNhNzo8BC8d6QDwJNsEaYV',
+        isUsed: false,
+      });
+      addressess.push({
+        address: '1A6NvRKPsswAX8wwPKY4Ti5FBeNCpne1NC',
+        isUsed: false,
+      });
+      addressess.push({
+        address: '18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9',
+        isUsed: false,
+      });
+      addressess.push({
+        address: '1GXRNe36nJinKjFWcknnGH3VpDj5hh5AYv',
+        isUsed: false,
+      });
+      addressess.push({
+        address: '19irWGAyKawyFUNvgXEKGKUuAdtpDyXd1b',
+        isUsed: false,
+      });
+      addressess.push({
+        address: '18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9',
+        isUsed: false,
+      });
+      return addressess;
     }
 
     const derivedKeys = [];
@@ -156,6 +183,7 @@ class WalletService {
         }
         return acc;
       }, 0);
+      debugger;
       if (countOfUnusedKeys < 20) {
         const remainingDerivedKeys = this.generateDerivedKeys(
           bip32ExtendedKey,
