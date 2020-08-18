@@ -47,7 +47,6 @@ export default class App extends React.Component {
                     Help
                   </Link>
                 </li>
-                <a href="../src/explorer/index.html">explorer</a>
               </ul>
             </form>
           </div>
