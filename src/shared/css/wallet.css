@@ -7,6 +7,9 @@
 .dispnone{
   display: none;
 }
+.loadinggif{
+  width:40px;
+}
 .passinputwidth{
   width:60%;
 }

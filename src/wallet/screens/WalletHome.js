@@ -1,10 +1,11 @@
-import React from 'react';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import * as walletActions from '../walletActions';
-import * as walletSelectors from '../walletSelectors';
-import { satoshiToBSV } from '../../shared/utils';
-import bsvlogo from '../../shared/images/bsv.png';
+import React from "react";
+import { connect } from "react-redux";
+import PropTypes from "prop-types";
+import * as walletActions from "../walletActions";
+import * as walletSelectors from "../walletSelectors";
+import { satoshiToBSV } from "../../shared/utils";
+import bsvlogo from "../../shared/images/bsv.png";
+import loadinggif from "../../shared/images/loading.gif";
 
 class WalletHome extends React.Component {
   constructor(props) {
@@ -20,23 +21,85 @@ class WalletHome extends React.Component {
   toggleSendTxPopup = () => {
     // const { sendTxPopup } = this.state;
     // this.setState({ sendTxPopup: !sendTxPopup });
-    this.props.history.push('/wallet/send');
+    this.props.history.push("/wallet/send");
   };
 
   onBack = () => {
     this.props.history.goBack();
   };
 
+  groupByTXID = (outputarr, txid) => {
+    return outputarr.reduce((finalOutput, currentValue) => {
+      if (!finalOutput[currentValue[txid]]) {
+        finalOutput[currentValue[txid]] = [];
+      }
+      finalOutput[currentValue[txid]].push(currentValue);
+      return finalOutput;
+    }, {});
+  };
+
+  sentreceived = spendinfo => {
+    if (spendinfo === null) {
+      return <div className="greenalert">+</div>;
+    } else {
+      return <div className="redalert">-</div>;
+    }
+  };
+
   renderTransaction() {
     const { outputs } = this.props;
-    return outputs.map((transaction) => {
+    var tempout = [];
+    var temp;
+    var outputsGroupedByTXIDobject = this.groupByTXID(outputs, "outputTxHash");
+    /*  function sortFunc(a, b) {
       return (
-        <tr>
-          <td></td>
-          <td></td>
-        </tr>
+        outputs.indexOf(a["outputTxHash"]) - outputs.indexOf(b["outputTxHash"])
+      );
+    }
+*/
+    //  temp.sort(sortFunc);
+    console.log(outputs);
+    //  console.log(outputsGroupedByTXIDobject);
+    //  console.log(temp + "tempobj");
+    var ctr = 0;
+    Object.entries(outputsGroupedByTXIDobject).forEach(
+      ([, outvalue], outindex) => {
+        console.log(outindex + "" + outvalue[0].outputTxHash);
+        tempout.push(
+          <tr>
+            <td>{outvalue[0].address}</td>
+            <td>
+              {this.sentreceived(outvalue[0].spendInfo)}{" "}
+              {satoshiToBSV(outvalue[0].value)} BSV
+            </td>
+            <td>{outvalue[0].outputTxHash}</td>
+          </tr>
+        );
+        if (ctr == 100) {
+          return false;
+        } else {
+          return true;
+        }
+        ctr++;
+      }
+    );
+
+    return tempout;
+
+    /*
+    return outputs.map(transaction => {
+      return (
+        <>
+          <tr>
+            <td>{transaction.outputTxHash}</td>
+          </tr>
+          <tr>
+            <td></td>
+          </tr>
+        </>
       );
     });
+    */
   }
 
   renderPagination() {
@@ -284,6 +347,7 @@ class WalletHome extends React.Component {
                   <img src={bsvlogo} alt="" />
                 </div>
                 <h5>Your Current Balance is</h5>
+                <img src={loadinggif} className="loadinggif" />
                 <h4>{satoshiToBSV(balance)} BSV</h4>
                 <div className="txbtn" onClick={this.toggleSendTxPopup}>
                   Send
@@ -291,14 +355,20 @@ class WalletHome extends React.Component {
               </center>
             </div>
           </div>
-          {/* <div className="row">
+
+          <div className="row">
             <div className="col-md-12 col-lg-12">
               <h3>Recent Transactions</h3>
               <table id="txlist" className="table">
+                <tr>
+                  <td>To / From(address)</td>
+                  <td>Sent amount/Received amount</td>
+                  <td>Transaction ID</td>
+                </tr>
                 <tbody>{this.renderTransaction()}</tbody>
               </table>
             </div>
-          </div> */}
+          </div>
           {/* <div className="row">
             <div className="col-md-12 col-lg-12">{this.renderPagination()}</div>
             <table id="txlist">{this.txlist}</table>
@@ -332,17 +402,17 @@ WalletHome.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   balance: PropTypes.number.isRequired,
-  outputs: PropTypes.arrayOf(PropTypes.object),
+  outputs: PropTypes.arrayOf(PropTypes.object)
 };
 
 WalletHome.defaultProps = {
-  outputs: [],
+  outputs: []
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
-  outputs: walletSelectors.getOutputs(state),
+  outputs: walletSelectors.getOutputs(state)
 });
 
 export default connect(mapStateToProps)(WalletHome);

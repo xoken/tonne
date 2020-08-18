@@ -173,7 +173,8 @@ class WalletService {
         return acc;
       }, prevBalance);
       const outputs = [...prevOutputs, ...data.outputs];
-      if (false && data.nextCursor) {
+  //    if (false && data.nextCursor) {
+  if (data.nextCursor) {
         console.log(balance);
         return await this.getOutputsByAddresses(
           keys,
