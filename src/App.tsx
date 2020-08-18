@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Route, Link } from 'react-router-dom';
+import { HashRouter, Route, Link } from 'react-router-dom';
 import PasswordScreen from './wallet/screens/PasswordScreen';
 import Wallet from './wallet/screens/Wallet';
 // import NewWallet from './wallet/screens/NewWallet';
@@ -11,9 +11,9 @@ import NewPassword from './wallet/screens/NewPassword';
 export default class App extends React.Component {
   render() {
     return (
-      <BrowserRouter>
+      <HashRouter>
         <nav className="navbar navbar-expand-lg navbar-light">
-          <Link to="#" id="logo" className="navbar-brand">
+          <Link to="/" id="logo" className="navbar-brand">
             <img
               src={logo}
               className="d-inline-block align-top"
@@ -50,14 +50,13 @@ export default class App extends React.Component {
             </form>
           </div>
         </nav>
-        <Route exact path="/" component={PasswordScreen} />
-
-        <Route exact path="/wallet" component={Wallet} />
+        <Route exact path="/" component={Wallet} />
+        <Route exact path="/auth" component={PasswordScreen} />
         <Route exact path="/wallet/new" component={NewPassword} />
         <Route exact path="/wallet/existing" component={ExistingWallet} />
         <Route exact path="/wallet/home" component={WalletHome} />
         <Route exact path="/wallet/send" component={sendTransaction} />
-      </BrowserRouter>
+      </HashRouter>
     );
   }
 }
