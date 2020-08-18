@@ -2234,31 +2234,8 @@ class ExistingWallet extends React.Component {
           "(" + splitwords.length + " of 12)";
       } else {
         document.getElementById("wordsremaining").textContent = "(0 of 12)";
+        this.setState({ suggestions: "" });
       }
-      this.wordsuggest(
-        splitwords[splitwords.length - 1].length,
-        splitwords[splitwords.length - 1]
-      );
-    }
-  };
-
-  backspace = () => {
-    if (document.getElementById("mnemonic").textContent.length !== 0) {
-      var splitwords;
-      document.getElementById("mnemonic").textContent = document
-        .getElementById("mnemonic")
-        .textContent.substring(
-          0,
-          document.getElementById("mnemonic").textContent.length - 1
-        );
-      splitwords = document.getElementById("mnemonic").textContent.split(" ");
-      if (document.getElementById("mnemonic").textContent.length !== 0) {
-        document.getElementById("wordsremaining").textContent =
-          "(" + splitwords.length + " of 12)";
-      } else {
-        document.getElementById("wordsremaining").textContent = "(0 of 12)";
-      }
-
       this.wordsuggest(
         splitwords[splitwords.length - 1].length,
         splitwords[splitwords.length - 1]
@@ -2267,13 +2244,9 @@ class ExistingWallet extends React.Component {
   };
 
   onContinue = () => {
-    this.setState({
-      bip39Mnemonic: document.getElementById("mnemonic").textContent
-    });
     const { dispatch } = this.props;
     const { bip39Mnemonic } = this.state;
     dispatch(walletActions.initWallet(bip39Mnemonic));
-    alert(this.state.bip39Mnemonic);
     this.props.history.push("/newpassword");
   };
 
@@ -2330,7 +2303,7 @@ class ExistingWallet extends React.Component {
           </div>
         </div>
 
-        <div>
+        <div className="dispnone">
           <h3>Enter Secret Backup Phrase</h3>
           <div>
             <textarea
