@@ -64,129 +64,127 @@ class WalletHome extends React.Component {
   // rjdecoded;
   // pagescontainer = [];
 
-  spendata(i) {
-    if (this.addressCache[i].spendInfo != null) {
-      var spinfo = [];
-      for (
-        var b = 0;
-        b < Object.keys(this.addressCache[i].spendInfo.spendData).length;
-        b++
-      ) {
-        spinfo.push(
-          <tr key={this.addressCache[i].outputTxHash + '' + b}>
-            <td>
-              <table className="subtable">
-                <tr>
-                  <th>
-                    <p>
-                      <b>spendData</b>
-                    </p>
-                  </th>
-                </tr>
-                <tr>
-                  <td>
-                    <b>Value:</b>
-                    {this.addressCache[i].spendInfo.spendData[b].value}
-                  </td>
-                  <td>
-                    <b>Output Address:</b>{' '}
-                    <div>
-                      {
-                        this.addressCache[i].spendInfo.spendData[b]
-                          .outputAddress
-                      }
-                    </div>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
-        );
-      }
-      return spinfo;
-    }
-  }
+  // spendata(i) {
+  //   if (this.addressCache[i].spendInfo != null) {
+  //     var spinfo = [];
+  //     for (
+  //       var b = 0;
+  //       b < Object.keys(this.addressCache[i].spendInfo.spendData).length;
+  //       b++
+  //     ) {
+  //       spinfo.push(
+  //         <tr key={this.addressCache[i].outputTxHash + '' + b}>
+  //           <td>
+  //             <table className="subtable">
+  //               <tr>
+  //                 <th>
+  //                   <p>
+  //                     <b>spendData</b>
+  //                   </p>
+  //                 </th>
+  //               </tr>
+  //               <tr>
+  //                 <td>
+  //                   <b>Value:</b>
+  //                   {this.addressCache[i].spendInfo.spendData[b].value}
+  //                 </td>
+  //                 <td>
+  //                   <b>Output Address:</b>{' '}
+  //                   <div>
+  //                     {
+  //                       this.addressCache[i].spendInfo.spendData[b]
+  //                         .outputAddress
+  //                     }
+  //                   </div>
+  //                 </td>
+  //               </tr>
+  //             </table>
+  //           </td>
+  //         </tr>
+  //       );
+  //     }
+  //     return spinfo;
+  //   }
+  // }
 
-  printresults() {
-    this.txlist.length = 0;
-    var printbreaker = 1;
-    var txnumber = (this.selected - 1) * this.outputsperpage;
-    for (var i = txnumber; i < this.addressCache.length; i++) {
-      this.txlist.push(
-        <tr key={this.addressCache[i].outputTxHash}>
-          <td className="txslnum">
-            #{i + 1} - <div>{this.addressCache[i].outputTxHash}</div> -
-            outputTxHash
-            <br />
-            <table>{this.spendata(i)}</table>
-          </td>
-        </tr>
-      );
+  // printresults() {
+  // this.txlist.length = 0;
+  // var printbreaker = 1;
+  // var txnumber = (this.selected - 1) * this.outputsperpage;
+  // for (var i = txnumber; i < this.addressCache.length; i++) {
+  //   this.txlist.push(
+  //     <tr key={this.addressCache[i].outputTxHash}>
+  //       <td className="txslnum">
+  //         #{i + 1} - <div>{this.addressCache[i].outputTxHash}</div> -
+  //         outputTxHash
+  //         <br />
+  //         <table>{this.spendata(i)}</table>
+  //       </td>
+  //     </tr>
+  //   );
+  //   if (printbreaker === this.outputsperpage) {
+  //     break;
+  //   }
+  //   printbreaker += 1;
+  // }
+  // }
 
-      if (printbreaker === this.outputsperpage) {
-        break;
-      }
+  // printpagination() {
+  // if (this.currentbatchnum === this.batches) {
+  //   if (this.totalpagesavailable % this.fixedpagearrlength === 0) {
+  //     this.pagearrlength = this.fixedpagearrlength;
+  //   } else {
+  //     this.pagearrlength = this.totalpagesavailable % this.fixedpagearrlength;
+  //   }
+  // } else {
+  //   this.pagearrlength = this.fixedpagearrlength;
+  // }
+  // this.pagescontainer.length = 0;
+  // if (this.pagearray[0] !== 1) {
+  //   this.pagescontainer.push(
+  //     <li key="leftangular" className="page-item active">
+  //       <button className="arrows" id="leftarrow">
+  //         &#x3008;
+  //       </button>
+  //     </li>
+  //   );
+  // }
+  // for (var i = 0; i < this.pagearrlength; i++) {
+  //   if (this.pagearray[i] === this.selected) {
+  //     this.pagescontainer.push(
+  //       <li key={this.pagearray[i]} className="page-item active">
+  //         <button className="page-link" id={this.pagearray[i]}>
+  //           {this.pagearray[i]}
+  //         </button>
+  //       </li>
+  //     );
+  //   } else {
+  //     this.pagescontainer.push(
+  //       <li key={this.pagearray[i]} className="page-item">
+  //         <button className="page-link" id={this.pagearray[i]}>
+  //           {this.pagearray[i]}
+  //         </button>
+  //       </li>
+  //     );
+  //   }
+  // }
+  // if (
+  //   this.pagearray[this.pagearrlength - 1] !== this.totalpagesavailable ||
+  //   this.nextcursor != null
+  // ) {
+  //   this.pagescontainer.push(
+  //     <li key="rightangular" className="page-item active">
+  //       <button className="arrows" id="rightarrow">
+  //         &#x3009;
+  //       </button>
+  //     </li>
+  //   );
+  // }
+  // this.addlistener();
+  // }
 
-      printbreaker += 1;
-    }
-  }
-
-  printpagination() {
-    if (this.currentbatchnum === this.batches) {
-      if (this.totalpagesavailable % this.fixedpagearrlength === 0) {
-        this.pagearrlength = this.fixedpagearrlength;
-      } else {
-        this.pagearrlength = this.totalpagesavailable % this.fixedpagearrlength;
-      }
-    } else {
-      this.pagearrlength = this.fixedpagearrlength;
-    }
-    this.pagescontainer.length = 0;
-    if (this.pagearray[0] !== 1) {
-      this.pagescontainer.push(
-        <li key="leftangular" className="page-item active">
-          <button className="arrows" id="leftarrow">
-            &#x3008;
-          </button>
-        </li>
-      );
-    }
-    for (var i = 0; i < this.pagearrlength; i++) {
-      if (this.pagearray[i] === this.selected) {
-        this.pagescontainer.push(
-          <li key={this.pagearray[i]} className="page-item active">
-            <button className="page-link" id={this.pagearray[i]}>
-              {this.pagearray[i]}
-            </button>
-          </li>
-        );
-      } else {
-        this.pagescontainer.push(
-          <li key={this.pagearray[i]} className="page-item">
-            <button className="page-link" id={this.pagearray[i]}>
-              {this.pagearray[i]}
-            </button>
-          </li>
-        );
-      }
-    }
-    if (
-      this.pagearray[this.pagearrlength - 1] !== this.totalpagesavailable ||
-      this.nextcursor != null
-    ) {
-      this.pagescontainer.push(
-        <li key="rightangular" className="page-item active">
-          <button className="arrows" id="rightarrow">
-            &#x3009;
-          </button>
-        </li>
-      );
-    }
-    this.addlistener();
-  }
-
-  addlistener() {
-    /*  var clickedpage = document.getElementsByClassName("page-link");
+  /* addlistener() {
+      var clickedpage = document.getElementsByClassName("page-link");
     for (var a = 0; a < clickedpage.length; a++) {
       clickedpage[a].addEventListener("click", function () {
         this.selected = this.id;
@@ -253,17 +251,16 @@ class WalletHome extends React.Component {
             printpagination();
           }
         });
-    }*/
-  }
+    }
+  }*/
 
   render() {
-    const allprops = this.props;
-    if (allprops.allTx !== undefined) {
-      this.rjdecoded = allprops.allTx;
-      console.log(allprops.allTx.outputs + 'allprops');
-      console.log(allprops.currentBalance + 'allprops');
-    }
-    const { balance } = this.props;
+    // const allprops = this.props;
+    // if (allprops.allTx !== undefined) {
+    //   this.rjdecoded = allprops.allTx;
+    //   console.log(allprops.allTx.outputs + 'allprops');
+    //   console.log(allprops.currentBalance + 'allprops');
+    // }
     // let pop;
     // const sendCurPopOpen = this.state.sendCurPopOpen;
     // if (sendCurPopOpen) {
@@ -276,6 +273,7 @@ class WalletHome extends React.Component {
     // } else {
     //   pop = <Popclose />;
     // }
+    const { balance } = this.props;
     return (
       <>
         <div className="container nonheader">
@@ -293,19 +291,19 @@ class WalletHome extends React.Component {
               </center>
             </div>
           </div>
-          <div className="row">
+          {/* <div className="row">
             <div className="col-md-12 col-lg-12">
               <h3>Recent Transactions</h3>
               <table id="txlist" className="table">
                 <tbody>{this.renderTransaction()}</tbody>
               </table>
             </div>
-          </div>
-          <div className="row">
+          </div> */}
+          {/* <div className="row">
             <div className="col-md-12 col-lg-12">{this.renderPagination()}</div>
             <table id="txlist">{this.txlist}</table>
-          </div>
-          <div className="row">
+          </div> */}
+          {/* <div className="row">
             <div className="col-md-12 col-lg-12">
               <nav aria-label="transactions navigation">
                 <ul
@@ -316,7 +314,7 @@ class WalletHome extends React.Component {
                 </ul>
               </nav>
             </div>
-          </div>
+          </div> */}
           <button
             type="button"
             className="btn btn-primary"
@@ -334,12 +332,7 @@ WalletHome.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   balance: PropTypes.number.isRequired,
-  outputs: PropTypes.arrayOf(
-    PropTypes.shape({
-      date: PropTypes.string.isRequired,
-      amount: PropTypes.number.isRequired,
-    })
-  ),
+  outputs: PropTypes.arrayOf(PropTypes.object),
 };
 
 WalletHome.defaultProps = {

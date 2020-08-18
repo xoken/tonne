@@ -73,54 +73,7 @@ class WalletService {
     if (indexStart === 0) {
       const addressess = [];
       addressess.push({
-        address: '14QdCax3sR6ZVMo6smMyUNzN5Fx9zA8Sjj',
-        isUsed: false,
-      });
-      addressess.push({
-        address: '17VaRoTC8dkb6vHyE37EPZByzpKvK1u2ZU',
-        isUsed: false,
-      });
-      addressess.push({
-        address: '1NGw8LYZ93g2RiZpiP4eCniU4YmQjH1tP9',
-        isUsed: false,
-      });
-      addressess.push({
-        address: '1EHM42QUBLSA9AdJGH6XmAMYSnh7rzTPuR',
-        isUsed: false,
-      });
-      addressess.push({
-        address: '1JbmUfm9fpu5o9BfCATRhbp4NiDR5D3UBX',
-        isUsed: false,
-      });
-      addressess.push({
-        address: '14gMdTsvq3Q6PnXK5jhn8KVgvWJnxzDV5m',
-        isUsed: false,
-      });
-      return addressess;
-    } else if (indexStart === 6) {
-      const addressess = [];
-      addressess.push({
-        address: '18E2ymquodpWHNhNzo8BC8d6QDwJNsEaYV',
-        isUsed: false,
-      });
-      addressess.push({
-        address: '1A6NvRKPsswAX8wwPKY4Ti5FBeNCpne1NC',
-        isUsed: false,
-      });
-      addressess.push({
-        address: '18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9',
-        isUsed: false,
-      });
-      addressess.push({
-        address: '1GXRNe36nJinKjFWcknnGH3VpDj5hh5AYv',
-        isUsed: false,
-      });
-      addressess.push({
-        address: '19irWGAyKawyFUNvgXEKGKUuAdtpDyXd1b',
-        isUsed: false,
-      });
-      addressess.push({
-        address: '18TLpiL4UFwmQY8nnnjmh2um11dFzZnBd9',
+        address: 'mn4vGSceDVbuSHUL6LQQ1P7RxPRkVRdyZH',
         isUsed: false,
       });
       return addressess;
@@ -183,7 +136,6 @@ class WalletService {
         }
         return acc;
       }, 0);
-      debugger;
       if (countOfUnusedKeys < 20) {
         const remainingDerivedKeys = this.generateDerivedKeys(
           bip32ExtendedKey,
@@ -203,7 +155,7 @@ class WalletService {
 
   getOutputsByAddresses = async (
     keys,
-    nextCursor,
+    nextCursor = '4001000000000',
     prevBalance = 0,
     prevOutputs = []
   ) => {
@@ -211,7 +163,7 @@ class WalletService {
     try {
       const data = await addressAPI.getOutputsByAddresses(
         addressess,
-        1000,
+        100,
         nextCursor
       );
       const balance = data.outputs.reduce((acc, currOutput) => {
@@ -221,7 +173,8 @@ class WalletService {
         return acc;
       }, prevBalance);
       const outputs = [...prevOutputs, ...data.outputs];
-      if (data.nextCursor) {
+      if (false && data.nextCursor) {
+        console.log(balance);
         return await this.getOutputsByAddresses(
           keys,
           data.nextCursor,
@@ -249,12 +202,17 @@ class WalletService {
         wallet: { outputs, derivedKeys },
       } = this.store.getState();
       const utxos = outputs.filter((output) => output.spendInfo === null);
-      const targets = [{ address: receiverAddress, value: amountInSatoshi }];
-      const privateKey = derivedKeys.find(
+      const targets = [
+        { address: receiverAddress, value: Number(amountInSatoshi) },
+      ];
+      const derivedKey = derivedKeys.find(
         (derivedKey) => derivedKey.isUsed === false
       );
+      // var inputs = utxos.slice(0, 5).map((element) => {
+      //   return { ...element, value: 5000 };
+      // });
       const transactionHex = utils.createSendTransaction(
-        privateKey,
+        derivedKey.privkey,
         utxos,
         targets,
         transactionFee
