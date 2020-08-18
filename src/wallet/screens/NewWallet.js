@@ -6,6 +6,10 @@ import * as walletSelectors from "../walletSelectors";
 var globmnorig = "";
 var globmndupl = "";
 class NewWallet extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { continue: false };
+  }
   morigfull = "";
   mnorig = [];
   mndupl = [];
@@ -13,12 +17,15 @@ class NewWallet extends React.Component {
   generateMnemonic = () => {
     const { dispatch } = this.props;
     dispatch(walletActions.initWallet());
+    this.setState({ continue: true });
   };
 
   onContinue = () => {
     this.props.history.push("/newpassword");
   };
-
+  onBack = () => {
+    this.props.history.goBack();
+  };
   addmnwordlistener = () => {
     var mnwords = document.getElementsByClassName("mnword");
     for (var j = 0; j < mnwords.length; j++) {
@@ -65,6 +72,14 @@ class NewWallet extends React.Component {
         this.addmnwordlistener();
       }
     }
+    var continu;
+    if (this.state.continue === true) {
+      continu = (
+        <button type="button" className="generalbtns" onClick={this.onContinue}>
+          Continue
+        </button>
+      );
+    }
 
     return (
       <div className="container nonheader">
@@ -87,16 +102,14 @@ class NewWallet extends React.Component {
               Generate Mnemonic
             </button>
             <br />
-            <button
-              type="button"
-              className="generalbtns"
-              onClick={this.onContinue}
-            >
-              Continue
-            </button>
+            {continu}
+
             <p></p>
           </div>
         </div>
+        <button type="button" className="generalbtns" onClick={this.onBack}>
+          Back
+        </button>
       </div>
     );
   }

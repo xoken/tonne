@@ -2,7 +2,7 @@ const indexPath = path.join("file://", __dirname, "index.html");
 const heightpagePath = path.join("file://", __dirname, "blockheight.html");
 const trasactionPath = path.join("file://", __dirname, "transaction.html");
 const refreshpage = document.getElementById("refreshpage");
-const logo = (document.getElementById("logo").href = indexPath);
+const logo = (document.getElementById("logo").href = "../../build/index.html");
 var blockparam, backblock;
 var flag;
 var result;
@@ -149,7 +149,7 @@ var txsection = document.getElementById("transactionsection");
 var enteredpagearea = document.getElementById("enteredpagenumber");
 const pagebutton = document.getElementById("pagebutton");
 
-pagebutton.addEventListener("click", function () {
+pagebutton.addEventListener("click", function() {
   if (enteredpagearea.value != "" && enteredpagearea.value <= numberofpages) {
     selected = enteredpagearea.value;
     currentbatchnum = Math.ceil(selected / fixedarrlength);
@@ -187,14 +187,14 @@ pagebutton.addEventListener("click", function () {
 function addlistener() {
   var clickedpage = document.getElementsByClassName("page-link");
   for (var a = 0; a < clickedpage.length; a++) {
-    clickedpage[a].addEventListener("click", function () {
+    clickedpage[a].addEventListener("click", function() {
       selected = this.id;
       printpagination();
       transactionprinting();
     });
   }
   if (pagearray[0] != 1) {
-    document.getElementById("leftarrow").addEventListener("click", function () {
+    document.getElementById("leftarrow").addEventListener("click", function() {
       if (pagearray[0] == 1) {
       } else {
         currentbatchnum = Math.ceil(pagearray[0] / fixedarrlength);
@@ -219,41 +219,39 @@ function addlistener() {
     });
   }
   if (pagearray[pagearrlength - 1] != numberofpages) {
-    document
-      .getElementById("rightarrow")
-      .addEventListener("click", function () {
-        if (
-          txcache[pagearray[pagearray.length - 1] * transactionsperpage + 1] ==
-          undefined
+    document.getElementById("rightarrow").addEventListener("click", function() {
+      if (
+        txcache[pagearray[pagearray.length - 1] * transactionsperpage + 1] ==
+        undefined
+      ) {
+        currentbatchnum = Math.ceil(pagearray[0] / fixedarrlength);
+        currentbatchnum += 1;
+        httpsreq(
+          "updatepaginationarray",
+          "getTXIDByHash",
+          currentblockhash,
+          currentbatchnum,
+          50
+        );
+      } else {
+        currentbatchnum = Math.ceil(pagearray[0] / fixedarrlength);
+        currentbatchnum += 1;
+        var tindex = 0;
+        for (
+          var t = pagearray[fixedarrlength - 1] + 1;
+          t <= pagearray[pagearrlength - 1] + pagearrlength;
+          t++
         ) {
-          currentbatchnum = Math.ceil(pagearray[0] / fixedarrlength);
-          currentbatchnum += 1;
-          httpsreq(
-            "updatepaginationarray",
-            "getTXIDByHash",
-            currentblockhash,
-            currentbatchnum,
-            50
-          );
-        } else {
-          currentbatchnum = Math.ceil(pagearray[0] / fixedarrlength);
-          currentbatchnum += 1;
-          var tindex = 0;
-          for (
-            var t = pagearray[fixedarrlength - 1] + 1;
-            t <= pagearray[pagearrlength - 1] + pagearrlength;
-            t++
-          ) {
-            if (t <= numberofpages) {
-              pagearray[tindex] = t;
-            } else {
-              pagearray[tindex] = "";
-            }
-            tindex += 1;
+          if (t <= numberofpages) {
+            pagearray[tindex] = t;
+          } else {
+            pagearray[tindex] = "";
           }
-          printpagination();
+          tindex += 1;
         }
-      });
+        printpagination();
+      }
+    });
   }
 }
 

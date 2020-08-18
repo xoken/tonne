@@ -16,6 +16,7 @@ class WalletHome extends React.Component {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch(walletActions.getCurrentBalance());
+    console.log(this.props);
   }
 
   toggleSendTxPopup = () => {
@@ -46,6 +47,50 @@ class WalletHome extends React.Component {
     }
   };
 
+  inplist = outval => {
+    var tempinarr = [];
+    for (var y = 0; y < outval.length; y++) {
+      if (outval[y].spendInfo !== null) {
+        tempinarr.push(
+          <tr>
+            <td>
+              From Address
+              <br />
+              <b>{outval[y].address}</b>
+            </td>
+            <td>
+              {this.sentreceived(outval[y].spendInfo)}{" "}
+              <b>{satoshiToBSV(outval[y].value)}</b> BSV
+            </td>
+          </tr>
+        );
+      }
+    }
+    return tempinarr;
+  };
+
+  spentlist = outval => {
+    var tempoutarr = [];
+    for (var f = 0; f < outval.length; f++) {
+      if (outval[f].spendInfo === null) {
+        tempoutarr.push(
+          <tr>
+            <td>
+              To Address
+              <br />
+              <b>{outval[f].address}</b>
+            </td>
+            <td>
+              {this.sentreceived(outval[f].spendInfo)}{" "}
+              <b>{satoshiToBSV(outval[f].value)}</b> BSV
+            </td>
+          </tr>
+        );
+      }
+    }
+    return tempoutarr;
+  };
+
   renderTransaction() {
     const { outputs } = this.props;
     var tempout = [];
@@ -67,12 +112,23 @@ class WalletHome extends React.Component {
         console.log(outindex + "" + outvalue[0].outputTxHash);
         tempout.push(
           <tr>
-            <td>{outvalue[0].address}</td>
-            <td>
-              {this.sentreceived(outvalue[0].spendInfo)}{" "}
-              {satoshiToBSV(outvalue[0].value)} BSV
+            <td className="wallettxlist" colSpan="2">
+              {outvalue[0].outputTxHash}
             </td>
-            <td>{outvalue[0].outputTxHash}</td>
+          </tr>
+        );
+        tempout.push(
+          <tr className="subrow">
+            <td>
+              <table>
+                <tbody>{this.inplist(outvalue)}</tbody>
+              </table>
+            </td>
+            <td>
+              <table>
+                <tbody>{this.spentlist(outvalue)}</tbody>
+              </table>
+            </td>
           </tr>
         );
         if (ctr == 100) {
@@ -337,6 +393,10 @@ class WalletHome extends React.Component {
     //   pop = <Popclose />;
     // }
     const { balance } = this.props;
+    var loadingGif;
+    if (balance === 0) {
+      loadingGif = <img src={loadinggif} className="loadinggif" />;
+    }
     return (
       <>
         <div className="container nonheader">
@@ -347,7 +407,7 @@ class WalletHome extends React.Component {
                   <img src={bsvlogo} alt="" />
                 </div>
                 <h5>Your Current Balance is</h5>
-                <img src={loadinggif} className="loadinggif" />
+                {loadingGif}
                 <h4>{satoshiToBSV(balance)} BSV</h4>
                 <div className="txbtn" onClick={this.toggleSendTxPopup}>
                   Send
@@ -359,12 +419,7 @@ class WalletHome extends React.Component {
           <div className="row">
             <div className="col-md-12 col-lg-12">
               <h3>Recent Transactions</h3>
-              <table id="txlist" className="table">
-                <tr>
-                  <td>To / From(address)</td>
-                  <td>Sent amount/Received amount</td>
-                  <td>Transaction ID</td>
-                </tr>
+              <table id="txlist">
                 <tbody>{this.renderTransaction()}</tbody>
               </table>
             </div>
@@ -385,11 +440,7 @@ class WalletHome extends React.Component {
               </nav>
             </div>
           </div> */}
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={this.onBack}
-          >
+          <button type="button" className="generalbtns" onClick={this.onBack}>
             Back
           </button>
         </div>

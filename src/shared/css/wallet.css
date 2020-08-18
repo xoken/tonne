@@ -4,6 +4,17 @@
 .generalheadingscolor{
   color:grey;
 }
+.wallettxlist{
+  color:white;
+  background-color: grey;
+  font-weight: bold;
+}
+.subrow{
+  border-bottom: 1px solid lightgrey;
+    border-left: 1px solid lightgrey;
+      border-right: 1px solid lightgrey;
+  padding-bottom: 20px;
+}
 .dispnone{
   display: none;
 }
