@@ -2,12 +2,13 @@ import React from 'react';
 import { HashRouter, Route, Link } from 'react-router-dom';
 import PasswordScreen from './wallet/screens/PasswordScreen';
 import Wallet from './wallet/screens/Wallet';
-// import NewWallet from './wallet/screens/NewWallet';
+import NewWallet from './wallet/screens/NewWallet';
 import ExistingWallet from './wallet/screens/ExistingWallet';
 import logo from './shared/images/logo.png';
 import WalletHome from './wallet/screens/WalletHome';
 import sendTransaction from './wallet/components/sendTransaction';
 import NewPassword from './wallet/screens/NewPassword';
+
 export default class App extends React.Component {
   render() {
     return (
@@ -50,9 +51,10 @@ export default class App extends React.Component {
             </form>
           </div>
         </nav>
-        <Route exact path="/" component={Wallet} />
-        <Route exact path="/auth" component={PasswordScreen} />
-        <Route exact path="/wallet/new" component={NewPassword} />
+        <Route exact path="/" component={PasswordScreen} />
+        <Route exact path="/newpassword" component={NewPassword} />
+        <Route exact path="/wallet" component={Wallet} />
+        <Route exact path="/wallet/new" component={NewWallet} />
         <Route exact path="/wallet/existing" component={ExistingWallet} />
         <Route exact path="/wallet/home" component={WalletHome} />
         <Route exact path="/wallet/send" component={sendTransaction} />
