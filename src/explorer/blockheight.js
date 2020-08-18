@@ -1,6 +1,8 @@
-const trasactionPath = path.join('file://', __dirname, 'transaction.html');
-const refreshpage = document.getElementById('refreshpage');
-const logo = (document.getElementById('logo').href = indexPath);
+const indexPath = path.join("file://", __dirname, "index.html");
+const heightpagePath = path.join("file://", __dirname, "blockheight.html");
+const trasactionPath = path.join("file://", __dirname, "transaction.html");
+const refreshpage = document.getElementById("refreshpage");
+const logo = (document.getElementById("logo").href = indexPath);
 var blockparam, backblock;
 var flag;
 var result;
@@ -21,97 +23,89 @@ var txnumber,
   transactionsperpage = 10;
 
 var params = new URL(global.location).searchParams;
-if (params.get('blockhash') != undefined) {
-  blockparam = params.get('blockhash');
+if (params.get("blockhash") != undefined) {
+  blockparam = params.get("blockhash");
   console.log(blockparam);
   flag = 0;
-} else if (params.get('blockheight')) {
-  blockparam = params.get('blockheight');
+} else if (params.get("blockheight")) {
+  blockparam = params.get("blockheight");
   console.log(blockparam);
   flag = 1;
 }
 
 //note to self : remove the following code if you enable httpsauth();
 if (flag == 0) {
-  httpsreq(
-    'Bearer ' + localStorage.getItem('sessionkey') + '',
-    'v1/block/hash/' + blockparam + '',
-    'printresults'
-  );
+  httpsreq("printresults", "getBlockByBlockHash", blockparam);
 } else {
-  httpsreq(
-    'Bearer ' + localStorage.getItem('sessionkey') + '',
-    'v1/block/height/' + blockparam + '',
-    'printresults'
-  );
+  httpsreq("printresults", "getBlockByBlockHeight", blockparam);
 }
 
 function printresults() {
   currentblockhash = rjdecoded.block.hash;
   numberoftransactions = rjdecoded.block.txCount;
-  document.getElementById('back').innerHTML =
+  document.getElementById("back").innerHTML =
     "<a class='btn btn-primary' href='" +
     indexPath +
-    '?blockhei=' +
+    "?blockhei=" +
     rjdecoded.block.height +
     "'>Back</a>";
   date = new Date(rjdecoded.block.header.blockTimestamp * 1000);
-  document.getElementById('nextblock').innerHTML =
+  document.getElementById("nextblock").innerHTML =
     "<a href='" +
     heightpagePath +
-    '?blockhash=' +
+    "?blockhash=" +
     rjdecoded.block.nextBlockHash +
     "'>" +
     rjdecoded.block.nextBlockHash +
-    '</a>';
-  document.getElementById('blocktitle').innerHTML =
-    '#' + rjdecoded.block.height;
-  document.getElementById('title').innerHTML =
-    'Block - ' + rjdecoded.block.hash;
-  document.getElementById('blockhash').innerHTML =
-    'Block - ' + rjdecoded.block.hash;
-  document.getElementById('txcount').innerHTML = rjdecoded.block.txCount;
-  document.getElementById('coinbasetx').innerHTML = rjdecoded.block.coinbaseTx;
-  document.getElementById('size').innerHTML = rjdecoded.block.size + ' Bytes';
-  document.getElementById('coinbasemessage').innerHTML =
+    "</a>";
+  document.getElementById("blocktitle").innerHTML =
+    "#" + rjdecoded.block.height;
+  document.getElementById("title").innerHTML =
+    "Block - " + rjdecoded.block.hash;
+  document.getElementById("blockhash").innerHTML =
+    "Block - " + rjdecoded.block.hash;
+  document.getElementById("txcount").innerHTML = rjdecoded.block.txCount;
+  document.getElementById("coinbasetx").innerHTML = rjdecoded.block.coinbaseTx;
+  document.getElementById("size").innerHTML = rjdecoded.block.size + " Bytes";
+  document.getElementById("coinbasemessage").innerHTML =
     rjdecoded.block.coinbaseMessage;
-  document.getElementById('guessedminer').innerHTML =
+  document.getElementById("guessedminer").innerHTML =
     rjdecoded.block.guessedMiner;
-  document.getElementById('previousblock').innerHTML =
+  document.getElementById("previousblock").innerHTML =
     "<a href='" +
     heightpagePath +
-    '?blockhash=' +
+    "?blockhash=" +
     rjdecoded.block.header.prevBlock +
     "'>" +
     rjdecoded.block.header.prevBlock +
-    '</a>';
-  document.getElementById('blockversion').innerHTML =
+    "</a>";
+  document.getElementById("blockversion").innerHTML =
     rjdecoded.block.header.blockVersion;
-  document.getElementById('merkleroot').innerHTML =
+  document.getElementById("merkleroot").innerHTML =
     rjdecoded.block.header.merkleRoot;
-  document.getElementById('blockbits').innerHTML =
+  document.getElementById("blockbits").innerHTML =
     rjdecoded.block.header.blockBits;
-  document.getElementById('timestamp').innerHTML =
+  document.getElementById("timestamp").innerHTML =
     date.getDate() +
-    '/' +
+    "/" +
     (date.getMonth() + 1) +
-    '/' +
+    "/" +
     date.getFullYear() +
-    ' - ' +
+    " - " +
     date.getHours() +
-    ':' +
+    ":" +
     date.getMinutes() +
-    ':' +
+    ":" +
     date.getSeconds();
-  document.getElementById('bhnonce').innerHTML = rjdecoded.block.header.nonce;
-  if (params.get('txindex') != undefined) {
-    console.log(params.get('txindex'));
+  document.getElementById("bhnonce").innerHTML = rjdecoded.block.header.nonce;
+  if (params.get("txindex") != undefined) {
+    console.log(params.get("txindex"));
     selected = Math.ceil(
-      (parseInt(params.get('txindex'), 10) + 1) / transactionsperpage
+      (parseInt(params.get("txindex"), 10) + 1) / transactionsperpage
     );
-    console.log(selected + 'selected back');
+    console.log(selected + "selected back");
     currentbatchnum = Math.ceil(selected / fixedarrlength);
-    console.log(currentbatchnum + 'currentbatchnum back');
+    console.log(currentbatchnum + "currentbatchnum back");
 
     numberofpages = Math.ceil(numberoftransactions / transactionsperpage);
 
@@ -127,24 +121,20 @@ function printresults() {
     batches = Math.ceil(numberofpages / fixedarrlength);
 
     httpsreq(
-      'Bearer ' + localStorage.getItem('sessionkey') + '',
-      'v1/block/txids/' +
-        currentblockhash +
-        '/?pagenumber=' +
-        currentbatchnum +
-        '&pagesize=50',
-      'enterednumcaching'
+      "enterednumcaching",
+      "getTXIDByHash",
+      currentblockhash,
+      currentbatchnum,
+      50
     );
   } else {
     currentbatchnum = 1;
     httpsreq(
-      'Bearer ' + localStorage.getItem('sessionkey') + '',
-      'v1/block/txids/' +
-        currentblockhash +
-        '/?pagenumber=' +
-        currentbatchnum +
-        '&pagesize=50',
-      'paginationinitialisation'
+      "paginationinitialisation",
+      "getTXIDByHash",
+      currentblockhash,
+      currentbatchnum,
+      50
     );
   }
 }
@@ -154,13 +144,13 @@ refreshpage.innerHTML =
   global.location +
   "'>Refresh Page</a><br />";
 
-const pagescontainer = document.getElementById('pagination');
-var txsection = document.getElementById('transactionsection');
-var enteredpagearea = document.getElementById('enteredpagenumber');
-const pagebutton = document.getElementById('pagebutton');
+const pagescontainer = document.getElementById("pagination");
+var txsection = document.getElementById("transactionsection");
+var enteredpagearea = document.getElementById("enteredpagenumber");
+const pagebutton = document.getElementById("pagebutton");
 
-pagebutton.addEventListener('click', function () {
-  if (enteredpagearea.value != '' && enteredpagearea.value <= numberofpages) {
+pagebutton.addEventListener("click", function () {
+  if (enteredpagearea.value != "" && enteredpagearea.value <= numberofpages) {
     selected = enteredpagearea.value;
     currentbatchnum = Math.ceil(selected / fixedarrlength);
     if (txcache[(selected - 1) * transactionsperpage + 1] != undefined) {
@@ -184,29 +174,27 @@ pagebutton.addEventListener('click', function () {
       transactionprinting();
     } else {
       httpsreq(
-        'Bearer ' + localStorage.getItem('sessionkey') + '',
-        'v1/block/txids/' +
-          currentblockhash +
-          '/?pagenumber=' +
-          currentbatchnum +
-          '&pagesize=50',
-        'enterednumcaching'
+        "enterednumcaching",
+        "getTXIDByHash",
+        currentblockhash,
+        currentbatchnum,
+        50
       );
     }
   }
 });
 
 function addlistener() {
-  var clickedpage = document.getElementsByClassName('page-link');
+  var clickedpage = document.getElementsByClassName("page-link");
   for (var a = 0; a < clickedpage.length; a++) {
-    clickedpage[a].addEventListener('click', function () {
+    clickedpage[a].addEventListener("click", function () {
       selected = this.id;
       printpagination();
       transactionprinting();
     });
   }
   if (pagearray[0] != 1) {
-    document.getElementById('leftarrow').addEventListener('click', function () {
+    document.getElementById("leftarrow").addEventListener("click", function () {
       if (pagearray[0] == 1) {
       } else {
         currentbatchnum = Math.ceil(pagearray[0] / fixedarrlength);
@@ -214,13 +202,11 @@ function addlistener() {
         var tindex = pagearray[0] - fixedarrlength;
         if (txcache[(tindex - 1) * transactionsperpage + 1] == undefined) {
           httpsreq(
-            'Bearer ' + localStorage.getItem('sessionkey') + '',
-            'v1/block/txids/' +
-              currentblockhash +
-              '/?pagenumber=' +
-              currentbatchnum +
-              '&pagesize=50',
-            'updateleftpaginationarray'
+            "updateleftpaginationarray",
+            "getTXIDByHash",
+            currentblockhash,
+            currentbatchnum,
+            50
           );
         } else {
           for (var t = 0; t < fixedarrlength; t++) {
@@ -234,8 +220,8 @@ function addlistener() {
   }
   if (pagearray[pagearrlength - 1] != numberofpages) {
     document
-      .getElementById('rightarrow')
-      .addEventListener('click', function () {
+      .getElementById("rightarrow")
+      .addEventListener("click", function () {
         if (
           txcache[pagearray[pagearray.length - 1] * transactionsperpage + 1] ==
           undefined
@@ -243,13 +229,11 @@ function addlistener() {
           currentbatchnum = Math.ceil(pagearray[0] / fixedarrlength);
           currentbatchnum += 1;
           httpsreq(
-            'Bearer ' + localStorage.getItem('sessionkey') + '',
-            'v1/block/txids/' +
-              currentblockhash +
-              '/?pagenumber=' +
-              currentbatchnum +
-              '&pagesize=50',
-            'updatepaginationarray'
+            "updatepaginationarray",
+            "getTXIDByHash",
+            currentblockhash,
+            currentbatchnum,
+            50
           );
         } else {
           currentbatchnum = Math.ceil(pagearray[0] / fixedarrlength);
@@ -263,7 +247,7 @@ function addlistener() {
             if (t <= numberofpages) {
               pagearray[tindex] = t;
             } else {
-              pagearray[tindex] = '';
+              pagearray[tindex] = "";
             }
             tindex += 1;
           }
@@ -324,7 +308,7 @@ function updatepaginationarray() {
       if (pagenum <= numberofpages) {
         pagearray[t] = pagenum;
       } else {
-        pagearray[t] = '';
+        pagearray[t] = "";
       }
     }
   }
@@ -341,37 +325,37 @@ function printpagination() {
   } else {
     pagearrlength = fixedarrlength;
   }
-  pagescontainer.innerHTML = '';
+  pagescontainer.innerHTML = "";
   if (pagearray[0] != 1) {
     pagescontainer.insertAdjacentHTML(
-      'beforeend',
+      "beforeend",
       "<li class='page-item active'><a class='arrows' id='leftarrow'><</a></li>"
     );
   }
   for (var i = 0; i < pagearrlength; i++) {
     if (pagearray[i] == selected) {
       pagescontainer.insertAdjacentHTML(
-        'beforeend',
+        "beforeend",
         "<li class='page-item active'><a class='page-link' id='" +
           pagearray[i] +
           "'>" +
           pagearray[i] +
-          '</a></li>'
+          "</a></li>"
       );
     } else {
       pagescontainer.insertAdjacentHTML(
-        'beforeend',
+        "beforeend",
         "<li class='page-item'><a class='page-link' id='" +
           pagearray[i] +
           "'>" +
           pagearray[i] +
-          '</a></li>'
+          "</a></li>"
       );
     }
   }
   if (pagearray[pagearrlength - 1] != numberofpages) {
     pagescontainer.insertAdjacentHTML(
-      'beforeend',
+      "beforeend",
       "<li class='page-item active'><a class='arrows' id='rightarrow'>></a></li>"
     );
   }
@@ -379,7 +363,7 @@ function printpagination() {
 }
 
 function transactionprinting() {
-  txsection.innerHTML = '';
+  txsection.innerHTML = "";
   var printbreaker = 1;
   txnumber = (selected - 1) * transactionsperpage;
   for (var k = txnumber; k < numberoftransactions; k++) {
@@ -388,11 +372,11 @@ function transactionprinting() {
       (txnumber + printbreaker) +
       " - <a href='" +
       trasactionPath +
-      '?transaction=' +
+      "?transaction=" +
       txcache[k] +
       "'>" +
       txcache[k] +
-      '</a></td></tr>';
+      "</a></td></tr>";
     if (printbreaker == transactionsperpage) {
       break;
     }

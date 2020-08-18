@@ -1,13 +1,13 @@
-import React from 'react';
-import { HashRouter, Route, Link } from 'react-router-dom';
-import PasswordScreen from './wallet/screens/PasswordScreen';
-import Wallet from './wallet/screens/Wallet';
-import NewWallet from './wallet/screens/NewWallet';
-import ExistingWallet from './wallet/screens/ExistingWallet';
-import logo from './shared/images/logo.png';
-import WalletHome from './wallet/screens/WalletHome';
-import sendTransaction from './wallet/components/sendTransaction';
-import NewPassword from './wallet/screens/NewPassword';
+import React from "react";
+import { HashRouter, Route, Link } from "react-router-dom";
+import PasswordScreen from "./wallet/screens/PasswordScreen";
+import Wallet from "./wallet/screens/Wallet";
+import NewWallet from "./wallet/screens/NewWallet";
+import ExistingWallet from "./wallet/screens/ExistingWallet";
+import logo from "./shared/images/logo.png";
+import WalletHome from "./wallet/screens/WalletHome";
+import sendTransaction from "./wallet/components/sendTransaction";
+import NewPassword from "./wallet/screens/NewPassword";
 
 export default class App extends React.Component {
   render() {
@@ -47,6 +47,7 @@ export default class App extends React.Component {
                     Help
                   </Link>
                 </li>
+                <a href="../src/explorer/index.html">explorer</a>
               </ul>
             </form>
           </div>

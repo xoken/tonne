@@ -1,12 +1,12 @@
-import React from 'react';
+import React from "react";
 
 export default class Wallet extends React.Component {
   onCreateWallet = () => {
-    this.props.history.push('/wallet/new');
+    this.props.history.push("/wallet/new");
   };
 
   onImportWallet = () => {
-    this.props.history.push('/wallet/existing');
+    this.props.history.push("/wallet/existing");
   };
 
   render() {
@@ -14,7 +14,7 @@ export default class Wallet extends React.Component {
       <>
         <div className="container wallet-container">
           <div className="row align-items-center">
-            <div className="col-sm-6">
+            <div className="col-lg-4 col-sm-4">
               <div className="card text-center">
                 <div className="card-body">
                   <h5 className="card-title">I already have a seed phrase</h5>
@@ -31,7 +31,7 @@ export default class Wallet extends React.Component {
                 </div>
               </div>
             </div>
-            <div className="col-sm-6">
+            <div className="col-lg-4 col-sm-4">
               <div className="card text-center">
                 <div className="card-body">
                   <h5 className="card-title">Yes, let's get set up!</h5>
@@ -45,6 +45,21 @@ export default class Wallet extends React.Component {
                   >
                     Create a Wallet
                   </button>
+                </div>
+              </div>
+            </div>
+            <div className="col-lg-4 col-sm-4">
+              <div className="card text-center">
+                <div className="card-body">
+                  <h5 className="card-title">BSV Block Explorer</h5>
+                  <p className="card-text">Explore BSV blocks without limits</p>
+                  <br />
+                  <a
+                    href="../src/explorer/index.html"
+                    className="btn btn-primary"
+                  >
+                    Explore Blocks
+                  </a>
                 </div>
               </div>
             </div>
