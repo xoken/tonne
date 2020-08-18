@@ -38,7 +38,7 @@
   margin:0px 5px 0px 5px;
 }
 .mnword{
-  
+
 }
 #alphabets {
   padding: 0px 20px 0px 20px;
@@ -76,7 +76,7 @@
   text-align: center;
   margin: 15px;
   width: fit-content;
-
+  text-decoration: none;
   vertical-align: middle;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -96,5 +96,6 @@
 }
 
 .generalbtns:hover {
+  text-decoration: none;
   background-color: grey;
 }

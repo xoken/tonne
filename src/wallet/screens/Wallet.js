@@ -23,7 +23,7 @@ export default class Wallet extends React.Component {
                   </p>
                   <button
                     type="button"
-                    className="btn btn-primary"
+                    className="generalbtns"
                     onClick={this.onImportWallet}
                   >
                     Import wallet
@@ -40,7 +40,7 @@ export default class Wallet extends React.Component {
                   </p>
                   <button
                     type="button"
-                    className="btn btn-primary"
+                    className="generalbtns"
                     onClick={this.onCreateWallet}
                   >
                     Create a Wallet
@@ -54,10 +54,7 @@ export default class Wallet extends React.Component {
                   <h5 className="card-title">BSV Block Explorer</h5>
                   <p className="card-text">Explore BSV blocks without limits</p>
                   <br />
-                  <a
-                    href="../src/explorer/index.html"
-                    className="btn btn-primary"
-                  >
+                  <a href="../src/explorer/index.html" className="generalbtns">
                     Explore Blocks
                   </a>
                 </div>

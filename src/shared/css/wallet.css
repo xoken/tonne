@@ -4,6 +4,9 @@
 .generalheadingscolor{
   color:grey;
 }
+.dispnone{
+  display: none;
+}
 .passinputwidth{
   width:60%;
 }
@@ -14,6 +17,10 @@
 .greenalert{
   color:green;
   font-weight: bold;
+}
+#backspc{
+  background-color: #eab300;
+  border:none;
 }
 .txbtn {
   display: inline-block;
