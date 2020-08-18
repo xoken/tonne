@@ -26,19 +26,6 @@ searchbutton.addEventListener("click", function () {
         searchresultsmessage();
       }
     } else if (searchterm.value.length == 64) {
-      if (searchterm.value.substring(0, 3) == "000") {
-        window.location.replace(
-          blhpath + "?blockhash=" + searchterm.value + ""
-        );
-      } else {
-        window.location.replace(
-          blhpath + "?transaction=" + searchterm.value + ""
-        );
-      }
-    } else {
-      searchresultsmessage();
-    }
-  } else if (searchterm.value.length == 64) {
     if (searchterm.value.substring(0, 3) == "000") {
       window.location.replace(blhpath + "?blockhash=" + searchterm.value + "");
     } else {
@@ -47,6 +34,7 @@ searchbutton.addEventListener("click", function () {
   } else {
     searchresultsmessage();
   }
+}
 });
 
 function searchresultsmessage() {
