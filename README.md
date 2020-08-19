@@ -9,7 +9,12 @@ sudo apt install npm
 ```
 
 **Step 2:**
-git clone/download nipkow and cd into the nipkow app's directory.
+
+```
+git clone --single-branch --branch develop https://github.com/xoken/nipkow.git
+```
+
+cd into the nipkow app's directory.
 
 **Step 3:**
 
