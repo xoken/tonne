@@ -11,7 +11,7 @@ class SendTransaction extends React.Component {
     this.state = {
       receiverAddress: 'mnGY8nS44fs11yYBJ3Lo3PX3Kdgyfup7d3',
       amountInSatoshi: '2000',
-      transactionFee: '',
+      transactionFee: 55,
     };
   }
 

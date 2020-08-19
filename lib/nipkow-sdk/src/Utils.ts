@@ -5,11 +5,16 @@ import {
   ECPair,
   payments,
   Psbt,
+  networks,
 } from 'bitcoinjs-lib';
 import derivationPaths from './constants/derivationPaths';
 import * as bip38 from 'bip38';
 import * as bip39 from 'bip39';
-import * as coinSelect from 'coinselect';
+import coinSelect from 'coinselect';
+import { fromUint8Array, atob } from 'js-base64';
+import pako from 'pako';
+import { transactionAPI } from './TransactionAPI';
+var zlib = require('zlib');
 
 class Utils {
   generateMnemonic = (
@@ -158,44 +163,16 @@ class Utils {
     targets: [],
     transactionFee: number
   ) => {
-    const key = ECPair.fromWIF(privateKey);
-    // psbt.addInput({
-    //   hash: 'd18e7106e5492baf8f3929d2d573d27d89277f3825d3836aa86ea1d843b5158b',
-    //   index: 0,
-    //   nonWitnessUtxo: Buffer.from(
-    //     '0200000001f9f34e95b9d5c8abcd20fc5bd4a825d1517be62f0f775e5f36da944d9' +
-    //       '452e550000000006b483045022100c86e9a111afc90f64b4904bd609e9eaed80d48' +
-    //       'ca17c162b1aca0a788ac3526f002207bb79b60d4fc6526329bf18a77135dc566020' +
-    //       '9e761da46e1c2f1152ec013215801210211755115eabf846720f5cb18f248666fec' +
-    //       '631e5e1e66009ce3710ceea5b1ad13ffffffff01' +
-    //       // value in satoshis (Int64LE) = 0x015f90 = 90000
-    //       '905f010000000000' +
-    //       // scriptPubkey length
-    //       '19' +
-    //       // scriptPubkey
-    //       '76a9148bbc95d2709c71607c60ee3f097c1217482f518d88ac' +
-    //       // locktime
-    //       '00000000',
-    //     'hex'
-    //   ),
-    // });
-    // psbt.addOutput({
-    //   address: '1KRMKfeZcmosxALVYESdPNez1AP1mEtywp',
-    //   value: 80000,
-    // });
+    const key = ECPair.fromWIF(privateKey, networks.regtest);
     console.log(transactionFee);
-    const feeRate = 55; // satoshis per byte
-    let { inputs, outputs, fee } = coinSelect.coinSelect(
-      utxos,
-      targets,
-      feeRate
-    );
+    const feeRate = 5; // satoshis per byte
+    let { inputs, outputs, fee } = coinSelect(utxos, targets, feeRate);
     // the accumulated fee is always returned for analysis
     console.log(fee);
     // .inputs and .outputs will be undefined if no solution was found
-    if (!inputs || !outputs) return;
+    // if (!inputs || !outputs) return;
 
-    let psbt = new Psbt();
+    let psbt = new Psbt({ network: networks.regtest });
 
     // inputs.forEach((input: { txId: any; vout: any; nonWitnessUtxo: any }) =>
     //   psbt.addInput({
@@ -204,33 +181,93 @@ class Utils {
     //     nonWitnessUtxo: input.nonWitnessUtxo,
     //   })
     // );
-
-    inputs.forEach(
-      (input: { outputTxHash: string; txIndex: number; nonWitnessUtxo: any }) =>
-        psbt.addInput({
-          hash: input.outputTxHash,
-          index: input.txIndex,
-          nonWitnessUtxo: Buffer.from(input.outputTxHash),
-        })
+    const txIds = inputs.map(
+      (input: { outputTxHash: any }) => input.outputTxHash
     );
-    outputs.forEach((output: { address: any; value: any }) => {
-      // watch out, outputs may have been added that you need to provide
-      // an output address/script for
-      if (!output.address) {
-        // output.address = wallet.getChangeAddress();
-        // wallet.nextChangeAddress();
-      }
 
-      psbt.addOutput({
-        address: output.address,
-        value: output.value,
-      });
+    const rawTxsResponse = await transactionAPI.getRawTransactionsByTxIDs(
+      txIds
+    );
+    const inputsWithRawTxs = rawTxsResponse.rawTxs.map((rawTx: any) => {
+      const base64Decode = atob(rawTx.txSerialized);
+      const decompressed = pako.ungzip(base64Decode);
+      const hex = Buffer.from(decompressed).toString('hex');
+      return { ...rawTx, hex };
     });
+    // const payment = payments.p2pkh({
+    //   pubkey: key.publicKey,
+    //   network: networks.regtest,
+    // });
+    // const output = payment.pubkey;
+    try {
+      inputsWithRawTxs.forEach(
+        (input: { txId: any; txIndex: any; hex: any }) => {
+          psbt.addInput({
+            hash: input.txId,
+            index: input.txIndex,
+            nonWitnessUtxo: Buffer.from(input.hex, 'hex'),
+            // redeemScript: output,
+          });
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
 
-    psbt.signInput(0, key);
-    psbt.validateSignaturesOfInput(0);
-    psbt.finalizeAllInputs();
-    return psbt.extractTransaction().toHex();
+    try {
+      outputs.forEach((output: { address: any; value: any }) => {
+        // watch out, outputs may have been added that you need to provide
+        // an output address/script for
+        if (!output.address) {
+          output.address = 'mnPbBBvj9JPJ4RHJfWLSwFDpfRCP81F1Zr';
+        }
+        psbt.addOutput({
+          address: output.address,
+          value: output.value,
+        });
+      });
+    } catch (error) {
+      console.log(error);
+    }
+    try {
+      // psbt.signInput(0, key);
+      psbt.signAllInputs(key);
+    } catch (error) {
+      debugger;
+      console.log(error);
+    }
+    try {
+      psbt.validateSignaturesOfAllInputs();
+    } catch (error) {
+      debugger;
+      console.log(error);
+    }
+    try {
+      psbt.finalizeAllInputs();
+    } catch (error) {
+      debugger;
+      console.log(error);
+    }
+    const hex = psbt.extractTransaction().toHex();
+    debugger;
+    try {
+      const compressed = zlib.gzipSync(hex, {
+        windowBits: 31,
+        level: 9,
+      });
+      const compressed1 = pako.gzip(hex, { level: 9, windowBits: 31 });
+      console.log(compressed);
+      console.log(compressed1);
+      debugger;
+      const base64 = fromUint8Array(compressed, true);
+      const compressedHex = Buffer.from(base64).toString('utf-8');
+      console.log(compressedHex);
+      debugger;
+    } catch (error) {
+      console.log(error);
+    }
+    // return compressedHex;
+    return 'H4sIAAAAAAACE2NiYGBgXqRqEBq/tiowZ85Rd8egZVsP5+SGNxzn+PJA2fdk3/sgY6AahmwPA1cmRYZNBs+OHrylc/nu5m9834OWSd2OOsKglb0h6tF6j8u1adymTAplFvInw5kFds0XK5qnwP8+6lbV3fiVUn7q286/MIiY+l2XUZH53smvbo0vNQ+dLbvS9X/259Xcl7TW66ZxOlvMDeS/f37ao/9A8C0qrHj++7V9q/1+N7xo52ay9VoeteOWbOX34GtXnjE4XgW5KcvdwIVJIe6/Nfv1156VXGfc9wcsaGl/J1vx6sD9oo71vx0d99yV6WVSSMmqqb2WqZOivGD/pMyGr/Im2YG1j9avWRmdNv0Ve2+DFpFOil/W+Ts6/g6v42KGzdOdfzob/v81vyNO7VnAkkbjxbJP7iGcFLnoYHqCy2F9kSs/HqrNd1sReXJXxaevOrWh/6/VKk0JdGZSkJTVKIvYtqU0wdVw0RGX7WckbqmnrpQt/7xrs5b1NxeZIiKdxHiBnQEMJMtWinjxPd6was18dTPZjd8ac69nTg9TXtyxBiQLAMwtCivmAQAA';
   };
 }
 

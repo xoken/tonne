@@ -173,7 +173,7 @@ class WalletService {
         return acc;
       }, prevBalance);
       const outputs = [...prevOutputs, ...data.outputs];
-      if (false && data.nextCursor) {
+      if (data.nextCursor) {
         console.log(balance);
         return await this.getOutputsByAddresses(
           keys,
@@ -208,11 +208,12 @@ class WalletService {
       const derivedKey = derivedKeys.find(
         (derivedKey) => derivedKey.isUsed === false
       );
+      console.log(derivedKey);
       // var inputs = utxos.slice(0, 5).map((element) => {
       //   return { ...element, value: 5000 };
       // });
-      const transactionHex = utils.createSendTransaction(
-        derivedKey.privkey,
+      const transactionHex = await utils.createSendTransaction(
+        'cN6NafxmNHmhhF6uUug2VuagYm5DWMhRQ5qZDLHyd7Sinbji69Ui',
         utxos,
         targets,
         transactionFee
