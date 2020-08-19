@@ -14,9 +14,8 @@ sudo apt install npm
 git clone --single-branch --branch develop https://github.com/xoken/nipkow.git
 ```
 
-cd into the nipkow app's directory.
-
 **Step 3:**
+cd into the nipkow app's directory.
 
 ```
 npm install
@@ -31,9 +30,10 @@ npm start
 ```
 
 open new terminal
+cd into nipkow app's directory and then
 
 ```
-cd <nipkow app's directory>/lib/nipkow-sdk
+cd /lib/nipkow-sdk
 ```
 
 ```
@@ -41,6 +41,11 @@ npm start
 ```
 
 open new terminal
+cd into nipkow app's directory and then
+
+```
+npm run build
+```
 
 ```
 npm run electron
