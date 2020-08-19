@@ -26,6 +26,9 @@ class NewPassword extends React.Component {
     this.props.history.push("/wallet/home");
     event.preventDefault();
   }
+  onBack = () => {
+    this.props.history.goBack();
+  };
   render() {
     return (
       <>
@@ -71,6 +74,9 @@ class NewPassword extends React.Component {
               </form>
             </div>
           </div>
+          <button type="button" className="generalbtns" onClick={this.onBack}>
+            Back
+          </button>
         </div>
       </>
     );

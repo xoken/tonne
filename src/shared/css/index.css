@@ -88,6 +88,10 @@ table {
   overflow: auto;
   width: auto;
 }
+.backspc {
+  float: right;
+  color: white;
+}
 .thborder {
   border-bottom: 1pt solid lightgrey;
 }

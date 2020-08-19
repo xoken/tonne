@@ -17,8 +17,8 @@ function createWindow() {
   win.show();
   // and load the index.html of the app.
   // win.loadFile('src/index.html');
-  const url = 'http://localhost:3000/wallet';
-  // const url = `file://${path.join(__dirname, '/../build/index.html')}`;
+  //const url = "http://localhost:3000/wallet";
+  const url = `file://${path.join(__dirname, '/../build/index.html')}`;
   // console.log(url);
   win.loadURL(url);
   //win.webContents.send("dirpath", indexPath);

@@ -1,4 +1,5 @@
 var rjdecoded;
+console.log(localStorage.getItem("sessionkey"));
 function httpsreq(functionname, ...reqparameter) {
   if (
     localStorage.getItem("callsremaining") == null ||
@@ -16,98 +17,98 @@ function httpsreq(functionname, ...reqparameter) {
     case "getOutputsByAddress":
       apis.addressAPI
         .getOutputsByAddress(reqparameter[1], reqparameter[2], reqparameter[3])
-        .then((data) => {
+        .then(data => {
           rjdecoded = data;
           window[functionname]();
         })
 
         //searchresultsmessage();
 
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
       break;
     case "getBlockByBlockHash":
       apis.blockAPI
         .getBlockByBlockHash(reqparameter[1])
-        .then((data) => {
+        .then(data => {
           rjdecoded = data;
           window[functionname]();
         })
 
         //searchresultsmessage();
 
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
       break;
     case "getBlockByBlockHeight":
       apis.blockAPI
         .getBlockByBlockHeight(reqparameter[1])
-        .then((data) => {
+        .then(data => {
           rjdecoded = data;
           window[functionname]();
         })
 
         //searchresultsmessage();
 
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
       break;
     case "getBlocksByBlockHeights":
       apis.blockAPI
         .getBlocksByBlockHeights(reqparameter[1])
-        .then((data) => {
+        .then(data => {
           rjdecoded = data;
           window[functionname]();
         })
 
         //searchresultsmessage();
 
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
       break;
     case "getTXIDByHash":
       apis.blockAPI
         .getTXIDByHash(reqparameter[1], reqparameter[2], reqparameter[3])
-        .then((data) => {
+        .then(data => {
           rjdecoded = data;
           window[functionname]();
         })
 
         //searchresultsmessage();
 
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
       break;
     case "getChainInfo":
       apis.chainAPI
         .getChainInfo()
-        .then((data) => {
+        .then(data => {
           rjdecoded = data;
           window[functionname]();
         })
 
         //searchresultsmessage();
 
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
       break;
     case "getTransactionByTxID":
       apis.transactionAPI
         .getTransactionByTxID(reqparameter[1])
-        .then((data) => {
+        .then(data => {
           rjdecoded = data;
           window[functionname]();
         })
 
         //searchresultsmessage();
 
-        .catch((err) => {
+        .catch(err => {
           console.log(err);
         });
       break;

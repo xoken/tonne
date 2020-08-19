@@ -3,9 +3,9 @@ const heightpagePath = path.join("file://", __dirname, "blockheight.html");
 
 const resultsrow = document.getElementById("rowstoinsert");
 const blockhand = document.getElementsByClassName("blockheights");
-const logo = (document.getElementById("logo").href = indexPath);
+const logo = (document.getElementById("logo").href = "../../build/index.html");
 document.getElementById("back").innerHTML =
-  "<a class='btn btn-primary' style='color:white;' onclick='window.history.back();'>Back</a>";
+  "<a class='btn btn-primary' style='color:white;' href='../../build/index.html'>Back</a>";
 var date,
   result,
   backpagenum,

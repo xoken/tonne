@@ -3,7 +3,7 @@ const addressPath = path.join("file://", __dirname, "address.html");
 const indexPath = path.join("file://", __dirname, "index.html");
 const heightpagePath = path.join("file://", __dirname, "blockheight.html");
 var result, transactionparam, selectedparam;
-const logo = (document.getElementById("logo").href = indexPath);
+const logo = (document.getElementById("logo").href = "../../build/index.html");
 //result = global.location.search.match(/\?transaction\=/i);
 //result = global.location.search.match(/\?transaction\=*\/i);
 //transactionparam = global.location.search.replace(result, '');

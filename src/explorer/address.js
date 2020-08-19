@@ -3,7 +3,7 @@ const heightpagePath = path.join("file://", __dirname, "blockheight.html");
 const transactionPath = path.join("file://", __dirname, "transaction.html");
 const addressPath = path.join("file://", __dirname, "address.html");
 var result, address;
-const logo = (document.getElementById("logo").href = indexPath);
+const logo = (document.getElementById("logo").href = "../../build/index.html");
 var addsummarysection = document.getElementById("addressummary");
 var txlist = document.getElementById("txlist");
 var addressCache = [],
@@ -246,14 +246,14 @@ function printpagination() {
 function addlistener() {
   var clickedpage = document.getElementsByClassName("page-link");
   for (var a = 0; a < clickedpage.length; a++) {
-    clickedpage[a].addEventListener("click", function () {
+    clickedpage[a].addEventListener("click", function() {
       selected = this.id;
       printpagination();
       printresults();
     });
   }
   if (pagearray[0] != 1) {
-    document.getElementById("leftarrow").addEventListener("click", function () {
+    document.getElementById("leftarrow").addEventListener("click", function() {
       currentbatchnum = Math.ceil(pagearray[0] / totalpagesavailable);
       currentbatchnum -= 1;
       var ltindex = pagearray[0] - fixedpagearrlength;
@@ -271,43 +271,41 @@ function addlistener() {
     pagearray[pagearray.length - 1] != totalpagesavailable ||
     nextcursor != null
   ) {
-    document
-      .getElementById("rightarrow")
-      .addEventListener("click", function () {
-        console.log("right arrow clicked");
-        //  console.log(pagearray[pagearray.length-1]+"pagearray[pagearray.length-1]");
-        console.log(totalpagesavailable + "totalpagesavailable");
-        currentbatchnum = Math.ceil(pagearray[0] / fixedpagearrlength);
-        if (
-          pagearray[pagearray.length - 1] == totalpagesavailable &&
-          nextcursor != null
-        ) {
-          httpsreq(
-            "adddataupdatepagearray",
-            "getOutputsByAddress",
-            100,
-            nextcursor
-          );
-        } else {
-          console.log("elseblock");
-          currentbatchnum += 1;
-          var tindex = pagearray[pagearray.length - 1];
+    document.getElementById("rightarrow").addEventListener("click", function() {
+      console.log("right arrow clicked");
+      //  console.log(pagearray[pagearray.length-1]+"pagearray[pagearray.length-1]");
+      console.log(totalpagesavailable + "totalpagesavailable");
+      currentbatchnum = Math.ceil(pagearray[0] / fixedpagearrlength);
+      if (
+        pagearray[pagearray.length - 1] == totalpagesavailable &&
+        nextcursor != null
+      ) {
+        httpsreq(
+          "adddataupdatepagearray",
+          "getOutputsByAddress",
+          100,
+          nextcursor
+        );
+      } else {
+        console.log("elseblock");
+        currentbatchnum += 1;
+        var tindex = pagearray[pagearray.length - 1];
 
-          if (
-            pagearray[pagearray.length - 1] + fixedpagearrlength >
-            totalpagesavailable
-          ) {
-            pagearrlength = totalpagesavailable % fixedpagearrlength;
-          } else {
-            pagearrlength = fixedpagearrlength;
-          }
-          for (var t = 0; t < pagearrlength; t++) {
-            tindex += 1;
-            pagearray[t] = tindex;
-            console.log(pagearray[t] + "pagearray[t]");
-          }
-          printpagination();
+        if (
+          pagearray[pagearray.length - 1] + fixedpagearrlength >
+          totalpagesavailable
+        ) {
+          pagearrlength = totalpagesavailable % fixedpagearrlength;
+        } else {
+          pagearrlength = fixedpagearrlength;
         }
-      });
+        for (var t = 0; t < pagearrlength; t++) {
+          tindex += 1;
+          pagearray[t] = tindex;
+          console.log(pagearray[t] + "pagearray[t]");
+        }
+        printpagination();
+      }
+    });
   }
 }
