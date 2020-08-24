@@ -5,7 +5,7 @@ const INITIAL_STATE = {
   // mnemonicLanguage: '',
   bip39Mnemonic: '',
   // bip39SplitMnemonic: [],
-  // bip39Passphrase: '',
+  bip39Passphrase: '',
   bip39SeedHex: '',
   // coin: '',
   bip32RootKeyBase58: '',
@@ -19,13 +19,21 @@ const INITIAL_STATE = {
   isLoading: false,
   balance: 0,
   outputs: [],
+  transactions: [],
 };
 
 export default createReducer(
   {
+    [actions.generateMnemonicSuccess]: (state, { bip39Mnemonic }) => ({
+      ...state,
+      bip39Mnemonic,
+    }),
+    [actions.setPassPhraseSuccess]: (state, { bip39Passphrase }) => ({
+      ...state,
+      bip39Passphrase,
+    }),
     [actions.initWalletSuccess]: (state, payload) => ({
       ...state,
-      bip39Mnemonic: payload.bip39Mnemonic,
       bip39SeedHex: payload.bip39SeedHex,
       bip32RootKeyBase58: payload.bip32RootKeyBase58,
       bip32ExtendedKey: payload.bip32ExtendedKey,
@@ -49,6 +57,10 @@ export default createReducer(
     [actions.getCurrentBalanceFailure]: (state) => ({
       ...state,
       isLoading: false,
+    }),
+    [actions.getTransactionSuccess]: (state, { transactions }) => ({
+      ...state,
+      transactions,
     }),
   },
   INITIAL_STATE

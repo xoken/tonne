@@ -1,4 +1,4 @@
-export const data = [
+const mnemonicLanguage = [
   { language: 'english', displayLanguage: 'English' },
   { language: 'japanese', displayLanguage: 'Japanese' },
   { language: 'spanish', displayLanguage: 'Spanish' },
@@ -9,3 +9,5 @@ export const data = [
   { language: 'korean', displayLanguage: '한국어' },
   { language: 'czech', displayLanguage: 'Čeština' },
 ];
+
+export default mnemonicLanguage;

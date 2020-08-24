@@ -1,26 +1,34 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import { Provider } from "react-redux";
-import "./shared/css/App.css";
-import "./shared/css/address.css";
-import "./shared/css/blockheight.css";
-import "./shared/css/index.css";
-import "./shared/css/mnemonic.css";
-import "./shared/css/scripthash.css";
-import "./shared/css/transaction.css";
-import "./shared/css/wallet.css";
-import App from "./App";
-import * as serviceWorker from "./serviceWorker";
-import configureStore from "./shared/store/configureStore";
-const store = configureStore();
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { Provider } from 'react-redux';
+import './shared/css/App.css';
+import './shared/css/address.css';
+import './shared/css/blockheight.css';
+import './shared/css/index.css';
+import './shared/css/mnemonic.css';
+import './shared/css/scripthash.css';
+import './shared/css/transaction.css';
+import './shared/css/wallet.css';
+import App from './App';
+import * as serviceWorker from './serviceWorker';
+import configureStore from './shared/store/configureStore';
+import { PersistGate } from 'redux-persist/integration/react';
+
+const { store, persistor } = configureStore();
+
+const PersistComponent = persistor
+  ? (props) => <PersistGate {...props} loading={null} persistor={persistor} />
+  : React.Fragment;
 
 ReactDOM.render(
   <Provider store={store}>
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
+    <PersistComponent>
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>
+    </PersistComponent>
   </Provider>,
-  document.getElementById("root")
+  document.getElementById('root')
 );
 
 // If you want your app to work offline and load faster, you can change

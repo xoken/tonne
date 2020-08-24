@@ -1,63 +1,64 @@
-import React from "react";
-import { connect } from "react-redux";
-import PropTypes from "prop-types";
-import * as walletActions from "../walletActions";
-import * as walletSelectors from "../walletSelectors";
-var globmnorig = "";
-var globmndupl = "";
+import React from 'react';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
+import * as walletActions from '../walletActions';
+import * as walletSelectors from '../walletSelectors';
+var globmnorig = '';
+var globmndupl = '';
+
 class NewWallet extends React.Component {
   constructor(props) {
     super(props);
     this.state = { continue: false };
   }
-  morigfull = "";
+
+  morigfull = '';
   mnorig = [];
   mndupl = [];
   self = this;
+
   generateMnemonic = () => {
     const { dispatch } = this.props;
-    dispatch(walletActions.initWallet());
+    dispatch(walletActions.generateMnemonic());
     this.setState({ continue: true });
   };
 
   onContinue = () => {
-    this.props.history.push("/newpassword");
+    this.props.history.push('/wallet/password');
   };
-  onBack = () => {
-    this.props.history.goBack();
-  };
+
   addmnwordlistener = () => {
-    var mnwords = document.getElementsByClassName("mnword");
+    var mnwords = document.getElementsByClassName('mnword');
     for (var j = 0; j < mnwords.length; j++) {
-      mnwords[j].addEventListener("mouseenter", function() {
+      mnwords[j].addEventListener('mouseenter', function () {
         this.textContent = globmnorig[this.id];
       });
-      mnwords[j].addEventListener("mouseleave", function() {
+      mnwords[j].addEventListener('mouseleave', function () {
         this.textContent = globmndupl[this.id];
       });
     }
   };
 
   printmn = () => {
-    document.getElementById("mnemonic").innerHTML = this.morigfull;
-    document.getElementById("unmaskhint").innerHTML =
-      "<h6>Hint: Move your mouse pointer over the masked words to unmask them</h6>";
+    document.getElementById('mnemonic').innerHTML = this.morigfull;
+    document.getElementById('unmaskhint').innerHTML =
+      '<h6>Hint: Move your mouse pointer over the masked words to unmask them</h6>';
   };
 
   render() {
-    this.morigfull = "";
+    this.morigfull = '';
     this.mnorig.length = 0;
     this.mndupl.length = 0;
-    if (this.props.bip39Mnemonic !== "undefined") {
-      var mnwordarray = this.props.bip39Mnemonic.split(" ");
+    if (this.props.bip39Mnemonic !== 'undefined') {
+      var mnwordarray = this.props.bip39Mnemonic.split(' ');
       for (var k = 0; k < mnwordarray.length; k++) {
         if (mnwordarray[k][0] !== undefined) {
           this.mndupl[k] = mnwordarray[k][0].toString();
           for (var l = 1; l < mnwordarray[k].length; l++) {
-            this.mndupl[k] += "*";
+            this.mndupl[k] += '*';
           }
           this.morigfull +=
-            "<span class='mnword' id='" + k + "'>" + this.mndupl[k] + "</span>";
+            "<span class='mnword' id='" + k + "'>" + this.mndupl[k] + '</span>';
         }
         this.mnorig.push(mnwordarray[k]);
 
@@ -67,7 +68,7 @@ class NewWallet extends React.Component {
       }
       globmnorig = this.mnorig;
       globmndupl = this.mndupl;
-      if (document.getElementById("mnemonic") !== null) {
+      if (document.getElementById('mnemonic') !== null) {
         this.printmn();
         this.addmnwordlistener();
       }
@@ -82,7 +83,7 @@ class NewWallet extends React.Component {
     }
 
     return (
-      <div className="container nonheader">
+      <>
         <div className="row">
           <div className="col-lg-12 col-md-12 col-sm-12 centerall">
             <h5 className="generalheadingscolor">
@@ -107,10 +108,7 @@ class NewWallet extends React.Component {
             <p></p>
           </div>
         </div>
-        <button type="button" className="generalbtns" onClick={this.onBack}>
-          Back
-        </button>
-      </div>
+      </>
     );
   }
 }
@@ -118,16 +116,16 @@ class NewWallet extends React.Component {
 NewWallet.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  bip39Mnemonic: PropTypes.string
+  bip39Mnemonic: PropTypes.string,
 };
 
 NewWallet.defaultProps = {
-  bip39Mnemonic: ""
+  bip39Mnemonic: '',
 };
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   isLoading: walletSelectors.isLoading(state),
-  bip39Mnemonic: walletSelectors.getMnemonic(state)
+  bip39Mnemonic: walletSelectors.getMnemonic(state),
 });
 
 export default connect(mapStateToProps)(NewWallet);

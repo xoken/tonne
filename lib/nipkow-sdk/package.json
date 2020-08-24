@@ -33,15 +33,15 @@
   "author": "shubendrak",
   "module": "dist/nipkow-sdk.esm.js",
   "devDependencies": {
-    "@types/node": "^14.0.27",
     "@types/qs": "^6.9.4",
+    "@types/node": "^12.12.54",
+    "@types/bip38": "^2.0.1",
     "husky": "^4.2.5",
     "tsdx": "^0.13.2",
     "tslib": "^2.0.0",
     "typescript": "^3.9.7"
   },
   "dependencies": {
-    "@types/bip38": "^2.0.1",
     "@types/pako": "^1.0.1",
     "axios": "^0.19.2",
     "bip38": "^3.1.1",

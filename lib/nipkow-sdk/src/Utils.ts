@@ -6,14 +6,17 @@ import {
   payments,
   Psbt,
   networks,
+  // Transaction,
+  // TransactionBuilder,
 } from 'bitcoinjs-lib';
 import derivationPaths from './constants/derivationPaths';
 import * as bip38 from 'bip38';
 import * as bip39 from 'bip39';
 import coinSelect from 'coinselect';
-import { fromUint8Array, atob } from 'js-base64';
-import pako from 'pako';
+// import { fromUint8Array } from 'js-base64';
+// import { fromUint8Array, atob } from 'js-base64';
 import { transactionAPI } from './TransactionAPI';
+import pako from 'pako';
 var zlib = require('zlib');
 
 class Utils {
@@ -163,43 +166,37 @@ class Utils {
     targets: [],
     transactionFee: number
   ) => {
-    const key = ECPair.fromWIF(privateKey, networks.regtest);
-    console.log(transactionFee);
-    const feeRate = 5; // satoshis per byte
-    let { inputs, outputs, fee } = coinSelect(utxos, targets, feeRate);
-    // the accumulated fee is always returned for analysis
-    console.log(fee);
-    // .inputs and .outputs will be undefined if no solution was found
-    // if (!inputs || !outputs) return;
-
-    let psbt = new Psbt({ network: networks.regtest });
-
-    // inputs.forEach((input: { txId: any; vout: any; nonWitnessUtxo: any }) =>
-    //   psbt.addInput({
-    //     hash: input.txId,
-    //     index: input.vout,
-    //     nonWitnessUtxo: input.nonWitnessUtxo,
-    //   })
-    // );
-    const txIds = inputs.map(
-      (input: { outputTxHash: any }) => input.outputTxHash
-    );
-
-    const rawTxsResponse = await transactionAPI.getRawTransactionsByTxIDs(
-      txIds
-    );
-    const inputsWithRawTxs = rawTxsResponse.rawTxs.map((rawTx: any) => {
-      const base64Decode = atob(rawTx.txSerialized);
-      const decompressed = pako.ungzip(base64Decode);
-      const hex = Buffer.from(decompressed).toString('hex');
-      return { ...rawTx, hex };
-    });
-    // const payment = payments.p2pkh({
-    //   pubkey: key.publicKey,
-    //   network: networks.regtest,
-    // });
-    // const output = payment.pubkey;
     try {
+      const key = ECPair.fromWIF(privateKey, networks.regtest);
+      console.log(transactionFee);
+      const feeRate = 5; // satoshis per byte
+      let { inputs, outputs, fee } = coinSelect(utxos, targets, feeRate);
+      // the accumulated fee is always returned for analysis
+      console.log(fee);
+      // .inputs and .outputs will be undefined if no solution was found
+      // if (!inputs || !outputs) return;
+
+      let psbt = new Psbt({ network: networks.regtest });
+
+      const txIds = inputs.map(
+        (input: { outputTxHash: any }) => input.outputTxHash
+      );
+
+      const rawTxsResponse = await transactionAPI.getRawTransactionsByTxIDs(
+        txIds
+      );
+
+      const inputsWithRawTxs = rawTxsResponse.rawTxs.map((rawTx: any) => {
+        const base64Decode = atob(rawTx.txSerialized);
+        const decompressed = pako.ungzip(base64Decode);
+        const hex = Buffer.from(decompressed).toString('hex');
+        return { ...rawTx, hex };
+      });
+      // const payment = payments.p2pkh({
+      //   pubkey: key.publicKey,
+      //   network: networks.regtest,
+      // });
+      // const output = payment.pubkey;
       inputsWithRawTxs.forEach(
         (input: { txId: any; txIndex: any; hex: any }) => {
           psbt.addInput({
@@ -210,11 +207,7 @@ class Utils {
           });
         }
       );
-    } catch (error) {
-      console.log(error);
-    }
 
-    try {
       outputs.forEach((output: { address: any; value: any }) => {
         // watch out, outputs may have been added that you need to provide
         // an output address/script for
@@ -226,48 +219,55 @@ class Utils {
           value: output.value,
         });
       });
-    } catch (error) {
-      console.log(error);
-    }
-    try {
-      // psbt.signInput(0, key);
       psbt.signAllInputs(key);
-    } catch (error) {
-      debugger;
-      console.log(error);
-    }
-    try {
       psbt.validateSignaturesOfAllInputs();
-    } catch (error) {
-      debugger;
-      console.log(error);
-    }
-    try {
       psbt.finalizeAllInputs();
-    } catch (error) {
-      debugger;
-      console.log(error);
-    }
-    const hex = psbt.extractTransaction().toHex();
-    debugger;
-    try {
-      const compressed = zlib.gzipSync(hex, {
-        windowBits: 31,
+      // const hex = psbt.extractTransaction().toHex();
+      const compressed = zlib.gzipSync('Shubendra', {
+        windowBits: 15,
         level: 9,
       });
-      const compressed1 = pako.gzip(hex, { level: 9, windowBits: 31 });
-      console.log(compressed);
-      console.log(compressed1);
-      debugger;
-      const base64 = fromUint8Array(compressed, true);
+      const base64 = Buffer.from(compressed).toString('base64');
       const compressedHex = Buffer.from(base64).toString('utf-8');
       console.log(compressedHex);
-      debugger;
+
+      /*var tx = new TransactionBuilder(networks.regtest);
+      inputs.forEach(
+        (input: {
+          outputTxHash: string | Buffer | Transaction;
+          outputIndex: number;
+        }) => {
+          tx.addInput(input.outputTxHash, input.outputIndex);
+        }
+      );
+      outputs.forEach((output: { address: any; value: any }) => {
+        // watch out, outputs may have been added that you need to provide
+        // an output address/script for
+        if (!output.address) {
+          output.address = 'mnPbBBvj9JPJ4RHJfWLSwFDpfRCP81F1Zr';
+        }
+        tx.addOutput(output.address, output.value);
+      });
+      tx.sign(0, key);
+      tx.sign(1, key);
+      tx.sign(2, key);
+      const hex = tx.build().toHex();
+      const compressed = zlib.gzipSync(hex, {
+        windowBits: 15,
+        level: 9,
+      });
+      console.log(compressed);
+      const base64 = fromUint8Array(compressed, true);
+      // const base641 = Buffer.from(compressed).toString('base64');
+      // console.log(base64);
+      const compressedHex = Buffer.from(base64).toString('utf-8');
+      console.log(compressedHex);
+      // return compressedHex;
+      return 'H4sIAAAAAAACE2NiYGBgXqRqEBq/tiowZ85Rd8egZVsP5+SGNxzn+PJA2fdk3/sgY6AahmwPA1cmRYZNBs+OHrylc/nu5m9834OWSd2OOsKglb0h6tF6j8u1adymTAplFvInw5kFds0XK5qnwP8+6lbV3fiVUn7q286/MIiY+l2XUZH53smvbo0vNQ+dLbvS9X/259Xcl7TW66ZxOlvMDeS/f37ao/9A8C0qrHj++7V9q/1+N7xo52ay9VoeteOWbOX34GtXnjE4XgW5KcvdwIVJIe6/Nfv1156VXGfc9wcsaGl/J1vx6sD9oo71vx0d99yV6WVSSMmqqb2WqZOivGD/pMyGr/Im2YG1j9avWRmdNv0Ve2+DFpFOil/W+Ts6/g6v42KGzdOdfzob/v81vyNO7VnAkkbjxbJP7iGcFLnoYHqCy2F9kSs/HqrNd1sReXJXxaevOrWh/6/VKk0JdGZSkJTVKIvYtqU0wdVw0RGX7WckbqmnrpQt/7xrs5b1NxeZIiKdxHiBnQEMJMtWinjxPd6was18dTPZjd8ac69nTg9TXtyxBiQLAMwtCivmAQAA';*/
     } catch (error) {
       console.log(error);
+      throw error;
     }
-    // return compressedHex;
-    return 'H4sIAAAAAAACE2NiYGBgXqRqEBq/tiowZ85Rd8egZVsP5+SGNxzn+PJA2fdk3/sgY6AahmwPA1cmRYZNBs+OHrylc/nu5m9834OWSd2OOsKglb0h6tF6j8u1adymTAplFvInw5kFds0XK5qnwP8+6lbV3fiVUn7q286/MIiY+l2XUZH53smvbo0vNQ+dLbvS9X/259Xcl7TW66ZxOlvMDeS/f37ao/9A8C0qrHj++7V9q/1+N7xo52ay9VoeteOWbOX34GtXnjE4XgW5KcvdwIVJIe6/Nfv1156VXGfc9wcsaGl/J1vx6sD9oo71vx0d99yV6WVSSMmqqb2WqZOivGD/pMyGr/Im2YG1j9avWRmdNv0Ve2+DFpFOil/W+Ts6/g6v42KGzdOdfzob/v81vyNO7VnAkkbjxbJP7iGcFLnoYHqCy2F9kSs/HqrNd1sReXJXxaevOrWh/6/VKk0JdGZSkJTVKIvYtqU0wdVw0RGX7WckbqmnrpQt/7xrs5b1NxeZIiKdxHiBnQEMJMtWinjxPd6was18dTPZjd8ac69nTg9TXtyxBiQLAMwtCivmAQAA';
   };
 }
 

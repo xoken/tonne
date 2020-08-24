@@ -1,58 +1,62 @@
 import { utils, networks, addressAPI, transactionAPI } from 'nipkow-sdk';
+import { unique } from '../shared/utils';
 
 class WalletService {
   constructor(store) {
     this.store = store;
   }
 
+  generateMnemonic = () => {
+    return utils.generateMnemonic();
+  };
+
   initWallet = (bip39Mnemonic, password) => {
-    if (!bip39Mnemonic) {
-      bip39Mnemonic = utils.generateMnemonic();
+    if (bip39Mnemonic) {
+      const seed = utils.mnemonicToSeedSync(bip39Mnemonic, password);
+      const bip39SeedHex = utils.getSeedHex(seed);
+      const bip32RootKey = utils.getBIP32RootKeyFromSeed(
+        seed,
+        networks.BITCOIN_SV
+      );
+      const bip32RootKeyBase58 = utils.getBIP32RootKeyBase58(bip32RootKey);
+      const bip32ExtendedKey = utils.getBIP32ExtendedKey(
+        utils.getDerivationPath(),
+        bip32RootKey
+      );
+      const accountExtendedKey = utils.getBIP32ExtendedKey(
+        utils.getDerivationPathAccount(),
+        bip32RootKey
+      );
+      const accountExtendedPrivateKey = utils.getAccountExtendedPrivKey(
+        accountExtendedKey
+      );
+      const accountExtendedPublicKey = utils.getAccountExtendedPubKey(
+        accountExtendedKey
+      );
+      const bip32ExtendedPrivateKey = utils.getBIP32ExtendedPrivKey(
+        bip32ExtendedKey
+      );
+      const bip32ExtendedPublicKey = utils.getBIP32ExtendedPubKey(
+        bip32ExtendedKey
+      );
+      const derivedKeys = this.generateDerivedKeys(
+        bip32ExtendedKey,
+        0,
+        20,
+        false
+      );
+      return {
+        bip39SeedHex,
+        bip32RootKeyBase58,
+        bip32ExtendedKey,
+        accountExtendedPrivateKey,
+        accountExtendedPublicKey,
+        bip32ExtendedPrivateKey,
+        bip32ExtendedPublicKey,
+        derivedKeys,
+      };
     }
-    const seed = utils.mnemonicToSeedSync(bip39Mnemonic, password);
-    const bip39SeedHex = utils.getSeedHex(seed);
-    const bip32RootKey = utils.getBIP32RootKeyFromSeed(
-      seed,
-      networks.BITCOIN_SV
-    );
-    const bip32RootKeyBase58 = utils.getBIP32RootKeyBase58(bip32RootKey);
-    const bip32ExtendedKey = utils.getBIP32ExtendedKey(
-      utils.getDerivationPath(),
-      bip32RootKey
-    );
-    const accountExtendedKey = utils.getBIP32ExtendedKey(
-      utils.getDerivationPathAccount(),
-      bip32RootKey
-    );
-    const accountExtendedPrivateKey = utils.getAccountExtendedPrivKey(
-      accountExtendedKey
-    );
-    const accountExtendedPublicKey = utils.getAccountExtendedPubKey(
-      accountExtendedKey
-    );
-    const bip32ExtendedPrivateKey = utils.getBIP32ExtendedPrivKey(
-      bip32ExtendedKey
-    );
-    const bip32ExtendedPublicKey = utils.getBIP32ExtendedPubKey(
-      bip32ExtendedKey
-    );
-    const derivedKeys = this.generateDerivedKeys(
-      bip32ExtendedKey,
-      0,
-      20,
-      false
-    );
-    return {
-      bip39Mnemonic,
-      bip39SeedHex,
-      bip32RootKeyBase58,
-      bip32ExtendedKey,
-      accountExtendedPrivateKey,
-      accountExtendedPublicKey,
-      bip32ExtendedPrivateKey,
-      bip32ExtendedPublicKey,
-      derivedKeys,
-    };
+    return null;
   };
 
   getCurrentBalance = async () => {
@@ -73,7 +77,8 @@ class WalletService {
     if (indexStart === 0) {
       const addressess = [];
       addressess.push({
-        address: 'mn4vGSceDVbuSHUL6LQQ1P7RxPRkVRdyZH',
+        // address: 'mn4vGSceDVbuSHUL6LQQ1P7RxPRkVRdyZH',
+        address: '1Lv8ehbvL7LbB93NuPPdLb6U7NsTyX1uao',
         isUsed: false,
       });
       return addressess;
@@ -155,7 +160,7 @@ class WalletService {
 
   getOutputsByAddresses = async (
     keys,
-    nextCursor = '4001000000000',
+    nextCursor = '',
     prevBalance = 0,
     prevOutputs = []
   ) => {
@@ -173,9 +178,7 @@ class WalletService {
         return acc;
       }, prevBalance);
       const outputs = [...prevOutputs, ...data.outputs];
-      //    if (false && data.nextCursor) {
       if (data.nextCursor) {
-        console.log(balance);
         return await this.getOutputsByAddresses(
           keys,
           data.nextCursor,
@@ -223,6 +226,16 @@ class WalletService {
     } catch (error) {
       throw error;
     }
+  };
+
+  login = (passphrase, existingPassphrase) => {
+    return passphrase === existingPassphrase;
+  };
+
+  getTransactions = async (outputs) => {
+    const uniqueTx = [...new Set(outputs.map((output) => output.outputTxHash))];
+    const transactions = await transactionAPI.getTransactionsByTxIDs(uniqueTx);
+    return transactions.txs;
   };
 }
 
