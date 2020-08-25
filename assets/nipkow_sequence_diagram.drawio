@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-08-25T06:51:39.517Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36" etag="xQD2qtQMty3nbC9Ubgfp" version="13.6.4" type="github">
+<mxfile host="app.diagrams.net" modified="2020-08-25T07:03:36.163Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36" etag="-ykVkcwplV3JQCnXrJOt" version="13.6.4" type="github">
   <diagram id="d2bJDyH4YY4jTTXs1ROH" name="Page-1">
     <mxGraphModel dx="1695" dy="401" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -61,7 +61,7 @@
             <mxPoint x="200" y="133" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="aKae5eKDBznJ4Y1164LR-36" value="Mmemonic seed + Password" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+        <mxCell id="aKae5eKDBznJ4Y1164LR-36" value="Mmemonic Seed + Password" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="240" y="210" width="160" height="20" as="geometry" />
         </mxCell>
         <mxCell id="aKae5eKDBznJ4Y1164LR-37" value="" style="endArrow=classic;html=1;" parent="1" edge="1">
@@ -357,6 +357,24 @@
         </mxCell>
         <mxCell id="aKae5eKDBznJ4Y1164LR-128" value="True" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="281.19000000000005" y="998.44" width="87.63" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="dy_9rE8HRgi9Pd3eRH8T-1" value="ExistingUser" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" vertex="1" parent="1">
+          <mxGeometry x="20" y="280" width="30" height="46.25" as="geometry" />
+        </mxCell>
+        <mxCell id="dy_9rE8HRgi9Pd3eRH8T-5" value="" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="40" y="240" as="sourcePoint" />
+            <mxPoint x="200" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dy_9rE8HRgi9Pd3eRH8T-8" value="" style="endArrow=none;dashed=1;html=1;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="40" y="280" as="sourcePoint" />
+            <mxPoint x="40" y="240" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="dy_9rE8HRgi9Pd3eRH8T-11" value="Mnemonic Seed + Password" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="50" y="250" width="140" height="30" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
