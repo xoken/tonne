@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-08-25T06:44:44.650Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36" etag="DCpKMheGTphkMgsYbR-a" version="13.6.4" type="github">
+<mxfile host="app.diagrams.net" modified="2020-08-25T06:47:28.451Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36" etag="Dy7Y7E3twGYhqhcl3iyc" version="13.6.4" type="github">
   <diagram id="d2bJDyH4YY4jTTXs1ROH" name="Page-1">
     <mxGraphModel dx="1695" dy="401" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -304,7 +304,7 @@
             <mxPoint x="427.5" y="960" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="aKae5eKDBznJ4Y1164LR-118" value="([unspentOutputs], senderAddress, satoshiPerBits)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+        <mxCell id="aKae5eKDBznJ4Y1164LR-118" value="([unspentOutputs], senderAddress, Amount, satoshiPerBits)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="240" y="900" width="170" height="50" as="geometry" />
         </mxCell>
         <mxCell id="aKae5eKDBznJ4Y1164LR-119" value="" style="endArrow=classic;html=1;" parent="1" edge="1">
@@ -337,7 +337,7 @@
             <mxPoint x="670" y="960" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="aKae5eKDBznJ4Y1164LR-124" value="([unspentOutputs], senderAddress, satoshiPerBits)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+        <mxCell id="aKae5eKDBznJ4Y1164LR-124" value="([unspentOutputs], senderAddress, Amount, satoshiPerBits)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
           <mxGeometry x="465" y="900" width="170" height="50" as="geometry" />
         </mxCell>
         <mxCell id="aKae5eKDBznJ4Y1164LR-125" value="" style="endArrow=classic;html=1;exitX=0.674;exitY=1.2;exitDx=0;exitDy=0;exitPerimeter=0;" parent="1" source="aKae5eKDBznJ4Y1164LR-112" edge="1">
