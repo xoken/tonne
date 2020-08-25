@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-08-25T06:47:28.451Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36" etag="Dy7Y7E3twGYhqhcl3iyc" version="13.6.4" type="github">
+<mxfile host="app.diagrams.net" modified="2020-08-25T06:51:39.517Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36" etag="xQD2qtQMty3nbC9Ubgfp" version="13.6.4" type="github">
   <diagram id="d2bJDyH4YY4jTTXs1ROH" name="Page-1">
     <mxGraphModel dx="1695" dy="401" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -126,7 +126,7 @@
         </mxCell>
         <mxCell id="aKae5eKDBznJ4Y1164LR-53" value="" style="endArrow=classic;html=1;" parent="1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
-            <mxPoint x="425" y="440" as="sourcePoint" />
+            <mxPoint x="430" y="440" as="sourcePoint" />
             <mxPoint x="215" y="440" as="targetPoint" />
           </mxGeometry>
         </mxCell>
@@ -265,7 +265,7 @@
             <mxPoint x="679.2399999999998" y="820" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="aKae5eKDBznJ4Y1164LR-107" value="Send Money" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
+        <mxCell id="aKae5eKDBznJ4Y1164LR-107" value="Send Coin" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=#fff2cc;strokeColor=#d6b656;" parent="1" vertex="1">
           <mxGeometry x="247.5" y="830" width="140" height="30" as="geometry" />
         </mxCell>
         <mxCell id="aKae5eKDBznJ4Y1164LR-108" value="NewUser" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;" parent="1" vertex="1">
