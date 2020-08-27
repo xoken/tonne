@@ -1,19 +1,21 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-import { HashRouter, Route, Link, Switch } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
+import { HashRouter, Link, Route, Switch } from 'react-router-dom';
+import ExplorerHome from './explorer/screens/explorerHome';
+import Home from './shared/components/home';
 import images from './shared/images';
-import Login from './wallet/screens/login';
-import Wallet from './wallet/screens/wallet';
-import NewWallet from './wallet/screens/newWallet';
-import ExistingWallet from './wallet/screens/existingWallet';
-import WalletDashboard from './wallet/screens/walletDashboard';
-import sendTransaction from './wallet/components/sendTransaction';
-import WalletPassword from './wallet/screens/walletPassword';
+import NoMatch from './shared/components/noMatch';
+import WalletHome from './wallet/screens/walletHome';
 
 class App extends React.Component {
+  constructor(props) {
+    super(props);
+    this.history = createBrowserHistory();
+  }
+
   onBack = () => {
-    // this.props.history.goBack();
+    this.history.goBack();
   };
 
   render() {
@@ -57,16 +59,23 @@ class App extends React.Component {
             </form>
           </div>
         </nav>
-        {/* <Switch> */}
         <div className="container nonheader">
-          <Route exact path="/" component={Login} />
-          <Route exact path="/wallet" component={Wallet} />
-          <Route exact path="/wallet/password" component={WalletPassword} />
-          <Route exact path="/wallet/new" component={NewWallet} />
-          <Route exact path="/wallet/existing" component={ExistingWallet} />
-          <Route exact path="/wallet/dashboard" component={WalletDashboard} />
-          <Route exact path="/wallet/send" component={sendTransaction} />
-          {/* </Switch> */}
+          <div style={{ minHeight: 450 }}>
+            <Switch>
+              <Route path="/wallet">
+                <WalletHome />
+              </Route>
+              <Route path="/explorer">
+                <ExplorerHome />
+              </Route>
+              <Route exact path="/">
+                <Home />
+              </Route>
+              <Route path="*">
+                <NoMatch />
+              </Route>
+            </Switch>
+          </div>
           <button type="button" className="generalbtns" onClick={this.onBack}>
             Back
           </button>

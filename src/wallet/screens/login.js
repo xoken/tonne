@@ -11,13 +11,13 @@ class Login extends React.Component {
   }
 
   componentDidMount() {
-    const { bip39Mnemonic } = this.props;
-    if (!bip39Mnemonic) {
-      this.props.history.push('/wallet');
-    }
+    // const { bip39Mnemonic } = this.props;
+    // if (!bip39Mnemonic) {
+    // this.props.history.push('/wallet');
+    // }
   }
 
-  handleContinue = async (event) => {
+  handleContinue = async event => {
     event.preventDefault();
     const { dispatch } = this.props;
     const { passphrase } = this.state;
@@ -53,7 +53,7 @@ class Login extends React.Component {
                     id="password"
                     placeholder="Password"
                     value={passphrase}
-                    onChange={(event) =>
+                    onChange={event =>
                       this.setState({
                         passphrase: event.target.value,
                         error: '',
@@ -90,7 +90,7 @@ Login.propTypes = {
 
 Login.defaultProps = {};
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   bip39Mnemonic: walletSelectors.getMnemonic(state),
 });

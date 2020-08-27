@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as walletActions from '../walletActions';
@@ -2138,7 +2139,7 @@ class ExistingWallet extends React.Component {
     }
   };
 
-  letterOnClick = (event) => {
+  letterOnClick = event => {
     var self = this;
     var splitwords;
     var tempmn;
@@ -2189,7 +2190,7 @@ class ExistingWallet extends React.Component {
     }
   };
 
-  wordOnClick = (event) => {
+  wordOnClick = event => {
     var splitwords,
       tempmnemonic,
       tempmn = '',
@@ -2247,7 +2248,7 @@ class ExistingWallet extends React.Component {
     const { dispatch } = this.props;
     const { bip39Mnemonic } = this.state;
     dispatch(walletActions.initWallet(bip39Mnemonic));
-    this.props.history.push('/newpassword');
+    this.props.history.push('/wallet/password');
   };
 
   componentDidMount() {
@@ -2301,13 +2302,13 @@ class ExistingWallet extends React.Component {
           </div>
         </div>
 
-        <div className="dispnone">
+        <div className="">
           <h3>Enter Secret Backup Phrase</h3>
           <div>
             <textarea
               rows="2"
               value={this.state.bip39Mnemonic || ''}
-              onChange={(event) =>
+              onChange={event =>
                 this.setState({ bip39Mnemonic: event.target.value })
               }
             />
@@ -2342,8 +2343,8 @@ ExistingWallet.propTypes = {
 
 ExistingWallet.defaultProps = {};
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
 });
 
-export default connect(mapStateToProps)(ExistingWallet);
+export default withRouter(connect(mapStateToProps)(ExistingWallet));

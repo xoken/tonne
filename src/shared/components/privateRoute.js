@@ -1,41 +1,32 @@
 import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
-import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
-// import * as walletSelectors from '../walletSelectors';
+import { Route, Redirect, useRouteMatch } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import * as walletSelectors from '../../wallet/walletSelectors';
 
-class PrivateRoute {
-  render() {
-    const { isAuthenticated, children, ...rest } = this.props;
-    debugger;
-    return (
-      <Route
-        {...rest}
-        render={({ location }) => {
-          return isAuthenticated ? (
-            children
-          ) : (
+export default function PrivateRoute({ children, ...rest }) {
+  const isAuthenticated = useSelector(state =>
+    walletSelectors.isAuthenticated(state)
+  );
+
+  const { path } = useRouteMatch();
+
+  return (
+    <Route
+      {...rest}
+      render={({ location }) => {
+        if (isAuthenticated) {
+          return children;
+        } else {
+          return (
             <Redirect
               to={{
-                pathname: '/login',
+                pathname: `${path}/login`,
                 state: { from: location },
               }}
             />
           );
-        }}
-      />
-    );
-  }
+        }
+      }}
+    />
+  );
 }
-
-PrivateRoute.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-};
-
-PrivateRoute.defaultProps = {};
-
-const mapStateToProps = (state) => ({
-  isAuthenticated: true,
-});
-
-export default connect(mapStateToProps)(PrivateRoute);

@@ -27,11 +27,11 @@
   "homepage": "./",
   "main": "src/electron-starter.js",
   "scripts": {
-    "start": "BROWSER=none react-scripts start",
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron": "BROWSER=none electron ."
+    "electron": "electron ."
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -58,5 +58,9 @@
     "electron": "^9.1.2",
     "reactotron-react-js": "^3.3.7",
     "reactotron-redux": "^3.1.3"
+  },
+  "prettier": {
+    "arrowParens": "avoid",
+    "singleQuote": true
   }
 }

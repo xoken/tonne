@@ -80,33 +80,29 @@ class WalletDashboard extends React.Component {
     if (!isLoading && transactions.length > 0) {
       return transactions.map(({ txId, tx: { txInps, txOuts } }) => {
         return (
-          <tr key={txId}>
-            <td className="wallettxlist" colSpan="2">
-              {txId}
-              <table>
-                <tbody>
-                  <tr>
-                    <td>
-                      {txInps.map((txInp) => (
-                        <>
-                          <p>{txInp.address}</p>
-                          <p>{satoshiToBSV(txInp.value)}</p>
-                        </>
-                      ))}
-                    </td>
-                    <td>
-                      {txOuts.map((txOut) => (
-                        <>
-                          <p>{txOut.address}</p>
-                          <p>{satoshiToBSV(txOut.value)}</p>
-                        </>
-                      ))}
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </td>
-          </tr>
+          <div key={txId} className="card">
+            <div className="card-header">{txId}</div>
+            <div className="card-body">
+              <div className="row">
+                <div className="col-md-6">
+                  {txInps.map((txInp) => (
+                    <>
+                      <p>{txInp.address}</p>
+                      <p>{satoshiToBSV(txInp.value)}</p>
+                    </>
+                  ))}
+                </div>
+                <div className="col-md-6">
+                  {txOuts.map((txOut) => (
+                    <>
+                      <p>{txOut.address}</p>
+                      <p>{satoshiToBSV(txOut.value)}</p>
+                    </>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
         );
       });
       // var tempout = [];
@@ -413,9 +409,10 @@ class WalletDashboard extends React.Component {
         <div className="row">
           <div className="col-md-12 col-lg-12">
             <h3>Recent Transactions</h3>
-            <table id="txlist">
-              <tbody>{this.renderTransaction()}</tbody>
-            </table>
+            {/* <table id="txlist">
+              <tbody></tbody>
+            </table> */}
+            {this.renderTransaction()}
           </div>
         </div>
         {/* <div className="row">

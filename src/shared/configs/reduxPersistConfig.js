@@ -1,6 +1,6 @@
-import storage from 'redux-persist/lib/storage';
-import { createTransform } from 'redux-persist';
-import StoreEncryptor from '../encryption/storeEncryptor';
+import storage from "redux-persist/lib/storage";
+import { createTransform } from "redux-persist";
+import StoreEncryptor from "../encryption/storeEncryptor";
 
 const encryptor = createTransform(
   (inboundState) => {
@@ -13,13 +13,13 @@ const encryptor = createTransform(
 );
 
 const REDUX_PERSIST = {
-  active: true,
+  active: false,
   storeConfig: {
-    key: 'primary',
+    key: "primary",
     transforms: [encryptor],
     storage: storage,
-    whitelist: ['wallet'],
-    debug: process.env.NODE_ENV === 'development',
+    whitelist: ["wallet"],
+    debug: process.env.NODE_ENV === "development",
   },
 };
 

@@ -4,20 +4,19 @@ import {
   BIP32Interface,
   ECPair,
   payments,
-  Psbt,
-  networks,
-  // Transaction,
-  // TransactionBuilder,
+  // Psbt,
+  // networks,
 } from 'bitcoinjs-lib';
 import derivationPaths from './constants/derivationPaths';
 import * as bip38 from 'bip38';
 import * as bip39 from 'bip39';
-import coinSelect from 'coinselect';
+// import coinSelect from 'coinselect';
 // import { fromUint8Array } from 'js-base64';
 // import { fromUint8Array, atob } from 'js-base64';
-import { transactionAPI } from './TransactionAPI';
-import pako from 'pako';
-var zlib = require('zlib');
+// import { transactionAPI } from './TransactionAPI';
+// import pako from 'pako';
+// var zlib = require('zlib');
+import { PrivKey } from 'bsv';
 
 class Utils {
   generateMnemonic = (
@@ -160,115 +159,178 @@ class Utils {
     return { indexText, address, pubkey, privkey };
   };
 
-  createSendTransaction = async (
-    privateKey: string,
-    utxos: [],
-    targets: [],
-    transactionFee: number
-  ) => {
-    try {
-      const key = ECPair.fromWIF(privateKey, networks.regtest);
-      console.log(transactionFee);
-      const feeRate = 5; // satoshis per byte
-      let { inputs, outputs, fee } = coinSelect(utxos, targets, feeRate);
-      // the accumulated fee is always returned for analysis
-      console.log(fee);
-      // .inputs and .outputs will be undefined if no solution was found
-      // if (!inputs || !outputs) return;
+  createSendTransaction = async () =>
+    // privateKey: string,
+    // utxos: [],
+    // targets: [],
+    // transactionFee: number
+    {
+      // console.log(privateKey);
+      try {
+        // const key = ECPair.fromPrivateKey(
+        //   Buffer.from(
+        //     '0f4396a043a09537e8712f49828863552bfb0ee7f763fc0c0e06f5ace8da133a',
+        //     'hex'
+        //   ),
+        //   { network: networks.regtest }
+        // );
+        // console.log(transactionFee);
+        // const feeRate = 5; // satoshis per byte
+        // let { inputs, outputs, fee } = coinSelect(utxos, targets, feeRate);
+        // the accumulated fee is always returned for analysis
+        // console.log(fee);
+        // .inputs and .outputs will be undefined if no solution was found
+        // if (!inputs || !outputs) return;
 
-      let psbt = new Psbt({ network: networks.regtest });
+        /*let psbt = new Psbt({ network: networks.regtest });
+       psbt.setVersion(1);
 
-      const txIds = inputs.map(
-        (input: { outputTxHash: any }) => input.outputTxHash
-      );
+        const txIds = inputs.map(
+          (input: { outputTxHash: any }) => input.outputTxHash
+        );
 
-      const rawTxsResponse = await transactionAPI.getRawTransactionsByTxIDs(
-        txIds
-      );
+        const rawTxsResponse = await transactionAPI.getRawTransactionsByTxIDs(
+          txIds
+        );
 
-      const inputsWithRawTxs = rawTxsResponse.rawTxs.map((rawTx: any) => {
-        const base64Decode = atob(rawTx.txSerialized);
-        const decompressed = pako.ungzip(base64Decode);
-        const hex = Buffer.from(decompressed).toString('hex');
-        return { ...rawTx, hex };
-      });
-      // const payment = payments.p2pkh({
-      //   pubkey: key.publicKey,
-      //   network: networks.regtest,
-      // });
-      // const output = payment.pubkey;
-      inputsWithRawTxs.forEach(
-        (input: { txId: any; txIndex: any; hex: any }) => {
-          psbt.addInput({
-            hash: input.txId,
-            index: input.txIndex,
-            nonWitnessUtxo: Buffer.from(input.hex, 'hex'),
-            // redeemScript: output,
+        const inputsWithRawTxs = rawTxsResponse.rawTxs.map((rawTx: any) => {
+          const base64Decode = atob(rawTx.txSerialized);
+          const decompressed = pako.ungzip(base64Decode);
+          const hex = Buffer.from(decompressed).toString('hex');
+          return { ...rawTx, hex };
+        });
+        // const payment = payments.p2pkh({
+        //   pubkey: key.publicKey,
+        //   network: networks.regtest,
+        // });
+        // const output = payment.pubkey;
+        // inputsWithRawTxs.forEach(
+        //   (input: { txId: any; txIndex: any; hex: any }) => {
+        //     psbt.addInput({
+        //       hash: input.txId,
+        //       index: input.txIndex,
+        //       nonWitnessUtxo: Buffer.from(input.hex, 'hex'),
+        //       // redeemScript: output,
+        //     });
+        //   }
+        // );
+
+        let merged = [];
+        for (let i = 0; i < inputs.length; i++) {
+          merged.push({
+            ...inputs[i],
+            ...inputsWithRawTxs.find(
+              (element: { txId: any }) => element.txId === inputs[i].outputTxHash
+            ),
           });
         }
-      );
 
-      outputs.forEach((output: { address: any; value: any }) => {
-        // watch out, outputs may have been added that you need to provide
-        // an output address/script for
-        if (!output.address) {
-          output.address = 'mnPbBBvj9JPJ4RHJfWLSwFDpfRCP81F1Zr';
-        }
-        psbt.addOutput({
-          address: output.address,
-          value: output.value,
+        merged.forEach(
+          (input: { outputTxHash: any; outputIndex: any; hex: any }) => {
+            psbt.addInput({
+              hash: input.outputTxHash,
+              index: input.outputIndex,
+              nonWitnessUtxo: Buffer.from(input.hex, 'hex'),
+              sighashType: 0x41,
+              // redeemScript: output,
+            });
+          }
+        );
+
+        outputs.forEach((output: { address: any; value: any }) => {
+          // watch out, outputs may have been added that you need to provide
+          // an output address/script for
+          if (!output.address) {
+            output.address = 'mnPbBBvj9JPJ4RHJfWLSwFDpfRCP81F1Zr';
+          }
+          psbt.addOutput({
+            address: output.address,
+            value: output.value,
+          });
         });
-      });
-      psbt.signAllInputs(key);
-      psbt.validateSignaturesOfAllInputs();
-      psbt.finalizeAllInputs();
-      // const hex = psbt.extractTransaction().toHex();
-      const compressed = zlib.gzipSync('Shubendra', {
-        windowBits: 15,
-        level: 9,
-      });
-      const base64 = Buffer.from(compressed).toString('base64');
-      const compressedHex = Buffer.from(base64).toString('utf-8');
-      console.log(compressedHex);
 
-      /*var tx = new TransactionBuilder(networks.regtest);
-      inputs.forEach(
-        (input: {
-          outputTxHash: string | Buffer | Transaction;
-          outputIndex: number;
-        }) => {
-          tx.addInput(input.outputTxHash, input.outputIndex);
+        psbt.signAllInputs(key, [0x41]);
+        psbt.validateSignaturesOfAllInputs();
+        psbt.finalizeAllInputs();
+        const transactionHex = psbt.extractTransaction().toHex();
+        const compressed = zlib.gzipSync(transactionHex, {
+          windowBits: 15,
+          level: 9,
+        });
+        const base64 = Buffer.from(compressed).toString('base64');
+        console.log(base64);*/
+        if (true) {
+          var privKey = PrivKey.PrivKey.fromWif(
+            Buffer.from('cN6NafxmNHmhhF6uUug2VuagYm5DWMhRQ5qZDLHyd7Sinbji69Ui')
+          );
+          // var publicKey = new bsv.PubKey(privKey, {
+          //   network: bsv.Networks.TESTNET,
+          // });
+          console.log(privKey.toString());
+
+          // var utxo = new bsv.Transaction.UnspentOutput({
+          //   txId: "015e6e5a54530adce825dd8d6a297de68e2bd9f658d2b8d823a4ed159e29accc",
+          //   outputIndex: 1,
+          //   satoshis: 10000,
+          //   scriptPubKey: publicKey.toString(),
+          //   script: publicKey.toString(),
+          // });
+
+          // var transaction = new bsv.Transaction();
+          // transaction
+          //   .from(utxo)
+          //   .to("mnGY8nS44fs11yYBJ3Lo3PX3Kdgyfup7d3", 2000)
+          //   .change("mnPbBBvj9JPJ4RHJfWLSwFDpfRCP81F1Zr")
+          //   .sign(privateKey);
+          // console.log(transaction.toString());
+
+          // var transaction = new bsv.Transaction()
+          //   .from([utxo])
+          //   .to("mnGY8nS44fs11yYBJ3Lo3PX3Kdgyfup7d3", 2000)
+          //   // .change("mnPbBBvj9JPJ4RHJfWLSwFDpfRCP81F1Zr")
+          //   .sign(privateKey);
+          // console.log(transaction);
         }
-      );
-      outputs.forEach((output: { address: any; value: any }) => {
-        // watch out, outputs may have been added that you need to provide
-        // an output address/script for
-        if (!output.address) {
-          output.address = 'mnPbBBvj9JPJ4RHJfWLSwFDpfRCP81F1Zr';
-        }
-        tx.addOutput(output.address, output.value);
-      });
-      tx.sign(0, key);
-      tx.sign(1, key);
-      tx.sign(2, key);
-      const hex = tx.build().toHex();
-      const compressed = zlib.gzipSync(hex, {
-        windowBits: 15,
-        level: 9,
-      });
-      console.log(compressed);
-      const base64 = fromUint8Array(compressed, true);
-      // const base641 = Buffer.from(compressed).toString('base64');
-      // console.log(base64);
-      const compressedHex = Buffer.from(base64).toString('utf-8');
-      console.log(compressedHex);
-      // return compressedHex;
-      return 'H4sIAAAAAAACE2NiYGBgXqRqEBq/tiowZ85Rd8egZVsP5+SGNxzn+PJA2fdk3/sgY6AahmwPA1cmRYZNBs+OHrylc/nu5m9834OWSd2OOsKglb0h6tF6j8u1adymTAplFvInw5kFds0XK5qnwP8+6lbV3fiVUn7q286/MIiY+l2XUZH53smvbo0vNQ+dLbvS9X/259Xcl7TW66ZxOlvMDeS/f37ao/9A8C0qrHj++7V9q/1+N7xo52ay9VoeteOWbOX34GtXnjE4XgW5KcvdwIVJIe6/Nfv1156VXGfc9wcsaGl/J1vx6sD9oo71vx0d99yV6WVSSMmqqb2WqZOivGD/pMyGr/Im2YG1j9avWRmdNv0Ve2+DFpFOil/W+Ts6/g6v42KGzdOdfzob/v81vyNO7VnAkkbjxbJP7iGcFLnoYHqCy2F9kSs/HqrNd1sReXJXxaevOrWh/6/VKk0JdGZSkJTVKIvYtqU0wdVw0RGX7WckbqmnrpQt/7xrs5b1NxeZIiKdxHiBnQEMJMtWinjxPd6was18dTPZjd8ac69nTg9TXtyxBiQLAMwtCivmAQAA';*/
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  };
+        return 'abc';
+
+        /*var tx = new TransactionBuilder(networks.regtest);
+        inputs.forEach(
+          (input: {
+            outputTxHash: string | Buffer | Transaction;
+            outputIndex: number;
+          }) => {
+            tx.addInput(input.outputTxHash, input.outputIndex);
+          }
+        );
+        outputs.forEach((output: { address: any; value: any }) => {
+          // watch out, outputs may have been added that you need to provide
+          // an output address/script for
+          if (!output.address) {
+            output.address = 'mnPbBBvj9JPJ4RHJfWLSwFDpfRCP81F1Zr';
+          }
+          tx.addOutput(output.address, output.value);
+        });
+        tx.sign(0, key);
+        tx.sign(1, key);
+        tx.sign(2, key);
+        const hex = tx.build().toHex();
+        const compressed = zlib.gzipSync(hex, {
+          windowBits: 15,
+          level: 9,
+        });
+        console.log(compressed);
+        const base64 = fromUint8Array(compressed, true);
+        // const base641 = Buffer.from(compressed).toString('base64');
+        // console.log(base64);
+        const compressedHex = Buffer.from(base64).toString('utf-8');
+        console.log(compressedHex);
+        // return compressedHex;
+        return 'H4sIAAAAAAACE2NiYGBgXqRqEBq/tiowZ85Rd8egZVsP5+SGNxzn+PJA2fdk3/sgY6AahmwPA1cmRYZNBs+OHrylc/nu5m9834OWSd2OOsKglb0h6tF6j8u1adymTAplFvInw5kFds0XK5qnwP8+6lbV3fiVUn7q286/MIiY+l2XUZH53smvbo0vNQ+dLbvS9X/259Xcl7TW66ZxOlvMDeS/f37ao/9A8C0qrHj++7V9q/1+N7xo52ay9VoeteOWbOX34GtXnjE4XgW5KcvdwIVJIe6/Nfv1156VXGfc9wcsaGl/J1vx6sD9oo71vx0d99yV6WVSSMmqqb2WqZOivGD/pMyGr/Im2YG1j9avWRmdNv0Ve2+DFpFOil/W+Ts6/g6v42KGzdOdfzob/v81vyNO7VnAkkbjxbJP7iGcFLnoYHqCy2F9kSs/HqrNd1sReXJXxaevOrWh/6/VKk0JdGZSkJTVKIvYtqU0wdVw0RGX7WckbqmnrpQt/7xrs5b1NxeZIiKdxHiBnQEMJMtWinjxPd6was18dTPZjd8ac69nTg9TXtyxBiQLAMwtCivmAQAA';*/
+      } catch (error) {
+        console.log(error);
+        throw error;
+      }
+    };
 }
 
 export const utils = new Utils();

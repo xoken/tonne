@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as walletActions from '../walletActions';
@@ -10,12 +11,12 @@ class WalletPassword extends React.Component {
     this.state = { password: '', confirmPassword: '' };
   }
 
-  handleNext = (event) => {
+  handleNext = event => {
     event.preventDefault();
     const { dispatch } = this.props;
     const { password } = this.state;
     dispatch(walletActions.setPassPhrase(password));
-    this.props.history.push('/wallet/dashboard');
+    this.props.history.push('/wallet');
   };
 
   renderPasswordMatchStatus() {
@@ -52,6 +53,7 @@ class WalletPassword extends React.Component {
   }
 
   render() {
+    const { password, confirmPassword } = this.state;
     return (
       <>
         <div className="row">
@@ -68,11 +70,11 @@ class WalletPassword extends React.Component {
                   <label>Password</label>
                   <input
                     type="password"
-                    className="form-control passinputwidth"
                     id="password"
+                    className="form-control passinputwidth"
                     placeholder="Password"
-                    value={this.state.password}
-                    onChange={(event) =>
+                    value={password}
+                    onChange={event =>
                       this.setState({ password: event.target.value })
                     }
                   />
@@ -81,11 +83,11 @@ class WalletPassword extends React.Component {
                   <label>Confirm Password</label>
                   <input
                     type="password"
+                    id="confirmPassword"
                     className="form-control passinputwidth"
-                    id="password"
-                    placeholder="Password"
-                    value={this.state.confirmPassword}
-                    onChange={(event) =>
+                    placeholder="Confirm Password"
+                    value={confirmPassword}
+                    onChange={event =>
                       this.setState({ confirmPassword: event.target.value })
                     }
                   />
@@ -109,8 +111,8 @@ WalletPassword.propTypes = {
 
 WalletPassword.defaultProps = {};
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
 });
 
-export default connect(mapStateToProps)(WalletPassword);
+export default withRouter(connect(mapStateToProps)(WalletPassword));

@@ -1,5 +1,5 @@
-import { utils, networks, addressAPI, transactionAPI } from 'nipkow-sdk';
-import { unique } from '../shared/utils';
+import { utils, networks, addressAPI, transactionAPI } from "nipkow-sdk";
+import { unique } from "../shared/utils";
 
 class WalletService {
   constructor(store) {
@@ -77,8 +77,8 @@ class WalletService {
     if (indexStart === 0) {
       const addressess = [];
       addressess.push({
-        // address: 'mn4vGSceDVbuSHUL6LQQ1P7RxPRkVRdyZH',
-        address: '1Lv8ehbvL7LbB93NuPPdLb6U7NsTyX1uao',
+        address: "mn4vGSceDVbuSHUL6LQQ1P7RxPRkVRdyZH",
+        // address: '1Lv8ehbvL7LbB93NuPPdLb6U7NsTyX1uao',
         isUsed: false,
       });
       return addressess;
@@ -160,7 +160,7 @@ class WalletService {
 
   getOutputsByAddresses = async (
     keys,
-    nextCursor = '',
+    nextCursor = "",
     prevBalance = 0,
     prevOutputs = []
   ) => {
@@ -178,7 +178,8 @@ class WalletService {
         return acc;
       }, prevBalance);
       const outputs = [...prevOutputs, ...data.outputs];
-      if (data.nextCursor) {
+      if (false && data.nextCursor) {
+        // if (data.nextCursor) {
         return await this.getOutputsByAddresses(
           keys,
           data.nextCursor,
@@ -217,7 +218,7 @@ class WalletService {
       //   return { ...element, value: 5000 };
       // });
       const transactionHex = await utils.createSendTransaction(
-        'cN6NafxmNHmhhF6uUug2VuagYm5DWMhRQ5qZDLHyd7Sinbji69Ui',
+        "cN6NafxmNHmhhF6uUug2VuagYm5DWMhRQ5qZDLHyd7Sinbji69Ui",
         utxos,
         targets,
         transactionFee

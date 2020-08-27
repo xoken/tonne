@@ -1,4 +1,4 @@
-import { createSelector } from 'reselect';
+import { createSelector } from "reselect";
 
 export const getWallet = (state) => state.wallet;
 
@@ -19,4 +19,12 @@ export const getOutputs = createSelector([getWallet], ({ outputs }) => outputs);
 export const getTransactions = createSelector(
   [getWallet],
   ({ transactions }) => transactions
+);
+
+export const isAuthenticated = createSelector(
+  [getWallet],
+  ({ bip39Passphrase }) => {
+    if (bip39Passphrase) return true;
+    else return false;
+  }
 );

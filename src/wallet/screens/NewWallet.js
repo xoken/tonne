@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as walletActions from '../walletActions';
@@ -123,9 +124,9 @@ NewWallet.defaultProps = {
   bip39Mnemonic: '',
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   bip39Mnemonic: walletSelectors.getMnemonic(state),
 });
 
-export default connect(mapStateToProps)(NewWallet);
+export default withRouter(connect(mapStateToProps)(NewWallet));
