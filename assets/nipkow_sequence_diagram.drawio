@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-08-27T06:30:30.100Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36" etag="RapkZgjT__Suc_i_wcRG" version="13.6.4" type="github">
+<mxfile host="app.diagrams.net" modified="2020-08-27T06:35:28.201Z" agent="5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.105 Safari/537.36" etag="gmq-HbGC3Yv-XzbSzNKJ" version="13.6.4" type="github">
   <diagram id="d2bJDyH4YY4jTTXs1ROH" name="Page-1">
     <mxGraphModel dx="1695" dy="450" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -100,8 +100,8 @@
             <mxPoint x="460" y="1350" as="targetPoint" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="aKae5eKDBznJ4Y1164LR-52" value="getOutputs([Derived keys])" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="274" y="1330" width="170" height="20" as="geometry" />
+        <mxCell id="aKae5eKDBznJ4Y1164LR-52" value="getOutputs([Derived keys])&lt;br&gt;Recursively fetch outputs until we find 20 keys with no outputs" style="text;html=1;strokeColor=none;fillColor=none;align=left;verticalAlign=top;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="267.56" y="1300" width="170" height="50" as="geometry" />
         </mxCell>
         <mxCell id="aKae5eKDBznJ4Y1164LR-53" value="" style="endArrow=classic;html=1;" parent="1" edge="1">
           <mxGeometry width="50" height="50" relative="1" as="geometry">
@@ -110,23 +110,23 @@
           </mxGeometry>
         </mxCell>
         <mxCell id="aKae5eKDBznJ4Y1164LR-54" value="[Outputs]" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="330" y="1360" width="40" height="30" as="geometry" />
+          <mxGeometry x="322.64" y="1360" width="40" height="30" as="geometry" />
         </mxCell>
         <mxCell id="aKae5eKDBznJ4Y1164LR-63" value="GetCurrentBalance&lt;br&gt;(Cumulate unspent outputs)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="262.5" y="1410" width="155" height="50" as="geometry" />
+          <mxGeometry x="262.5" y="1440" width="155" height="50" as="geometry" />
         </mxCell>
         <mxCell id="aKae5eKDBznJ4Y1164LR-64" value="CurrentBalance" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
-          <mxGeometry x="305" y="1490" width="40" height="20" as="geometry" />
+          <mxGeometry x="305" y="1520" width="40" height="20" as="geometry" />
         </mxCell>
         <mxCell id="aKae5eKDBznJ4Y1164LR-66" value="" style="edgeStyle=orthogonalEdgeStyle;html=1;align=left;spacingLeft=2;endArrow=block;rounded=0;" parent="1" edge="1">
           <mxGeometry x="1" y="273" relative="1" as="geometry">
-            <mxPoint x="250" y="1450" as="sourcePoint" />
+            <mxPoint x="250" y="1480" as="sourcePoint" />
             <Array as="points">
-              <mxPoint x="245" y="1450" />
-              <mxPoint x="330" y="1450" />
-              <mxPoint x="330" y="1490" />
+              <mxPoint x="245" y="1480" />
+              <mxPoint x="330" y="1480" />
+              <mxPoint x="330" y="1520" />
             </Array>
-            <mxPoint x="246" y="1490" as="targetPoint" />
+            <mxPoint x="246" y="1520" as="targetPoint" />
             <mxPoint x="-196" y="-83" as="offset" />
           </mxGeometry>
         </mxCell>
@@ -725,6 +725,12 @@
             <mxPoint x="230" y="1823.5" as="sourcePoint" />
             <mxPoint x="83" y="1823.478" as="targetPoint" />
           </mxGeometry>
+        </mxCell>
+        <mxCell id="dy_9rE8HRgi9Pd3eRH8T-348" value="[Derived Keys]" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="102.5" y="1421.52" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="dy_9rE8HRgi9Pd3eRH8T-349" value="[Derived Keys] with status used/unused" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" vertex="1" parent="1">
+          <mxGeometry x="280" y="1399.38" width="115" height="20" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
