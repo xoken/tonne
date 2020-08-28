@@ -41,15 +41,15 @@ export const setMnemonic = bip39Mnemonic => (dispatch, getState, { serviceInject
   }
 };
 
-export const setPassPhrase = bip39Passphrase => (dispatch, getState, { serviceInjector }) => {
+export const setPassPhrase = bip39Passphrase => async (dispatch, getState, { serviceInjector }) => {
   dispatch(setPassPhraseRequest());
   try {
     dispatch(setPassPhraseSuccess({ bip39Passphrase }));
-    dispatch(loginSuccess({ loginResult: true }));
     const {
       auth: { bip39Mnemonic },
     } = getState();
-    dispatch(walletActions.initWallet(bip39Mnemonic, bip39Passphrase));
+    await dispatch(walletActions.initWallet(bip39Mnemonic, bip39Passphrase));
+    dispatch(loginSuccess({ loginResult: true }));
   } catch (error) {
     dispatch(setPassPhraseFailure());
     throw error;
@@ -70,8 +70,8 @@ export const login = bip39Passphrase => async (dispatch, getState, { serviceInje
       const {
         auth: { bip39Mnemonic },
       } = getState();
+      await dispatch(walletActions.initWallet(bip39Mnemonic, bip39Passphrase));
       dispatch(loginSuccess({ loginResult }));
-      dispatch(walletActions.initWallet(bip39Mnemonic, bip39Passphrase));
     } else {
       dispatch(loginFailure());
     }

@@ -14,7 +14,7 @@ class WalletDashboard extends React.Component {
 
   componentDidMount() {
     const { dispatch } = this.props;
-    dispatch(walletActions.getCurrentBalance());
+    dispatch(walletActions.getOutputs());
   }
 
   toggleSendTxPopup = () => {
@@ -23,15 +23,15 @@ class WalletDashboard extends React.Component {
     this.props.history.push('/wallet/send');
   };
 
-  sentreceived = (spendinfo) => {
+  sentreceived = spendinfo => {
     if (spendinfo === null) {
-      return <div className="greenalert">+</div>;
+      return <div className='greenalert'>+</div>;
     } else {
-      return <div className="redalert">-</div>;
+      return <div className='redalert'>-</div>;
     }
   };
 
-  inplist = (outval) => {
+  inplist = outval => {
     var tempinarr = [];
     for (var y = 0; y < outval.length; y++) {
       if (outval[y].spendInfo !== null) {
@@ -43,8 +43,7 @@ class WalletDashboard extends React.Component {
               <b>{outval[y].address}</b>
             </td>
             <td>
-              {this.sentreceived(outval[y].spendInfo)}{' '}
-              <b>{satoshiToBSV(outval[y].value)}</b> BSV
+              {this.sentreceived(outval[y].spendInfo)} <b>{satoshiToBSV(outval[y].value)}</b> BSV
             </td>
           </tr>
         );
@@ -53,7 +52,7 @@ class WalletDashboard extends React.Component {
     return tempinarr;
   };
 
-  spentlist = (outval) => {
+  spentlist = outval => {
     var tempoutarr = [];
     for (var f = 0; f < outval.length; f++) {
       if (outval[f].spendInfo === null) {
@@ -65,8 +64,7 @@ class WalletDashboard extends React.Component {
               <b>{outval[f].address}</b>
             </td>
             <td>
-              {this.sentreceived(outval[f].spendInfo)}{' '}
-              <b>{satoshiToBSV(outval[f].value)}</b> BSV
+              {this.sentreceived(outval[f].spendInfo)} <b>{satoshiToBSV(outval[f].value)}</b> BSV
             </td>
           </tr>
         );
@@ -80,20 +78,20 @@ class WalletDashboard extends React.Component {
     if (!isLoading && transactions.length > 0) {
       return transactions.map(({ txId, tx: { txInps, txOuts } }) => {
         return (
-          <div key={txId} className="card">
-            <div className="card-header">{txId}</div>
-            <div className="card-body">
-              <div className="row">
-                <div className="col-md-6">
-                  {txInps.map((txInp) => (
+          <div key={txId} className='card'>
+            <div className='card-header'>{txId}</div>
+            <div className='card-body'>
+              <div className='row'>
+                <div className='col-md-6'>
+                  {txInps.map(txInp => (
                     <>
                       <p>{txInp.address}</p>
                       <p>{satoshiToBSV(txInp.value)}</p>
                     </>
                   ))}
                 </div>
-                <div className="col-md-6">
-                  {txOuts.map((txOut) => (
+                <div className='col-md-6'>
+                  {txOuts.map(txOut => (
                     <>
                       <p>{txOut.address}</p>
                       <p>{satoshiToBSV(txOut.value)}</p>
@@ -146,8 +144,8 @@ class WalletDashboard extends React.Component {
 
   renderPagination() {
     return (
-      <nav aria-label="transactions navigation">
-        <ul className="pagination justify-content-center" id="pagination"></ul>
+      <nav aria-label='transactions navigation'>
+        <ul className='pagination justify-content-center' id='pagination'></ul>
       </nav>
     );
   }
@@ -381,23 +379,19 @@ class WalletDashboard extends React.Component {
     const { balance, isLoading } = this.props;
     return (
       <>
-        <div className="row">
-          <div className="col-lg-12 col-md-12 col-sm-12 border-left-right">
+        <div className='row'>
+          <div className='col-lg-12 col-md-12 col-sm-12 border-left-right'>
             <center>
-              <div className="cryptologo">
-                <img src={images.bsv} alt="" />
+              <div className='cryptologo'>
+                <img src={images.bsv} alt='' />
               </div>
               {isLoading ? (
-                <img
-                  alt="Loading"
-                  src={images.loading}
-                  className="loadinggif"
-                />
+                <img alt='Loading' src={images.loading} className='loadinggif' />
               ) : (
                 <>
                   <h5>Your Current Balance is</h5>
                   <h4>{satoshiToBSV(balance)} BSV</h4>
-                  <div className="txbtn" onClick={this.toggleSendTxPopup}>
+                  <div className='txbtn' onClick={this.toggleSendTxPopup}>
                     Send
                   </div>
                 </>
@@ -406,8 +400,8 @@ class WalletDashboard extends React.Component {
           </div>
         </div>
 
-        <div className="row">
-          <div className="col-md-12 col-lg-12">
+        <div className='row'>
+          <div className='col-md-12 col-lg-12'>
             <h3>Recent Transactions</h3>
             {/* <table id="txlist">
               <tbody></tbody>
@@ -447,7 +441,7 @@ WalletDashboard.defaultProps = {
   outputs: [],
 };
 
-const mapStateToProps = (state) => ({
+const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
   outputs: walletSelectors.getOutputs(state),

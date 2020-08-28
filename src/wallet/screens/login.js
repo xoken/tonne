@@ -11,22 +11,13 @@ class Login extends React.Component {
     this.state = { passphrase: '', error: '' };
   }
 
-  componentDidMount() {
-    // const { bip39Mnemonic } = this.props;
-    // if (!bip39Mnemonic) {
-    // this.props.history.push('/wallet');
-    // }
-  }
-
   handleContinue = async event => {
     event.preventDefault();
     const { dispatch } = this.props;
     const { passphrase } = this.state;
     if (passphrase) {
       const result = await dispatch(authActions.login(passphrase));
-      if (result) {
-        this.props.history.push('/wallet');
-      } else {
+      if (!result) {
         this.setState({ error: 'Wrong Password' });
       }
     }

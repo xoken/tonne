@@ -39,18 +39,18 @@ export default createReducer(
       bip32ExtendedPublicKey: payload.bip32ExtendedPublicKey,
       derivedKeys: payload.derivedKeys,
     }),
-    [actions.getCurrentBalanceRequest]: state => ({
+    [actions.getOutputsRequest]: state => ({
       ...state,
       isLoading: true,
     }),
-    [actions.getCurrentBalanceSuccess]: (state, payload) => ({
+    [actions.getOutputsSuccess]: (state, payload) => ({
       ...state,
       balance: payload.balance,
       outputs: payload.outputs,
       derivedKeys: payload.derivedKeys,
       isLoading: false,
     }),
-    [actions.getCurrentBalanceFailure]: state => ({
+    [actions.getOutputsFailure]: state => ({
       ...state,
       isLoading: false,
     }),

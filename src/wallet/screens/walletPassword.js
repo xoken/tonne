@@ -16,7 +16,6 @@ class WalletPassword extends React.Component {
     const { dispatch } = this.props;
     const { password } = this.state;
     dispatch(authActions.setPassPhrase(password));
-    this.props.history.push('/wallet');
   };
 
   renderPasswordMatchStatus() {
