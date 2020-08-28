@@ -1,12 +1,10 @@
 import React from 'react';
 import { Route, Redirect, useRouteMatch } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import * as walletSelectors from '../../wallet/walletSelectors';
+import * as authSelectors from '../../auth/authSelectors';
 
 export default function PrivateRoute({ children, ...rest }) {
-  const isAuthenticated = useSelector(state =>
-    walletSelectors.isAuthenticated(state)
-  );
+  const isAuthenticated = useSelector(state => authSelectors.isAuthenticated(state));
 
   const { path } = useRouteMatch();
 

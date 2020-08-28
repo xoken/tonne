@@ -2,8 +2,8 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import * as walletActions from '../walletActions';
-import * as walletSelectors from '../walletSelectors';
+import * as authActions from '../../auth/authActions';
+import * as authSelectors from '../../auth/authSelectors';
 var globmnorig = '';
 var globmndupl = '';
 
@@ -20,7 +20,7 @@ class NewWallet extends React.Component {
 
   generateMnemonic = () => {
     const { dispatch } = this.props;
-    dispatch(walletActions.generateMnemonic());
+    dispatch(authActions.generateMnemonic());
     this.setState({ continue: true });
   };
 
@@ -50,7 +50,7 @@ class NewWallet extends React.Component {
     this.morigfull = '';
     this.mnorig.length = 0;
     this.mndupl.length = 0;
-    if (this.props.bip39Mnemonic !== 'undefined') {
+    if (this.props.bip39Mnemonic) {
       var mnwordarray = this.props.bip39Mnemonic.split(' ');
       for (var k = 0; k < mnwordarray.length; k++) {
         if (mnwordarray[k][0] !== undefined) {
@@ -58,8 +58,7 @@ class NewWallet extends React.Component {
           for (var l = 1; l < mnwordarray[k].length; l++) {
             this.mndupl[k] += '*';
           }
-          this.morigfull +=
-            "<span class='mnword' id='" + k + "'>" + this.mndupl[k] + '</span>';
+          this.morigfull += "<span class='mnword' id='" + k + "'>" + this.mndupl[k] + '</span>';
         }
         this.mnorig.push(mnwordarray[k]);
 
@@ -77,7 +76,7 @@ class NewWallet extends React.Component {
     var continu;
     if (this.state.continue === true) {
       continu = (
-        <button type="button" className="generalbtns" onClick={this.onContinue}>
+        <button type='button' className='generalbtns' onClick={this.onContinue}>
           Continue
         </button>
       );
@@ -85,22 +84,18 @@ class NewWallet extends React.Component {
 
     return (
       <>
-        <div className="row">
-          <div className="col-lg-12 col-md-12 col-sm-12 centerall">
-            <h5 className="generalheadingscolor">
-              Please write down these words on a piece of paper. This seed will
-              help recover your wallet in the future.
+        <div className='row'>
+          <div className='col-lg-12 col-md-12 col-sm-12 centerall'>
+            <h5 className='generalheadingscolor'>
+              Please write down these words on a piece of paper. This seed will help recover your
+              wallet in the future.
             </h5>
             <div>
-              <div className="mnemonic" id="mnemonic"></div>
+              <div className='mnemonic' id='mnemonic'></div>
             </div>
-            <div id="unmaskhint"></div>
+            <div id='unmaskhint'></div>
 
-            <button
-              type="button"
-              className="generalbtns"
-              onClick={this.generateMnemonic}
-            >
+            <button type='button' className='generalbtns' onClick={this.generateMnemonic}>
               Generate Mnemonic
             </button>
             <br />
@@ -125,8 +120,8 @@ NewWallet.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  isLoading: walletSelectors.isLoading(state),
-  bip39Mnemonic: walletSelectors.getMnemonic(state),
+  isLoading: authSelectors.isLoading(state),
+  bip39Mnemonic: authSelectors.getMnemonic(state),
 });
 
 export default withRouter(connect(mapStateToProps)(NewWallet));

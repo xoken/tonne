@@ -1,11 +1,11 @@
 import { createReducer } from 'redux-act';
+import auth from '../auth';
 import * as actions from './walletActions';
 
 const INITIAL_STATE = {
   // mnemonicLanguage: '',
-  bip39Mnemonic: '',
   // bip39SplitMnemonic: [],
-  bip39Passphrase: '',
+  isSessionValid: false,
   bip39SeedHex: '',
   // coin: '',
   bip32RootKeyBase58: '',
@@ -24,13 +24,9 @@ const INITIAL_STATE = {
 
 export default createReducer(
   {
-    [actions.generateMnemonicSuccess]: (state, { bip39Mnemonic }) => ({
+    [auth.actions.loginSuccess]: (state, { loginResult }) => ({
       ...state,
-      bip39Mnemonic,
-    }),
-    [actions.setPassPhraseSuccess]: (state, { bip39Passphrase }) => ({
-      ...state,
-      bip39Passphrase,
+      isSessionValid: loginResult,
     }),
     [actions.initWalletSuccess]: (state, payload) => ({
       ...state,
@@ -43,7 +39,7 @@ export default createReducer(
       bip32ExtendedPublicKey: payload.bip32ExtendedPublicKey,
       derivedKeys: payload.derivedKeys,
     }),
-    [actions.getCurrentBalanceRequest]: (state) => ({
+    [actions.getCurrentBalanceRequest]: state => ({
       ...state,
       isLoading: true,
     }),
@@ -54,7 +50,7 @@ export default createReducer(
       derivedKeys: payload.derivedKeys,
       isLoading: false,
     }),
-    [actions.getCurrentBalanceFailure]: (state) => ({
+    [actions.getCurrentBalanceFailure]: state => ({
       ...state,
       isLoading: false,
     }),

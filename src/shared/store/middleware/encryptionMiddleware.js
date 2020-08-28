@@ -2,7 +2,7 @@ import StoreEncryptor from '../../encryption/storeEncryptor';
 import { REHYDRATE } from 'redux-persist';
 let encryptedData = null;
 
-export const encryptionMiddleware = (store) => (next) => (action) => {
+export const encryptionMiddleware = store => next => action => {
   if (action.type === REHYDRATE) {
     // debugger;
   }

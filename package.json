@@ -60,7 +60,14 @@
     "reactotron-redux": "^3.1.3"
   },
   "prettier": {
-    "arrowParens": "avoid",
-    "singleQuote": true
+    "printWidth": 100,
+    "tabWidth": 2,
+    "useTabs": false,
+    "singleQuote": true,
+    "jsxSingleQuote": true,
+    "bracketSpacing": true,
+    "jsxBracketSameLine": true,
+    "semi": true,
+    "arrowParens": "avoid"
   }
 }
