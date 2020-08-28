@@ -1,4 +1,5 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as walletActions from '../walletActions';
@@ -448,4 +449,4 @@ const mapStateToProps = state => ({
   transactions: walletSelectors.getTransactions(state),
 });
 
-export default connect(mapStateToProps)(WalletDashboard);
+export default withRouter(connect(mapStateToProps)(WalletDashboard));
