@@ -1,8 +1,8 @@
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
-import ExistingWallet from './existingWallet';
+import ExistingWallet from './ExistingWallet';
 import Login from './login';
-import NewWallet from './newWallet';
+import NewWallet from './NewWallet';
 import NoMatch from '../../shared/components/noMatch';
 import PrivateRoute from '../../shared/components/privateRoute';
 import PublicRoute from '../../shared/components/publicRoute';
@@ -33,7 +33,7 @@ export default function WalletHome() {
         <PrivateRoute exact path={path}>
           <WalletDashboard />
         </PrivateRoute>
-        <Route path="*">
+        <Route path='*'>
           <NoMatch />
         </Route>
       </Switch>

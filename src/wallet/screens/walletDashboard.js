@@ -390,8 +390,10 @@ class WalletDashboard extends React.Component {
                 <img alt='Loading' src={images.loading} className='loadinggif' />
               ) : (
                 <>
-                  <h5>Your Current Balance is</h5>
-                  <h4>{satoshiToBSV(balance)} BSV</h4>
+                  <div className='gracefuload'>
+                    <h5>Your Current Balance is</h5>
+                    <h4>{satoshiToBSV(balance)} BSV</h4>
+                  </div>
                   <div className='txbtn' onClick={this.toggleSendTxPopup}>
                     Send
                   </div>
@@ -435,18 +437,18 @@ WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   balance: PropTypes.number.isRequired,
-  outputs: PropTypes.arrayOf(PropTypes.object),
+  outputs: PropTypes.arrayOf(PropTypes.object)
 };
 
 WalletDashboard.defaultProps = {
-  outputs: [],
+  outputs: []
 };
 
 const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
   outputs: walletSelectors.getOutputs(state),
-  transactions: walletSelectors.getTransactions(state),
+  transactions: walletSelectors.getTransactions(state)
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));

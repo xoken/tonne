@@ -4,10 +4,43 @@
 .generalheadingscolor{
   color:grey;
 }
+.gracefuload{
+  position: relative;
+  animation-duration: 1s;
+  animation-name: graceful;
+}
+::-webkit-scrollbar {
+  width: 10px;
+  color: #eab300;
+}
+::-webkit-scrollbar-track
+{
+	-webkit-box-shadow: inset 0 0 5px lightgrey;
+	background-color: white;
+}
+::-webkit-scrollbar-thumb
+{
+  background-image: linear-gradient(transparent, #eab300, transparent);
+
+}
 .wallettxlist{
   color:white;
   background-color: grey;
   font-weight: bold;
+}
+.card-header{
+  background-color: #eab300;
+  color: white;
+  font-weight: bold;
+}
+.card{
+  -webkit-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.61);
+  -moz-box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.61);
+  box-shadow: 0px 5px 5px 0px rgba(0,0,0,0.61);
+  margin:10px 0px 10px 0px;
+  animation-duration: 1s;
+  animation-name: transactioncards;
+  border: none;
 }
 .subrow{
   border-bottom: 1px solid lightgrey;
@@ -73,7 +106,7 @@
 }
 .cryptologo > img {
   min-height: 64px !important;
-  animation-duration: 1.5s;
+  animation-duration: 0.5s;
   position: relative;
   animation-name: logoslide;
 }
@@ -158,6 +191,30 @@
   to {
     top: 0px;
     opacity: 1;
+  }
+}
+
+@keyframes transactioncards {
+  from {
+    transform: rotateX(90deg); transform-origin: top;
+    opacity: 0.4;
+  }
+
+  to {
+    transform: rotateX(0deg); transform-origin: top;
+    opacity: 1;
+  }
+}
+
+@keyframes graceful {
+  from {
+    opacity: 0.4;
+    transform: rotateX(90deg);
+  }
+
+  to {
+    opacity: 1;
+    transform: rotateX(0deg);
   }
 }
 
