@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2020-08-29T06:45:42.271Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36" etag="_xH2B4qtH_1gDgFtShSu" version="13.6.5" type="github">
+<mxfile host="app.diagrams.net" modified="2020-08-29T06:57:13.406Z" agent="5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.125 Safari/537.36" etag="KaQxIF7xU-61slJjWY13" version="13.6.5" type="github">
   <diagram id="d2bJDyH4YY4jTTXs1ROH" name="Page-1">
     <mxGraphModel dx="2012" dy="706" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -745,6 +745,30 @@
         </mxCell>
         <mxCell id="VSwW9jE1x60WQ4yRuWXA-7" value="Whats the difference b/w encrypted password and User password? Why do we need two? &lt;br&gt;The mnenomic and user password is sufficient, use the user password to encrypt the mnemonic.&lt;br&gt;So the user only has to backup the 12/24 word mnemonic." style="shape=note;size=15;align=left;spacingLeft=10;html=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
           <mxGeometry x="-290" y="676.88" width="190" height="146.25" as="geometry" />
+        </mxCell>
+        <mxCell id="VSwW9jE1x60WQ4yRuWXA-10" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=none;endFill=0;" edge="1" parent="1" source="VSwW9jE1x60WQ4yRuWXA-9" target="aKae5eKDBznJ4Y1164LR-63">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="VSwW9jE1x60WQ4yRuWXA-9" value="The GetCurrentBalance should be exposed by the SDK, instead of that logic being in the wallet/client.&lt;br&gt;No point in SDK if its going to lack any business logic.." style="shape=note;size=15;align=left;spacingLeft=10;html=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="-180" y="1460" width="200" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="VSwW9jE1x60WQ4yRuWXA-11" value="What exactly is the purpose of fetching the full Txn? I thought we have all fields needed in the getOutputs or getUTXOs APIs to display the &quot;recent txns&quot; page..?" style="shape=note;size=15;align=left;spacingLeft=10;html=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="-250" y="1734.01" width="200" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="VSwW9jE1x60WQ4yRuWXA-13" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=-0.019;entryY=0.52;entryDx=0;entryDy=0;entryPerimeter=0;dashed=1;endArrow=none;endFill=0;" edge="1" parent="1" source="VSwW9jE1x60WQ4yRuWXA-12" target="dy_9rE8HRgi9Pd3eRH8T-278">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="VSwW9jE1x60WQ4yRuWXA-12" value="What is this In-memory DB exactly? What technology?" style="shape=note;size=15;align=left;spacingLeft=10;html=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="-285" y="1285" width="200" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="VSwW9jE1x60WQ4yRuWXA-14" value="10 mins is too long, should poll much more often, 30 secs!&lt;br&gt;&lt;br&gt;&lt;br&gt;Also, you are updating the in-memory DB alright, but doesn&#39;t show how the page gets seamlessly refreshed with new information" style="shape=note;size=15;align=left;spacingLeft=10;html=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="-260" y="1950" width="200" height="210" as="geometry" />
+        </mxCell>
+        <mxCell id="VSwW9jE1x60WQ4yRuWXA-16" style="edgeStyle=none;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;dashed=1;endArrow=none;endFill=0;" edge="1" parent="1" source="VSwW9jE1x60WQ4yRuWXA-15" target="dy_9rE8HRgi9Pd3eRH8T-267">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="VSwW9jE1x60WQ4yRuWXA-15" value="When a Txn-1 is being sent out, you should update the local cache too!. So that when immedietely after you are making the Txn-2 we dont accidentally include the same UTXOs (double spending!)&lt;br&gt;&lt;br&gt;Even though you call the getUnspentOutupts, you should crosscheck against the local cache. The local cache can expire after 30 mins (say in some chain-re-org scenarios) so you are not permanently stuck with stale utxos." style="shape=note;size=15;align=left;spacingLeft=10;html=1;whiteSpace=wrap;fillColor=#f8cecc;strokeColor=#b85450;" vertex="1" parent="1">
+          <mxGeometry x="-200" y="2460" width="220" height="240" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
