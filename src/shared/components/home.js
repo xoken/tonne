@@ -37,12 +37,9 @@ export default class Home extends React.Component {
                   <h5 className='card-title'>BSV Block Explorer</h5>
                   <p className='card-text'>Explore BSV blocks without limits</p>
                   <br />
-                  <a href='../src/explorer/index.html' className='generalbtns'>
+                  <Link to='/explorer' className='generalbtns'>
                     Explore Blocks
-                  </a>
-                  {/* <Link to="../src/explorer/index.html" className="generalbtns">
-                    Explore Blocks
-                  </Link> */}
+                  </Link>
                 </div>
               </div>
             </div>

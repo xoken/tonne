@@ -6,43 +6,38 @@ export default class ExplorerDashboard extends React.Component {
     return (
       <>
         <ExplorerSearch />
-        <div class='row'>
-          <div class='col-md-12 col-lg-12'>
+        <div className='row'>
+          <div className='col-md-12 col-lg-12'>
             <h4>Summary</h4>
           </div>
         </div>
-        <div class='row'>
-          <div class='col-md-12 col-lg-12'>
+        <div className='row'>
+          <div className='col-md-12 col-lg-12'>
             <table id='summarysection' border='1'></table>
           </div>
         </div>
         <hr />
-        <div class='row'>
-          <div class='col-lg-12 col-md-12'>
+        <div className='row'>
+          <div className='col-lg-12 col-md-12'>
             <h4>Latest Blocks</h4>
           </div>
         </div>
-        <div class='row'>
-          <div class='col-md-12 col-lg-12'>
-            <div class='latestblocks'>
+        <div className='row'>
+          <div className='col-md-12 col-lg-12'>
+            <div className='latestblocks'>
               <table id='rowstoinsert'></table>
             </div>
             <br />
           </div>
         </div>
-        <div class='row'>
-          <div class='col-md-12 col-lg-12 text-center'>
+        <div className='row'>
+          <div className='col-md-12 col-lg-12 text-center'>
             <nav aria-label='transactions navigation'>
-              <ul class='pagination justify-content-center' id='pagination'></ul>
+              <ul className='pagination justify-content-center' id='pagination'></ul>
             </nav>
             Enter page number
-            <input
-              style='margin-left: 10px; margin-right: 10px;'
-              size='5'
-              type='text'
-              id='enteredpagenumber'
-            />
-            <input class='btn btn-primary' type='button' id='pagebutton' value='Go' />
+            <input className='pagenuminput' size='5' type='text' id='enteredpagenumber' />
+            <input className='btn btn-primary' type='button' id='pagebutton' value='Go' />
           </div>
         </div>
       </>

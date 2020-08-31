@@ -139,12 +139,7 @@ export default class ExplorerBlockHeight extends React.Component {
               <ul class='pagination justify-content-center' id='pagination'></ul>
             </nav>
             Enter page number
-            <input
-              style='margin-left: 10px; margin-right: 10px;'
-              size='5'
-              type='text'
-              id='enteredpagenumber'
-            />
+            <input className='pagenuminput' size='5' type='text' id='enteredpagenumber' />
             <input class='btn btn-primary' type='button' id='pagebutton' value='Go' />
           </div>
         </div>

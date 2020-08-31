@@ -6,21 +6,21 @@ export default class ExplorerTransaction extends React.Component {
     return (
       <>
         <ExplorerSearch />
-        <div class='row'>
-          <div class='col-md-12 col-lg-12'>
+        <div className='row'>
+          <div className='col-md-12 col-lg-12'>
             <h4>Transaction</h4>
             <a id='txid'></a>
             <hr />
           </div>
         </div>
-        <div class='row'>
-          <div class='col-md-12 col-lg-12'>
+        <div className='row'>
+          <div className='col-md-12 col-lg-12'>
             <h4>Summary</h4>
           </div>
         </div>
-        <div class='row'>
-          <div class='col-md-6 col-lg-6 summaryblock1'>
-            <table class='tdborderbottom'>
+        <div className='row'>
+          <div className='col-md-6 col-lg-6 summaryblock1'>
+            <table className='tdborderbottom'>
               <tr>
                 <td>
                   <b>Block</b>
@@ -49,8 +49,8 @@ export default class ExplorerTransaction extends React.Component {
               </tr>
             </table>
           </div>
-          <div class='col-md-6 col-lg-6 summaryblock1'>
-            <table class='tdborderbottom'>
+          <div className='col-md-6 col-lg-6 summaryblock1'>
+            <table className='tdborderbottom'>
               <tr>
                 <td>
                   <b>txIndex</b>
@@ -81,8 +81,8 @@ export default class ExplorerTransaction extends React.Component {
         <br />
         <hr />
         <br />
-        <div class='row'>
-          <div class='col-md-12 col-lg-12'>
+        <div className='row'>
+          <div className='col-md-12 col-lg-12'>
             <center>
               <h4>MerkleBranch</h4>
             </center>
@@ -91,19 +91,19 @@ export default class ExplorerTransaction extends React.Component {
         </div>
 
         <hr />
-        <div class='row'>
-          <div class='col-md-12 col-lg-12'>
+        <div className='row'>
+          <div className='col-md-12 col-lg-12'>
             <h5>
               <a id='noofinputs'></a> Inputs, <a id='noofoutputs'></a> Outputs
             </h5>
             <hr />
           </div>
         </div>
-        <div class='row'>
-          <div class='col-md-6 col-lg-6'>
+        <div className='row'>
+          <div className='col-md-6 col-lg-6'>
             <table id='inputaddress'></table>
           </div>
-          <div class='col-md-6 col-lg-6'>
+          <div className='col-md-6 col-lg-6'>
             <table id='outputaddress'></table>
           </div>
         </div>

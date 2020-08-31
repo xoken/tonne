@@ -6,7 +6,6 @@ import './shared/css/address.css';
 import './shared/css/blockheight.css';
 import './shared/css/index.css';
 import './shared/css/mnemonic.css';
-import './shared/css/scripthash.css';
 import './shared/css/transaction.css';
 import './shared/css/wallet.css';
 import App from './App';
@@ -17,7 +16,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 const { store, persistor } = configureStore();
 
 const PersistComponent = persistor
-  ? (props) => <PersistGate {...props} loading={null} persistor={persistor} />
+  ? props => <PersistGate {...props} loading={null} persistor={persistor} />
   : React.Fragment;
 
 ReactDOM.render(
