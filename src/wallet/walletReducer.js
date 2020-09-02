@@ -28,27 +28,29 @@ export default createReducer(
       ...state,
       isSessionValid: loginResult,
     }),
-    [actions.initWalletSuccess]: (state, payload) => ({
+    [actions.initWalletSuccess]: state => ({
       ...state,
-      bip39SeedHex: payload.bip39SeedHex,
-      bip32RootKeyBase58: payload.bip32RootKeyBase58,
-      bip32ExtendedKey: payload.bip32ExtendedKey,
-      accountExtendedPrivateKey: payload.accountExtendedPrivateKey,
-      accountExtendedPublicKey: payload.accountExtendedPublicKey,
-      bip32ExtendedPrivateKey: payload.bip32ExtendedPrivateKey,
-      bip32ExtendedPublicKey: payload.bip32ExtendedPublicKey,
-      derivedKeys: payload.derivedKeys,
+      // bip39SeedHex: payload.bip39SeedHex,
+      // bip32RootKeyBase58: payload.bip32RootKeyBase58,
+      // bip32ExtendedKey: payload.bip32ExtendedKey,
+      // accountExtendedPrivateKey: payload.accountExtendedPrivateKey,
+      // accountExtendedPublicKey: payload.accountExtendedPublicKey,
+      // bip32ExtendedPrivateKey: payload.bip32ExtendedPrivateKey,
+      // bip32ExtendedPublicKey: payload.bip32ExtendedPublicKey,
+      // derivedKeys: payload.derivedKeys,
     }),
     [actions.getOutputsRequest]: state => ({
       ...state,
       isLoading: true,
     }),
-    [actions.getOutputsSuccess]: (state, payload) => ({
+    [actions.getOutputsSuccess]: (state, { outputs }) => ({
       ...state,
-      balance: payload.balance,
-      outputs: payload.outputs,
-      derivedKeys: payload.derivedKeys,
+      outputs,
       isLoading: false,
+    }),
+    [actions.getBalanceSuccess]: (state, { balance }) => ({
+      ...state,
+      balance,
     }),
     [actions.getOutputsFailure]: state => ({
       ...state,

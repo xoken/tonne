@@ -51,11 +51,9 @@ class ExistingWallet extends React.Component {
         this.data = buf.toString('hex');
         this.randomnumber = parseInt(this.data, 16);
         this.rindex = this.randomnumber % 26;
-        //console.log(this.rindex);
         this.temp = this.alphabetarray[index];
         this.alphabetarray[index] = this.alphabetarray[this.rindex];
         this.alphabetarray[this.rindex] = this.temp;
-        //console.log(this.alphabetarray);
         index -= 1;
         if (0 === this.counter % 26) {
           this.mix();

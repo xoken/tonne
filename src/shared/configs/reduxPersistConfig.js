@@ -13,7 +13,7 @@ const encryptor = createTransform(
 );
 
 const REDUX_PERSIST = {
-  active: true,
+  active: false,
   storeConfig: {
     key: 'primary',
     transforms: [encryptor],

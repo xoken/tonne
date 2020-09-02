@@ -1,20 +1,23 @@
 import PouchDB from 'pouchdb';
 
-PouchDB.plugin(require('pouchdb-upsert'));
-export const db = new PouchDB('mydb');
-
 export const AUTH = 'auth';
 export const BIP32_EXTENDED_KEY = 'bip32ExtendedKey';
 export const DERIVED_KEYS = 'derivedKeys';
 export const OUTPUTS = 'outputs';
 export const UTXOS = 'utxos';
 
+let db: any;
+
+export const createDB = (dbName: string) => {
+  db = new PouchDB(dbName, { revs_limit: 1, auto_compaction: true });
+};
+
 const get = async (key: string) => await db.get(key);
 
 const set = async (key: string, value: any) => {
   const doc: any = await db.get(key);
   doc.value = value;
-  await db.put(value);
+  await db.put(doc);
 };
 
 export const getAuth = async () => {
@@ -79,14 +82,9 @@ export const bulkUpdate = async (data: any[]) => {
       return doc;
     })
   );
-  debugger;
   await db.bulkDocs(newData);
 };
 
-// db.info()
-//   .then(function(info: any) {
-//     console.log(info);
-//   })
-//   .catch(function(err: any) {
-//     console.log(err);
-//   });
+export const destroy = async () => {
+  await db.destroy();
+};

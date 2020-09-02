@@ -9,6 +9,10 @@ export const getOutputsRequest = createAction('GET_OUTPUTS_REQUEST');
 export const getOutputsSuccess = createAction('GET_OUTPUTS_SUCCESS');
 export const getOutputsFailure = createAction('GET_OUTPUTS_FAILURE');
 
+export const getBalanceRequest = createAction('GET_BALANCE_REQUEST');
+export const getBalanceSuccess = createAction('GET_BALANCE_SUCCESS');
+export const getBalanceFailure = createAction('GET_BALANCE_FAILURE');
+
 export const getTransactionRequest = createAction('GET_TRANSACTION_REQUEST');
 export const getTransactionSuccess = createAction('GET_TRANSACTION_SUCCESS');
 export const getTransactionFailure = createAction('GET_TRANSACTION_FAILURE');
@@ -24,12 +28,8 @@ export const initWallet = (bip39Mnemonic, bip39Passphrase) => async (
 ) => {
   dispatch(initWalletRequest());
   try {
-    const response = await serviceInjector(WalletService).initWallet(
-      bip39Mnemonic,
-      bip39Passphrase
-    );
-    debugger;
-    dispatch(initWalletSuccess(response));
+    await serviceInjector(WalletService).initWallet(bip39Mnemonic, bip39Passphrase);
+    dispatch(initWalletSuccess());
   } catch (error) {
     console.log(error);
     dispatch(initWalletFailure());
@@ -39,13 +39,15 @@ export const initWallet = (bip39Mnemonic, bip39Passphrase) => async (
 export const getOutputs = () => async (dispatch, getState, { serviceInjector }) => {
   dispatch(getOutputsRequest());
   try {
-    const response = await serviceInjector(WalletService).getOutputs();
-    debugger;
-    dispatch(getOutputsSuccess(response));
-    dispatch(getTransactions());
+    const { outputs } = await serviceInjector(WalletService).getOutputs();
+    dispatch(getOutputsSuccess({ outputs }));
+    if (outputs.length > 0) {
+      dispatch(getBalanceRequest());
+      const { balance } = await serviceInjector(WalletService).getBalance();
+      dispatch(getBalanceSuccess({ balance }));
+    }
   } catch (error) {
     console.log(error);
-    dispatch(getTransactions());
     dispatch(getOutputsFailure());
   }
 };
@@ -65,18 +67,5 @@ export const createSendTransaction = (receiverAddress, amountInSatoshi, transact
     dispatch(createSendTransactionSuccess(response));
   } catch (error) {
     dispatch(createSendTransactionFailure());
-  }
-};
-
-export const getTransactions = () => async (dispatch, getState, { serviceInjector }) => {
-  const {
-    wallet: { outputs },
-  } = getState();
-  dispatch(getTransactionRequest());
-  try {
-    const transactions = await serviceInjector(WalletService).getTransactions(outputs);
-    dispatch(getTransactionSuccess({ transactions }));
-  } catch (error) {
-    dispatch(getTransactionFailure());
   }
 };

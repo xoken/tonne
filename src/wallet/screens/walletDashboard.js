@@ -15,7 +15,7 @@ class WalletDashboard extends React.Component {
 
   async componentDidMount() {
     const { dispatch } = this.props;
-    const r = await dispatch(walletActions.getOutputs());
+    dispatch(walletActions.getOutputs());
   }
 
   toggleSendTxPopup = () => {
@@ -75,29 +75,18 @@ class WalletDashboard extends React.Component {
   };
 
   renderTransaction() {
-    const { isLoading, transactions } = this.props;
-    if (!isLoading && transactions.length > 0) {
-      return transactions.map(({ txId, tx: { txInps, txOuts } }) => {
+    const { isLoading, outputs } = this.props;
+    if (!isLoading && outputs.length > 0) {
+      return outputs.map(({ outputTxHash, value, address }, index) => {
         return (
-          <div key={txId} className='card'>
-            <div className='card-header'>{txId}</div>
+          <div key={index} className='card'>
+            <div className='card-header'>{outputTxHash}</div>
             <div className='card-body'>
               <div className='row'>
+                <div className='col-md-6'></div>
                 <div className='col-md-6'>
-                  {txInps.map(txInp => (
-                    <>
-                      <p>{txInp.address}</p>
-                      <p>{satoshiToBSV(txInp.value)}</p>
-                    </>
-                  ))}
-                </div>
-                <div className='col-md-6'>
-                  {txOuts.map(txOut => (
-                    <>
-                      <p>{txOut.address}</p>
-                      <p>{satoshiToBSV(txOut.value)}</p>
-                    </>
-                  ))}
+                  <p>{address}</p>
+                  <p>{satoshiToBSV(value)}</p>
                 </div>
               </div>
             </div>
@@ -448,7 +437,6 @@ const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
   outputs: walletSelectors.getOutputs(state),
-  transactions: walletSelectors.getTransactions(state),
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));
