@@ -1,5 +1,6 @@
 import * as networks from './constants/networks';
 import * as derivationPaths from './constants/derivationPaths';
+import wallet from './Wallet';
 
 export { addressAPI } from './AddressAPI';
 export { authAPI } from './AuthAPI';
@@ -10,4 +11,4 @@ export { scriptHashAPI } from './ScriptHashAPI';
 export { transactionAPI } from './TransactionAPI';
 export { userAPI } from './UserAPI';
 export { networks, derivationPaths };
-export { utils } from './Utils';
+export { wallet };

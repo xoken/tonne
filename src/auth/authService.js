@@ -1,4 +1,4 @@
-import { utils } from 'nipkow-sdk';
+import { wallet } from 'nipkow-sdk';
 
 class AuthService {
   constructor(store) {
@@ -6,7 +6,7 @@ class AuthService {
   }
 
   generateMnemonic = () => {
-    return utils.generateMnemonic();
+    return wallet.generateMnemonic();
   };
 
   login = (bip39Passphrase, existingBip39Passphrase) => {

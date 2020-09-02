@@ -2,6 +2,7 @@
   "include": ["src", "types"],
   "compilerOptions": {
     "module": "esnext",
+    "target": "es2017",
     "lib": ["dom", "esnext"],
     "importHelpers": true,
     "declaration": true,
@@ -18,6 +19,7 @@
       "*": ["src/*", "node_modules/*"]
     },
     "jsx": "react",
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true
   }
 }

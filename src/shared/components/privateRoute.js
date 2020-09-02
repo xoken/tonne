@@ -4,7 +4,8 @@ import { useSelector } from 'react-redux';
 import * as authSelectors from '../../auth/authSelectors';
 
 export default function PrivateRoute({ children, ...rest }) {
-  const isAuthenticated = useSelector(state => authSelectors.isAuthenticated(state));
+  // const isAuthenticated = useSelector(state => authSelectors.isAuthenticated(state));
+  const isAuthenticated = true;
 
   const { path } = useRouteMatch();
 

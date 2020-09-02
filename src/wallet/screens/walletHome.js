@@ -1,8 +1,8 @@
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
-import ExistingWallet from './ExistingWallet';
+import ExistingWallet from './existingWallet';
 import Login from './login';
-import NewWallet from './NewWallet';
+import NewWallet from './newWallet';
 import NoMatch from '../../shared/components/noMatch';
 import PrivateRoute from '../../shared/components/privateRoute';
 import PublicRoute from '../../shared/components/publicRoute';

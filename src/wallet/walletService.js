@@ -1,49 +1,23 @@
-import { utils, networks, addressAPI, transactionAPI } from 'nipkow-sdk';
-import { unique } from '../shared/utils';
+import { wallet, networks, addressAPI, transactionAPI } from 'nipkow-sdk';
+// import { unique } from '../shared/utils';
 
 class WalletService {
   constructor(store) {
     this.store = store;
   }
 
-  initWallet = (bip39Mnemonic, password) => {
-    if (bip39Mnemonic) {
-      const seed = utils.mnemonicToSeedSync(bip39Mnemonic, password);
-      const bip39SeedHex = utils.getSeedHex(seed);
-      const bip32RootKey = utils.getBIP32RootKeyFromSeed(seed, networks.BITCOIN_SV);
-      const bip32RootKeyBase58 = utils.getBIP32RootKeyBase58(bip32RootKey);
-      const bip32ExtendedKey = utils.getBIP32ExtendedKey(utils.getDerivationPath(), bip32RootKey);
-      const accountExtendedKey = utils.getBIP32ExtendedKey(
-        utils.getDerivationPathAccount(),
-        bip32RootKey
-      );
-      const accountExtendedPrivateKey = utils.getAccountExtendedPrivKey(accountExtendedKey);
-      const accountExtendedPublicKey = utils.getAccountExtendedPubKey(accountExtendedKey);
-      const bip32ExtendedPrivateKey = utils.getBIP32ExtendedPrivKey(bip32ExtendedKey);
-      const bip32ExtendedPublicKey = utils.getBIP32ExtendedPubKey(bip32ExtendedKey);
-      const derivedKeys = this.generateDerivedKeys(bip32ExtendedKey, 0, 20, false);
-      return {
-        bip39SeedHex,
-        bip32RootKeyBase58,
-        bip32ExtendedKey,
-        accountExtendedPrivateKey,
-        accountExtendedPublicKey,
-        bip32ExtendedPrivateKey,
-        bip32ExtendedPublicKey,
-        derivedKeys,
-      };
-    }
-    return null;
+  initWallet = bip39Mnemonic => {
+    return wallet.initWallet(bip39Mnemonic);
   };
 
   getOutputs = async () => {
-    const {
-      wallet: { derivedKeys },
-    } = this.store.getState();
-    return await this.calculateBalance(derivedKeys);
+    debugger;
+    const response = await wallet.getOutputs();
+    debugger;
+    return response;
   };
 
-  generateDerivedKeys = (
+  /*generateDerivedKeys = (
     bip32ExtendedKey,
     indexStart,
     count,
@@ -153,10 +127,10 @@ class WalletService {
       const utxos = outputs.filter(output => output.spendInfo === null);
       const targets = [{ address: receiverAddress, value: Number(amountInSatoshi) }];
       const derivedKey = derivedKeys.find(derivedKey => derivedKey.isUsed === false);
+      // });
       console.log(derivedKey);
       // var inputs = utxos.slice(0, 5).map((element) => {
       //   return { ...element, value: 5000 };
-      // });
       const transactionHex = await utils.createSendTransaction(
         'cN6NafxmNHmhhF6uUug2VuagYm5DWMhRQ5qZDLHyd7Sinbji69Ui',
         utxos,
@@ -173,7 +147,7 @@ class WalletService {
     const uniqueTx = [...new Set(outputs.map(output => output.outputTxHash))];
     const transactions = await transactionAPI.getTransactionsByTxIDs(uniqueTx);
     return transactions.txs;
-  };
+  };*/
 }
 
 export default WalletService;

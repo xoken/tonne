@@ -13,9 +13,9 @@ class WalletDashboard extends React.Component {
     this.state = { sendTxPopup: false };
   }
 
-  componentDidMount() {
+  async componentDidMount() {
     const { dispatch } = this.props;
-    dispatch(walletActions.getOutputs());
+    const r = await dispatch(walletActions.getOutputs());
   }
 
   toggleSendTxPopup = () => {
@@ -437,18 +437,18 @@ WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   balance: PropTypes.number.isRequired,
-  outputs: PropTypes.arrayOf(PropTypes.object)
+  outputs: PropTypes.arrayOf(PropTypes.object),
 };
 
 WalletDashboard.defaultProps = {
-  outputs: []
+  outputs: [],
 };
 
 const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
   outputs: walletSelectors.getOutputs(state),
-  transactions: walletSelectors.getTransactions(state)
+  transactions: walletSelectors.getTransactions(state),
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));

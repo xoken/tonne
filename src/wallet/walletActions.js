@@ -17,14 +17,18 @@ export const createSendTransactionRequest = createAction('CREATE_SEND_TRANSACTIO
 export const createSendTransactionSuccess = createAction('CREATE_SEND_TRANSACTION_SUCCESS');
 export const createSendTransactionFailure = createAction('CREATE_SEND_TRANSACTION_FAILURE');
 
-export const initWallet = (bip39Mnemonic, bip39Passphrase) => (
+export const initWallet = (bip39Mnemonic, bip39Passphrase) => async (
   dispatch,
   getState,
   { serviceInjector }
 ) => {
   dispatch(initWalletRequest());
   try {
-    const response = serviceInjector(WalletService).initWallet(bip39Mnemonic, bip39Passphrase);
+    const response = await serviceInjector(WalletService).initWallet(
+      bip39Mnemonic,
+      bip39Passphrase
+    );
+    debugger;
     dispatch(initWalletSuccess(response));
   } catch (error) {
     console.log(error);
@@ -36,6 +40,7 @@ export const getOutputs = () => async (dispatch, getState, { serviceInjector }) 
   dispatch(getOutputsRequest());
   try {
     const response = await serviceInjector(WalletService).getOutputs();
+    debugger;
     dispatch(getOutputsSuccess(response));
     dispatch(getTransactions());
   } catch (error) {

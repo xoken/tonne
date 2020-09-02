@@ -9,11 +9,11 @@ import customMiddleware from './middleware';
 
 const { storeConfig, active: shouldPersistStore } = ReduxPersistConfig;
 
-export default (preloadedState) => {
+export default preloadedState => {
   const middlewares = [
     ...customMiddleware,
     thunkMiddleware.withExtraArgument({
-      serviceInjector: (Service) => new Service(store),
+      serviceInjector: Service => new Service(store),
     }),
   ];
   const middlewareEnhancer = applyMiddleware(...middlewares);
@@ -29,11 +29,7 @@ export default (preloadedState) => {
     ? persistReducer(storeConfig, rootReducer)
     : rootReducer;
 
-  const store = createStore(
-    persistedReducer,
-    preloadedState,
-    composedEnhancers
-  );
+  const store = createStore(persistedReducer, preloadedState, composedEnhancers);
 
   const persistor = shouldPersistStore ? persistStore(store) : undefined;
 
