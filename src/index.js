@@ -6,7 +6,6 @@ import './shared/css/address.css';
 import './shared/css/blockheight.css';
 import './shared/css/index.css';
 import './shared/css/mnemonic.css';
-import './shared/css/scripthash.css';
 import './shared/css/transaction.css';
 import './shared/css/wallet.css';
 import App from './App';

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { createBrowserHistory } from 'history';
 import { HashRouter, Link, Route, Switch } from 'react-router-dom';
-import ExplorerHome from './explorer/screens/explorerHome';
+import ExplorerHome from './explorer/screens/ExplorerHome';
 import Home from './shared/components/home';
 import images from './shared/images';
 import NoMatch from './shared/components/noMatch';
