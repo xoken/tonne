@@ -134,3 +134,5 @@ table {
     margin: auto 5%;
   }
 }
+
+.wordbreak{word-break:break-all;}
