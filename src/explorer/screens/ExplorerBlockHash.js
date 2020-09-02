@@ -42,10 +42,10 @@ class ExplorerBlockHeight extends React.Component {
   date;
   blockhash;
 
-  initBlockHeight = async () => {
+  initBlockHash = async () => {
     this.rjdecoded = await ExplorerHttpsReq.httpsreq(
-      'getBlockByBlockHeight',
-      this.props.match.params.blockheight
+      'getBlockByBlockHash',
+      this.props.match.params.blockhash
     );
     this.printresults();
   };
@@ -63,8 +63,8 @@ class ExplorerBlockHeight extends React.Component {
           </td>
           <td>
             <Link
-              to={'/explorer/blockhash/' + this.rjdecoded.block.header.prevBlock + '/""'}
-              id='previousblock'>
+              id='previousblock'
+              to={'/explorer/blockhash/' + this.rjdecoded.block.header.prevBlock + '/""'}>
               {this.rjdecoded.block.header.prevBlock}
             </Link>
           </td>
@@ -111,8 +111,8 @@ class ExplorerBlockHeight extends React.Component {
           </td>
           <td>
             <Link
-              to={'/explorer/blockhash/' + this.rjdecoded.block.nextBlockHash + '/""'}
-              id='nextblock'>
+              id='nextblock'
+              to={'/explorer/blockhash/' + this.rjdecoded.block.nextBlockHash + '/""'}>
               {this.rjdecoded.block.nextBlockHash}
             </Link>
           </td>
@@ -505,7 +505,7 @@ class ExplorerBlockHeight extends React.Component {
     }
   };
   componentDidMount() {
-    this.initBlockHeight();
+    this.initBlockHash();
   }
   render() {
     return (

@@ -1,11 +1,11 @@
 import React from 'react';
-import ExplorerSearch from '../components/ExplorerSearch';
+import { Link, withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-export default class ExplorerAddress extends React.Component {
+class ExplorerAddress extends React.Component {
   render() {
     return (
       <>
-        <ExplorerSearch />
         <div class='row'>
           <div class='col-md-12 col-lg-12'>
             <h4>Address</h4>
@@ -44,3 +44,7 @@ export default class ExplorerAddress extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({});
+
+export default withRouter(connect(mapStateToProps)(ExplorerAddress));

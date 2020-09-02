@@ -1,11 +1,11 @@
 import React from 'react';
-import ExplorerSearch from '../components/ExplorerSearch';
+import { Link, withRouter } from 'react-router-dom';
+import { connect } from 'react-redux';
 
-export default class ExplorerTransaction extends React.Component {
+class ExplorerTransaction extends React.Component {
   render() {
     return (
       <>
-        <ExplorerSearch />
         <div className='row'>
           <div className='col-md-12 col-lg-12'>
             <h4>Transaction</h4>
@@ -111,3 +111,7 @@ export default class ExplorerTransaction extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({});
+
+export default withRouter(connect(mapStateToProps)(ExplorerTransaction));

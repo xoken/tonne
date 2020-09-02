@@ -60,7 +60,7 @@ class App extends React.Component {
                 <WalletHome />
               </Route>
               <Route path='/explorer'>
-                <ExplorerHome />
+                <ExplorerHome history={this.history} />
               </Route>
               <Route exact path='/'>
                 <Home />
