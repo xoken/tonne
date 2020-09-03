@@ -41,6 +41,7 @@ class ExplorerBlockHeight extends React.Component {
   title;
   date;
   blockhash;
+  back;
 
   initBlockHash = async () => {
     this.rjdecoded = await ExplorerHttpsReq.httpsreq(
@@ -51,6 +52,11 @@ class ExplorerBlockHeight extends React.Component {
   };
 
   printresults = async () => {
+    this.back = (
+      <Link className='btn btn-primary' to={'/explorer/' + this.rjdecoded.block.height}>
+        Back
+      </Link>
+    );
     this.currentblockhash = this.rjdecoded.block.hash;
     this.numberoftransactions = this.rjdecoded.block.txCount;
 
@@ -510,11 +516,7 @@ class ExplorerBlockHeight extends React.Component {
   render() {
     return (
       <>
-        {
-          //   <Link className='btn btn-primary' to={'/explorer/' + this.rjdecoded.block.height}>
-          //   Back
-          // </Link>
-        }
+        {this.back}
         <div className='row'>
           <div className='col-md-12 col-lg-12'>
             <h4>Block</h4>

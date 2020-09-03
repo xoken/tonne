@@ -27,9 +27,24 @@ class ExplorerDashboard extends React.Component {
   summarysection = [];
 
   initDashboard = async () => {
-    if (this.props.match.params.blockheight !== undefined) {
+    if (
+      this.props.match.params.blockheight !== undefined &&
+      !isNaN(this.props.match.params.blockheight)
+    ) {
       this.blockhei = this.props.match.params.blockheight;
+      console.log(this.blockhei + 'this.blockhei');
     }
+    if (localStorage.getItem('username') !== undefined || localStorage.getItem('username') !== '') {
+      if (
+        localStorage.getItem('callsremaining') !== null ||
+        localStorage.getItem('callsremaining') > 3
+      ) {
+        this.rjdecoded = await ExplorerHttpsReq.httpsreq('getChainInfo');
+        this.summary();
+      }
+    }
+  };
+  blockheiinit = () => {
     if (this.blockhei !== '') {
       //this.selected = (this.numberofpages - Math.ceil(this.blockhei/10));
       this.selected =
@@ -39,15 +54,6 @@ class ExplorerDashboard extends React.Component {
         this.index = 1;
       } else if (this.selected >= this.numberofpages - (this.pagearrlength - 2)) {
         this.index = this.pagearrlength;
-      }
-    }
-    if (localStorage.getItem('username') !== undefined || localStorage.getItem('username') !== '') {
-      if (
-        localStorage.getItem('callsremaining') !== null ||
-        localStorage.getItem('callsremaining') > 3
-      ) {
-        this.rjdecoded = await ExplorerHttpsReq.httpsreq('getChainInfo');
-        this.summary();
       }
     }
   };
@@ -97,6 +103,7 @@ class ExplorerDashboard extends React.Component {
       </>
     );
     console.table(this.summarysection);
+    this.blockheiinit();
     this.updatepagearray();
     this.updateheightlist();
     this.printpagination();
