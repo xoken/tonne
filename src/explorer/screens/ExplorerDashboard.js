@@ -27,9 +27,24 @@ class ExplorerDashboard extends React.Component {
   summarysection = [];
 
   initDashboard = async () => {
-    if (this.props.match.params.blockheight !== undefined) {
+    if (
+      this.props.match.params.blockheight !== undefined &&
+      !isNaN(this.props.match.params.blockheight)
+    ) {
       this.blockhei = this.props.match.params.blockheight;
+      console.log(this.blockhei + 'this.blockhei');
     }
+    if (localStorage.getItem('username') !== undefined || localStorage.getItem('username') !== '') {
+      if (
+        localStorage.getItem('callsremaining') !== null ||
+        localStorage.getItem('callsremaining') > 3
+      ) {
+        this.rjdecoded = await ExplorerHttpsReq.httpsreq('getChainInfo');
+        this.summary();
+      }
+    }
+  };
+  blockheiinit = () => {
     if (this.blockhei !== '') {
       //this.selected = (this.numberofpages - Math.ceil(this.blockhei/10));
       this.selected =
@@ -39,15 +54,6 @@ class ExplorerDashboard extends React.Component {
         this.index = 1;
       } else if (this.selected >= this.numberofpages - (this.pagearrlength - 2)) {
         this.index = this.pagearrlength;
-      }
-    }
-    if (localStorage.getItem('username') !== undefined || localStorage.getItem('username') !== '') {
-      if (
-        localStorage.getItem('callsremaining') !== null ||
-        localStorage.getItem('callsremaining') > 3
-      ) {
-        this.rjdecoded = await ExplorerHttpsReq.httpsreq('getChainInfo');
-        this.summary();
       }
     }
   };
@@ -97,6 +103,7 @@ class ExplorerDashboard extends React.Component {
       </>
     );
     console.table(this.summarysection);
+    this.blockheiinit();
     this.updatepagearray();
     this.updateheightlist();
     this.printpagination();
@@ -106,7 +113,7 @@ class ExplorerDashboard extends React.Component {
   callsec = async () => {
     this.rjdecoded = await ExplorerHttpsReq.httpsreq('getBlocksByBlockHeights', this.heightlist);
     this.printresults();
-    if (this.state.selectnum == '') {
+    if (this.state.selectnum === '') {
       this.setState({
         selectnum: 1
       });
@@ -270,56 +277,57 @@ class ExplorerDashboard extends React.Component {
           //  Back
           //    </button>
         }
-
-        <div className='row'>
-          <div className='col-md-12 col-lg-12'>
-            <h4>Summary</h4>
+        <div className='opacitywhileload'>
+          <div className='row'>
+            <div className='col-md-12 col-lg-12'>
+              <h4>Summary</h4>
+            </div>
           </div>
-        </div>
-        <div className='row'>
-          <div className='col-md-12 col-lg-12'>
-            <table border='1'>
-              <tbody>{this.summarysection}</tbody>
-            </table>
-          </div>
-        </div>
-        <hr />
-        <div className='row'>
-          <div className='col-lg-12 col-md-12'>
-            <h4>Latest Blocks</h4>
-          </div>
-        </div>
-        <div className='row'>
-          <div className='col-md-12 col-lg-12'>
-            <div className='latestblocks'>
-              <table>
-                <tbody>{this.resultsrow}</tbody>
+          <div className='row'>
+            <div className='col-md-12 col-lg-12'>
+              <table border='1'>
+                <tbody>{this.summarysection}</tbody>
               </table>
             </div>
-            <br />
           </div>
-        </div>
-        <div className='row'>
-          <div className='col-md-12 col-lg-12 text-center'>
-            <nav aria-label='transactions navigation'>
-              <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
-            </nav>
-            Enter page number
-            <form onSubmit={this.pagebutton}>
-              <input
-                className='pagenuminput'
-                size='5'
-                type='text'
-                onChange={event =>
-                  this.setState({
-                    enteredpagenumber: event.target.value
-                  })
-                }
-              />
-              <button className='btn btn-primary' type='submit'>
-                Go
-              </button>
-            </form>
+          <hr />
+          <div className='row'>
+            <div className='col-lg-12 col-md-12'>
+              <h4>Latest Blocks</h4>
+            </div>
+          </div>
+          <div className='row'>
+            <div className='col-md-12 col-lg-12'>
+              <div className='latestblocks'>
+                <table>
+                  <tbody>{this.resultsrow}</tbody>
+                </table>
+              </div>
+              <br />
+            </div>
+          </div>
+          <div className='row'>
+            <div className='col-md-12 col-lg-12 text-center'>
+              <nav aria-label='transactions navigation'>
+                <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
+              </nav>
+              Enter page number
+              <form onSubmit={this.pagebutton}>
+                <input
+                  className='pagenuminput'
+                  size='5'
+                  type='text'
+                  onChange={event =>
+                    this.setState({
+                      enteredpagenumber: event.target.value
+                    })
+                  }
+                />
+                <button className='btn btn-primary' type='submit'>
+                  Go
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </>
