@@ -18,6 +18,8 @@ class ExplorerTransaction extends React.Component {
   inputs;
   outputs;
   txid;
+  backblockHeight;
+  backtxIndex;
 
   initTransaction = async () => {
     if (this.props.match.params.txid !== undefined) {
@@ -30,15 +32,8 @@ class ExplorerTransaction extends React.Component {
   printresults = () => {
     var inputs, outputs;
     this.tempoutputstring.length = 0;
-    this.back = (
-      <Link
-        className='btn btn-primary'
-        to={
-          '/explorer/blockheight/' + this.rjdecoded.tx.blockHeight + '/' + this.rjdecoded.tx.txIndex
-        }>
-        Back
-      </Link>
-    );
+    this.backblockHeight = this.rjdecoded.tx.blockHeight;
+    this.backtxIndex = this.rjdecoded.tx.txIndex;
 
     this.summarysect1.push(
       <>
@@ -121,7 +116,6 @@ class ExplorerTransaction extends React.Component {
         </tr>
       );
     }
-    this.merklebranchsection.push(<> </>);
     this.inputaddress.push(
       <tr>
         <td></td>
@@ -138,7 +132,7 @@ class ExplorerTransaction extends React.Component {
         </td>
       </tr>
     );
-    for (var j = 0; j < inputs; j++) {
+    for (var j = 0; j < this.inputs; j++) {
       this.inputaddress.push(
         <tr>
           <td className='tdnum'>({j + 1}).</td>
@@ -187,21 +181,159 @@ class ExplorerTransaction extends React.Component {
         </tr>
       );
     }
-    for (var z = 0; z < outputs; z++) {
-      //this.tempoutputstring.push(<><tr><td className='tdnum'>({z + 1}).</td><td className='tdpadd'><table className='outputinputtd'><tr><td><b>address</b></td><td className='tdwordbreak'><Link to={'/explorer/address/'+this.rjdecoded.tx.tx.txOuts[z].address}>{this.rjdecoded.tx.tx.txOuts[z].address}</Link></td></tr><tr><td><b>lockingScript</b></td><td className='tdwordbreak'>{this.rjdecoded.tx.tx.txOuts[z].lockingScript}</td></tr><tr><td><b>value</b></td><td className='tdwordbreak'>{this.rjdecoded.tx.tx.txOuts[z].value}</td></tr><tr><td><b>outputIndex</b></td><td className='tdwordbreak'>{this.rjdecoded.tx.tx.txOuts[z].outputIndex}</td></tr></table><br></>);
+    for (var z = 0; z < this.outputs; z++) {
+      this.tempoutputstring.push(
+        <tr>
+          <td className='tdnum'>({z + 1}).</td>
+          <td className='tdpadd'>
+            <table className='outputinputtd'>
+              <tr>
+                <td>
+                  <b>address</b>
+                </td>
+                <td className='tdwordbreak'>
+                  <Link to={'/explorer/address/' + this.rjdecoded.tx.tx.txOuts[z].address}>
+                    {this.rjdecoded.tx.tx.txOuts[z].address}
+                  </Link>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <b>lockingScript</b>
+                </td>
+                <td className='tdwordbreak'>{this.rjdecoded.tx.tx.txOuts[z].lockingScript}</td>
+              </tr>
+              <tr>
+                <td>
+                  <b>value</b>
+                </td>
+                <td className='tdwordbreak'>{this.rjdecoded.tx.tx.txOuts[z].value}</td>
+              </tr>
+              <tr>
+                <td>
+                  <b>outputIndex</b>
+                </td>
+                <td className='tdwordbreak'>{this.rjdecoded.tx.tx.txOuts[z].outputIndex}</td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      );
       if (this.rjdecoded.tx.tx.txOuts[z].txSpendInfo != null) {
-        //this.tempoutputstring.push(<><table className='outputinputtd'><tr><td><b>spendingBlockHash</b></td><td className='tdwordbreak'><Link to={'/explorer/blockhash/'+this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingBlockHash}>{this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingBlockHash}</Link></td></tr><tr><td><b>spendingBlockHeight</b></td><td className='tdwordbreak'><Link to={'/explorer/blockheight/'+this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingBlockHeight}>{this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingBlockHeight}</a></td></tr><tr><td><b>spendingTxId</b></td><td className='tdwordbreak'><Link to={'/explorer/transaction/'+this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxId}>{this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxId}</Link></td></tr><tr><td><b>spendingTxIndex</b></td><td className='tdwordbreak'>{this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxIndex}</td></tr></table><table className='outputinputtd'></>);
-
+        this.tempoutputstring.push(
+          <tr>
+            <td>
+              <table class='outputinputtd'>
+                <tr>
+                  <td>
+                    <b>spendingBlockHash</b>
+                  </td>
+                  <td class='tdwordbreak'>
+                    <Link
+                      to={
+                        '/explorer/blockhash/' +
+                        this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingBlockHash +
+                        '/""'
+                      }>
+                      {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingBlockHash}
+                    </Link>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <b>spendingBlockHeight</b>
+                  </td>
+                  <td class='tdwordbreak'>
+                    <Link
+                      to={
+                        '/explorer/blockheight/' +
+                        this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingBlockHeight +
+                        '/""'
+                      }>
+                      {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingBlockHeight}
+                    </Link>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <b>spendingTxId</b>
+                  </td>
+                  <td class='tdwordbreak'>
+                    <Link
+                      to={
+                        '/explorer/transaction/' +
+                        this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxId
+                      }>
+                      {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxId}
+                    </Link>
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <b>spendingTxIndex</b>
+                  </td>
+                  <td class='tdwordbreak'>
+                    {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxIndex}
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        );
         for (
           var b = 0;
           b < Object.keys(this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData).length;
           b++
         ) {
-          //this.tempoutputstring.push(<><tr><br><td colspan='2'><b><h5>spendData</h5></b></td></tr><tr><td><b>spendingOutputIndex</b></td><td className='tdwordbreak'>{this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].spendingOutputIndex}</td></tr><tr><td><b>value</b></td><td className='tdwordbreak'>{this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].value}</td></tr><tr><td><b>outputAddress</b></td><td className='tdwordbreak'><Link to={'/explorer/address/'+this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].outputAddress}>{rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].outputAddress}</Link></td></tr></>);
+          this.tempoutputstring.push(
+            <tr>
+              <td>
+                <table class='outputinputtd'>
+                  <tr>
+                    <br />
+                    <td colspan='2'>
+                      <b>
+                        <h5>spendData</h5>
+                      </b>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <b>spendingOutputIndex</b>
+                    </td>
+                    <td className='tdwordbreak'>
+                      {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].spendingOutputIndex}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <b>value</b>
+                    </td>
+                    <td className='tdwordbreak'>
+                      {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].value}
+                    </td>
+                  </tr>
+                  <tr>
+                    <td>
+                      <b>outputAddress</b>
+                    </td>
+                    <td className='tdwordbreak'>
+                      <Link
+                        to={
+                          '/explorer/address/' +
+                          this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].outputAddress
+                        }>
+                        {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].outputAddress}
+                      </Link>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          );
         }
-        //this.tempoutputstring.push(<></table><br><br></td></tr></>);
       } else {
-        //this.tempoutputstring.push(<><br><br></td></tr></>);
+        //  this.tempoutputstring.push(<><br><br></td></tr></>);
       }
     }
     this.setState({ loaded: true });
@@ -212,54 +344,60 @@ class ExplorerTransaction extends React.Component {
   render() {
     return (
       <>
-        {this.back}
-        <div className='row'>
-          <div className='col-md-12 col-lg-12'>
-            <h4>Transaction</h4>
-            <div id='txid'>{this.txid}</div>
-            <hr />
+        <Link
+          className='btn btn-primary'
+          to={'/explorer/blockheight/' + this.backblockHeight + '/' + this.backtxIndex}>
+          Back
+        </Link>
+        <div className='opacitywhileload'>
+          <div className='row'>
+            <div className='col-md-12 col-lg-12'>
+              <h4>Transaction</h4>
+              <div id='txid'>{this.txid}</div>
+              <hr />
+            </div>
           </div>
-        </div>
-        <div className='row'>
-          <div className='col-md-12 col-lg-12'>
-            <h4>Summary</h4>
+          <div className='row'>
+            <div className='col-md-12 col-lg-12'>
+              <h4>Summary</h4>
+            </div>
           </div>
-        </div>
-        <div className='row'>
-          <div className='col-md-6 col-lg-6 summaryblock1'>
-            <table className='tdborderbottom'>{this.summarysect1}</table>
+          <div className='row'>
+            <div className='col-md-6 col-lg-6 summaryblock1'>
+              <table className='tdborderbottom'>{this.summarysect1}</table>
+            </div>
+            <div className='col-md-6 col-lg-6 summaryblock1'>
+              <table className='tdborderbottom'>{this.summarysect2}</table>
+            </div>
           </div>
-          <div className='col-md-6 col-lg-6 summaryblock1'>
-            <table className='tdborderbottom'>{this.summarysect2}</table>
+          <br />
+          <hr />
+          <br />
+          <div className='row'>
+            <div className='col-md-12 col-lg-12'>
+              <center>
+                <h4>MerkleBranch</h4>
+              </center>
+              <table id='merklebranchsection'>{this.merklebranchsection}</table>
+            </div>
           </div>
-        </div>
-        <br />
-        <hr />
-        <br />
-        <div className='row'>
-          <div className='col-md-12 col-lg-12'>
-            <center>
-              <h4>MerkleBranch</h4>
-            </center>
-            <table id='merklebranchsection'>{this.merklebranchsection}</table>
-          </div>
-        </div>
 
-        <hr />
-        <div className='row'>
-          <div className='col-md-12 col-lg-12'>
-            <h5>
-              <div>{this.inputs}</div> Inputs, <div>{this.outputs}</div> Outputs
-            </h5>
-            <hr />
+          <hr />
+          <div className='row'>
+            <div className='col-md-12 col-lg-12'>
+              <h5>
+                <div>{this.inputs}</div> Inputs, <div>{this.outputs}</div> Outputs
+              </h5>
+              <hr />
+            </div>
           </div>
-        </div>
-        <div className='row'>
-          <div className='col-md-6 col-lg-6'>
-            <table id='inputaddress'>{this.inputaddress}</table>
-          </div>
-          <div className='col-md-6 col-lg-6'>
-            <table id='outputaddress'>{this.tempoutputstring}</table>
+          <div className='row'>
+            <div className='col-md-6 col-lg-6'>
+              <table id='inputaddress'>{this.inputaddress}</table>
+            </div>
+            <div className='col-md-6 col-lg-6'>
+              <table id='outputaddress'>{this.tempoutputstring}</table>
+            </div>
           </div>
         </div>
       </>

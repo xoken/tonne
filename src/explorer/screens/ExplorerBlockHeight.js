@@ -41,7 +41,7 @@ class ExplorerBlockHeight extends React.Component {
   title;
   date;
   blockhash;
-  back;
+  backheight;
 
   initBlockHeight = async () => {
     this.rjdecoded = await ExplorerHttpsReq.httpsreq(
@@ -52,11 +52,7 @@ class ExplorerBlockHeight extends React.Component {
   };
 
   printresults = async () => {
-    this.back = (
-      <Link className='btn btn-primary' to={'/explorer/' + this.rjdecoded.block.height}>
-        Back
-      </Link>
-    );
+    this.backheight = this.rjdecoded.block.height;
     this.currentblockhash = this.rjdecoded.block.hash;
     this.numberoftransactions = this.rjdecoded.block.txCount;
 
@@ -516,58 +512,62 @@ class ExplorerBlockHeight extends React.Component {
   render() {
     return (
       <>
-        {this.back}
-        <div className='row'>
-          <div className='col-md-12 col-lg-12'>
-            <h4>Block</h4>
-            <h5 id='blocktitle'># {this.blocktitle}</h5>
-            <div id='blockhash'>Block - {this.blockhash}</div>
-            <hr />
+        <Link className='btn btn-primary' to={'/explorer/' + this.backheight}>
+          Back
+        </Link>
+        <div className='opacitywhileload'>
+          <div className='row'>
+            <div className='col-md-12 col-lg-12'>
+              <h4>Block</h4>
+              <h5 id='blocktitle'># {this.blocktitle}</h5>
+              <div id='blockhash'>Block - {this.blockhash}</div>
+              <hr />
+            </div>
           </div>
-        </div>
-        <div className='row'>
-          <div className='col-md-12 col-lg-12'>
-            <h4>Summary</h4>
+          <div className='row'>
+            <div className='col-md-12 col-lg-12'>
+              <h4>Summary</h4>
+            </div>
           </div>
-        </div>
-        <div className='row'>
-          <div className='col-md-6 col-lg-6 summaryblock1'>
-            <table className='tdborderbottom'>{this.summarysect1}</table>
+          <div className='row'>
+            <div className='col-md-6 col-lg-6 summaryblock1'>
+              <table className='tdborderbottom'>{this.summarysect1}</table>
+            </div>
+            <div className='col-md-6 col-lg-6'>
+              <table className='tdborderbottom'>{this.summarysect2}</table>
+            </div>
           </div>
-          <div className='col-md-6 col-lg-6'>
-            <table className='tdborderbottom'>{this.summarysect2}</table>
+          <hr />
+          <div className='row'>
+            <div className='col-md-12 col-lg-12 text-center'>
+              <table id='transactionsection'>{this.txsection}</table>
+              <br />
+            </div>
           </div>
-        </div>
-        <hr />
-        <div className='row'>
-          <div className='col-md-12 col-lg-12 text-center'>
-            <table id='transactionsection'>{this.txsection}</table>
-            <br />
-          </div>
-        </div>
-        <div className='row'>
-          <div className='col-md-12 col-lg-12 text-center'>
-            <nav aria-label='transactions navigation'>
-              <ul className='pagination justify-content-center' id='pagination'>
-                {this.pagescontainer}
-              </ul>
-            </nav>
-            Enter page number
-            <form onSubmit={this.pagebutton}>
-              <input
-                className='pagenuminput'
-                size='5'
-                type='text'
-                onChange={event =>
-                  this.setState({
-                    enteredpagenumber: event.target.value
-                  })
-                }
-              />
-              <button className='btn btn-primary' type='submit' id='pagebutton'>
-                Go
-              </button>
-            </form>
+          <div className='row'>
+            <div className='col-md-12 col-lg-12 text-center'>
+              <nav aria-label='transactions navigation'>
+                <ul className='pagination justify-content-center' id='pagination'>
+                  {this.pagescontainer}
+                </ul>
+              </nav>
+              Enter page number
+              <form onSubmit={this.pagebutton}>
+                <input
+                  className='pagenuminput'
+                  size='5'
+                  type='text'
+                  onChange={event =>
+                    this.setState({
+                      enteredpagenumber: event.target.value
+                    })
+                  }
+                />
+                <button className='btn btn-primary' type='submit' id='pagebutton'>
+                  Go
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </>

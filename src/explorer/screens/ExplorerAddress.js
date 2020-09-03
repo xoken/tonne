@@ -27,7 +27,6 @@ class ExplorerAddress extends React.Component {
   currentbatchnum = 1;
   nextcursor = '';
   pagescontainer = [];
-  back;
 
   initAddress = async () => {
     if (this.props.match.params.address !== undefined) {
@@ -35,11 +34,6 @@ class ExplorerAddress extends React.Component {
     }
     this.rjdecoded = await ExplorerHttpsReq.httpsreq('getOutputsByAddress', this.address, 100);
     this.pagearrayinit();
-    this.back = (
-      <button onClick={this.history.goBack()} className='btn btn-primary'>
-        Back
-      </button>
-    );
   };
 
   printresults = () => {
@@ -53,7 +47,7 @@ class ExplorerAddress extends React.Component {
           <tr>
             <td className='txslnum'>
               #({i + 1}) -{' '}
-              <Link to={'/explorer/transaction/' + this.addressCache[i].outputTxHash + '/""'}>
+              <Link to={'/explorer/transaction/' + this.addressCache[i].outputTxHash}>
                 {this.addressCache[i].outputTxHash}
               </Link>{' '}
               - outputTxHash
@@ -192,6 +186,11 @@ class ExplorerAddress extends React.Component {
 
       printbreaker += 1;
     }
+    if (this.state.selectnum === '') {
+      this.setState({
+        selectnum: 1
+      });
+    }
   };
 
   pagearrayinit = () => {
@@ -276,15 +275,7 @@ class ExplorerAddress extends React.Component {
       if (this.pagearray[i] === this.selected) {
         this.pagescontainer.push(
           <li className='page-item active'>
-            <button
-              className='page-link'
-              onClick={this.addlistener}
-              onChange={event =>
-                this.setState({
-                  selectnum: event.target.value
-                })
-              }
-              id={this.pagearray[i]}>
+            <button className='page-link' onClick={this.addlistener} id={this.pagearray[i]}>
               {this.pagearray[i]}
             </button>
           </li>
@@ -314,12 +305,11 @@ class ExplorerAddress extends React.Component {
   };
 
   addlistener = event => {
-    // this.setState({
-    //   selectnum: event.target.value
-    // });
+    this.setState({
+      selectnum: event.target.value
+    });
     this.selected = event.target.value;
 
-    this.selected = this.id;
     this.printpagination();
     this.printresults();
   };
@@ -387,39 +377,47 @@ class ExplorerAddress extends React.Component {
   render() {
     return (
       <>
-        {this.back}
-        <div class='row'>
-          <div class='col-md-12 col-lg-12'>
-            <h4>Address</h4>
-            <br />
-            <div id='address'>{this.address}</div>
-            <hr />
+        {
+          //    <button onClick={this.props.history.goBack()} className='btn btn-primary'>
+          //    Back
+          //  </button>
+        }
+        <div className='opacitywhileload'>
+          <div class='row'>
+            <div class='col-md-12 col-lg-12'>
+              <h4>Address</h4>
+              <br />
+              <div id='address'>{this.address}</div>
+              <hr />
+            </div>
           </div>
-        </div>
 
-        <div class='row'>
-          <div class='col-md-12 col-lg-12 summaryblock1'>
-            <table id='addressummary'></table>
+          <div class='row'>
+            <div class='col-md-12 col-lg-12 summaryblock1'>
+              <table id='addressummary'></table>
+            </div>
           </div>
-        </div>
 
-        <div class='row'>
-          <div class='col-md-12 col-lg-12'>
-            <h5>
-              <div id='nooftransactions'></div>Transactions
-            </h5>
+          <div class='row'>
+            <div class='col-md-12 col-lg-12'>
+              <h5>
+                <div id='nooftransactions'></div>Transactions
+              </h5>
+            </div>
           </div>
-        </div>
-        <div class='row'>
-          <div class='col-md-12 col-lg-12'>
-            <table id='txlist'></table>
+          <div class='row'>
+            <div class='col-md-12 col-lg-12'>
+              <table id='txlist'>{this.txlist}</table>
+            </div>
           </div>
-        </div>
-        <div class='row'>
-          <div class='col-md-12 col-lg-12'>
-            <nav aria-label='transactions navigation'>
-              <ul class='pagination justify-content-center' id='pagination'></ul>
-            </nav>
+          <div class='row'>
+            <div class='col-md-12 col-lg-12'>
+              <nav aria-label='transactions navigation'>
+                <ul class='pagination justify-content-center' id='pagination'>
+                  {this.pagescontainer}
+                </ul>
+              </nav>
+            </div>
           </div>
         </div>
       </>

@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
 code {
@@ -15,6 +16,19 @@ code {
 .wallet-container {
   display: flex;
   height: 400px;
+}
+.opacitywhileload{
+  animation-duration: 2s;
+  animation-name: opacityload;
+}
+@keyframes opacityload {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @media (max-width: 991px) {
@@ -133,6 +147,15 @@ table {
     width: 90%;
     margin: auto 5%;
   }
+}
+
+.minheightofwindow{
+min-height:100%;
+}
+#root{
+  box-shadow:
+       inset 0 -30px 70px rgba(0,0,0,0.2);
+       min-height:100%;
 }
 
 .wordbreak{word-break:break-all;}

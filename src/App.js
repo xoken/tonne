@@ -54,7 +54,7 @@ class App extends React.Component {
           </div>
         </nav>
         <div className='container nonheader'>
-          <div style={{ minHeight: 450 }}>
+          <div className=''>
             <Switch>
               <Route path='/wallet'>
                 <WalletHome />
