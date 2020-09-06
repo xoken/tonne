@@ -5,11 +5,12 @@ import {
   payments,
   Psbt,
   networks,
+  // Transaction,
+  // TransactionBuilder,
 } from 'bitcoinjs-lib';
 import * as bip38 from 'bip38';
 import * as bip39 from 'bip39';
-import coinSelect from 'coinselect';
-import pako from 'pako';
+// import coinSelect from 'coinselect';
 import * as Persist from './Persist';
 import derivationPaths from './constants/derivationPaths';
 import coin from './constants/coin';
@@ -124,9 +125,9 @@ class Wallet {
         useHardenedAddresses
       );
       if (i === 0) {
-        derivedKey.address = 'mnGY8nS44fs11yYBJ3Lo3PX3Kdgyfup7d3';
+        // derivedKey.address = 'mnGY8nS44fs11yYBJ3Lo3PX3Kdgyfup7d3';
       } else if (i === 1) {
-        derivedKey.address = 'mnGY8nS44fs11yYBJ3Lo3PX3Kdgyfup7d3';
+        // derivedKey.address = 'mnGY8nS44fs11yYBJ3Lo3PX3Kdgyfup7d3';
         // derivedKey.address = 'mn4vGSceDVbuSHUL6LQQ1P7RxPRkVRdyZH';
       } else if (i === 2) {
         // derivedKey.address = '1Lv8ehbvL7LbB93NuPPdLb6U7NsTyX1uao';
@@ -226,17 +227,26 @@ class Wallet {
     const derivedKeys = await Persist.getDerivedKeys();
     const addressess = this._getAddressesFromKeys(derivedKeys);
     const utxos = await addressAPI.getUTXOsByAddresses(addressess);
-    Persist.setUtxos(utxos);
+    Persist.setUtxos(utxos.utxos);
+    console.log(receiverAddress);
+    console.log(amountInSatoshi);
+    // const targets = [
+    //   { address: receiverAddress, value: Number(amountInSatoshi) },
+    // ];
     const targets = [
-      { address: receiverAddress, value: Number(amountInSatoshi) },
+      { address: 'mnPbBBvj9JPJ4RHJfWLSwFDpfRCP81F1Zr', value: 10000000 },
     ];
-    const transactionHex = await this._createSendTransaction(
-      'cN6NafxmNHmhhF6uUug2VuagYm5DWMhRQ5qZDLHyd7Sinbji69Ui',
-      utxos,
-      targets,
-      transactionFee
-    );
-    await transactionAPI.broadcastRawTransaction(transactionHex);
+    try {
+      const transactionHex = await this._createSendTransaction(
+        'cMwS7zdHqkyEuQiKtm8vANacXrFtZ8DrueJyVGwb7aeGnQKPdNfc',
+        utxos.utxos,
+        targets,
+        transactionFee
+      );
+      await transactionAPI.broadcastRawTransaction(transactionHex);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   async _createSendTransaction(
@@ -245,89 +255,108 @@ class Wallet {
     targets: any[],
     transactionFee: number
   ): Promise<string> {
-    console.log(privateKey);
     console.log(transactionFee);
-    const key = ECPair.fromPrivateKey(
-      Buffer.from(
-        '0f4396a043a09537e8712f49828863552bfb0ee7f763fc0c0e06f5ace8da133a',
-        'hex'
-      ),
-      { network: networks.regtest }
-    );
-    const feeRate = 5; // satoshis per byte
-    let { inputs, outputs, fee } = coinSelect(utxos, targets, feeRate);
-    // the accumulated fee is always returned for analysis
-    console.log(fee);
-    // .inputs and .outputs will be undefined if no solution was found
-    if (!inputs || !outputs) throw new Error('Empty inputs || outputs');
-
-    const psbt = new Psbt({ network: networks.regtest });
-    psbt.setVersion(1);
-    const txIds = inputs.map(
-      (input: { outputTxHash: any }) => input.outputTxHash
-    );
-    const rawTxsResponse = await transactionAPI.getRawTransactionsByTxIDs(
-      txIds
-    );
-    const inputsWithRawTxs = rawTxsResponse.rawTxs.map((rawTx: any) => {
-      const base64Decode = atob(rawTx.txSerialized);
-      const decompressed = pako.ungzip(base64Decode);
-      const hex = Buffer.from(decompressed).toString('hex');
-      return { ...rawTx, hex };
-    });
-
-    // const payment = payments.p2pkh({
-    //   pubkey: key.publicKey,
+    // const key = ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), {
     //   network: networks.regtest,
     // });
-    // const output = payment.pubkey;
+    const key = ECPair.fromWIF(privateKey, networks.testnet);
+    const feeRate = 5; // satoshis per byte
+    // let { inputs, outputs, fee } = coinSelect(utxos, targets, feeRate);
+    // the accumulated fee is always returned for analysis
+    console.log(feeRate);
+    console.log(utxos);
+    console.log(targets);
+    // .inputs and .outputs will be undefined if no solution was found
+    // if (!inputs || !outputs) throw new Error('Empty inputs || outputs');
 
-    let merged = [];
-    for (let i = 0; i < inputs.length; i++) {
-      merged.push({
-        ...inputs[i],
-        ...inputsWithRawTxs.find(
-          (element: { txId: any }) => element.txId === inputs[i].outputTxHash
+    // const txIds = inputs.map(
+    //   (input: { outputTxHash: any }) => input.outputTxHash
+    // );
+    // const rawTxsResponse = await transactionAPI.getRawTransactionsByTxIDs(
+    //   txIds
+    // );
+    // const inputsWithRawTxs = rawTxsResponse.rawTxs.map((rawTx: any) => {
+    //   const hex = Buffer.from(rawTx.txSerialized, 'base64').toString('hex');
+    //   return { ...rawTx, hex };
+    // });
+    // let merged = [];
+    // for (let i = 0; i < inputs.length; i++) {
+    //   merged.push({
+    //     ...inputs[i],
+    //     ...inputsWithRawTxs.find(
+    //       (element: { txId: any }) => element.txId === inputs[i].outputTxHash
+    //     ),
+    //   });
+    // }
+    if (true) {
+      const psbt = new Psbt({ network: networks.testnet, forkCoin: 'bch' });
+      psbt.setVersion(1);
+      // const payment = payments.p2pkh({
+      //   pubkey: key.publicKey,
+      //   network: networks.regtest,
+      // });
+      // const output = payment.pubkey;
+      // merged.forEach(
+      //   (input: { outputTxHash: any; outputIndex: any; hex: any }) => {
+      //     psbt.addInput({
+      //       hash: input.outputTxHash,
+      //       index: input.outputIndex,
+      //       nonWitnessUtxo: Buffer.from(input.hex, 'hex'),
+      //       // redeemScript: output,
+      //     });
+      //   }
+      // );
+
+      psbt.addInput({
+        hash:
+          '66446a1ba6bed10558ae5ac48ecb170a5d84e13e32251f443bbe6af7a9108373',
+        index: 1,
+        nonWitnessUtxo: Buffer.from(
+          '02000000013cac6fda76da1d1850b4c885276aefb57d8d0069b8e27614aeac9caca83f7f96010000006a4730440220353102fd5e7ef0d3449dd731e123528d5cc6164b773dc7ecfdbefbb3fd68ee1a02206b1e048c648db0b5adc82194f27d56263a41ecf9070d98e5b8ff98093e8c0216412102ccd25a957cecccf29ab8ee39ab5a2971ff6c19b982965af92d764af602ddc966feffffff0244f27201000000001976a914a14186606a9b27cabf6d4db4924bd36c94f1103b88ac00093d00000000001976a9144a0ee3b0aaac9f27361db1f6816dd769975623a388aca1191500',
+          'hex'
         ),
+        // redeemScript: output,
       });
-    }
-    merged.forEach(
-      (input: { outputTxHash: any; outputIndex: any; hex: any }) => {
-        psbt.addInput({
-          hash: input.outputTxHash,
-          index: input.outputIndex,
-          nonWitnessUtxo: Buffer.from(input.hex, 'hex'),
-          sighashType: 0x41,
-          // redeemScript: output,
-        });
-      }
-    );
-    outputs.forEach((output: { address: any; value: any }) => {
-      // watch out, outputs may have been added that you need to provide
-      // an output address/script for
-      if (!output.address) {
-        output.address = 'mnPbBBvj9JPJ4RHJfWLSwFDpfRCP81F1Zr';
-      }
       psbt.addOutput({
-        address: output.address,
-        value: output.value,
+        address: 'mnPbBBvj9JPJ4RHJfWLSwFDpfRCP81F1Zr',
+        value: 2000000,
       });
-    });
-    psbt.signAllInputs(key, [0x41]);
-    psbt.validateSignaturesOfAllInputs();
-    psbt.finalizeAllInputs();
-    const transactionHex = psbt.extractTransaction().toHex();
-    const base64 = Buffer.from(transactionHex).toString('base64');
-    console.log(base64);
-    return base64;
-
-    /*var tx = new TransactionBuilder(networks.regtest);
-      inputs.forEach(
+      debugger;
+      // outputs.forEach((output: { address: any; value: any }) => {
+      //   // watch out, outputs may have been added that you need to provide
+      //   // an output address/script for
+      //   if (!output.address) {
+      //     output.address = 'mnPbBBvj9JPJ4RHJfWLSwFDpfRCP81F1Zr';
+      //   }
+      //   psbt.addOutput({
+      //     address: output.address,
+      //     value: output.value,
+      //   });
+      // });
+      psbt.signAllInputs(key);
+      psbt.validateSignaturesOfAllInputs();
+      psbt.finalizeAllInputs();
+      const transactionHex = psbt.extractTransaction(true).toHex();
+      console.log(transactionHex);
+      const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
+      console.log(base64);
+      return base64;
+    } else {
+      /*const tx = new TransactionBuilder(networks.regtest);
+      tx.setVersion(1);
+      tx.enableBitcoinCash();
+      merged.forEach(
         (input: {
           outputTxHash: string | Buffer | Transaction;
           outputIndex: number;
+          hex: string;
         }) => {
-          tx.addInput(input.outputTxHash, input.outputIndex);
+          // const spk = payments.p2pkh({
+          //   pubkey: key.publicKey,
+          //   network: networks.regtest,
+          // }).output;
+          // tx.addInput(Transaction.fromHex(input.hex), input.outputIndex);
+          tx.addInput(input.hex, input.outputIndex);
         }
       );
       outputs.forEach((output: { address: any; value: any }) => {
@@ -338,14 +367,23 @@ class Wallet {
         }
         tx.addOutput(output.address, output.value);
       });
-      tx.sign(0, key);
-      tx.sign(1, key);
-      tx.sign(2, key);
+      const hashType =
+        Transaction.SIGHASH_ALL | Transaction.SIGHASH_BITCOINCASHBIP143;
+      // tx.sign({
+      //   prevOutScriptType: '',
+      //   vin: 0,
+      //   keyPair: key,
+      //   hashType,
+      // });
+
+      tx.sign(0, key, undefined, hashType);
+      tx.sign(1, key, undefined, hashType);
       const transactionHex = tx.build().toHex();
-      const base64 = Buffer.from(transactionHex).toString('base64');
-      const compressedHex = Buffer.from(base64).toString('utf-8');
-      return compressedHex;
-    */
+      console.log(transactionHex);
+      const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
+      console.log(base64);
+      return base64;*/
+    }
   }
 }
 

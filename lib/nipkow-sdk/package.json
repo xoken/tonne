@@ -49,7 +49,7 @@
     "babel-polyfill": "^6.26.0",
     "bip38": "^3.1.1",
     "bip39": "^3.0.2",
-    "bitcoinjs-lib": "^5.1.10",
+    "bitcoinjs-lib": "junderw/bitcoinjs-lib#cashv5",
     "bsv": "moneybutton/bsv#bsv2",
     "coinselect": "^3.1.12",
     "js-base64": "^3.4.5",
