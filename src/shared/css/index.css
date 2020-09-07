@@ -1,23 +1,19 @@
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu',
+    'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   scroll-behavior: smooth;
 }
 
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
-
-.wallet-container {
-  display: flex;
-  height: 400px;
+.container {
+  min-height: 400px;
 }
-.opacitywhileload{
+.opacitywhileload {
   animation-duration: 2s;
   animation-name: opacityload;
 }
@@ -109,9 +105,6 @@ table {
 .thborder {
   border-bottom: 1pt solid lightgrey;
 }
-.nonheader {
-  margin-top: 50px;
-}
 #summarysection {
   border: 1pt solid lightgrey;
 }
@@ -149,13 +142,14 @@ table {
   }
 }
 
-.minheightofwindow{
-min-height:100%;
+.minheightofwindow {
+  min-height: 100%;
 }
-#root{
-  box-shadow:
-       inset 0 -30px 70px rgba(0,0,0,0.2);
-       min-height:100%;
+#root {
+  box-shadow: inset 0 -30px 70px rgba(0, 0, 0, 0.2);
+  min-height: 100%;
 }
 
-.wordbreak{word-break:break-all;}
+.wordbreak {
+  word-break: break-all;
+}

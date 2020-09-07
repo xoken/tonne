@@ -1,6 +1,3 @@
-.nonheader {
-  margin-top: 50px;
-}
 .summaryblock1 {
   border-right: 1pt solid lightgrey !important;
 }
@@ -71,6 +68,7 @@
   text-align: right;
 }
 
-.pagenuminput{
-  margin-left: 10px; margin-right: 10px;
+.pagenuminput {
+  margin-left: 10px;
+  margin-right: 10px;
 }

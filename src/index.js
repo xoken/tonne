@@ -12,15 +12,13 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import configureStore from './shared/store/configureStore';
 import { PersistGate } from 'redux-persist/integration/react';
-import { wallet } from 'nipkow-sdk';
+import 'semantic-ui-css/semantic.min.css';
 
 const { store, persistor } = configureStore();
 
 const PersistComponent = persistor
   ? props => <PersistGate {...props} loading={null} persistor={persistor} />
   : React.Fragment;
-
-wallet.init();
 
 ReactDOM.render(
   <Provider store={store}>

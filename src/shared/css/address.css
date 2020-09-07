@@ -1,7 +1,3 @@
-.nonheader {
-  margin-top: 50px;
-}
-
 .subtable > tbody > tr > td {
   border: 1pt solid lightgrey !important;
   padding: 15px;

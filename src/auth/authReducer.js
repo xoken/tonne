@@ -1,21 +1,38 @@
 import { createReducer } from 'redux-act';
-import auth from '../auth';
+import * as actions from './authActions';
 
 const INITIAL_STATE = {
   isLoading: false,
   bip39Mnemonic: null,
-  bip39Passphrase: null,
+  profile: null,
+  profiles: [],
 };
 
 export default createReducer(
   {
-    [auth.actions.setMnemonicSuccess]: (state, { bip39Mnemonic }) => ({
+    [actions.getProfileRequest]: state => ({
+      ...state,
+      isLoading: true,
+    }),
+    [actions.getProfileSuccess]: (state, { profiles }) => ({
+      ...state,
+      profiles,
+      isLoading: false,
+    }),
+    [actions.getProfileFailure]: state => ({
+      ...state,
+      isLoading: false,
+    }),
+    [actions.setMnemonicSuccess]: (state, { bip39Mnemonic }) => ({
       ...state,
       bip39Mnemonic,
     }),
-    [auth.actions.setPassPhraseSuccess]: (state, { bip39Passphrase }) => ({
+    [actions.loginSuccess]: (state, { loginResult }) => ({
       ...state,
-      bip39Passphrase,
+    }),
+    [actions.setProfileSuccess]: (state, { profile }) => ({
+      ...state,
+      profile,
     }),
   },
   INITIAL_STATE

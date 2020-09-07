@@ -1,10 +1,6 @@
 import { createAction } from 'redux-act';
 import WalletService from './walletService';
 
-export const initWalletRequest = createAction('INIT_WALLET_REQUEST');
-export const initWalletSuccess = createAction('INIT_WALLET_SUCCESS');
-export const initWalletFailure = createAction('INIT_WALLET_FAILURE');
-
 export const getOutputsRequest = createAction('GET_OUTPUTS_REQUEST');
 export const getOutputsSuccess = createAction('GET_OUTPUTS_SUCCESS');
 export const getOutputsFailure = createAction('GET_OUTPUTS_FAILURE');
@@ -20,21 +16,6 @@ export const getTransactionFailure = createAction('GET_TRANSACTION_FAILURE');
 export const createSendTransactionRequest = createAction('CREATE_SEND_TRANSACTION_REQUEST');
 export const createSendTransactionSuccess = createAction('CREATE_SEND_TRANSACTION_SUCCESS');
 export const createSendTransactionFailure = createAction('CREATE_SEND_TRANSACTION_FAILURE');
-
-export const initWallet = (bip39Mnemonic, bip39Passphrase) => async (
-  dispatch,
-  getState,
-  { serviceInjector }
-) => {
-  dispatch(initWalletRequest());
-  try {
-    await serviceInjector(WalletService).initWallet(bip39Mnemonic, bip39Passphrase);
-    dispatch(initWalletSuccess());
-  } catch (error) {
-    console.log(error);
-    dispatch(initWalletFailure());
-  }
-};
 
 export const getOutputs = () => async (dispatch, getState, { serviceInjector }) => {
   dispatch(getOutputsRequest());
@@ -66,6 +47,7 @@ export const createSendTransaction = (receiverAddress, amountInSatoshi, transact
     );
     dispatch(createSendTransactionSuccess(response));
   } catch (error) {
+    console.log(error);
     dispatch(createSendTransactionFailure());
   }
 };

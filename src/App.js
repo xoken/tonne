@@ -53,26 +53,28 @@ class App extends React.Component {
             </form>
           </div>
         </nav>
-        <div className='container nonheader'>
-          <div className=''>
-            <Switch>
-              <Route path='/wallet'>
-                <WalletHome />
-              </Route>
-              <Route path='/explorer'>
-                <ExplorerHome history={this.history} />
-              </Route>
-              <Route exact path='/'>
-                <Home />
-              </Route>
-              <Route path='*'>
-                <NoMatch />
-              </Route>
-            </Switch>
+        <div className='container'>
+          <Switch>
+            <Route path='/wallet'>
+              <WalletHome />
+            </Route>
+            <Route path='/explorer'>
+              <ExplorerHome history={this.history} />
+            </Route>
+            <Route exact path='/'>
+              <Home />
+            </Route>
+            <Route path='*'>
+              <NoMatch />
+            </Route>
+          </Switch>
+          <div className='row'>
+            <div className='col-md-12'>
+              <button type='button' className='generalbtns' onClick={this.onBack}>
+                Back
+              </button>
+            </div>
           </div>
-          <button type='button' className='generalbtns' onClick={this.onBack}>
-            Back
-          </button>
         </div>
       </HashRouter>
     );

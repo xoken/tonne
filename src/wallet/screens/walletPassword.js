@@ -11,11 +11,14 @@ class WalletPassword extends React.Component {
     this.state = { password: '', confirmPassword: '' };
   }
 
-  handleNext = event => {
+  handleNext = async event => {
     event.preventDefault();
     const { dispatch } = this.props;
     const { password } = this.state;
-    dispatch(authActions.setPassPhrase(password));
+    try {
+      await dispatch(authActions.createProfile(password));
+      this.props.history.push('/wallet');
+    } catch (error) {}
   };
 
   renderPasswordMatchStatus() {

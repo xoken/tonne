@@ -40,6 +40,8 @@
   },
   "dependencies": {
     "@types/bip38": "^2.0.1",
+    "@types/crypto-js": "^3.1.47",
+    "@types/faker": "^5.1.0",
     "@types/node": "^12.12.54",
     "@types/pako": "^1.0.1",
     "@types/pouchdb": "^6.4.0",
@@ -52,6 +54,8 @@
     "bitcoinjs-lib": "junderw/bitcoinjs-lib#cashv5",
     "bsv": "moneybutton/bsv#bsv2",
     "coinselect": "^3.1.12",
+    "crypto-js": "^4.0.0",
+    "faker": "^5.1.0",
     "js-base64": "^3.4.5",
     "pako": "^1.0.11",
     "pouchdb": "^7.2.2",

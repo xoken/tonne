@@ -1,16 +1,8 @@
 import PouchDB from 'pouchdb';
-
-export const AUTH = 'auth';
-export const BIP32_EXTENDED_KEY = 'bip32ExtendedKey';
-export const DERIVED_KEYS = 'derivedKeys';
-export const OUTPUTS = 'outputs';
-export const UTXOS = 'utxos';
+import CryptoJS from 'crypto-js';
+import AES from 'crypto-js/aes';
 
 let db: any;
-
-export const createDB = (dbName: string) => {
-  db = new PouchDB(dbName, { revs_limit: 1, auto_compaction: true });
-};
 
 const get = async (key: string) => await db.get(key);
 
@@ -18,6 +10,96 @@ const set = async (key: string, value: any) => {
   const doc: any = await db.get(key);
   doc.value = value;
   await db.put(doc);
+};
+
+export const AUTH = 'auth';
+export const BIP32_EXTENDED_KEY = 'bip32ExtendedKey';
+export const DERIVED_KEYS = 'derivedKeys';
+export const OUTPUTS = 'outputs';
+export const UTXOS = 'utxos';
+
+const profiles = new PouchDB('Profiles', {
+  revs_limit: 1,
+  auto_compaction: true,
+});
+
+export const init = async (dbName: string) => {
+  db = new PouchDB(dbName, { revs_limit: 1, auto_compaction: true });
+  await bulkSet([
+    { key: AUTH, value: null },
+    { key: BIP32_EXTENDED_KEY, value: null },
+    { key: DERIVED_KEYS, value: [] },
+    { key: OUTPUTS, value: [] },
+    { key: UTXOS, value: [] },
+  ]);
+};
+
+export const createProfile = async (
+  cryptedMnemonic: string,
+  profileName: string
+) => {
+  const newProfile = { cryptedMnemonic, name: profileName };
+  try {
+    const existingProfiles: any = await profiles.get('profiles');
+    if (
+      existingProfiles &&
+      existingProfiles.value &&
+      existingProfiles.value instanceof Array
+    ) {
+      existingProfiles.value = [...existingProfiles.value, newProfile];
+      await profiles.put(existingProfiles);
+    } else {
+      await profiles.put({
+        _id: 'profiles',
+        value: [newProfile],
+      });
+    }
+  } catch (error) {
+    await profiles.put({
+      _id: 'profiles',
+      value: [newProfile],
+    });
+  }
+};
+
+export const getProfiles = async () => {
+  try {
+    const existingProfiles: any = await profiles.get('profiles');
+    if (
+      existingProfiles &&
+      existingProfiles.value &&
+      existingProfiles.value instanceof Array
+    ) {
+      const profileNames = existingProfiles.value.map(
+        (existingProfile: any) => existingProfile
+      );
+      return profileNames;
+    } else {
+      return [];
+    }
+  } catch (error) {
+    return [];
+  }
+};
+
+export const login = async (profile: string, password: string) => {
+  const existingProfiles = await getProfiles();
+  const selectedProfile = existingProfiles.find(
+    (existingProfile: { name: string }) => existingProfile.name === profile
+  );
+  if (selectedProfile) {
+    const bip39Mnemonic = AES.decrypt(
+      selectedProfile.cryptedMnemonic,
+      password
+    ).toString(CryptoJS.enc.Utf8);
+    if (bip39Mnemonic) {
+      return bip39Mnemonic;
+    } else {
+      throw new Error('Login error');
+    }
+  } else {
+    throw new Error("Account Doesn't exist");
+  }
 };
 
 export const getAuth = async () => {
@@ -56,16 +138,6 @@ export const setDerivedKeys = async (value: any) =>
 export const setOutputs = async (value: any) => await set(OUTPUTS, value);
 
 export const setUtxos = async (value: any) => await set(UTXOS, value);
-
-export const setInitialState = async () => {
-  await bulkSet([
-    { key: AUTH, value: null },
-    { key: BIP32_EXTENDED_KEY, value: null },
-    { key: DERIVED_KEYS, value: [] },
-    { key: OUTPUTS, value: [] },
-    { key: UTXOS, value: [] },
-  ]);
-};
 
 export const bulkSet = async (inputs: any[]) => {
   const newData = inputs.map(element => {

@@ -5,10 +5,6 @@ class WalletService {
     this.store = store;
   }
 
-  async initWallet(bip39Mnemonic) {
-    return await wallet.initWallet(bip39Mnemonic);
-  }
-
   async getOutputs() {
     return await wallet.getOutputs();
   }

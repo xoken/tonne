@@ -8,15 +8,15 @@ import * as authSelectors from '../../auth/authSelectors';
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { passphrase: '', error: '' };
+    this.state = { password: '', error: '' };
   }
 
   handleContinue = async event => {
     event.preventDefault();
     const { dispatch } = this.props;
-    const { passphrase } = this.state;
-    if (passphrase) {
-      const result = await dispatch(authActions.login(passphrase));
+    const { password } = this.state;
+    if (password) {
+      const result = await dispatch(authActions.login(password));
       if (!result) {
         this.setState({ error: 'Wrong Password' });
       }
@@ -24,7 +24,7 @@ class Login extends React.Component {
   };
 
   render() {
-    const { passphrase, error } = this.state;
+    const { password, error } = this.state;
     return (
       <>
         <div className='row'>
@@ -42,16 +42,16 @@ class Login extends React.Component {
                     className='form-control passinputwidth'
                     id='password'
                     placeholder='Password'
-                    value={passphrase}
+                    value={password}
                     onChange={event =>
                       this.setState({
-                        passphrase: event.target.value,
+                        password: event.target.value,
                         error: '',
                       })
                     }
                   />
                   {error && (
-                    <div class='invalid-feedback' style={{ display: 'block' }}>
+                    <div className='invalid-feedback' style={{ display: 'block' }}>
                       {error}
                     </div>
                   )}
@@ -71,14 +71,12 @@ class Login extends React.Component {
 Login.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  bip39Mnemonic: PropTypes.string.isRequired,
 };
 
 Login.defaultProps = {};
 
 const mapStateToProps = state => ({
   isLoading: authSelectors.isLoading(state),
-  bip39Mnemonic: authSelectors.getMnemonic(state),
 });
 
 export default withRouter(connect(mapStateToProps)(Login));
