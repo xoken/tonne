@@ -101,16 +101,16 @@ class WalletHome extends React.Component {
     return (
       <>
         <Switch>
-          <PublicRoute path={`${path}/existing`} restricted={true}>
+          <PublicRoute path={`${path}/existing`}>
             <ExistingWallet />
           </PublicRoute>{' '}
-          <PublicRoute path={`${path}/new`} restricted={true}>
+          <PublicRoute path={`${path}/new`}>
             <NewWallet />
           </PublicRoute>
-          <PublicRoute path={`${path}/login`} restricted={true}>
+          <PublicRoute path={`${path}/login`}>
             <Login />
           </PublicRoute>
-          <PublicRoute path={`${path}/password`} restricted={true}>
+          <PublicRoute path={`${path}/password`}>
             <WalletPassword />
           </PublicRoute>
           <PrivateRoute path={`${path}/send`}>

@@ -149,5 +149,10 @@ export const bulkUpdate = async (data: any[]) => {
 };
 
 export const destroy = async () => {
-  await db.destroy();
+  try {
+    await db.destroy();
+    return true;
+  } catch (error) {
+    throw error;
+  }
 };

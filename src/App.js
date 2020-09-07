@@ -53,7 +53,7 @@ class App extends React.Component {
             </form>
           </div>
         </nav>
-        <div className='container'>
+        <div className='container main-container'>
           <Switch>
             <Route path='/wallet'>
               <WalletHome />
@@ -68,6 +68,8 @@ class App extends React.Component {
               <NoMatch />
             </Route>
           </Switch>
+        </div>
+        <div className='container'>
           <div className='row'>
             <div className='col-md-12'>
               <button type='button' className='generalbtns' onClick={this.onBack}>

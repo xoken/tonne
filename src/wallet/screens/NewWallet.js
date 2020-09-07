@@ -31,10 +31,10 @@ class NewWallet extends React.Component {
   addmnwordlistener = () => {
     var mnwords = document.getElementsByClassName('mnword');
     for (var j = 0; j < mnwords.length; j++) {
-      mnwords[j].addEventListener('mouseenter', function() {
+      mnwords[j].addEventListener('mouseenter', function () {
         this.textContent = globmnorig[this.id];
       });
-      mnwords[j].addEventListener('mouseleave', function() {
+      mnwords[j].addEventListener('mouseleave', function () {
         this.textContent = globmndupl[this.id];
       });
     }
@@ -85,7 +85,7 @@ class NewWallet extends React.Component {
     return (
       <>
         <div className='row'>
-          <div className='col-lg-12 col-md-12 col-sm-12 centerall'>
+          <div className='col-md-12 centerall'>
             <h5 className='generalheadingscolor'>
               Please write down these words on a piece of paper. This seed will help recover your
               wallet in the future.
@@ -112,16 +112,16 @@ class NewWallet extends React.Component {
 NewWallet.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
-  bip39Mnemonic: PropTypes.string
+  bip39Mnemonic: PropTypes.string,
 };
 
 NewWallet.defaultProps = {
-  bip39Mnemonic: ''
+  bip39Mnemonic: '',
 };
 
 const mapStateToProps = state => ({
   isLoading: authSelectors.isLoading(state),
-  bip39Mnemonic: authSelectors.getMnemonic(state)
+  bip39Mnemonic: authSelectors.getMnemonic(state),
 });
 
 export default withRouter(connect(mapStateToProps)(NewWallet));

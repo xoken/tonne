@@ -21,9 +21,11 @@ class Login extends React.Component {
     if (password) {
       const queryParams = new URLSearchParams(search);
       const profileId = queryParams.get('profile');
-      const result = await dispatch(authActions.login(profileId, password));
-      if (!result) {
-        this.setState({ error: 'Wrong Password' });
+      try {
+        await dispatch(authActions.login(profileId, password));
+        this.props.history.push('/wallet');
+      } catch (error) {
+        this.setState({ error });
       }
     }
   };
@@ -33,7 +35,7 @@ class Login extends React.Component {
     return (
       <>
         <div className='row'>
-          <div className='col-md-12 col-lg-12 centerall'>
+          <div className='col-md-12 centerall'>
             <center>
               <form onSubmit={this.handleContinue}>
                 <div className='form-group'>

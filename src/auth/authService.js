@@ -17,9 +17,13 @@ class AuthService {
     return await wallet.getProfiles();
   }
 
-  generateMnemonic = () => {
+  generateMnemonic() {
     return wallet.generateMnemonic();
-  };
+  }
+
+  logout() {
+    return wallet.logout();
+  }
 }
 
 export default AuthService;

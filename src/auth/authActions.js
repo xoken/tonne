@@ -21,6 +21,10 @@ export const loginRequest = createAction('LOGIN_REQUEST');
 export const loginSuccess = createAction('LOGIN_SUCCESS');
 export const loginFailure = createAction('LOGIN_FAILURE');
 
+export const logoutRequest = createAction('LOGOUT_REQUEST');
+export const logoutSuccess = createAction('LOGOUT_SUCCESS');
+export const logoutFailure = createAction('LOGOUT_FAILURE');
+
 export const getProfiles = () => async (dispatch, getState, { serviceInjector }) => {
   dispatch(getProfileRequest());
   try {
@@ -47,10 +51,13 @@ export const generateMnemonic = () => (dispatch, getState, { serviceInjector }) 
   try {
     const bip39Mnemonic = serviceInjector(AuthService).generateMnemonic();
     dispatch(generateMnemonicSuccess());
-    dispatch(setMnemonicSuccess({ bip39Mnemonic }));
+    try {
+      dispatch(setMnemonicSuccess({ bip39Mnemonic }));
+    } catch (error) {
+      dispatch(setMnemonicFailure());
+    }
   } catch (error) {
     dispatch(generateMnemonicFailure());
-    dispatch(setMnemonicFailure());
     throw error;
   }
 };
@@ -63,8 +70,7 @@ export const createProfile = password => async (dispatch, getState, { serviceInj
     } = getState();
     const { profile } = await serviceInjector(AuthService).createProfile(bip39Mnemonic, password);
     dispatch(createProfileSuccess());
-    login(profile, password);
-    dispatch(loginSuccess({ profile }));
+    dispatch(login(profile, password));
   } catch (error) {
     console.log(error);
     dispatch(createProfileFailure());
@@ -82,5 +88,15 @@ export const login = (profileId, password) => async (dispatch, getState, { servi
     }
   } catch (error) {
     dispatch(loginFailure());
+  }
+};
+
+export const logout = () => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(logoutRequest());
+  try {
+    await serviceInjector(AuthService).logout();
+    dispatch(logoutSuccess());
+  } catch (error) {
+    dispatch(logoutFailure());
   }
 };

@@ -59,7 +59,7 @@ class WalletPassword extends React.Component {
     return (
       <>
         <div className='row'>
-          <div className='col-md-12 col-lg-12 centerall'>
+          <div className='col-md-12 centerall'>
             <h5>Choose a password to encrypt your wallet keys.</h5>
             <h6 className='generalheadingscolor'>
               Include alphabets, numbers and special characters in your password.

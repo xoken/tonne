@@ -123,9 +123,8 @@ class Wallet {
         useHardenedAddresses
       );
       if (i === 0) {
-        // derivedKey.address = 'mnGY8nS44fs11yYBJ3Lo3PX3Kdgyfup7d3';
+        derivedKey.address = 'mnGY8nS44fs11yYBJ3Lo3PX3Kdgyfup7d3';
       } else if (i === 1) {
-        // derivedKey.address = 'mnGY8nS44fs11yYBJ3Lo3PX3Kdgyfup7d3';
         // derivedKey.address = 'mn4vGSceDVbuSHUL6LQQ1P7RxPRkVRdyZH';
       } else if (i === 2) {
         // derivedKey.address = '1Lv8ehbvL7LbB93NuPPdLb6U7NsTyX1uao';
@@ -328,6 +327,10 @@ class Wallet {
     wordlist?: string[]
   ): string {
     return bip39.generateMnemonic(strength, rng, wordlist);
+  }
+
+  logout() {
+    return Persist.destroy();
   }
 }
 

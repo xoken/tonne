@@ -10,9 +10,13 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
-.container {
+.main-container {
   min-height: 400px;
 }
+.navbar {
+  margin-bottom: 50px;
+}
+
 .opacitywhileload {
   animation-duration: 2s;
   animation-name: opacityload;
@@ -149,11 +153,11 @@ table {
   box-shadow: inset 0 -30px 70px rgba(0, 0, 0, 0.2);
   min-height: 100%;
 }
-html{
-  height:100%;
+html {
+  height: 100%;
 }
-body{
-  height:100%;
+body {
+  height: 100%;
 }
 
 .wordbreak {

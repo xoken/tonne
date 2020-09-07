@@ -1,5 +1,4 @@
 const apis = require('nipkow-sdk');
-console.log(apis);
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
 export default class ExplorerAuth {

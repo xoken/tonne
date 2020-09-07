@@ -165,7 +165,7 @@ class ExistingWallet extends React.Component {
     return (
       <>
         <div className='row'>
-          <div className='col-lg-12 col-md-12 col-sm-12'>
+          <div className='col-md-12'>
             <div id='mnemonic' className='mnemonic'>
               {this.state.bip39Mnemonic || ''}
             </div>
@@ -173,7 +173,7 @@ class ExistingWallet extends React.Component {
           </div>
         </div>
         <div className='row'>
-          <div className='col-lg-12 col-md-12 col-sm-12'>
+          <div className='col-md-12'>
             <br />
             <button className='btn btn-primary' id='backspc' onClick={this.backspaceOnClick}>
               &#9003;
@@ -181,7 +181,7 @@ class ExistingWallet extends React.Component {
           </div>
         </div>
         <div className='row'>
-          <div className='col-lg-12 col-md-12 col-sm-12 centerall'>
+          <div className='col-md-12 centerall'>
             <br />
             <br />
 
@@ -190,12 +190,12 @@ class ExistingWallet extends React.Component {
         </div>
 
         <div className='row'>
-          <div className='col-lg-12 col-md-12 col-sm-12'>
+          <div className='col-md-12'>
             <ul id='suggestions'>{this.state.suggestions}</ul>
           </div>
         </div>
         <div className='row'>
-          <div className='col-lg-12 col-md-12 col-sm-12'>
+          <div className='col-md-12'>
             <center>
               <MnemonicCompleted
                 mncompleted={this.state.mncompleted}

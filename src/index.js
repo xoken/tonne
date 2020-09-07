@@ -23,9 +23,9 @@ const PersistComponent = persistor
 ReactDOM.render(
   <Provider store={store}>
     <PersistComponent>
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
+      {/* <React.StrictMode> */}
+      <App />
+      {/* </React.StrictMode> */}
     </PersistComponent>
   </Provider>,
   document.getElementById('root')

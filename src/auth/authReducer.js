@@ -27,9 +27,22 @@ export default createReducer(
       ...state,
       bip39Mnemonic,
     }),
+    [actions.loginRequest]: state => ({
+      ...state,
+      isLoading: true,
+    }),
     [actions.loginSuccess]: (state, { profile }) => ({
       ...state,
+      isLoading: false,
       profile,
+    }),
+    [actions.loginFailure]: state => ({
+      ...state,
+      isLoading: false,
+    }),
+    [actions.logoutSuccess]: state => ({
+      ...state,
+      profile: null,
     }),
   },
   INITIAL_STATE
