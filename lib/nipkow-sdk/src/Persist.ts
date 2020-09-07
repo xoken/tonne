@@ -2,7 +2,13 @@ import PouchDB from 'pouchdb';
 import CryptoJS from 'crypto-js';
 import AES from 'crypto-js/aes';
 
+let profiles: any;
 let db: any;
+
+export const BIP32_EXTENDED_KEY = 'bip32ExtendedKey';
+export const DERIVED_KEYS = 'derivedKeys';
+export const OUTPUTS = 'outputs';
+export const UTXOS = 'utxos';
 
 const get = async (key: string) => await db.get(key);
 
@@ -11,16 +17,6 @@ const set = async (key: string, value: any) => {
   doc.value = value;
   await db.put(doc);
 };
-
-export const BIP32_EXTENDED_KEY = 'bip32ExtendedKey';
-export const DERIVED_KEYS = 'derivedKeys';
-export const OUTPUTS = 'outputs';
-export const UTXOS = 'utxos';
-
-const profiles = new PouchDB('Profiles', {
-  revs_limit: 1,
-  auto_compaction: true,
-});
 
 export const init = async (dbName: string) => {
   db = new PouchDB(dbName, { revs_limit: 1, auto_compaction: true });
@@ -62,6 +58,10 @@ export const createProfile = async (
 
 export const getProfiles = async () => {
   try {
+    profiles = new PouchDB('Profiles', {
+      revs_limit: 1,
+      auto_compaction: true,
+    });
     const existingProfiles: any = await profiles.get('profiles');
     if (
       existingProfiles &&
