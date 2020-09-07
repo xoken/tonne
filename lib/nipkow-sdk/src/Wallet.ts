@@ -285,12 +285,12 @@ class Wallet {
     return base64;
   }
 
-  async login(profile: string, password: string) {
+  async login(profileId: string, password: string) {
     try {
-      const bip39Mnemonic = await Persist.login(profile, password);
-      await Persist.init(profile);
+      const bip39Mnemonic = await Persist.login(profileId, password);
+      await Persist.init(profileId);
       await this._initWallet(bip39Mnemonic);
-      return true;
+      return { profile: profileId };
     } catch (error) {
       throw error;
     }

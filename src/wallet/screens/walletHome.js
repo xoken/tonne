@@ -21,9 +21,7 @@ class WalletHome extends React.Component {
   }
 
   onSelectProfile = profile => () => {
-    const { dispatch } = this.props;
-    dispatch(authActions.setProfile(profile));
-    this.props.history.push('/wallet/login');
+    this.props.history.push(`/wallet/login?profile=${profile}`);
   };
 
   renderExistingProfile() {

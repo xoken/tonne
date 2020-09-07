@@ -12,7 +12,6 @@ const set = async (key: string, value: any) => {
   await db.put(doc);
 };
 
-export const AUTH = 'auth';
 export const BIP32_EXTENDED_KEY = 'bip32ExtendedKey';
 export const DERIVED_KEYS = 'derivedKeys';
 export const OUTPUTS = 'outputs';
@@ -26,7 +25,6 @@ const profiles = new PouchDB('Profiles', {
 export const init = async (dbName: string) => {
   db = new PouchDB(dbName, { revs_limit: 1, auto_compaction: true });
   await bulkSet([
-    { key: AUTH, value: null },
     { key: BIP32_EXTENDED_KEY, value: null },
     { key: DERIVED_KEYS, value: [] },
     { key: OUTPUTS, value: [] },
@@ -102,11 +100,6 @@ export const login = async (profile: string, password: string) => {
   }
 };
 
-export const getAuth = async () => {
-  const authDoc: any = await get(AUTH);
-  return authDoc.value;
-};
-
 export const getBip32ExtendedKey = async () => {
   const bip32ExtendedKeyDoc: any = await get(BIP32_EXTENDED_KEY);
   return bip32ExtendedKeyDoc.value;
@@ -126,8 +119,6 @@ export const getUtxos = async () => {
   const utxosDoc: any = await get(UTXOS);
   return utxosDoc.value;
 };
-
-export const setAuth = async (value: any) => await set(AUTH, value);
 
 export const setBip32ExtendedKey = async (value: any) =>
   await set(BIP32_EXTENDED_KEY, value);

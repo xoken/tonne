@@ -13,10 +13,15 @@ class Login extends React.Component {
 
   handleContinue = async event => {
     event.preventDefault();
-    const { dispatch } = this.props;
+    const {
+      dispatch,
+      location: { search },
+    } = this.props;
     const { password } = this.state;
     if (password) {
-      const result = await dispatch(authActions.login(password));
+      const queryParams = new URLSearchParams(search);
+      const profileId = queryParams.get('profile');
+      const result = await dispatch(authActions.login(profileId, password));
       if (!result) {
         this.setState({ error: 'Wrong Password' });
       }
