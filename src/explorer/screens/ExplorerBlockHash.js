@@ -6,7 +6,7 @@ import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 class ExplorerBlockHeight extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { enteredpagenumber: '', selectnum: '' };
+    this.state = { selectnum: '' };
     this.addlistener = this.addlistener.bind(this);
     this.leftlistener = this.leftlistener.bind(this);
     this.rightlistener = this.rightlistener.bind(this);
@@ -52,6 +52,7 @@ class ExplorerBlockHeight extends React.Component {
   };
 
   printresults = async () => {
+    console.log(this.rjdecoded.block.height + 'this.rjdecoded.block.height');
     this.backheight = this.rjdecoded.block.height;
     this.currentblockhash = this.rjdecoded.block.hash;
     this.numberoftransactions = this.rjdecoded.block.txCount;
@@ -215,15 +216,19 @@ class ExplorerBlockHeight extends React.Component {
       );
       this.paginationinitialisation();
     }
+    this.setState({
+      selectnum: this.selected
+    });
   };
 
   pagebutton = async event => {
     event.preventDefault();
-    if (this.state.enteredpagenumber !== '' && this.state.enteredpagenumber <= this.numberofpages) {
-      this.setState({
-        selectnum: this.state.enteredpagenumber
-      });
-      this.selected = this.state.enteredpagenumber;
+    if (
+      this.state.selectnum !== '' &&
+      this.state.selectnum <= this.numberofpages &&
+      this.state.selectnum > 0
+    ) {
+      this.selected = this.state.selectnum;
       this.currentbatchnum = Math.ceil(this.selected / this.fixedarrlength);
       if (this.txcache[(this.selected - 1) * this.transactionsperpage + 1] !== undefined) {
         var tempindex, tempind;
@@ -559,7 +564,7 @@ class ExplorerBlockHeight extends React.Component {
                   type='text'
                   onChange={event =>
                     this.setState({
-                      enteredpagenumber: event.target.value
+                      selectnum: event.target.value
                     })
                   }
                 />

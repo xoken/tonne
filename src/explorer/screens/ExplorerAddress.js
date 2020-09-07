@@ -6,7 +6,7 @@ import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 class ExplorerAddress extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { selectnum: '' };
+    this.state = { selectnum: '', leftright: '' };
     this.addlistener = this.addlistener.bind(this);
     this.leftlistener = this.leftlistener.bind(this);
     this.rightlistener = this.rightlistener.bind(this);
@@ -38,9 +38,10 @@ class ExplorerAddress extends React.Component {
 
   printresults = () => {
     this.txlist.length = 0;
-
+    console.log(this.addressCache);
     var printbreaker = 1;
     var txnumber = (this.selected - 1) * this.outputsperpage;
+    console.log(this.selected + 'this.selected');
     for (var i = txnumber; i < this.addressCache.length; i++) {
       this.txlist.push(
         <>
@@ -186,11 +187,9 @@ class ExplorerAddress extends React.Component {
 
       printbreaker += 1;
     }
-    if (this.state.selectnum === '') {
-      this.setState({
-        selectnum: 1
-      });
-    }
+    this.setState({
+      selectnum: this.selected
+    });
   };
 
   pagearrayinit = () => {
@@ -228,7 +227,7 @@ class ExplorerAddress extends React.Component {
     } else {
       this.nextcursor = null;
     }
-    console.log(this.addressCache.length);
+    console.log(this.addressCache.length + 'addressCache.length');
   };
 
   adddataupdatepagearray = () => {
@@ -275,7 +274,7 @@ class ExplorerAddress extends React.Component {
       if (this.pagearray[i] === this.selected) {
         this.pagescontainer.push(
           <li className='page-item active'>
-            <button className='page-link' onClick={this.addlistener} id={this.pagearray[i]}>
+            <button className='page-link' onClick={this.addlistener} value={this.pagearray[i]}>
               {this.pagearray[i]}
             </button>
           </li>
@@ -283,7 +282,7 @@ class ExplorerAddress extends React.Component {
       } else {
         this.pagescontainer.push(
           <li className='page-item'>
-            <button className='page-link' onClick={this.addlistener} id={this.pagearray[i]}>
+            <button className='page-link' onClick={this.addlistener} value={this.pagearray[i]}>
               {this.pagearray[i]}
             </button>
           </li>
@@ -305,11 +304,9 @@ class ExplorerAddress extends React.Component {
   };
 
   addlistener = event => {
-    this.setState({
-      selectnum: event.target.value
-    });
     this.selected = event.target.value;
-
+    console.log(this.selected + 'this.selected addlistener');
+    console.log(event.target.value + 'event.target.value addlistener');
     this.printpagination();
     this.printresults();
   };
@@ -327,6 +324,9 @@ class ExplorerAddress extends React.Component {
 
       this.printpagination();
     }
+    this.setState({
+      leftright: this.currentbatchnum
+    });
   };
   rightlistener = async event => {
     if (
@@ -368,6 +368,9 @@ class ExplorerAddress extends React.Component {
         this.printpagination();
       }
     }
+    this.setState({
+      leftright: this.currentbatchnum
+    });
   };
 
   componentDidMount() {
@@ -383,8 +386,8 @@ class ExplorerAddress extends React.Component {
           //  </button>
         }
         <div className='opacitywhileload'>
-          <div class='row'>
-            <div class='col-md-12 col-lg-12'>
+          <div className='row'>
+            <div className='col-md-12 col-lg-12'>
               <h4>Address</h4>
               <br />
               <div id='address'>{this.address}</div>
@@ -392,28 +395,28 @@ class ExplorerAddress extends React.Component {
             </div>
           </div>
 
-          <div class='row'>
-            <div class='col-md-12 col-lg-12 summaryblock1'>
+          <div className='row'>
+            <div className='col-md-12 col-lg-12 summaryblock1'>
               <table id='addressummary'></table>
             </div>
           </div>
 
-          <div class='row'>
-            <div class='col-md-12 col-lg-12'>
+          <div className='row'>
+            <div className='col-md-12 col-lg-12'>
               <h5>
                 <div id='nooftransactions'></div>Transactions
               </h5>
             </div>
           </div>
-          <div class='row'>
-            <div class='col-md-12 col-lg-12'>
+          <div className='row'>
+            <div className='col-md-12 col-lg-12'>
               <table id='txlist'>{this.txlist}</table>
             </div>
           </div>
-          <div class='row'>
-            <div class='col-md-12 col-lg-12'>
+          <div className='row'>
+            <div className='col-md-12 col-lg-12'>
               <nav aria-label='transactions navigation'>
-                <ul class='pagination justify-content-center' id='pagination'>
+                <ul className='pagination justify-content-center' id='pagination'>
                   {this.pagescontainer}
                 </ul>
               </nav>

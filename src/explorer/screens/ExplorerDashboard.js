@@ -7,7 +7,7 @@ import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 class ExplorerDashboard extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { enteredpagenumber: '', selectnum: '' };
+    this.state = { selectnum: '' };
     this.addlistener = this.addlistener.bind(this);
     this.pagebutton = this.pagebutton.bind(this);
   }
@@ -107,7 +107,6 @@ class ExplorerDashboard extends React.Component {
     this.updatepagearray();
     this.updateheightlist();
     this.printpagination();
-    //  setTimeout(this.callsec, 1);
     this.callsec();
   };
   callsec = async () => {
@@ -121,11 +120,12 @@ class ExplorerDashboard extends React.Component {
   };
   pagebutton = event => {
     event.preventDefault();
-    if (this.state.enteredpagenumber !== '' && this.state.enteredpagenumber <= this.numberofpages) {
-      this.setState({
-        selectnum: this.state.enteredpagenumber
-      });
-      this.selected = this.state.enteredpagenumber;
+    if (
+      this.state.selectnum !== '' &&
+      this.state.selectnum <= this.numberofpages &&
+      this.state.selectnum > 0
+    ) {
+      this.selected = this.state.selectnum;
       this.updateheightlist();
       this.callsec();
       console.log(this.selected);
@@ -148,9 +148,6 @@ class ExplorerDashboard extends React.Component {
   };
 
   addlistener = event => {
-    this.setState({
-      selectnum: event.target.value
-    });
     this.selected = event.target.value;
     this.updateheightlist();
     this.updatepagearray();
@@ -263,6 +260,9 @@ class ExplorerDashboard extends React.Component {
         </tr>
       );
     }
+    this.setState({
+      selectnum: this.selected
+    });
   };
 
   componentDidMount() {
@@ -319,7 +319,7 @@ class ExplorerDashboard extends React.Component {
                   type='text'
                   onChange={event =>
                     this.setState({
-                      enteredpagenumber: event.target.value
+                      selectnum: event.target.value
                     })
                   }
                 />

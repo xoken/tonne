@@ -149,6 +149,12 @@ table {
   box-shadow: inset 0 -30px 70px rgba(0, 0, 0, 0.2);
   min-height: 100%;
 }
+html{
+  height:100%;
+}
+body{
+  height:100%;
+}
 
 .wordbreak {
   word-break: break-all;
