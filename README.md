@@ -35,7 +35,9 @@ cd into nipkow home directory and then
 ```
 cd /lib/nipkow-sdk
 ```
-
+```
+npm install
+```
 ```
 npm start
 ```
