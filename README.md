@@ -46,9 +46,5 @@ open new terminal
 cd into nipkow home directory and then
 
 ```
-npm run build
-```
-
-```
 npm run electron
 ```
