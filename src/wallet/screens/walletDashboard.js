@@ -218,9 +218,9 @@ class WalletDashboard extends React.Component {
           <div className='col-md-12'>{this.renderTransaction()}</div>
         </div>
         <div className='row'>
-          <div className='col-md-12'>{this.renderPagination()}</div>
+          {/* <div className='col-md-12'>{this.renderPagination()}</div> */}
         </div>
-        {this.renderTransactionModal()}
+        {/* {this.renderTransactionModal()} */}
         {this.renderSendTransactionModal()}
       </>
     );
