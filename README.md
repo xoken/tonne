@@ -15,7 +15,7 @@ git clone --single-branch --branch develop https://github.com/xoken/nipkow.git
 ```
 
 **Step 3:**
-cd into the nipkow app's directory.
+cd into the nipkow home directory.
 
 ```
 npm install
@@ -23,14 +23,14 @@ npm install
 
 ## To launch nipkow
 
-cd into nipkow app's directory and then
+cd into nipkow home directory and then
 
 ```
 npm start
 ```
 
 open new terminal
-cd into nipkow app's directory and then
+cd into nipkow home directory and then
 
 ```
 cd /lib/nipkow-sdk
@@ -41,7 +41,7 @@ npm start
 ```
 
 open new terminal
-cd into nipkow app's directory and then
+cd into nipkow home directory and then
 
 ```
 npm run build
