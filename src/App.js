@@ -21,6 +21,15 @@ class App extends React.Component {
   render() {
     return (
       <HashRouter>
+        <div className='titlecontainer'>
+          <div className='title'>Nipkow</div>
+          <div className='titlebarbtnscontainer'>
+            <button className='minimize'>-</button>
+            <button className='maximize'>&#9744;</button>
+            <button className='closeapp'>x</button>
+          </div>
+        </div>
+
         <nav className='navbar navbar-expand-lg navbar-light'>
           <Link to='/' id='logo' className='navbar-brand'>
             <img src={images.logo} className='d-inline-block align-top' alt='' loading='lazy' />

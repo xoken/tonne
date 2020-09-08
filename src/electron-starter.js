@@ -8,10 +8,11 @@ function createWindow() {
     width: Math.ceil(widthHeight.width * 0.7),
     height: Math.ceil(widthHeight.height * 0.7),
     show: false,
+    frame: false,
     webPreferences: {
       nodeIntegration: true,
-      webSecurity: false,
-    },
+      webSecurity: false
+    }
   });
   // win.maximize();
   win.show();

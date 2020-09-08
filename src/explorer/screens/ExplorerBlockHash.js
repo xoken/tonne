@@ -6,7 +6,7 @@ import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 class ExplorerBlockHeight extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { selectnum: '' };
+    this.state = { selectnum: '', leftright: '' };
     this.addlistener = this.addlistener.bind(this);
     this.leftlistener = this.leftlistener.bind(this);
     this.rightlistener = this.rightlistener.bind(this);
@@ -262,9 +262,6 @@ class ExplorerBlockHeight extends React.Component {
   };
 
   addlistener = event => {
-    this.setState({
-      selectnum: event.target.value
-    });
     this.selected = event.target.value;
     this.printpagination();
     this.transactionprinting();
@@ -293,6 +290,9 @@ class ExplorerBlockHeight extends React.Component {
         this.printpagination();
       }
     }
+    this.setState({
+      selectnum: this.currentbatchnum
+    });
   };
   rightlistener = async event => {
     if (this.pagearray[this.pagearrlength - 1] !== this.numberofpages) {
@@ -328,6 +328,9 @@ class ExplorerBlockHeight extends React.Component {
         this.printpagination();
       }
     }
+    this.setState({
+      selectnum: this.currentbatchnum
+    });
   };
 
   enterednumcaching = () => {
@@ -456,11 +459,9 @@ class ExplorerBlockHeight extends React.Component {
       }
       printbreaker += 1;
     }
-    if (this.state.selectnum === '') {
-      this.setState({
-        selectnum: 1
-      });
-    }
+    this.setState({
+      selectnum: this.selected
+    });
   };
 
   paginationinitialisation = () => {
