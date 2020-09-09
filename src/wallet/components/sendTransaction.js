@@ -9,19 +9,57 @@ class SendTransaction extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      receiverAddress: 'mnGY8nS44fs11yYBJ3Lo3PX3Kdgyfup7d3',
-      amountInSatoshi: '2000',
-      transactionFee: 55,
+      receiverAddress: '',
+      amountInSatoshi: '',
+      transactionFee: '',
+      isError: false,
+      message: '',
     };
   }
 
   onSend = async () => {
     const { dispatch } = this.props;
     const { receiverAddress, amountInSatoshi, transactionFee } = this.state;
-    await dispatch(
-      walletActions.createSendTransaction(receiverAddress, amountInSatoshi, transactionFee)
-    );
+    if (receiverAddress && amountInSatoshi) {
+      try {
+        await dispatch(
+          walletActions.createSendTransaction(
+            receiverAddress,
+            amountInSatoshi,
+            Number(transactionFee)
+          )
+        );
+        this.setState({ isError: false, message: 'Transaction Successful' });
+      } catch (error) {
+        this.setState({ isError: true, message: error });
+      }
+    } else {
+      this.setState({ isError: true, message: 'Please enter receiver address and amount' });
+    }
   };
+
+  onClose = () => {
+    this.props.onClose();
+  };
+
+  renderMessage() {
+    const { isError, message } = this.state;
+    if (message) {
+      if (isError) {
+        return (
+          <div class='ui negative message'>
+            <p>{message}</p>
+          </div>
+        );
+      } else {
+        return (
+          <div class='ui success message'>
+            <p>{message}</p>
+          </div>
+        );
+      }
+    }
+  }
 
   render() {
     const { receiverAddress, amountInSatoshi, transactionFee } = this.state;
@@ -62,7 +100,7 @@ class SendTransaction extends React.Component {
                 readOnly
                 className='form-control-plaintext'
                 id='receiverAddress'
-                value={satoshiToBSV(amountInSatoshi) + ' BSV'}
+                value={satoshiToBSV(Number(amountInSatoshi)) + ' BSV'}
               />
             </div>
           </div>
@@ -80,6 +118,15 @@ class SendTransaction extends React.Component {
               />
             </div>
           </div>
+          <div className='form-group row'>
+            <div className='col-sm-5'>{this.renderMessage()}</div>
+          </div>
+          <button type='button' className='btn btn-primary' onClick={this.onSend}>
+            Send
+          </button>
+          <button type='button' className='btn btn-primary' onClick={this.onClose}>
+            Close
+          </button>
         </form>
       </div>
     );

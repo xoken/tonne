@@ -1,4 +1,4 @@
-import * as coin from './constants/coin';
+import * as network from './constants/network';
 import * as derivationPaths from './constants/derivationPaths';
 import wallet from './Wallet';
 import * as persist from './Persist';
@@ -11,6 +11,6 @@ export { merkleBranchAPI } from './MerkleBranchAPI';
 export { scriptHashAPI } from './ScriptHashAPI';
 export { transactionAPI } from './TransactionAPI';
 export { userAPI } from './UserAPI';
-export { coin, derivationPaths };
+export { network, derivationPaths };
 export { wallet };
 export { persist };

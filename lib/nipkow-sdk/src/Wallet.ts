@@ -2,9 +2,9 @@ import {
   Network,
   bip32,
   ECPair,
+  networks,
   payments,
   Psbt,
-  networks,
 } from 'bitcoinjs-lib';
 import AES from 'crypto-js/aes';
 import coinSelect from 'coinselect';
@@ -13,16 +13,19 @@ import * as bip38 from 'bip38';
 import * as bip39 from 'bip39';
 import * as Persist from './Persist';
 import derivationPaths from './constants/derivationPaths';
-import coin from './constants/coin';
+import network from './constants/network';
 import { addressAPI } from './AddressAPI';
 import { transactionAPI } from './TransactionAPI';
 
 class Wallet {
   async _initWallet(bip39Mnemonic: string, password?: string) {
     const seed = this._mnemonicToSeedSync(bip39Mnemonic, password);
-    const bip32RootKey = this._getBIP32RootKeyFromSeed(seed, coin.BITCOIN_SV);
+    const bip32RootKey = this._getBIP32RootKeyFromSeed(
+      seed,
+      network.BITCOIN_SV_REGTEST
+    );
     const bip32ExtendedKey = this._getBIP32ExtendedKey(
-      this._getDerivationPath(),
+      derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath,
       bip32RootKey
     );
     await Persist.setBip32ExtendedKey(bip32ExtendedKey);
@@ -41,7 +44,10 @@ class Wallet {
     if (!bip32RootKey) {
       return bip32RootKey;
     }
-    let extendedKey = bip32.fromBase58(bip32RootKey);
+    let extendedKey = bip32.fromBase58(
+      bip32RootKey,
+      network.BITCOIN_SV_REGTEST
+    );
     const pathBits = path.split('/');
     for (let i = 0; i < pathBits.length; i++) {
       const bit = pathBits[i];
@@ -59,16 +65,6 @@ class Wallet {
     return extendedKey.toBase58();
   }
 
-  _getDerivationPath(): string {
-    const { purpose, coin, account, change } = derivationPaths.BITCOIN_SV;
-    let path = 'm/';
-    path += purpose + "'/";
-    path += coin + "'/";
-    path += account + "'/";
-    path += change;
-    return path;
-  }
-
   _generateDerivedAddress(
     bip32ExtendedKey: string,
     index: number,
@@ -76,7 +72,10 @@ class Wallet {
     bip38password: string = '',
     useHardenedAddresses?: boolean
   ) {
-    const bip32Interface = bip32.fromBase58(bip32ExtendedKey);
+    const bip32Interface = bip32.fromBase58(
+      bip32ExtendedKey,
+      network.BITCOIN_SV_REGTEST
+    );
     let key;
     if (useHardenedAddresses) {
       key = bip32Interface.deriveHardened(index);
@@ -84,11 +83,19 @@ class Wallet {
       key = bip32Interface.derive(index);
     }
     const useUncompressed = useBip38;
-    let keyPair = ECPair.fromPrivateKey(key.privateKey!);
+    let keyPair = ECPair.fromPrivateKey(key.privateKey!, {
+      network: network.BITCOIN_SV_REGTEST,
+    });
     if (useUncompressed) {
-      keyPair = ECPair.fromPrivateKey(key.privateKey!, { compressed: false });
+      keyPair = ECPair.fromPrivateKey(key.privateKey!, {
+        compressed: false,
+        network: network.BITCOIN_SV_REGTEST,
+      });
     }
-    const address = payments.p2pkh({ pubkey: keyPair.publicKey }).address!;
+    const address = payments.p2pkh({
+      pubkey: keyPair.publicKey,
+      network: network.BITCOIN_SV_REGTEST,
+    }).address!;
     const hasPrivkey = !key.isNeutered();
     let privkey;
     if (hasPrivkey) {
@@ -98,7 +105,8 @@ class Wallet {
       }
     }
     const pubkey = keyPair.publicKey.toString('hex');
-    let indexText = this._getDerivationPath() + '/' + index;
+    let indexText =
+      derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath + '/' + index;
     if (useHardenedAddresses) {
       indexText = indexText + "'";
     }
@@ -122,13 +130,14 @@ class Wallet {
         bip38password,
         useHardenedAddresses
       );
-      if (i === 0) {
-        derivedKey.address = 'mnGY8nS44fs11yYBJ3Lo3PX3Kdgyfup7d3';
-      } else if (i === 1) {
-        // derivedKey.address = 'mn4vGSceDVbuSHUL6LQQ1P7RxPRkVRdyZH';
-      } else if (i === 2) {
-        // derivedKey.address = '1Lv8ehbvL7LbB93NuPPdLb6U7NsTyX1uao';
-      }
+      // if (i === 0) {
+      //   derivedKey.address = 'mkTJA5GAsJQp7UmAgh43AVAVM4BvjWbG7z';
+      //   derivedKey.privkey =
+      //     'cTP23waCMwbWfDoH53PGJNpbyiyMk2g2djhuXff5XhPNuewqdKNY';
+      //   derivedKey.address = 'mmKu1EzwGmicQA5XwpFVDBegwNjf7h55MP';
+      //   derivedKey.privkey =
+      //     'cSn2zVDF4c7w63rH1Cc2uXsMr6UzFAwasTRmm4CpQet1ofuVKzRj';
+      // }
       derivedKeys.push({ ...derivedKey, isUsed: false });
     }
     await Persist.setDerivedKeys(derivedKeys);
@@ -194,6 +203,24 @@ class Wallet {
     }
   }
 
+  async _getChangeAddress() {
+    const derivedKeys = await Persist.getDerivedKeys();
+    const derivedKey = derivedKeys.find(
+      (derivedKey: { isUsed: boolean }) => derivedKey.isUsed === false
+    );
+    return derivedKey.address;
+  }
+
+  async _getKeys(addresses: string[]): Promise<object[]> {
+    const derivedKeys = await Persist.getDerivedKeys();
+    return addresses.map(address => {
+      const derivedKey = derivedKeys.find(
+        (derivedKey: { address: string }) => derivedKey.address === address
+      );
+      return ECPair.fromWIF(derivedKey.privkey, networks.regtest);
+    });
+  }
+
   async createSendTransaction(
     receiverAddress: string,
     amountInSatoshi: number,
@@ -207,7 +234,6 @@ class Wallet {
       { address: receiverAddress, value: Number(amountInSatoshi) },
     ];
     const transactionHex = await this._createSendTransaction(
-      'cMwS7zdHqkyEuQiKtm8vANacXrFtZ8DrueJyVGwb7aeGnQKPdNfc',
       utxos.utxos,
       targets,
       transactionFee
@@ -216,20 +242,13 @@ class Wallet {
   }
 
   async _createSendTransaction(
-    privateKey: string,
     utxos: [],
     targets: any[],
     transactionFee: number
   ): Promise<string> {
-    console.log(transactionFee);
-    // const key = ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), {
-    //   network: networks.regtest,
-    // });
-    const key = ECPair.fromWIF(privateKey, networks.testnet);
     const feeRate = 5; // satoshis per byte
     let { inputs, outputs, fee } = coinSelect(utxos, targets, feeRate);
     // the accumulated fee is always returned for analysis
-    console.log(fee);
     // .inputs and .outputs will be undefined if no solution was found
     if (!inputs || !outputs) throw new Error('Empty inputs || outputs');
 
@@ -252,7 +271,10 @@ class Wallet {
         ),
       });
     }
-    const psbt = new Psbt({ network: networks.testnet, forkCoin: 'bch' });
+    const psbt = new Psbt({
+      network: network.BITCOIN_SV_REGTEST,
+      forkCoin: 'bch',
+    });
     psbt.setVersion(1);
     merged.forEach(
       (input: { outputTxHash: any; outputIndex: any; hex: any }) => {
@@ -265,18 +287,25 @@ class Wallet {
       }
     );
 
-    outputs.forEach((output: { address: any; value: any }) => {
+    outputs.forEach(async (output: { address: any; value: any }) => {
       // watch out, outputs may have been added that you need to provide
       // an output address/script for
       if (!output.address) {
-        output.address = 'mnPbBBvj9JPJ4RHJfWLSwFDpfRCP81F1Zr';
+        output.address = await this._getChangeAddress();
       }
       psbt.addOutput({
         address: output.address,
         value: output.value,
       });
     });
-    psbt.signAllInputs(key);
+
+    const addresses = merged.map(input => input.address);
+    const keys: object[] = await this._getKeys(addresses);
+
+    keys.forEach((key: any, i) => {
+      psbt.signInput(i, key);
+    });
+
     psbt.validateSignaturesOfAllInputs();
     psbt.finalizeAllInputs();
     const transactionHex = psbt.extractTransaction(true).toHex();

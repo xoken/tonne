@@ -188,11 +188,12 @@ class ExplorerAddress extends React.Component {
       printbreaker += 1;
     }
     this.setState({
-      selectnum: this.selected
+      selectnum: this.selected,
     });
   };
 
   pagearrayinit = () => {
+    debugger;
     this.caching();
     if (this.addressCache.length > 0) {
       var tempindex = 1;
@@ -325,7 +326,7 @@ class ExplorerAddress extends React.Component {
       this.printpagination();
     }
     this.setState({
-      leftright: this.currentbatchnum
+      leftright: this.currentbatchnum,
     });
   };
   rightlistener = async event => {
@@ -369,7 +370,7 @@ class ExplorerAddress extends React.Component {
       }
     }
     this.setState({
-      leftright: this.currentbatchnum
+      leftright: this.currentbatchnum,
     });
   };
 

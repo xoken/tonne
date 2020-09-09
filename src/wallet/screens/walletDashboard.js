@@ -2,13 +2,13 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Checkbox, Icon, Modal, Pagination } from 'semantic-ui-react';
+import { Button, Icon, Modal, Pagination } from 'semantic-ui-react';
 import { formatDistanceToNow } from 'date-fns';
 import SendTransaction from '../components/sendTransaction';
 import * as authActions from '../../auth/authActions';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
-import { satoshiToBSV } from '../../shared/utils';
+import { groupBy, satoshiToBSV } from '../../shared/utils';
 import images from '../../shared/images';
 
 class WalletDashboard extends React.Component {
@@ -18,7 +18,6 @@ class WalletDashboard extends React.Component {
       sendTxModal: false,
       transactionModal: false,
       lastRefreshed: new Date(),
-      autoRefreshToggle: false,
     };
   }
 
@@ -32,6 +31,11 @@ class WalletDashboard extends React.Component {
         }),
       10000
     );
+    const autoRefreshTimeInSecs = (1 * 60 * 1000) / 2;
+    this.autoRefreshTimer = setInterval(() => {
+      console.log('auto refresh');
+      this.onRefresh();
+    }, autoRefreshTimeInSecs);
   }
 
   toggleTransactionModal = () => {
@@ -44,52 +48,25 @@ class WalletDashboard extends React.Component {
     this.setState({ sendTxModal: !sendTxModal });
   };
 
-  onAutoRefresh = () => {
-    const { autoRefreshToggle } = this.state;
-    clearInterval(this.autoRefreshTimer);
-    if (!autoRefreshToggle) {
-      const autoRefreshTimeInSecs = 1 * 60 * 1000;
-      this.autoRefreshTimer = setInterval(() => {
-        console.log('Hello');
-      }, autoRefreshTimeInSecs);
-    }
-    this.setState({ autoRefreshToggle: !autoRefreshToggle });
-  };
-
-  onRefresh = () => {
+  onRefresh = async () => {
+    const { dispatch } = this.props;
+    await dispatch(walletActions.getOutputs());
     this.setState({
       lastRefreshed: new Date(),
       timeSinceLastRefreshed: new Date(),
     });
   };
 
-  renderAutoRefresh() {
-    const { lastRefreshed, autoRefreshToggle } = this.state;
-    if (lastRefreshed) {
-      return (
-        <div className='auto-refresh'>
-          <span className='autorefresh-label'>Auto-refresh</span>
-          <Checkbox toggle checked={autoRefreshToggle} onChange={this.onAutoRefresh} />
-        </div>
-      );
-    }
-  }
-
   renderLastRefresh() {
     const { lastRefreshed } = this.state;
     if (lastRefreshed) {
       return (
-        <div className='manual-refresh'>
-          <span className='text'>
-            Last refreshed{': '}
-            {formatDistanceToNow(lastRefreshed, {
-              includeSeconds: true,
-              addSuffix: true,
-            })}
-          </span>
-          <button className='icon' onClick={this.onRefresh}>
-            <Icon name='refresh' />
-          </button>
+        <div className='right floated'>
+          Last refreshed{': '}
+          {formatDistanceToNow(lastRefreshed, {
+            includeSeconds: true,
+            addSuffix: true,
+          })}
         </div>
       );
     }
@@ -103,26 +80,76 @@ class WalletDashboard extends React.Component {
   renderTransaction() {
     const { isLoading, outputs } = this.props;
     if (!isLoading && outputs.length > 0) {
-      return outputs.map(({ outputTxHash, value, address }, index) => {
+      const outputsGroupedBy = groupBy(outputs, 'outputTxHash');
+      return Object.entries(outputsGroupedBy).map(tx => {
         return (
-          <div key={index} className='card'>
+          <div key={tx[0]} className='card'>
             <div className='card-header' onClick={this.toggleTransactionModal}>
-              {outputTxHash}
+              {tx[0]}
             </div>
             <div className='card-body'>
-              <div className='row'>
-                <div className='col-md-6'></div>
-                <div className='col-md-6'>
-                  <p>{address}</p>
-                  <p>{satoshiToBSV(value)}</p>
-                </div>
-              </div>
+              {tx[1].map(output => {
+                return (
+                  <div className='card'>
+                    <div className='card-body'>
+                      <p>{`Address: ${output.address}`}</p>
+                      <p>{`BlockHash: ${output.blockHash}`}</p>
+                      <p>{`BlockHeight: ${output.blockHeight}`}</p>
+                      <p>{`OutputIndex: ${output.outputIndex}`}</p>
+                      <p>{`OutputTxHash: ${output.outputTxHash}`}</p>
+                      <p>{`Address: ${output.address}`}</p>
+                      <p>{`SpendInfo: ${output.spendInfo}`}</p>
+                      <p>{`TxIndex: ${output.txIndex}`}</p>
+                      <p>{`Value: ${satoshiToBSV(output.value)}`}</p>
+                      <h3>SpendInfo</h3>
+                      {this.renderSpendInfo(output.spendInfo)}
+                      <h3>PrevOutpoint</h3>
+                      {output.prevOutpoint.map(pOutpoint => {
+                        return (
+                          <div>
+                            <p>{`opIndex: ${pOutpoint[0].opIndex}`}</p>
+                            <p>{`opTxHash: ${pOutpoint[0].opTxHash}`}</p>
+                            <p>{pOutpoint[1]}</p>
+                            <p>{pOutpoint[2]}</p>
+                            <hr />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         );
       });
     }
     return null;
+  }
+
+  renderSpendInfo(spendInfo) {
+    if (spendInfo) {
+      return (
+        <div>
+          <p>{`spendingBlockHash: ${spendInfo.spendingBlockHash}`}</p>
+          <p>{`spendingBlockHeight: ${spendInfo.spendingBlockHeight}`}</p>
+          <p>{`spendingTxId: ${spendInfo.spendingTxId}`}</p>
+          <p>{`spendingTxIndex: ${spendInfo.spendingTxIndex}`}</p>
+          <h4>Spend Data</h4>
+          {spendInfo.spendData.map((sData, index) => {
+            return (
+              <div>
+                <p>{`spendingOutputIndex: ${sData.spendingOutputIndex}`}</p>
+                <p>{`value: ${sData.value}`}</p>
+                <p>{`outputAddress: ${sData.outputAddress}`}</p>
+                <hr />
+              </div>
+            );
+          })}
+        </div>
+      );
+    }
+    return <p>null</p>;
   }
 
   renderPagination() {
@@ -136,15 +163,9 @@ class WalletDashboard extends React.Component {
         <Modal.Header>Send Transactions</Modal.Header>
         <Modal.Content>
           <Modal.Description>
-            <SendTransaction />
+            <SendTransaction onClose={this.toggleSendTxPopup} />
           </Modal.Description>
         </Modal.Content>
-        <Modal.Actions>
-          <Button onClick={this.toggleSendTxPopup}>Cancel</Button>
-          <Button onClick={this.toggleSendTxPopup} positive>
-            Send
-          </Button>
-        </Modal.Actions>
       </Modal>
     );
   }
@@ -202,15 +223,22 @@ class WalletDashboard extends React.Component {
             </center>
           </div>
         </div>
-
-        <div className='row'>
-          <div className='col-md-12'>
-            <h3>Recent Transactions</h3>
+        <div class='ui two column centered grid'>
+          <div class='column'></div>
+          <div class='four column centered row'>
+            <div class='column'></div>
+            <div class='column'></div>
           </div>
         </div>
-        <div className='row'>
-          <div className='col-md-12'>
-            {this.renderAutoRefresh()}
+
+        <div className='ui grid'>
+          <div className='left floated six wide column'>
+            <h3>Recent Transactions</h3>
+          </div>
+          <div className='right floated right aligned six wide column'>
+            <Button className='right floated' icon onClick={this.onRefresh}>
+              <Icon name='refresh' />
+            </Button>
             {this.renderLastRefresh()}
           </div>
         </div>

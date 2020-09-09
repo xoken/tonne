@@ -46,7 +46,7 @@ class Utils {
   };
 
   getDerivationPathAccount = (): string => {
-    const { purpose, coin, account } = derivationPaths.BITCOIN_SV;
+    const { purpose, coin, account } = derivationPaths.BITCOIN_SV.BIP44;
     let path = 'm/';
     path += purpose + "'/";
     path += coin + "'/";
