@@ -7,13 +7,7 @@ import Home from './shared/components/home';
 import images from './shared/images';
 import NoMatch from './shared/components/noMatch';
 import WalletHome from './wallet/screens/walletHome';
-// const { ipcRenderer } = require('electron');
-//
-// ipcRenderer.on('win', function(event, data) {
-//   console.log('received data', data);
-//
-//   alert('received data');
-// });
+
 class App extends React.Component {
   constructor(props) {
     super(props);

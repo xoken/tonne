@@ -21,7 +21,7 @@ cd into the nipkow repo directory and run the following command.
 npm install
 ```
 
-when the installation is complete, continue running the following commands.
+when the installation is complete, continue running the following commands inside nipkow repo directory.
 
 ```
 cd /lib/nipkow-sdk
@@ -39,10 +39,6 @@ If you are not already in nipkow repo directory, cd into nipkow repo directory a
 
 ```
 cd /lib/nipkow-sdk
-```
-
-```
-npm install
 ```
 
 ```
@@ -68,3 +64,27 @@ npm run electron
 ```
 
 Keep this terminal window open.
+
+## To update nipkow
+
+**Step 1:**
+Open a new terminal.
+If you are not already in nipkow repo directory, cd into nipkow repo directory and run the following commands.
+
+```
+git pull
+```
+
+```
+npm install
+```
+
+```
+cd /lib/nipkow-sdk
+```
+
+```
+npm install
+```
+
+To launch updated nipkow, refer to the previous section titled "To launch nipkow".
