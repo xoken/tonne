@@ -56,7 +56,8 @@ class ExplorerBlockHeight extends React.Component {
     this.backheight = this.rjdecoded.block.height;
     this.currentblockhash = this.rjdecoded.block.hash;
     this.numberoftransactions = this.rjdecoded.block.txCount;
-
+    this.summarysect1.length = 0;
+    this.summarysect2.length = 0;
     this.date = new Date(this.rjdecoded.block.header.blockTimestamp * 1000);
     this.summarysect1.push(
       <>
@@ -514,6 +515,11 @@ class ExplorerBlockHeight extends React.Component {
   };
   componentDidMount() {
     this.initBlockHash();
+  }
+  componentDidUpdate(latestprops) {
+    if (this.props.match.params.blockhash !== latestprops.match.params.blockhash) {
+      this.initBlockHash();
+    }
   }
   render() {
     return (

@@ -8,7 +8,7 @@ function createWindow() {
     width: Math.ceil(widthHeight.width * 0.7),
     height: Math.ceil(widthHeight.height * 0.7),
     show: false,
-    frame: false,
+    //frame: false,
     webPreferences: {
       nodeIntegration: true,
       webSecurity: false
@@ -20,10 +20,10 @@ function createWindow() {
   // win.loadFile('src/index.html');
   const url = 'http://localhost:3000';
   // const url = 'http://localhost:3000/#/wallet/send';
-  // const url = `file://${path.join(__dirname, '/../build/index.html')}`;
+  //const url = `file://${path.join(__dirname, '/../build/index.html')}`;
   // console.log(url);
   win.loadURL(url);
-  //win.webContents.send("dirpath", indexPath);
+  //win.webContents.send('win', win);
   // Open the DevTools.
   win.webContents.openDevTools();
 }

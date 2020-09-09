@@ -49,7 +49,10 @@ class ExplorerDashboard extends React.Component {
       //this.selected = (this.numberofpages - Math.ceil(this.blockhei/10));
       this.selected =
         this.numberofpages - Math.ceil((this.blockhei - (this.syncedblocksheight % 10)) / 10);
-      console.log(this.selected);
+      if (this.selected === 0) {
+        this.selected = 1;
+      }
+      console.log(this.selected + 'this.selected');
       if (this.selected <= this.pagearrlength - 2) {
         this.index = 1;
       } else if (this.selected >= this.numberofpages - (this.pagearrlength - 2)) {

@@ -509,6 +509,11 @@ class ExplorerBlockHeight extends React.Component {
   componentDidMount() {
     this.initBlockHeight();
   }
+  componentDidUpdate(latestprops) {
+    if (this.props.match.params.blockheight !== latestprops.match.params.blockheight) {
+      this.initBlockHeight();
+    }
+  }
   render() {
     return (
       <>

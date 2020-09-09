@@ -42,6 +42,13 @@ class ExplorerAddress extends React.Component {
     var printbreaker = 1;
     var txnumber = (this.selected - 1) * this.outputsperpage;
     console.log(this.selected + 'this.selected');
+    function checkforinvalidtxid(txidpar) {
+      if (txidpar !== '0000000000000000000000000000000000000000000000000000000000000000') {
+        return <Link to={'/explorer/transaction/' + txidpar + '/""'}>{txidpar}</Link>;
+      } else {
+        return <div>{txidpar}</div>;
+      }
+    }
     for (var i = txnumber; i < this.addressCache.length; i++) {
       this.txlist.push(
         <>
@@ -150,14 +157,7 @@ class ExplorerAddress extends React.Component {
                   <tr>
                     <td colspan='3'>
                       <b>opTxHash:</b>{' '}
-                      <Link
-                        to={
-                          '/explorer/transaction/' +
-                          this.addressCache[i].prevOutpoint[a][0].opTxHash +
-                          '/""'
-                        }>
-                        {this.addressCache[i].prevOutpoint[a][0].opTxHash}
-                      </Link>
+                      {checkforinvalidtxid(this.addressCache[i].prevOutpoint[a][0].opTxHash)}
                     </td>
                   </tr>
                   <tr>
@@ -376,7 +376,11 @@ class ExplorerAddress extends React.Component {
   componentDidMount() {
     this.initAddress();
   }
-
+  componentDidUpdate(latestprops) {
+    if (this.props.match.params.address !== latestprops.match.params.address) {
+      this.initAddress();
+    }
+  }
   render() {
     return (
       <>

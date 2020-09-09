@@ -34,7 +34,13 @@ class ExplorerTransaction extends React.Component {
     this.tempoutputstring.length = 0;
     this.backblockHeight = this.rjdecoded.tx.blockHeight;
     this.backtxIndex = this.rjdecoded.tx.txIndex;
-
+    function checkforinvalidtxid(txidpar) {
+      if (txidpar !== '0000000000000000000000000000000000000000000000000000000000000000') {
+        return <Link to={'/explorer/transaction/' + txidpar}>{txidpar}</Link>;
+      } else {
+        return <div>{txidpar}</div>;
+      }
+    }
     this.summarysect1.push(
       <>
         <tr>
@@ -153,9 +159,7 @@ class ExplorerTransaction extends React.Component {
                   <b>outpointTxID</b>
                 </td>
                 <td className='tdwordbreak'>
-                  <Link to={'/explorer/transaction/' + this.rjdecoded.tx.tx.txInps[j].outpointTxID}>
-                    {this.rjdecoded.tx.tx.txInps[j].outpointTxID}
-                  </Link>
+                  {checkforinvalidtxid(this.rjdecoded.tx.tx.txInps[j].outpointTxID)}
                 </td>
               </tr>
               <tr>
@@ -340,6 +344,11 @@ class ExplorerTransaction extends React.Component {
   };
   componentDidMount() {
     this.initTransaction();
+  }
+  componentDidUpdate(latestprops) {
+    if (this.props.match.params.txid !== latestprops.match.params.txid) {
+      this.initTransaction();
+    }
   }
   render() {
     return (

@@ -7,7 +7,13 @@ import Home from './shared/components/home';
 import images from './shared/images';
 import NoMatch from './shared/components/noMatch';
 import WalletHome from './wallet/screens/walletHome';
-
+// const { ipcRenderer } = require('electron');
+//
+// ipcRenderer.on('win', function(event, data) {
+//   console.log('received data', data);
+//
+//   alert('received data');
+// });
 class App extends React.Component {
   constructor(props) {
     super(props);
@@ -21,15 +27,16 @@ class App extends React.Component {
   render() {
     return (
       <HashRouter>
-        <div className='titlecontainer'>
-          <div className='title'>Nipkow</div>
-          <div className='titlebarbtnscontainer'>
-            <button className='minimize'>-</button>
-            <button className='maximize'>&#9744;</button>
-            <button className='closeapp'>x</button>
-          </div>
-        </div>
-
+        {
+          // <div className='titlecontainer'>
+          //   <div className='title'>Nipkow</div>
+          //   <div className='titlebarbtnscontainer'>
+          //     <button className='minimize'>-</button>
+          //     <button className='maximize'>&#9744;</button>
+          //     <button className='closeapp'>x</button>
+          //   </div>
+          // </div>
+        }
         <nav className='navbar navbar-expand-lg navbar-light'>
           <Link to='/' id='logo' className='navbar-brand'>
             <img src={images.logo} className='d-inline-block align-top' alt='' loading='lazy' />
