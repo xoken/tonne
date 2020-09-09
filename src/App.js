@@ -6,7 +6,7 @@ import ExplorerHome from './explorer/screens/ExplorerHome';
 import Home from './shared/components/home';
 import images from './shared/images';
 import NoMatch from './shared/components/noMatch';
-import WalletHome from './wallet/screens/walletHome';
+import WalletHome from './wallet/screens/WalletHome';
 
 class App extends React.Component {
   constructor(props) {
@@ -35,32 +35,23 @@ class App extends React.Component {
           <Link to='/' id='logo' className='navbar-brand'>
             <img src={images.logo} className='d-inline-block align-top' alt='' loading='lazy' />
           </Link>
-          <button
-            className='navbar-toggler'
-            type='button'
-            data-toggle='collapse'
-            data-target='#navbarSupportedContent'
-            aria-controls='navbarSupportedContent'
-            aria-expanded='false'
-            aria-label='Toggle navigation'>
-            <span className='navbar-toggler-icon'></span>
-          </button>
-          <div className='collapse navbar-collapse' id='navbarSupportedContent'>
-            <ul className='navbar-nav mr-auto'></ul>
-            <form className='form-inline my-2 my-lg-0'>
-              <ul className='navbar-nav mr-auto'>
-                <li className='nav-item active'>
-                  <Link to='#' className='nav-link'>
-                    Contact <span className='sr-only'>(current)</span>
-                  </Link>
-                </li>
-                <li className='nav-item'>
-                  <Link to='#' className='nav-link'>
-                    Help
-                  </Link>
-                </li>
-              </ul>
-            </form>
+          <div className='cen'>
+            <Link to='/explorer' className='navbar-brand'>
+              <img
+                src={images.blockexplorerlogo}
+                className='d-inline-block align-top headerblockexplorerlogo'
+                alt=''
+                loading='lazy'
+              />
+            </Link>
+            <Link to='/wallet' className='navbar-brand'>
+              <img
+                src={images.walletlogo}
+                className='d-inline-block align-top headerwalletlogo'
+                alt=''
+                loading='lazy'
+              />
+            </Link>
           </div>
         </nav>
         <div className='container main-container'>

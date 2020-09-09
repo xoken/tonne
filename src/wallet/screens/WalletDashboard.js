@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Button, Checkbox, Icon, Modal, Pagination } from 'semantic-ui-react';
 import { formatDistanceToNow } from 'date-fns';
-import SendTransaction from '../components/sendTransaction';
+import SendTransaction from '../components/SendTransaction';
 import * as authActions from '../../auth/authActions';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
@@ -18,7 +18,7 @@ class WalletDashboard extends React.Component {
       sendTxModal: false,
       transactionModal: false,
       lastRefreshed: new Date(),
-      autoRefreshToggle: false,
+      autoRefreshToggle: false
     };
   }
 
@@ -28,7 +28,7 @@ class WalletDashboard extends React.Component {
     this.timerID = setInterval(
       () =>
         this.setState({
-          timeSinceLastRefreshed: new Date(),
+          timeSinceLastRefreshed: new Date()
         }),
       10000
     );
@@ -59,7 +59,7 @@ class WalletDashboard extends React.Component {
   onRefresh = () => {
     this.setState({
       lastRefreshed: new Date(),
-      timeSinceLastRefreshed: new Date(),
+      timeSinceLastRefreshed: new Date()
     });
   };
 
@@ -84,7 +84,7 @@ class WalletDashboard extends React.Component {
             Last refreshed{': '}
             {formatDistanceToNow(lastRefreshed, {
               includeSeconds: true,
-              addSuffix: true,
+              addSuffix: true
             })}
           </span>
           <button className='icon' onClick={this.onRefresh}>
@@ -236,17 +236,17 @@ WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   balance: PropTypes.number.isRequired,
-  outputs: PropTypes.arrayOf(PropTypes.object),
+  outputs: PropTypes.arrayOf(PropTypes.object)
 };
 
 WalletDashboard.defaultProps = {
-  outputs: [],
+  outputs: []
 };
 
 const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
-  outputs: walletSelectors.getOutputs(state),
+  outputs: walletSelectors.getOutputs(state)
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));
