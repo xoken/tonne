@@ -301,3 +301,15 @@
 #txlist {
   width: 100%;
 }
+
+.modal {
+  position: fixed;
+  top: unset;
+  left: unset;
+  z-index: unset;
+  display: unset;
+  width: unset;
+  height: unset;
+  overflow: unset;
+  outline: unset;
+}
