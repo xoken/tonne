@@ -3,7 +3,13 @@ import axios, { AxiosRequestConfig } from 'axios';
 
 const httpReq = axios.create({
   // baseURL: 'https://sb1.xoken.org:9091/v1',
-  baseURL: 'https://127.0.0.1:9091/v1',
+  //baseURL: 'https://127.0.0.1:9091/v1',
+  baseURL:
+    'https://' +
+    localStorage.getItem('hostname') +
+    ':' +
+    localStorage.getItem('port') +
+    '/v1',
   httpsAgent: new https.Agent({
     rejectUnauthorized: false,
   }),

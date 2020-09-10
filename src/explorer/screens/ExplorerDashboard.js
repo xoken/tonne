@@ -40,7 +40,9 @@ class ExplorerDashboard extends React.Component {
         localStorage.getItem('callsremaining') > 3
       ) {
         this.rjdecoded = await ExplorerHttpsReq.httpsreq('getChainInfo');
-        this.summary();
+        if (this.rjdecoded !== undefined) {
+          this.summary();
+        }
       }
     }
   };

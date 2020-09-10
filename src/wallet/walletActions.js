@@ -33,6 +33,17 @@ export const getOutputs = () => async (dispatch, getState, { serviceInjector }) 
   }
 };
 
+export const getTransaction = txid => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(getTransactionRequest());
+  try {
+    const { txoutputs } = await serviceInjector(WalletService).getTransaction(txid);
+    dispatch(getTransactionSuccess({ txoutputs }));
+  } catch (error) {
+    console.log(error);
+    dispatch(getTransactionFailure());
+  }
+};
+
 export const createSendTransaction = (receiverAddress, amountInSatoshi, transactionFee) => async (
   dispatch,
   getState,

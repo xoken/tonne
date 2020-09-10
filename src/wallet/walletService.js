@@ -9,6 +9,10 @@ class WalletService {
     return await wallet.getOutputs();
   }
 
+  async getTransaction(txid) {
+    return await wallet.getTransaction(txid);
+  }
+
   async getBalance() {
     return await wallet.getBalance();
   }

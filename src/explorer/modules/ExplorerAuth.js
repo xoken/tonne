@@ -49,9 +49,9 @@ export default class ExplorerAuth {
       });
   };
   static authprompt = () => {
-    localStorage.setItem('username', 'admin');
-    localStorage.setItem('password', 'MTQ3MjU0MjkwMzI4NjgyMzU0Nz');
-    localStorage.setItem('hostname', '127.0.0.1');
+    localStorage.setItem('username', 'ExplorerUser');
+    localStorage.setItem('password', 'OTQ2Nzc1MDIwNDA5MDcyMTM2Ng');
+    localStorage.setItem('hostname', 'sb1.xoken.org');
     localStorage.setItem('port', 9091);
     this.httpsauth();
   };

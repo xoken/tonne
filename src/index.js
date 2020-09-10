@@ -16,6 +16,11 @@ import 'semantic-ui-css/semantic.min.css';
 
 const { store, persistor } = configureStore();
 
+localStorage.setItem('username', 'ExplorerUser');
+localStorage.setItem('password', 'OTQ2Nzc1MDIwNDA5MDcyMTM2Ng');
+localStorage.setItem('hostname', 'sb1.xoken.org');
+localStorage.setItem('port', 9091);
+
 const PersistComponent = persistor
   ? props => <PersistGate {...props} loading={null} persistor={persistor} />
   : React.Fragment;

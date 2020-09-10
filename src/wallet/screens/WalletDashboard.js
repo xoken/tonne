@@ -10,6 +10,7 @@ import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
 import { groupBy, satoshiToBSV } from '../../shared/utils';
 import images from '../../shared/images';
+import ExplorerTransaction from '../../explorer/screens/ExplorerTransaction';
 
 class WalletDashboard extends React.Component {
   constructor(props) {
@@ -19,6 +20,7 @@ class WalletDashboard extends React.Component {
       transactionModal: false,
       lastRefreshed: new Date(),
       autoRefreshToggle: false,
+      txid: ''
     };
   }
 
@@ -28,7 +30,7 @@ class WalletDashboard extends React.Component {
     this.timerID = setInterval(
       () =>
         this.setState({
-          timeSinceLastRefreshed: new Date(),
+          timeSinceLastRefreshed: new Date()
         }),
       10000
     );
@@ -39,8 +41,11 @@ class WalletDashboard extends React.Component {
     }, autoRefreshTimeInSecs);
   }
 
-  toggleTransactionModal = () => {
-    const { transactionModal } = this.state;
+  toggleTransactionModal = txidpar => {
+    const { transactionModal, txid } = this.state;
+    if (transactionModal) {
+      this.setState({ txid: txidpar });
+    }
     this.setState({ transactionModal: !transactionModal });
   };
 
@@ -54,7 +59,7 @@ class WalletDashboard extends React.Component {
     await dispatch(walletActions.getOutputs());
     this.setState({
       lastRefreshed: new Date(),
-      timeSinceLastRefreshed: new Date(),
+      timeSinceLastRefreshed: new Date()
     });
   };
 
@@ -66,7 +71,7 @@ class WalletDashboard extends React.Component {
           Last refreshed{': '}
           {formatDistanceToNow(lastRefreshed, {
             includeSeconds: true,
-            addSuffix: true,
+            addSuffix: true
           })}
         </div>
       );
@@ -84,10 +89,8 @@ class WalletDashboard extends React.Component {
       const outputsGroupedBy = groupBy(outputs, 'outputTxHash');
       return Object.entries(outputsGroupedBy).map(tx => {
         return (
-          <div key={tx[0]} className='card'>
-            <div className='card-header' onClick={this.toggleTransactionModal}>
-              {tx[0]}
-            </div>
+          <div key={tx[0]} className='card' onClick={this.toggleTransactionModal(tx[0])}>
+            <div className='card-header'>{tx[0]}</div>
             <div className='card-body'>
               {tx[1].map(output => {
                 return (
@@ -205,6 +208,7 @@ class WalletDashboard extends React.Component {
         <Modal.Header>Transaction</Modal.Header>
         <Modal.Content>
           <Modal.Description></Modal.Description>
+          <ExplorerTransaction txid={this.state.txid} />
         </Modal.Content>
         <Modal.Actions>
           <Button primary onClick={this.toggleTransactionModal}>
@@ -289,17 +293,17 @@ WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   balance: PropTypes.number.isRequired,
-  outputs: PropTypes.arrayOf(PropTypes.object),
+  outputs: PropTypes.arrayOf(PropTypes.object)
 };
 
 WalletDashboard.defaultProps = {
-  outputs: [],
+  outputs: []
 };
 
 const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
-  outputs: walletSelectors.getOutputs(state),
+  outputs: walletSelectors.getOutputs(state)
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));

@@ -156,6 +156,17 @@ class Wallet {
     };
   }
 
+  async getTransaction(txid) {
+    const { txoutputs } = await transactionAPI
+      .getTransactionByTxID(reqparameter[1])
+      .then(data => {
+        return data;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
   async _getOutputs(keys: any[], prevOutputs: any[] = []): Promise<any> {
     const outputs = await this._getOutputsByAddresses(keys);
     const updatedKeys = keys.map((key: { address: any; indexText: string }) => {
