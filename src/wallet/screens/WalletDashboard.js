@@ -10,6 +10,7 @@ import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
 import { satoshiToBSV } from '../../shared/utils';
 import images from '../../shared/images';
+import { groupBy } from '../../shared/utils';
 
 class WalletDashboard extends React.Component {
   constructor(props) {
@@ -102,28 +103,63 @@ class WalletDashboard extends React.Component {
 
   renderTransaction() {
     const { isLoading, outputs } = this.props;
-    if (!isLoading && outputs.length > 0) {
-      return outputs.map(({ outputTxHash, value, address }, index) => {
-        return (
-          <div key={index} className='card'>
-            <div className='card-header' onClick={this.toggleTransactionModal}>
-              {outputTxHash}
-            </div>
-            <div className='card-body'>
-              <div className='row'>
-                <div className='col-md-6'></div>
-                <div className='col-md-6'>
-                  <p>{address}</p>
-                  <p>{satoshiToBSV(value)}</p>
+    var outputsGroupedByTXIDobject = groupBy(outputs, 'outputTxHash');
+    if (!isLoading && Object.entries(outputsGroupedByTXIDobject).length > 0) {
+      return [].concat
+        .apply([], Object.values(outputsGroupedByTXIDobject))
+        .map(({ outputTxHash, value, address, blockHash, blockHeight, outputIndex }, index) => {
+          return (
+            <div key={index} className='card'>
+              <div className='card-header' onClick={this.toggleTransactionModal}>
+                {outputTxHash}
+              </div>
+              <div className='card-body'>
+                <div className='row'>
+                  <div className='col-md-6'></div>
+                  <div className='col-md-6'>
+                    <p>{address}</p>
+                    <p>{satoshiToBSV(value)}</p>
+                  </div>
+                </div>
+                <div className='row'>
+                  <div className='col-md-12'>
+                    <p>Block hash: {blockHash}</p>
+                    <p>Block Height: {blockHeight}</p>
+                    <p>Output Index: {outputIndex}</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        );
-      });
+          );
+        });
     }
     return null;
   }
+
+  // renderTransaction() {
+  //   const { isLoading, outputs } = this.props;
+  //   if (!isLoading && outputs.length > 0) {
+  //     return outputs.map(({ outputTxHash, value, address }, index) => {
+  //       return (
+  //         <div key={index} className='card'>
+  //           <div className='card-header' onClick={this.toggleTransactionModal}>
+  //             {outputTxHash}
+  //           </div>
+  //           <div className='card-body'>
+  //             <div className='row'>
+  //               <div className='col-md-6'></div>
+  //               <div className='col-md-6'>
+  //                 <p>{address}</p>
+  //                 <p>{satoshiToBSV(value)}</p>
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       );
+  //     });
+  //   }
+  //   return null;
+  // }
 
   renderPagination() {
     return <Pagination size='mini' defaultActivePage={5} totalPages={10} />;

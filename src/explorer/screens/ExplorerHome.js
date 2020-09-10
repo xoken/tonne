@@ -6,6 +6,7 @@ import ExplorerBlockHash from './ExplorerBlockHash';
 import ExplorerTransaction from './ExplorerTransaction';
 import ExplorerDashboard from './ExplorerDashboard';
 import ExplorerSearch from '../components/ExplorerSearch';
+import NoResultsFound from './NoResultsFound';
 import NoMatch from '../../shared/components/noMatch';
 
 export default function ExplorerHome() {
@@ -27,6 +28,9 @@ export default function ExplorerHome() {
           </Route>
           <Route path={`${path}/transaction/:txid`}>
             <ExplorerTransaction />
+          </Route>
+          <Route path={`${path}/404`}>
+            <NoResultsFound />
           </Route>
           <Route path={`${path}/:blockheight`}>
             <ExplorerDashboard />

@@ -48,7 +48,11 @@ class ExplorerBlockHeight extends React.Component {
       'getBlockByBlockHash',
       this.props.match.params.blockhash
     );
-    this.printresults();
+    if (this.rjdecoded === undefined) {
+      this.props.history.push(`/explorer/404`);
+    } else {
+      this.printresults();
+    }
   };
 
   printresults = async () => {

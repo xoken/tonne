@@ -26,7 +26,11 @@ class ExplorerTransaction extends React.Component {
       this.transactionparam = this.props.match.params.txid;
     }
     this.rjdecoded = await ExplorerHttpsReq.httpsreq('getTransactionByTxID', this.transactionparam);
-    this.printresults();
+    if (this.rjdecoded === undefined) {
+      this.props.history.push(`/explorer/404`);
+    } else {
+      this.printresults();
+    }
   };
 
   printresults = () => {
