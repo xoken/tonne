@@ -198,3 +198,15 @@ body {
   background-color: lightgrey;
   color: black;
 }
+.cen{
+  position: absolute;
+  left: 0;
+  right: 0;
+  text-align: center;
+}
+.headerwalletlogo{
+  width:86px;
+}
+.headerblockexplorerlogo{
+  width:80px;
+}

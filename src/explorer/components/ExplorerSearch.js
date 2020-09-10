@@ -26,9 +26,8 @@ class ExplorerSearch extends React.Component {
           //  window.location.replace(txpath + '?transaction=' + searchterm.value + '');
         }
       } else {
-        this.searchNegativeMsg.push(<div>No results found</div>);
-        //  searchmesssage.innerHTML = 'No results found';
-        //  searchnegative.style.visibility = 'hidden';
+        console.log(this.props.history + 'this.props.history');
+        this.props.history.push(`/explorer/404`);
       }
     }
   };
@@ -39,17 +38,18 @@ class ExplorerSearch extends React.Component {
         <div className='row'>
           <div className='col-md-12 col-lg-12'>
             <center>
-              <input
-                className='pagenuminput'
-                placeholder='TXID / Address / BlockHeight'
-                size='50'
-                type='text'
-                onChange={event => this.setState({ searchterm: event.target.value })}
-              />
-              <button className='btn btn-primary' onClick={this.onSearchClick}>
-                Search
-              </button>
-              {this.searchNegativeMsg}
+              <form onSubmit={this.onSearchClick}>
+                <input
+                  className='pagenuminput'
+                  placeholder='TXID / Address / BlockHeight'
+                  size='50'
+                  type='text'
+                  onChange={event => this.setState({ searchterm: event.target.value })}
+                />
+                <button className='btn btn-primary' type='submit'>
+                  Search
+                </button>
+              </form>
             </center>
           </div>
         </div>

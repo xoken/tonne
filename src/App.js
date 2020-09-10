@@ -6,7 +6,7 @@ import ExplorerHome from './explorer/screens/ExplorerHome';
 import Home from './shared/components/home';
 import images from './shared/images';
 import NoMatch from './shared/components/noMatch';
-import WalletHome from './wallet/screens/walletHome';
+import WalletHome from './wallet/screens/WalletHome';
 
 class App extends React.Component {
   constructor(props) {
@@ -35,6 +35,24 @@ class App extends React.Component {
           <Link to='/' id='logo' className='navbar-brand'>
             <img src={images.logo} className='d-inline-block align-top' alt='' loading='lazy' />
           </Link>
+          <div className='cen'>
+            <Link to='/explorer' className='navbar-brand'>
+              <img
+                src={images.blockexplorerlogo}
+                className='d-inline-block align-top headerblockexplorerlogo'
+                alt=''
+                loading='lazy'
+              />
+            </Link>
+            <Link to='/wallet' className='navbar-brand'>
+              <img
+                src={images.walletlogo}
+                className='d-inline-block align-top headerwalletlogo'
+                alt=''
+                loading='lazy'
+              />
+            </Link>
+          </div>
         </nav>
         <div className='container main-container'>
           <Switch>

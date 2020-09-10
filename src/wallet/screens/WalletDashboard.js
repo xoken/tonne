@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Button, Icon, Modal, Pagination } from 'semantic-ui-react';
 import { formatDistanceToNow } from 'date-fns';
-import SendTransaction from '../components/sendTransaction';
+import SendTransaction from '../components/SendTransaction';
 import * as authActions from '../../auth/authActions';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
@@ -18,6 +18,7 @@ class WalletDashboard extends React.Component {
       sendTxModal: false,
       transactionModal: false,
       lastRefreshed: new Date(),
+      autoRefreshToggle: false,
     };
   }
 
@@ -151,6 +152,30 @@ class WalletDashboard extends React.Component {
     }
     return <p>null</p>;
   }
+  // renderTransaction() {
+  //   const { isLoading, outputs } = this.props;
+  //   if (!isLoading && outputs.length > 0) {
+  //     return outputs.map(({ outputTxHash, value, address }, index) => {
+  //       return (
+  //         <div key={index} className='card'>
+  //           <div className='card-header' onClick={this.toggleTransactionModal}>
+  //             {outputTxHash}
+  //           </div>
+  //           <div className='card-body'>
+  //             <div className='row'>
+  //               <div className='col-md-6'></div>
+  //               <div className='col-md-6'>
+  //                 <p>{address}</p>
+  //                 <p>{satoshiToBSV(value)}</p>
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </div>
+  //       );
+  //     });
+  //   }
+  //   return null;
+  // }
 
   renderPagination() {
     return <Pagination size='mini' defaultActivePage={5} totalPages={10} />;

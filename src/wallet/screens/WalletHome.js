@@ -2,15 +2,15 @@ import React from 'react';
 import { Link, Route, Switch, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { List, Loader } from 'semantic-ui-react';
-import ExistingWallet from './existingWallet';
-import Login from './login';
-import NewWallet from './newWallet';
+import ExistingWallet from './ExistingWallet';
+import Login from './Login';
+import NewWallet from './NewWallet';
 import NoMatch from '../../shared/components/noMatch';
 import PrivateRoute from '../../shared/components/privateRoute';
 import PublicRoute from '../../shared/components/publicRoute';
-import SendTransaction from '../components/sendTransaction';
-import WalletDashboard from './walletDashboard';
-import WalletPassword from './walletPassword';
+import SendTransaction from '../components/SendTransaction';
+import WalletDashboard from './WalletDashboard';
+import WalletPassword from './WalletPassword';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
 
@@ -131,7 +131,7 @@ class WalletHome extends React.Component {
 const mapStateToProps = state => ({
   isLoading: authSelectors.isLoading(state),
   profile: authSelectors.getProfile(state),
-  profiles: authSelectors.getProfiles(state),
+  profiles: authSelectors.getProfiles(state)
 });
 
 export default withRouter(connect(mapStateToProps)(WalletHome));

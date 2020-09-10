@@ -33,7 +33,11 @@ class ExplorerAddress extends React.Component {
       this.address = this.props.match.params.address;
     }
     this.rjdecoded = await ExplorerHttpsReq.httpsreq('getOutputsByAddress', this.address, 100);
-    this.pagearrayinit();
+    if (this.rjdecoded === undefined) {
+      this.props.history.push(`/explorer/404`);
+    } else {
+      this.pagearrayinit();
+    }
   };
 
   printresults = () => {
@@ -214,7 +218,7 @@ class ExplorerAddress extends React.Component {
       this.printpagination();
       this.printresults();
     } else {
-      this.searchresultsmessage();
+      //
     }
   };
 
