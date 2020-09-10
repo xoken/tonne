@@ -91,53 +91,53 @@ class WalletDashboard extends React.Component {
     dispatch(authActions.logout());
   };
 
-  renderTransaction() {
-    const { isLoading, outputs } = this.props;
-    if (!isLoading && outputs.length > 0) {
-      const outputsGroupedBy = groupBy(outputs, 'outputTxHash');
-      return Object.entries(outputsGroupedBy).map(tx => {
-        return (
-          <div key={tx[0]} className='card' onClick={this.toggleTransactionModal(tx[0])}>
-            <div className='card-header'>{tx[0]}</div>
-            <div className='card-body'>
-              {tx[1].map(output => {
-                return (
-                  <div className='card'>
-                    <div className='card-body'>
-                      <p>{`Address: ${output.address}`}</p>
-                      <p>{`BlockHash: ${output.blockHash}`}</p>
-                      <p>{`BlockHeight: ${output.blockHeight}`}</p>
-                      <p>{`OutputIndex: ${output.outputIndex}`}</p>
-                      <p>{`OutputTxHash: ${output.outputTxHash}`}</p>
-                      <p>{`Address: ${output.address}`}</p>
-                      <p>{`SpendInfo: ${output.spendInfo}`}</p>
-                      <p>{`TxIndex: ${output.txIndex}`}</p>
-                      <p>{`Value: ${satoshiToBSV(output.value)}`}</p>
-                      <h3>SpendInfo</h3>
-                      {this.renderSpendInfo(output.spendInfo)}
-                      <h3>PrevOutpoint</h3>
-                      {output.prevOutpoint.map(pOutpoint => {
-                        return (
-                          <div>
-                            <p>{`opIndex: ${pOutpoint[0].opIndex}`}</p>
-                            <p>{`opTxHash: ${pOutpoint[0].opTxHash}`}</p>
-                            <p>{pOutpoint[1]}</p>
-                            <p>{pOutpoint[2]}</p>
-                            <hr />
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-        );
-      });
-    }
-    return null;
-  }
+  // renderTransaction() {
+  //   const { isLoading, outputs } = this.props;
+  //   if (!isLoading && outputs.length > 0) {
+  //     const outputsGroupedBy = groupBy(outputs, 'outputTxHash');
+  //     return Object.entries(outputsGroupedBy).map(tx => {
+  //       return (
+  //         <div key={tx[0]} className='card' onClick={this.toggleTransactionModal(tx[0])}>
+  //           <div className='card-header'>{tx[0]}</div>
+  //           <div className='card-body'>
+  //             {tx[1].map(output => {
+  //               return (
+  //                 <div className='card'>
+  //                   <div className='card-body'>
+  //                     <p>{`Address: ${output.address}`}</p>
+  //                     <p>{`BlockHash: ${output.blockHash}`}</p>
+  //                     <p>{`BlockHeight: ${output.blockHeight}`}</p>
+  //                     <p>{`OutputIndex: ${output.outputIndex}`}</p>
+  //                     <p>{`OutputTxHash: ${output.outputTxHash}`}</p>
+  //                     <p>{`Address: ${output.address}`}</p>
+  //                     <p>{`SpendInfo: ${output.spendInfo}`}</p>
+  //                     <p>{`TxIndex: ${output.txIndex}`}</p>
+  //                     <p>{`Value: ${satoshiToBSV(output.value)}`}</p>
+  //                     <h3>SpendInfo</h3>
+  //                     {this.renderSpendInfo(output.spendInfo)}
+  //                     <h3>PrevOutpoint</h3>
+  //                     {output.prevOutpoint.map(pOutpoint => {
+  //                       return (
+  //                         <div>
+  //                           <p>{`opIndex: ${pOutpoint[0].opIndex}`}</p>
+  //                           <p>{`opTxHash: ${pOutpoint[0].opTxHash}`}</p>
+  //                           <p>{pOutpoint[1]}</p>
+  //                           <p>{pOutpoint[2]}</p>
+  //                           <hr />
+  //                         </div>
+  //                       );
+  //                     })}
+  //                   </div>
+  //                 </div>
+  //               );
+  //             })}
+  //           </div>
+  //         </div>
+  //       );
+  //     });
+  //   }
+  //   return null;
+  // }
 
   renderSpendInfo(spendInfo) {
     if (spendInfo) {

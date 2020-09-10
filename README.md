@@ -8,11 +8,15 @@
 sudo apt install npm
 ```
 
+---
+
 **Step 2:**
 
 ```
 git clone --single-branch --branch develop https://github.com/xoken/nipkow.git
 ```
+
+---
 
 **Step 3:**
 cd into the nipkow repo directory and run the following command.
@@ -31,6 +35,8 @@ cd /lib/nipkow-sdk
 npm install
 ```
 
+---
+
 ## To launch nipkow
 
 **Step 1:**
@@ -46,6 +52,9 @@ npm start
 ```
 
 Keep this terminal window open.
+
+---
+
 **Step 2:**
 Open a new terminal.
 If you are not already in nipkow repo directory, cd into nipkow repo directory and run the following command.
@@ -55,6 +64,9 @@ npm start
 ```
 
 Keep this terminal window open.
+
+---
+
 **Step 3:**
 Open a new terminal.
 If you are not already in nipkow repo directory, cd into nipkow repo directory and run the following command.
@@ -64,6 +76,8 @@ npm run electron
 ```
 
 Keep this terminal window open.
+
+---
 
 ## To update nipkow
 
