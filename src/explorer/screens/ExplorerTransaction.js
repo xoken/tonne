@@ -22,8 +22,16 @@ class ExplorerTransaction extends React.Component {
   backtxIndex;
 
   initTransaction = async () => {
-    if (this.props.match.params.txid !== undefined) {
-      this.transactionparam = this.props.match.params.txid;
+    if (
+      this.props.match.params.txid !== undefined ||
+      this.props.txid !== undefined ||
+      this.props.txid !== ''
+    ) {
+      if (this.props.txid !== '' || this.props.txid !== undefined) {
+        this.transactionparam = this.props.txid;
+      } else {
+        this.transactionparam = this.props.match.params.txid;
+      }
     }
     this.rjdecoded = await ExplorerHttpsReq.httpsreq('getTransactionByTxID', this.transactionparam);
     if (this.rjdecoded === undefined) {

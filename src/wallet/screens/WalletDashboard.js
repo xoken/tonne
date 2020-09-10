@@ -209,6 +209,9 @@ class WalletDashboard extends React.Component {
         <Modal.Content>
           <Modal.Description></Modal.Description>
           <ExplorerTransaction txid={this.state.txid} />
+          {
+            //  <ExplorerTransaction txid='098ec555381e7f61a5b80e106fc2d65381b308d21a376db0e3316c4c2eaa2616' />
+          }
         </Modal.Content>
         <Modal.Actions>
           <Button primary onClick={this.toggleTransactionModal}>
@@ -252,11 +255,11 @@ class WalletDashboard extends React.Component {
             </center>
           </div>
         </div>
-        <div class='ui two column centered grid'>
-          <div class='column'></div>
-          <div class='four column centered row'>
-            <div class='column'></div>
-            <div class='column'></div>
+        <div className='ui two column centered grid'>
+          <div className='column'></div>
+          <div className='four column centered row'>
+            <div className='column'></div>
+            <div className='column'></div>
           </div>
         </div>
 
@@ -277,7 +280,7 @@ class WalletDashboard extends React.Component {
         <div className='row'>
           {/* <div className='col-md-12'>{this.renderPagination()}</div> */}
         </div>
-        {/* {this.renderTransactionModal()} */}
+        {this.renderTransactionModal()}
         {this.renderSendTransactionModal()}
       </>
     );

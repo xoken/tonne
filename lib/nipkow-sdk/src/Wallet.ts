@@ -156,9 +156,9 @@ class Wallet {
     };
   }
 
-  async getTransaction(txid) {
-    const { txoutputs } = await transactionAPI
-      .getTransactionByTxID(reqparameter[1])
+  getTransaction(txid: string) {
+    const txoutputs = transactionAPI
+      .getTransactionByTxID(txid)
       .then(data => {
         return data;
       })
