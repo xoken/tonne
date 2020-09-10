@@ -24,10 +24,9 @@ class ExplorerTransaction extends React.Component {
   initTransaction = async () => {
     if (
       this.props.match.params.txid !== undefined ||
-      this.props.txid !== undefined ||
-      this.props.txid !== ''
+      (this.props.txid !== undefined && this.props.txid !== '')
     ) {
-      if (this.props.txid !== '' || this.props.txid !== undefined) {
+      if (this.props.txid !== '' && this.props.txid !== undefined) {
         this.transactionparam = this.props.txid;
       } else {
         this.transactionparam = this.props.match.params.txid;
@@ -35,14 +34,17 @@ class ExplorerTransaction extends React.Component {
     }
     this.rjdecoded = await ExplorerHttpsReq.httpsreq('getTransactionByTxID', this.transactionparam);
     if (this.rjdecoded === undefined) {
-      this.props.history.push(`/explorer/404`);
+      if (this.props.match.params.txid !== undefined) {
+        this.props.history.push(`/explorer/404`);
+      }
+      console.log(this.props.match.params.txid + 'this.props.match.params.txid');
+      console.log(this.props.txid + 'this.props.txid');
     } else {
       this.printresults();
     }
   };
 
   printresults = () => {
-    var inputs, outputs;
     this.tempoutputstring.length = 0;
     this.backblockHeight = this.rjdecoded.tx.blockHeight;
     this.backtxIndex = this.rjdecoded.tx.txIndex;
