@@ -31,7 +31,7 @@ class SendTransaction extends React.Component {
         );
         this.setState({ isError: false, message: 'Transaction Successful' });
       } catch (error) {
-        this.setState({ isError: true, message: error });
+        this.setState({ isError: true, message: error.message });
       }
     } else {
       this.setState({ isError: true, message: 'Please enter receiver address and amount' });
@@ -119,7 +119,7 @@ class SendTransaction extends React.Component {
             </div>
           </div>
           <div className='form-group row'>
-            <div className='col-sm-5'>{this.renderMessage()}</div>
+            <div className='col-sm-12'>{this.renderMessage()}</div>
           </div>
           <button type='button' className='btn btn-primary' onClick={this.onSend}>
             Send

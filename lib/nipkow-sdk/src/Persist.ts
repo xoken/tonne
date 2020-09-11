@@ -130,6 +130,12 @@ export const setOutputs = async (value: any) => await set(OUTPUTS, value);
 
 export const setUtxos = async (value: any) => await set(UTXOS, value);
 
+export const updateDerivedKeys = async (value: any) => {
+  const existingKeys = await getDerivedKeys();
+  const newKeys = [...existingKeys, ...value];
+  await setDerivedKeys(newKeys);
+};
+
 export const bulkSet = async (inputs: any[]) => {
   const newData = inputs.map(element => {
     return { _id: element.key, value: element.value };

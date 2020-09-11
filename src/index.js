@@ -17,8 +17,8 @@ import 'semantic-ui-css/semantic.min.css';
 const { store, persistor } = configureStore();
 
 localStorage.setItem('username', 'ExplorerUser');
-localStorage.setItem('password', 'OTQ2Nzc1MDIwNDA5MDcyMTM2Ng');
-localStorage.setItem('hostname', 'sb1.xoken.org');
+localStorage.setItem('password', 'MzQzNTExOTc3MTk1NTAwMDE5Nw');
+localStorage.setItem('hostname', '127.0.0.1');
 localStorage.setItem('port', 9091);
 
 const PersistComponent = persistor

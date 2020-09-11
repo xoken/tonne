@@ -29,7 +29,6 @@ class Wallet {
       bip32RootKey
     );
     await Persist.setBip32ExtendedKey(bip32ExtendedKey);
-    await this._generateDerivedKeys(bip32ExtendedKey, 0, 20, false);
   }
 
   _mnemonicToSeedSync(bip39Mnemonic: string, password?: string): Buffer {
@@ -113,7 +112,7 @@ class Wallet {
     return { indexText, address, pubkey, privkey };
   }
 
-  async _generateDerivedKeys(
+  _generateDerivedKeys(
     bip32ExtendedKey: string,
     indexStart: number,
     count: number,
@@ -131,7 +130,8 @@ class Wallet {
         useHardenedAddresses
       );
       // if (i === 0) {
-      //   derivedKey.address = 'mkTJA5GAsJQp7UmAgh43AVAVM4BvjWbG7z';
+      // derivedKey.address = 'mmKu1EzwGmicQA5XwpFVDBegwNjf7h55MP';
+      // derivedKey.address = 'mkTJA5GAsJQp7UmAgh43AVAVM4BvjWbG7z';
       //   derivedKey.privkey =
       //     'cTP23waCMwbWfDoH53PGJNpbyiyMk2g2djhuXff5XhPNuewqdKNY';
       //   derivedKey.address = 'mmKu1EzwGmicQA5XwpFVDBegwNjf7h55MP';
@@ -140,7 +140,6 @@ class Wallet {
       // }
       derivedKeys.push({ ...derivedKey, isUsed: false });
     }
-    await Persist.setDerivedKeys(derivedKeys);
     return derivedKeys;
   }
 
@@ -149,8 +148,15 @@ class Wallet {
   }
 
   async getOutputs() {
-    const { outputs } = await this._getOutputs(await Persist.getDerivedKeys());
-    await Persist.setOutputs(outputs);
+    const initialDerivedKeys = this._generateDerivedKeys(
+      await Persist.getBip32ExtendedKey(),
+      0,
+      20,
+      false
+    );
+    const { outputs, derivedKeys } = await this._getOutputs(initialDerivedKeys);
+    await Persist.setOutputs(outputs); // compare and set
+    await Persist.setDerivedKeys(derivedKeys);
     return {
       outputs,
     };
@@ -167,7 +173,11 @@ class Wallet {
       });
   }
 
-  async _getOutputs(keys: any[], prevOutputs: any[] = []): Promise<any> {
+  async _getOutputs(
+    keys: any[],
+    prevOutputs: any[] = [],
+    prevKeys: any[] = []
+  ): Promise<any> {
     const outputs = await this._getOutputsByAddresses(keys);
     const updatedKeys = keys.map((key: { address: any; indexText: string }) => {
       const found = outputs.some(
@@ -176,23 +186,42 @@ class Wallet {
       return { ...key, isUsed: found };
     });
     const newOutputs = [...prevOutputs, ...outputs];
+    const newKeys = [...prevKeys, ...updatedKeys];
     const isAllKeyUsed = updatedKeys.every(
       (key: { isUsed: boolean }) => key.isUsed === true
     );
     const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
+    const lastKeyIndex = updatedKeys[updatedKeys.length - 1].indexText
+      .split('/')
+      .pop();
     if (isAllKeyUsed) {
-      const lastKeyIndex = updatedKeys[updatedKeys.length - 1].indexText
-        .split('/')
-        .pop();
-      const newDerivedKeys = await this._generateDerivedKeys(
+      const newDerivedKeys = this._generateDerivedKeys(
         bip32ExtendedKey,
         Number(lastKeyIndex) + 1,
         20,
         false
       );
-      return this._getOutputs(newDerivedKeys, newOutputs);
+      return this._getOutputs(newDerivedKeys, newOutputs, newKeys);
     } else {
-      return { outputs: newOutputs };
+      const countOfUnusedKeys = updatedKeys.reduce((acc, currKey) => {
+        if (!currKey.isUsed) {
+          acc = acc + 1;
+        }
+        return acc;
+      }, 0);
+      if (countOfUnusedKeys < 20) {
+        const remainingDerivedKeys = this._generateDerivedKeys(
+          bip32ExtendedKey,
+          Number(lastKeyIndex) + 1,
+          20 - countOfUnusedKeys,
+          false
+        );
+        return {
+          outputs: newOutputs,
+          derivedKeys: [...newKeys, ...remainingDerivedKeys],
+        };
+      }
+      return { outputs: newOutputs, derivedKeys: newKeys };
     }
   }
 
@@ -201,11 +230,11 @@ class Wallet {
     prevOutputs: any[] = [],
     nextCursor?: number
   ): Promise<any> {
-    const addressess = this._getAddressesFromKeys(keys);
+    const addresses = this._getAddressesFromKeys(keys);
     const data: {
       outputs: any[];
       nextCursor: number;
-    } = await addressAPI.getOutputsByAddresses(addressess, 100, nextCursor);
+    } = await addressAPI.getOutputsByAddresses(addresses, 100, nextCursor);
     const outputs = [...prevOutputs, ...data.outputs];
     if (data.nextCursor) {
       return await this._getOutputsByAddresses(keys, outputs, data.nextCursor);
@@ -214,12 +243,46 @@ class Wallet {
     }
   }
 
+  async getUTXOs() {
+    const derivedKeys = await Persist.getDerivedKeys();
+    const usedDerivedKeys = derivedKeys.filter(
+      (derivedKey: { isUsed: boolean }) => derivedKey.isUsed === true
+    );
+    const addresses = usedDerivedKeys.map(
+      (usedDerivedKey: { address: any }) => usedDerivedKey.address
+    );
+    return await this._getUTXOsByAddresses(addresses);
+  }
+
+  async _getUTXOsByAddresses(
+    addresses: string[],
+    prevUTXOs: any[] = [],
+    nextCursor?: number
+  ): Promise<any> {
+    const data: {
+      utxos: any[];
+      nextCursor: number;
+    } = await addressAPI.getUTXOsByAddresses(addresses, 100, nextCursor);
+    const utxos = [...prevUTXOs, ...data.utxos];
+    if (data.nextCursor) {
+      return await this._getUTXOsByAddresses(addresses, utxos, data.nextCursor);
+    } else {
+      return { utxos };
+    }
+  }
+
   async _getChangeAddress() {
     const derivedKeys = await Persist.getDerivedKeys();
-    const derivedKey = derivedKeys.find(
+    const ununsedKeyIndex = derivedKeys.findIndex(
       (derivedKey: { isUsed: boolean }) => derivedKey.isUsed === false
     );
-    return derivedKey.address;
+    const newDerivedKeys = [...derivedKeys];
+    newDerivedKeys[ununsedKeyIndex] = {
+      ...newDerivedKeys[ununsedKeyIndex],
+      isUsed: true,
+    };
+    Persist.setDerivedKeys(newDerivedKeys);
+    return newDerivedKeys[ununsedKeyIndex].address;
   }
 
   async _getKeys(addresses: string[]): Promise<object[]> {
@@ -237,91 +300,92 @@ class Wallet {
     amountInSatoshi: number,
     transactionFee: number
   ) {
-    const derivedKeys = await Persist.getDerivedKeys();
-    const addressess = this._getAddressesFromKeys(derivedKeys);
-    const utxos = await addressAPI.getUTXOsByAddresses(addressess);
-    Persist.setUtxos(utxos.utxos);
+    const { utxos } = await this.getUTXOs();
+    const mmtxos = utxos.map((utxo: any) => ({ ...utxo, isUsed: false }));
+    Persist.setUtxos(mmtxos);
     const targets = [
       { address: receiverAddress, value: Number(amountInSatoshi) },
     ];
-    const transactionHex = await this._createSendTransaction(
-      utxos.utxos,
-      targets,
-      transactionFee
-    );
-    await transactionAPI.broadcastRawTransaction(transactionHex);
+    await this._createSendTransaction(mmtxos, targets, transactionFee);
   }
 
   async _createSendTransaction(
     utxos: [],
     targets: any[],
     transactionFee: number
-  ): Promise<string> {
-    const feeRate = 5; // satoshis per byte
-    let { inputs, outputs, fee } = coinSelect(utxos, targets, feeRate);
-    // the accumulated fee is always returned for analysis
-    // .inputs and .outputs will be undefined if no solution was found
-    if (!inputs || !outputs) throw new Error('Empty inputs || outputs');
+  ) {
+    try {
+      const feeRate = 5; // satoshis per byte
+      let { inputs, outputs, fee } = coinSelect(utxos, targets, feeRate);
+      // the accumulated fee is always returned for analysis
+      // .inputs and .outputs will be undefined if no solution was found
+      if (!inputs || !outputs) throw new Error('Empty inputs || outputs');
 
-    const txIds = inputs.map(
-      (input: { outputTxHash: any }) => input.outputTxHash
-    );
-    const rawTxsResponse = await transactionAPI.getRawTransactionsByTxIDs(
-      txIds
-    );
-    const inputsWithRawTxs = rawTxsResponse.rawTxs.map((rawTx: any) => {
-      const hex = Buffer.from(rawTx.txSerialized, 'base64').toString('hex');
-      return { ...rawTx, hex };
-    });
-    let merged = [];
-    for (let i = 0; i < inputs.length; i++) {
-      merged.push({
-        ...inputs[i],
-        ...inputsWithRawTxs.find(
-          (element: { txId: any }) => element.txId === inputs[i].outputTxHash
-        ),
+      const txIds = inputs.map(
+        (input: { outputTxHash: any }) => input.outputTxHash
+      );
+      const rawTxsResponse = await transactionAPI.getRawTransactionsByTxIDs(
+        txIds
+      );
+      const inputsWithRawTxs = rawTxsResponse.rawTxs.map((rawTx: any) => {
+        const hex = Buffer.from(rawTx.txSerialized, 'base64').toString('hex');
+        return { ...rawTx, hex };
       });
-    }
-    const psbt = new Psbt({
-      network: network.BITCOIN_SV_REGTEST,
-      forkCoin: 'bch',
-    });
-    psbt.setVersion(1);
-    merged.forEach(
-      (input: { outputTxHash: any; outputIndex: any; hex: any }) => {
-        psbt.addInput({
-          hash: input.outputTxHash,
-          index: input.outputIndex,
-          nonWitnessUtxo: Buffer.from(input.hex, 'hex'),
-          // redeemScript: output,
+      let merged = [];
+      for (let i = 0; i < inputs.length; i++) {
+        merged.push({
+          ...inputs[i],
+          ...inputsWithRawTxs.find(
+            (element: { txId: any }) => element.txId === inputs[i].outputTxHash
+          ),
         });
       }
-    );
-
-    outputs.forEach(async (output: { address: any; value: any }) => {
-      // watch out, outputs may have been added that you need to provide
-      // an output address/script for
-      if (!output.address) {
-        output.address = await this._getChangeAddress();
-      }
-      psbt.addOutput({
-        address: output.address,
-        value: output.value,
+      const psbt = new Psbt({
+        network: network.BITCOIN_SV_REGTEST,
+        forkCoin: 'bch',
       });
-    });
+      psbt.setVersion(1);
+      merged.forEach(
+        (input: { outputTxHash: any; outputIndex: any; hex: any }) => {
+          psbt.addInput({
+            hash: input.outputTxHash,
+            index: input.outputIndex,
+            nonWitnessUtxo: Buffer.from(input.hex, 'hex'),
+            // redeemScript: output,
+          });
+        }
+      );
+      outputs.forEach(async (output: { address: any; value: any }) => {
+        // watch out, outputs may have been added that you need to provide
+        // an output address/script for
+        if (!output.address) {
+          output.address = await this._getChangeAddress();
+        }
+        psbt.addOutput({
+          address: output.address,
+          value: output.value,
+        });
+      });
 
-    const addresses = merged.map(input => input.address);
-    const keys: object[] = await this._getKeys(addresses);
+      const addresses = merged.map(input => input.address);
+      const keys: object[] = await this._getKeys(addresses);
+      keys.forEach((key: any, i) => {
+        psbt.signInput(i, key);
+      });
 
-    keys.forEach((key: any, i) => {
-      psbt.signInput(i, key);
-    });
+      psbt.validateSignaturesOfAllInputs();
+      psbt.finalizeAllInputs();
+      const transactionHex = psbt.extractTransaction(true).toHex();
+      const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
+      await transactionAPI.broadcastRawTransaction(base64);
+      this._updateUTXOs(inputs, utxos);
+    } catch (error) {
+      throw error;
+    }
+  }
 
-    psbt.validateSignaturesOfAllInputs();
-    psbt.finalizeAllInputs();
-    const transactionHex = psbt.extractTransaction(true).toHex();
-    const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
-    return base64;
+  _updateUTXOs(inputs: any[], utxos: any[]) {
+    // inputs
   }
 
   async login(profileId: string, password: string) {

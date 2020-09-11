@@ -21,7 +21,7 @@ class WalletDashboard extends React.Component {
       lastRefreshed: new Date(),
       autoRefreshToggle: false,
       selectnum: '',
-      txid: ''
+      txid: '',
     };
   }
   transactionList = [];
@@ -35,18 +35,17 @@ class WalletDashboard extends React.Component {
   async componentDidMount() {
     const { dispatch } = this.props;
     dispatch(walletActions.getOutputs());
-    this.timerID = setInterval(
-      () =>
-        this.setState({
-          timeSinceLastRefreshed: new Date()
-        }),
-      10000
-    );
-    const autoRefreshTimeInSecs = (1 * 60 * 1000) / 2;
-    this.autoRefreshTimer = setInterval(() => {
-      console.log('auto refresh');
-      this.onRefresh();
-    }, autoRefreshTimeInSecs);
+    // this.timerID = setInterval(
+    //   () =>
+    //     this.setState({
+    //       timeSinceLastRefreshed: new Date(),
+    //     }),
+    //   10000
+    // );
+    // const autoRefreshTimeInSecs = 59 * 60 * 1000;
+    // this.autoRefreshTimer = setInterval(() => {
+    //   this.onRefresh();
+    // }, autoRefreshTimeInSecs);
   }
 
   toggleTransactionModal = txidpar => {
@@ -67,7 +66,7 @@ class WalletDashboard extends React.Component {
     await dispatch(walletActions.getOutputs());
     this.setState({
       lastRefreshed: new Date(),
-      timeSinceLastRefreshed: new Date()
+      timeSinceLastRefreshed: new Date(),
     });
   };
 
@@ -79,7 +78,7 @@ class WalletDashboard extends React.Component {
           Last refreshed{': '}
           {formatDistanceToNow(lastRefreshed, {
             includeSeconds: true,
-            addSuffix: true
+            addSuffix: true,
           })}
         </div>
       );
@@ -91,53 +90,53 @@ class WalletDashboard extends React.Component {
     dispatch(authActions.logout());
   };
 
-  // renderTransaction() {
-  //   const { isLoading, outputs } = this.props;
-  //   if (!isLoading && outputs.length > 0) {
-  //     const outputsGroupedBy = groupBy(outputs, 'outputTxHash');
-  //     return Object.entries(outputsGroupedBy).map(tx => {
-  //       return (
-  //         <div key={tx[0]} className='card' onClick={this.toggleTransactionModal(tx[0])}>
-  //           <div className='card-header'>{tx[0]}</div>
-  //           <div className='card-body'>
-  //             {tx[1].map(output => {
-  //               return (
-  //                 <div className='card'>
-  //                   <div className='card-body'>
-  //                     <p>{`Address: ${output.address}`}</p>
-  //                     <p>{`BlockHash: ${output.blockHash}`}</p>
-  //                     <p>{`BlockHeight: ${output.blockHeight}`}</p>
-  //                     <p>{`OutputIndex: ${output.outputIndex}`}</p>
-  //                     <p>{`OutputTxHash: ${output.outputTxHash}`}</p>
-  //                     <p>{`Address: ${output.address}`}</p>
-  //                     <p>{`SpendInfo: ${output.spendInfo}`}</p>
-  //                     <p>{`TxIndex: ${output.txIndex}`}</p>
-  //                     <p>{`Value: ${satoshiToBSV(output.value)}`}</p>
-  //                     <h3>SpendInfo</h3>
-  //                     {this.renderSpendInfo(output.spendInfo)}
-  //                     <h3>PrevOutpoint</h3>
-  //                     {output.prevOutpoint.map(pOutpoint => {
-  //                       return (
-  //                         <div>
-  //                           <p>{`opIndex: ${pOutpoint[0].opIndex}`}</p>
-  //                           <p>{`opTxHash: ${pOutpoint[0].opTxHash}`}</p>
-  //                           <p>{pOutpoint[1]}</p>
-  //                           <p>{pOutpoint[2]}</p>
-  //                           <hr />
-  //                         </div>
-  //                       );
-  //                     })}
-  //                   </div>
-  //                 </div>
-  //               );
-  //             })}
-  //           </div>
-  //         </div>
-  //       );
-  //     });
-  //   }
-  //   return null;
-  // }
+  renderTransaction() {
+    const { isLoading, outputs } = this.props;
+    if (!isLoading && outputs.length > 0) {
+      const outputsGroupedBy = groupBy(outputs, 'outputTxHash');
+      return Object.entries(outputsGroupedBy).map(tx => {
+        return (
+          <div key={tx[0]} className='card' onClick={this.toggleTransactionModal(tx[0])}>
+            <div className='card-header'>{tx[0]}</div>
+            <div className='card-body'>
+              {tx[1].map(output => {
+                return (
+                  <div className='card'>
+                    <div className='card-body'>
+                      <p>{`Address: ${output.address}`}</p>
+                      <p>{`BlockHash: ${output.blockHash}`}</p>
+                      <p>{`BlockHeight: ${output.blockHeight}`}</p>
+                      <p>{`OutputIndex: ${output.outputIndex}`}</p>
+                      <p>{`OutputTxHash: ${output.outputTxHash}`}</p>
+                      <p>{`Address: ${output.address}`}</p>
+                      <p>{`SpendInfo: ${output.spendInfo}`}</p>
+                      <p>{`TxIndex: ${output.txIndex}`}</p>
+                      <p>{`Value: ${satoshiToBSV(output.value)}`}</p>
+                      <h3>SpendInfo</h3>
+                      {this.renderSpendInfo(output.spendInfo)}
+                      <h3>PrevOutpoint</h3>
+                      {output.prevOutpoint.map(pOutpoint => {
+                        return (
+                          <div>
+                            <p>{`opIndex: ${pOutpoint[0].opIndex}`}</p>
+                            <p>{`opTxHash: ${pOutpoint[0].opTxHash}`}</p>
+                            <p>{pOutpoint[1]}</p>
+                            <p>{pOutpoint[2]}</p>
+                            <hr />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      });
+    }
+    return null;
+  }
 
   renderSpendInfo(spendInfo) {
     if (spendInfo) {
@@ -163,32 +162,33 @@ class WalletDashboard extends React.Component {
     }
     return <p>null</p>;
   }
-  renderTransaction() {
-    //let tempCache = [];
-    //let tempOutputs = [];
-    //let tempCachePos = 0;
-    const { isLoading, outputs } = this.props;
-    if (!isLoading && outputs.length > 0) {
-      const outputsGroupedBy = groupBy(outputs, 'outputTxHash');
-      this.numberofpages = Math.ceil(Object.entries(outputsGroupedBy) / 10);
-      if (this.numberofpages < 10) {
-        for (var b = 0; b < this.numberofpages; b++) {
-          this.pagearray[b] = b + 1;
-        }
-      } else {
-        this.pagearray = [1, 2, 3, 4, 5, 6, 7, '-', this.numberofpages];
-      }
-      localStorage.setItem('outputCache', [].concat.apply([], Object.values(outputsGroupedBy)));
-      // tempOutputs = [].concat.apply([], Object.values(outputsGroupedBy));
-      // for (var a = 0; a < tempOutputs.length; a++) {
-      //   tempCache[tempCachePos].unshift(tempOutputs[a]);
-      //   tempCachePos += 1;
-      // }
-      //localStorage.setItem('outputCache',tempCache);
-      this.updatepagearray();
-      this.transactionList = this.printtransactions();
-    }
-  }
+
+  // renderTransaction() {
+  //   //let tempCache = [];
+  //   //let tempOutputs = [];
+  //   //let tempCachePos = 0;
+  //   const { isLoading, outputs } = this.props;
+  //   if (!isLoading && outputs.length > 0) {
+  //     const outputsGroupedBy = groupBy(outputs, 'outputTxHash');
+  //     this.numberofpages = Math.ceil(Object.entries(outputsGroupedBy) / 10);
+  //     if (this.numberofpages < 10) {
+  //       for (var b = 0; b < this.numberofpages; b++) {
+  //         this.pagearray[b] = b + 1;
+  //       }
+  //     } else {
+  //       this.pagearray = [1, 2, 3, 4, 5, 6, 7, '-', this.numberofpages];
+  //     }
+  //     localStorage.setItem('outputCache', [].concat.apply([], Object.values(outputsGroupedBy)));
+  //     // tempOutputs = [].concat.apply([], Object.values(outputsGroupedBy));
+  //     // for (var a = 0; a < tempOutputs.length; a++) {
+  //     //   tempCache[tempCachePos].unshift(tempOutputs[a]);
+  //     //   tempCachePos += 1;
+  //     // }
+  //     //localStorage.setItem('outputCache',tempCache);
+  //     this.updatepagearray();
+  //     this.transactionList = this.printtransactions();
+  //   }
+  // }
 
   printtransactions = () => {
     return localStorage
@@ -204,7 +204,7 @@ class WalletDashboard extends React.Component {
             blockHeight,
             outputIndex,
             spendInfo,
-            prevOutpoint
+            prevOutpoint,
           },
           index
         ) => {
@@ -435,18 +435,18 @@ class WalletDashboard extends React.Component {
             <Button className='right floated' icon onClick={this.onRefresh}>
               <Icon name='refresh' />
             </Button>
-            {this.renderLastRefresh()}
+            {/* {this.renderLastRefresh()} */}
           </div>
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            {this.renderTransaction()}
-            {this.transactionList}
+            {/* {this.renderTransaction()} */}
+            {/* {this.transactionList} */}
           </div>
         </div>
-        <div className='row'>
-          {/* <div className='col-md-12'>{this.renderPagination()}</div> */}
-          <div className='col-md-12 col-lg-12 text-center'>
+        {/* <div className='row'> */}
+        {/* <div className='col-md-12'>{this.renderPagination()}</div> */}
+        {/* <div className='col-md-12 col-lg-12 text-center'>
             <nav aria-label='transactions navigation'>
               <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
             </nav>
@@ -458,7 +458,7 @@ class WalletDashboard extends React.Component {
                 type='text'
                 onChange={event =>
                   this.setState({
-                    selectnum: event.target.value
+                    selectnum: event.target.value,
                   })
                 }
               />
@@ -466,17 +466,17 @@ class WalletDashboard extends React.Component {
                 Go
               </button>
             </form>
-          </div>
-        </div>
-        {this.renderTransactionModal()}
+          </div> */}
+        {/* </div> */}
+        {/* {this.renderTransactionModal()} */}
         {this.renderSendTransactionModal()}
       </>
     );
   }
 
   componentWillUnmount() {
-    clearInterval(this.timerID);
-    clearInterval(this.autoRefreshTimer);
+    // clearInterval(this.timerID);
+    // clearInterval(this.autoRefreshTimer);
   }
 }
 
@@ -484,17 +484,17 @@ WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   balance: PropTypes.number.isRequired,
-  outputs: PropTypes.arrayOf(PropTypes.object)
+  outputs: PropTypes.arrayOf(PropTypes.object),
 };
 
 WalletDashboard.defaultProps = {
-  outputs: []
+  outputs: [],
 };
 
 const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
-  outputs: walletSelectors.getOutputs(state)
+  outputs: walletSelectors.getOutputs(state),
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));

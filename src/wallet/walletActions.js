@@ -58,7 +58,7 @@ export const createSendTransaction = (receiverAddress, amountInSatoshi, transact
     );
     dispatch(createSendTransactionSuccess(response));
   } catch (error) {
-    console.log(error);
     dispatch(createSendTransactionFailure());
+    throw error;
   }
 };
