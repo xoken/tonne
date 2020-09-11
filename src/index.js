@@ -13,13 +13,19 @@ import * as serviceWorker from './serviceWorker';
 import configureStore from './shared/store/configureStore';
 import { PersistGate } from 'redux-persist/integration/react';
 import 'semantic-ui-css/semantic.min.css';
+import ExplorerAuth from './explorer/modules/ExplorerAuth';
 
 const { store, persistor } = configureStore();
 
-localStorage.setItem('username', 'ExplorerUser');
-localStorage.setItem('password', 'MzQzNTExOTc3MTk1NTAwMDE5Nw');
-localStorage.setItem('hostname', '127.0.0.1');
-localStorage.setItem('port', 9091);
+// if (
+//   localStorage.getItem('sessionkey') === null ||
+//   localStorage.getItem('sessionkey') === 'null' ||
+//   localStorage.getItem('sessionkey') === undefined ||
+//   localStorage.getItem('sessionkey') === ''
+// ) {
+//   ExplorerAuth.httpsauth();
+//   console.log('httpsauth called from index');
+// }
 
 const PersistComponent = persistor
   ? props => <PersistGate {...props} loading={null} persistor={persistor} />

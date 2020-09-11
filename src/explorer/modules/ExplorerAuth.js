@@ -59,4 +59,7 @@ export default class ExplorerAuth {
   componentDidMount() {
     this.test();
   }
+  componentDidUpdate() {
+    this.test();
+  }
 }

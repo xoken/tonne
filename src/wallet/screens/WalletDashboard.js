@@ -21,7 +21,7 @@ class WalletDashboard extends React.Component {
       lastRefreshed: new Date(),
       autoRefreshToggle: false,
       selectnum: '',
-      txid: '',
+      txid: ''
     };
   }
   transactionList = [];
@@ -31,6 +31,7 @@ class WalletDashboard extends React.Component {
   pagearrlength = 9;
   selected = 1;
   pagescontainer = [];
+  outputTempCache = [];
 
   async componentDidMount() {
     const { dispatch } = this.props;
@@ -66,7 +67,7 @@ class WalletDashboard extends React.Component {
     await dispatch(walletActions.getOutputs());
     this.setState({
       lastRefreshed: new Date(),
-      timeSinceLastRefreshed: new Date(),
+      timeSinceLastRefreshed: new Date()
     });
   };
 
@@ -78,7 +79,7 @@ class WalletDashboard extends React.Component {
           Last refreshed{': '}
           {formatDistanceToNow(lastRefreshed, {
             includeSeconds: true,
-            addSuffix: true,
+            addSuffix: true
           })}
         </div>
       );
@@ -164,91 +165,79 @@ class WalletDashboard extends React.Component {
   }
 
   // renderTransaction() {
-  //   //let tempCache = [];
-  //   //let tempOutputs = [];
-  //   //let tempCachePos = 0;
   //   const { isLoading, outputs } = this.props;
   //   if (!isLoading && outputs.length > 0) {
   //     const outputsGroupedBy = groupBy(outputs, 'outputTxHash');
-  //     this.numberofpages = Math.ceil(Object.entries(outputsGroupedBy) / 10);
+  //     console.table(Object.entries(outputsGroupedBy));
+  //     this.outputTempCache = outputsGroupedBy;
+  //     this.numberofpages = Math.ceil(Object.entries(outputsGroupedBy).length / 10);
+  //     console.log(this.numberofpages + 'this.numberofpages');
   //     if (this.numberofpages < 10) {
+  //       this.pagearrlength = this.numberofpages;
   //       for (var b = 0; b < this.numberofpages; b++) {
   //         this.pagearray[b] = b + 1;
   //       }
   //     } else {
   //       this.pagearray = [1, 2, 3, 4, 5, 6, 7, '-', this.numberofpages];
   //     }
-  //     localStorage.setItem('outputCache', [].concat.apply([], Object.values(outputsGroupedBy)));
-  //     // tempOutputs = [].concat.apply([], Object.values(outputsGroupedBy));
-  //     // for (var a = 0; a < tempOutputs.length; a++) {
-  //     //   tempCache[tempCachePos].unshift(tempOutputs[a]);
-  //     //   tempCachePos += 1;
-  //     // }
-  //     //localStorage.setItem('outputCache',tempCache);
+  //     //localStorage.setItem('outputCache', outputsGroupedBy);
   //     this.updatepagearray();
-  //     this.transactionList = this.printtransactions();
+  //     this.printtransactions();
+  //     debugger;
   //   }
   // }
 
   printtransactions = () => {
-    return localStorage
-      .getItem('outputCache')
-      .map(
-        (
-          {
-            outputTxHash,
-            value,
-            address,
-            blockHash,
-            txIndex,
-            blockHeight,
-            outputIndex,
-            spendInfo,
-            prevOutpoint,
-          },
-          index
-        ) => {
-          return (
-            <div key={index} className='card' onClick={this.toggleTransactionModal(index)}>
-              <div className='card-header'>{outputTxHash}</div>
-              <div className='card-body'>
-                <div className='row'>
-                  <div className='col-md-6'></div>
-                  <div className='col-md-6'>
-                    <p>{address}</p>
-                    <p>{satoshiToBSV(value)}</p>
-                  </div>
-                </div>
-                <div className='row'>
-                  <div className='col-md-12'>
-                    <p>Address: {address}</p>
-                    <p>BlockHash: {blockHash}</p>
-                    <p>BlockHeight: {blockHeight}</p>
-                    <p>OutputIndex: {outputIndex}</p>
-                    <p>OutputTxHash: {outputTxHash}</p>
-                    <p>TxIndex: {txIndex}</p>
-                    <p>Value: {satoshiToBSV(value)}</p>
-                    <h3>SpendInfo</h3>
-                    {this.renderSpendInfo(spendInfo)}
-                    <h3>PrevOutpoint</h3>
-                    {prevOutpoint.map(pOutpoint => {
-                      return (
-                        <div>
-                          <p>{`opIndex: ${pOutpoint[0].opIndex}`}</p>
-                          <p>{`opTxHash: ${pOutpoint[0].opTxHash}`}</p>
-                          <p>{pOutpoint[1]}</p>
-                          <p>{pOutpoint[2]}</p>
-                          <hr />
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              </div>
-            </div>
-          );
-        }
+    Object.entries(this.outputTempCache).forEach(([, tx], outindex) => {
+      this.transactionList.push(
+        <div key={tx[0]} className='card' onClick={this.toggleTransactionModal(tx[0])}>
+          <div className='card-header'>{tx[0]}</div>
+          <div className='card-body'>{this.trxs(tx[1])}</div>
+        </div>
       );
+    });
+  };
+
+  trxs = tx1 => {
+    if (tx1 !== null && tx1 !== undefined) {
+      Object.entries(tx1).map(output => {
+        return (
+          <div className='card'>
+            <div className='card-body'>
+              <p>{`Address: ${output.address}`}</p>
+              <p>{`BlockHash: ${output.blockHash}`}</p>
+              <p>{`BlockHeight: ${output.blockHeight}`}</p>
+              <p>{`OutputIndex: ${output.outputIndex}`}</p>
+              <p>{`OutputTxHash: ${output.outputTxHash}`}</p>
+              <p>{`Address: ${output.address}`}</p>
+              <p>{`SpendInfo: ${output.spendInfo}`}</p>
+              <p>{`TxIndex: ${output.txIndex}`}</p>
+              <p>{`Value: ${satoshiToBSV(output.value)}`}</p>
+              <h3>SpendInfo</h3>
+              {this.renderSpendInfo(output.spendInfo)}
+              <h3>PrevOutpoint</h3>
+              {}
+            </div>
+          </div>
+        );
+      });
+    }
+  };
+
+  prevouts = prevOutpoint => {
+    if (prevOutpoint !== null && prevOutpoint !== undefined) {
+      Object.entries(prevOutpoint).map(pOutpoint => {
+        return (
+          <div>
+            <p>{`opIndex: ${pOutpoint[0].opIndex}`}</p>
+            <p>{`opTxHash: ${pOutpoint[0].opTxHash}`}</p>
+            <p>{pOutpoint[1]}</p>
+            <p>{pOutpoint[2]}</p>
+            <hr />
+          </div>
+        );
+      });
+    }
   };
 
   renderPagination() {
@@ -372,10 +361,11 @@ class WalletDashboard extends React.Component {
         <Modal.Content>
           <Modal.Description></Modal.Description>
           {
-            //<ExplorerTransaction txid={this.state.txid} />
+            //  <ExplorerTransaction txid={this.state.txid} />
           }
-
-          <ExplorerTransaction txid='098ec555381e7f61a5b80e106fc2d65381b308d21a376db0e3316c4c2eaa2616' />
+          {
+            //          <ExplorerTransaction txid='098ec555381e7f61a5b80e106fc2d65381b308d21a376db0e3316c4c2eaa2616' />
+          }
         </Modal.Content>
         <Modal.Actions>
           <Button primary onClick={this.toggleTransactionModal}>
@@ -440,13 +430,15 @@ class WalletDashboard extends React.Component {
         </div>
         <div className='row'>
           <div className='col-md-12'>
-            {/* {this.renderTransaction()} */}
-            {/* {this.transactionList} */}
+            {}
+            {this.transactionList}
           </div>
         </div>
-        {/* <div className='row'> */}
-        {/* <div className='col-md-12'>{this.renderPagination()}</div> */}
-        {/* <div className='col-md-12 col-lg-12 text-center'>
+        <div className='row'>
+          {
+            //  <div className='col-md-12'>{this.renderPagination()}</div>
+          }
+          <div className='col-md-12 col-lg-12 text-center'>
             <nav aria-label='transactions navigation'>
               <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
             </nav>
@@ -458,7 +450,7 @@ class WalletDashboard extends React.Component {
                 type='text'
                 onChange={event =>
                   this.setState({
-                    selectnum: event.target.value,
+                    selectnum: event.target.value
                   })
                 }
               />
@@ -466,10 +458,14 @@ class WalletDashboard extends React.Component {
                 Go
               </button>
             </form>
-          </div> */}
-        {/* </div> */}
-        {/* {this.renderTransactionModal()} */}
-        {this.renderSendTransactionModal()}
+          </div>
+        </div>
+        {
+          //this.renderTransactionModal()
+        }
+        {
+          //this.renderSendTransactionModal()
+        }
       </>
     );
   }
@@ -484,17 +480,17 @@ WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   balance: PropTypes.number.isRequired,
-  outputs: PropTypes.arrayOf(PropTypes.object),
+  outputs: PropTypes.arrayOf(PropTypes.object)
 };
 
 WalletDashboard.defaultProps = {
-  outputs: [],
+  outputs: []
 };
 
 const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
-  outputs: walletSelectors.getOutputs(state),
+  outputs: walletSelectors.getOutputs(state)
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));

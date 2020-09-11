@@ -56,6 +56,8 @@ class ExplorerBlockHeight extends React.Component {
   };
 
   printresults = async () => {
+    this.summarysect1.length = 0;
+    this.summarysect2.length = 0;
     this.backheight = this.rjdecoded.block.height;
     this.currentblockhash = this.rjdecoded.block.hash;
     this.numberoftransactions = this.rjdecoded.block.txCount;

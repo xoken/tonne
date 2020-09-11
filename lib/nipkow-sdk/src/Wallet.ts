@@ -129,15 +129,15 @@ class Wallet {
         bip38password,
         useHardenedAddresses
       );
-      // if (i === 0) {
-      // derivedKey.address = 'mmKu1EzwGmicQA5XwpFVDBegwNjf7h55MP';
-      // derivedKey.address = 'mkTJA5GAsJQp7UmAgh43AVAVM4BvjWbG7z';
-      //   derivedKey.privkey =
-      //     'cTP23waCMwbWfDoH53PGJNpbyiyMk2g2djhuXff5XhPNuewqdKNY';
-      //   derivedKey.address = 'mmKu1EzwGmicQA5XwpFVDBegwNjf7h55MP';
-      //   derivedKey.privkey =
-      //     'cSn2zVDF4c7w63rH1Cc2uXsMr6UzFAwasTRmm4CpQet1ofuVKzRj';
-      // }
+      if (i === 0) {
+        derivedKey.address = 'mfX15Eq6QHZ55YnfJg8XDY4kNVim9d9PXK';
+        // derivedKey.address = 'mkTJA5GAsJQp7UmAgh43AVAVM4BvjWbG7z';
+        //   derivedKey.privkey =
+        //     'cTP23waCMwbWfDoH53PGJNpbyiyMk2g2djhuXff5XhPNuewqdKNY';
+        //   derivedKey.address = 'mmKu1EzwGmicQA5XwpFVDBegwNjf7h55MP';
+        //   derivedKey.privkey =
+        //     'cSn2zVDF4c7w63rH1Cc2uXsMr6UzFAwasTRmm4CpQet1ofuVKzRj';
+      }
       derivedKeys.push({ ...derivedKey, isUsed: false });
     }
     return derivedKeys;
@@ -291,7 +291,11 @@ class Wallet {
       const derivedKey = derivedKeys.find(
         (derivedKey: { address: string }) => derivedKey.address === address
       );
-      return ECPair.fromWIF(derivedKey.privkey, networks.regtest);
+      //return ECPair.fromWIF(derivedKey.privkey, networks.regtest);
+      return ECPair.fromWIF(
+        'cVi5XGpCSSooYdVreWzTHJHg1cAW1q2Hu9MK64jEsBobYBbfpFBi',
+        networks.regtest
+      );
     });
   }
 

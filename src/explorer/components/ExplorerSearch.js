@@ -8,23 +8,18 @@ class ExplorerSearch extends React.Component {
     this.state = { searchterm: '' };
   }
 
-  searchNegativeMsg = [];
   onSearchClick = () => {
     if (this.state.searchterm !== '') {
       if (this.state.searchterm.length < 26) {
         this.props.history.push('/explorer/blockheight/' + this.state.searchterm + '/""');
-        //  window.location.replace(blhpath + '?blockheight=' + searchterm.value + '');
       } else if (this.state.searchterm.length >= 26 && this.state.searchterm.length <= 35) {
         this.props.history.push(`/explorer/address/${this.state.searchterm}`);
-        //  window.location.replace(addpath + '?address=' + searchterm.value + '');
       } else if (this.state.searchterm.length === 64) {
-        if (this.state.searchterm.substring(0, 3) === '000') {
-          this.props.history.push(`/explorer/blockhash/${this.state.searchterm}/""`);
-          //  window.location.replace(blhpath + '?blockhash=' + searchterm.value + '');
-        } else {
-          this.props.history.push(`/explorer/transaction/${this.state.searchterm}`);
-          //  window.location.replace(txpath + '?transaction=' + searchterm.value + '');
-        }
+        //if (this.state.searchterm.substring(0, 3) === '000') {
+        //  this.props.history.push(`/explorer/blockhash/${this.state.searchterm}/""`);
+        //} else {
+        this.props.history.push(`/explorer/transaction/${this.state.searchterm}`);
+        //  }
       } else {
         console.log(this.props.history + 'this.props.history');
         this.props.history.push(`/explorer/404`);

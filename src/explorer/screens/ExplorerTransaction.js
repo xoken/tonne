@@ -46,6 +46,9 @@ class ExplorerTransaction extends React.Component {
 
   printresults = () => {
     this.tempoutputstring.length = 0;
+    this.inputaddress.length = 0;
+    this.summarysect1.length = 0;
+    this.summarysect2.length = 0;
     this.backblockHeight = this.rjdecoded.tx.blockHeight;
     this.backtxIndex = this.rjdecoded.tx.txIndex;
     function checkforinvalidtxid(txidpar) {
@@ -240,7 +243,7 @@ class ExplorerTransaction extends React.Component {
       if (this.rjdecoded.tx.tx.txOuts[z].txSpendInfo != null) {
         this.tempoutputstring.push(
           <tr>
-            <td>
+            <td colspan='2'>
               <table class='outputinputtd'>
                 <tr>
                   <td>
@@ -305,8 +308,8 @@ class ExplorerTransaction extends React.Component {
         ) {
           this.tempoutputstring.push(
             <tr>
-              <td>
-                <table class='outputinputtd'>
+              <td colspan='2'>
+                <table className='outputinputtd'>
                   <tr>
                     <br />
                     <td colspan='2'>
