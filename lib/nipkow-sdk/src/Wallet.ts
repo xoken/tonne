@@ -301,12 +301,24 @@ class Wallet {
     transactionFee: number
   ) {
     const { utxos } = await this.getUTXOs();
-    const mmtxos = utxos.map((utxo: any) => ({ ...utxo, isUsed: false }));
-    Persist.setUtxos(mmtxos);
+    const mUTXOs = utxos.map((utxo: any) => ({ ...utxo, isUsed: false }));
+    const cachedUTXOs = await Persist.getUtxos();
+    let finalUTXOs;
+    if (cachedUTXOs.length > 0) {
+      const mergedUTXOs = mUTXOs.map((mUTXO: any, index: string | number) => {
+        return Object.assign(mUTXO, cachedUTXOs[index]);
+      });
+      finalUTXOs = mergedUTXOs.filter(
+        (mergedUTXO: { isUsed: boolean }) => mergedUTXO.isUsed === false
+      );
+    } else {
+      await Persist.setUtxos(mUTXOs);
+      finalUTXOs = mUTXOs;
+    }
     const targets = [
       { address: receiverAddress, value: Number(amountInSatoshi) },
     ];
-    await this._createSendTransaction(mmtxos, targets, transactionFee);
+    await this._createSendTransaction(finalUTXOs, targets, transactionFee);
   }
 
   async _createSendTransaction(
@@ -378,14 +390,23 @@ class Wallet {
       const transactionHex = psbt.extractTransaction(true).toHex();
       const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
       await transactionAPI.broadcastRawTransaction(base64);
-      this._updateUTXOs(inputs, utxos);
+      await this._updateUTXOs(inputs, utxos);
     } catch (error) {
       throw error;
     }
   }
 
-  _updateUTXOs(inputs: any[], utxos: any[]) {
-    // inputs
+  async _updateUTXOs(inputs: any[], utxos: any[]) {
+    const newUTXOs = [...utxos];
+    inputs.forEach(input => {
+      const utxoIndex = utxos.findIndex(utxo => utxo.address === input.address);
+      newUTXOs[utxoIndex] = {
+        ...newUTXOs[utxoIndex],
+        isUsed: true,
+      };
+    });
+
+    await Persist.setUtxos(newUTXOs);
   }
 
   async login(profileId: string, password: string) {
