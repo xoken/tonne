@@ -4,8 +4,8 @@ import Qs from 'qs';
 class AddressAPI {
   getOutputsByAddress = async (
     address: string,
-    pagesize: number,
-    cursor: number
+    pagesize?: number,
+    cursor?: number
   ) => {
     try {
       const { data } = await get(`address/${address}/outputs`, {
@@ -19,8 +19,8 @@ class AddressAPI {
 
   getOutputsByAddresses = async (
     addresses: string[],
-    pagesize: number,
-    cursor: number
+    pagesize?: number,
+    cursor?: number
   ) => {
     try {
       const { data } = await get(`addresses/outputs`, {
@@ -40,8 +40,8 @@ class AddressAPI {
 
   getUTXOsByAddress = async (
     address: string,
-    pagesize: number,
-    cursor: string
+    pagesize?: number,
+    cursor?: number
   ) => {
     try {
       const { data } = await get(`address/${address}/utxos`, {
@@ -55,8 +55,8 @@ class AddressAPI {
 
   getUTXOsByAddresses = async (
     addresses: string[],
-    pagesize: number,
-    cursor: string
+    pagesize?: number,
+    cursor?: number
   ) => {
     try {
       const { data } = await get(`addresses/utxos`, {

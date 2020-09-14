@@ -1,4 +1,8 @@
-import * as Bitcoin from 'bitcoinjs-lib';
+import * as network from './constants/network';
+import * as derivationPaths from './constants/derivationPaths';
+import wallet from './Wallet';
+import * as persist from './Persist';
+
 export { addressAPI } from './AddressAPI';
 export { authAPI } from './AuthAPI';
 export { blockAPI } from './BlockAPI';
@@ -7,15 +11,6 @@ export { merkleBranchAPI } from './MerkleBranchAPI';
 export { scriptHashAPI } from './ScriptHashAPI';
 export { transactionAPI } from './TransactionAPI';
 export { userAPI } from './UserAPI';
-
-export const generateRandomAddress = () => {
-  return Bitcoin.ECPair.makeRandom().toWIF();
-};
-
-// export const generateAddressFromWIF = (wifString: string) => {
-//   return Bitcoin.ECPair.fromWIF(wifString);
-// };
-
-// export const createTransaction = () => {
-//   const transaction = new Bitcoin.Transaction();
-// };
+export { network, derivationPaths };
+export { wallet };
+export { persist };

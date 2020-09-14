@@ -17,12 +17,12 @@ const httpReq = axios.create({
 });
 
 httpReq.interceptors.request.use(
-  (config) => {
+  config => {
     const token = localStorage.getItem('sessionkey');
     config.headers.Authorization = token ? `Bearer ${token}` : '';
     return config;
   },
-  (error) => {
+  error => {
     console.log(error);
     return Promise.reject(error);
   }

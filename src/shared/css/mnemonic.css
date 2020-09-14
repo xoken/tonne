@@ -1,0 +1,94 @@
+.letter {
+  text-align: center;
+  background-color: #b3c8bd;
+  cursor: pointer;
+  display: inline-block;
+  padding: 15px;
+  border-radius: 5px;
+  margin: 10px;
+  color: white;
+  vertical-align: middle;
+  font-size: 18px;
+  width: 57px;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
+.wordlist {
+  text-align: center;
+  background-color: rgb(235, 188, 88);
+  cursor: pointer;
+  display: inline-block;
+  padding: 5px 10px 5px 10px;
+  border-radius: 35px;
+  margin: 5px;
+  color: white;
+  vertical-align: middle;
+  font-size: 18px;
+  min-width: 100px;
+}
+.mnmargin {
+  margin: 0px 5px 0px 5px;
+}
+.mnword {
+}
+#alphabets {
+  padding: 0px 20px 0px 20px;
+}
+.mnemonic {
+  width: 100%;
+  color: #447319;
+  text-align: center;
+  font-size: 20px;
+  font-weight: bold;
+  border: 1pt solid lightgrey;
+  min-height: 30px;
+  user-select: none;
+  margin: 20px 0px 20px 0px;
+}
+#backspc {
+  float: right;
+  color: white;
+}
+#wordsremaining {
+  float: right;
+}
+#suggestions {
+  padding: 0px 20px 0px 20px;
+  text-align: center;
+}
+
+.generalbtns {
+  display: inline-block;
+  font-weight: 400;
+  color: white !important;
+  text-align: center;
+  margin: 15px;
+  width: fit-content;
+  text-decoration: none;
+  vertical-align: middle;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  padding: 0.375rem 0.75rem;
+  font-size: 18px;
+  line-height: 1.5;
+  border-radius: 5px;
+  border: none;
+  cursor: pointer;
+  background-color: #eab300;
+  animation-duration: 1.5s;
+  position: relative;
+  animation-name: buttonslide;
+  transition: background-color 0.35s ease-in-out;
+}
+
+.generalbtns:hover {
+  text-decoration: none;
+  background-color: grey;
+}

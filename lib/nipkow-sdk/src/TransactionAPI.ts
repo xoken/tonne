@@ -34,7 +34,7 @@ class TransactionAPI {
     }
   };
 
-  getRawTransactionByTxIDs = async (txIDs: string[]) => {
+  getRawTransactionsByTxIDs = async (txIDs: string[]) => {
     try {
       const { data } = await get(`rawtransactions`, {
         params: {
@@ -52,9 +52,7 @@ class TransactionAPI {
   broadcastRawTransaction = async (hash: string) => {
     try {
       const { data } = await post(`relaytx`, {
-        params: {
-          rawTx: hash,
-        },
+        rawTx: hash,
       });
       return data;
     } catch (error) {

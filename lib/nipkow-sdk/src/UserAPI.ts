@@ -9,7 +9,10 @@ class UserAPI {
   ) => {
     try {
       const { data } = await post('user', {
-        data: { username, firstName, lastName, email },
+        username,
+        firstName,
+        lastName,
+        email,
       });
       return data;
     } catch (error) {

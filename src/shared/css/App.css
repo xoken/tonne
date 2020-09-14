@@ -1,0 +1,18 @@
+.navbar {
+  box-shadow: 0px 15px 10px -15px #111;
+  max-height: 70px;
+  width: 100% !important;
+}
+.navbar-brand img {
+  max-height: 70px;
+}
+
+div [class*='left floated'] {
+  float: left;
+  margin-left: 0.25em;
+}
+
+div [class*='right floated'] {
+  float: right;
+  margin-right: 0.25em;
+}
