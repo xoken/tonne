@@ -13,7 +13,7 @@ import * as serviceWorker from './serviceWorker';
 import configureStore from './shared/store/configureStore';
 import { PersistGate } from 'redux-persist/integration/react';
 import 'semantic-ui-css/semantic.min.css';
-import ExplorerAuth from './explorer/modules/ExplorerAuth';
+// import ExplorerAuth from './explorer/modules/ExplorerAuth';
 
 const { store, persistor } = configureStore();
 
