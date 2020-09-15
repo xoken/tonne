@@ -16,7 +16,12 @@ code {
 .navbar {
   margin-bottom: 50px;
 }
-
+.walletclass{
+  border-bottom:3px solid #eab300;
+}
+.explorerclass{
+  border-bottom:3px solid #eab300;
+}
 .opacitywhileload {
   animation-duration: 2s;
   animation-name: opacityload;

@@ -16,6 +16,7 @@ import * as authSelectors from '../../auth/authSelectors';
 
 class WalletHome extends React.Component {
   async componentDidMount() {
+    this.props.changeTabHighlight('wallet');
     const { dispatch } = this.props;
     dispatch(authActions.getProfiles());
   }
