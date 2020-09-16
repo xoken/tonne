@@ -19,8 +19,10 @@ class App extends React.Component {
   changeTabHighlight = prop => {
     if (prop === 'explorer' && prop !== '') {
       this.explorerClassName = prop + 'class';
+      this.walletClassName = '';
     } else if (prop === 'wallet' && prop !== '') {
       this.walletClassName = prop + 'class';
+      this.explorerClassName = '';
     } else {
       this.explorerClassName = '';
       this.walletClassName = '';
@@ -57,14 +59,7 @@ class App extends React.Component {
             <img src={images.logo} className='d-inline-block align-top' alt='' loading='lazy' />
           </Link>
           <div className='cen'>
-            <Link
-              to='/explorer'
-              className={`navbar-brand ${this.explorerClassName}`}
-              onClick={event =>
-                this.setState({
-                  clickedTab: 'explorer'
-                })
-              }>
+            <Link to='/explorer' className={`navbar-brand ${this.explorerClassName}`}>
               <img
                 src={images.blockexplorerlogo}
                 className='d-inline-block align-top headerblockexplorerlogo'
@@ -72,14 +67,7 @@ class App extends React.Component {
                 loading='lazy'
               />
             </Link>
-            <Link
-              to='/wallet'
-              className={`navbar-brand ${this.walletClassName}`}
-              onClick={event =>
-                this.setState({
-                  clickedTab: 'wallet'
-                })
-              }>
+            <Link to='/wallet' className={`navbar-brand ${this.walletClassName}`}>
               <img
                 src={images.walletlogo}
                 className='d-inline-block align-top headerwalletlogo'
