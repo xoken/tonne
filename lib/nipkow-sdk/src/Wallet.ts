@@ -435,6 +435,15 @@ class Wallet {
     }
   }
 
+  async updateProfileName(existingProfileName: string, newProfileName: string) {
+    try {
+      await Persist.updateProfileName(existingProfileName, newProfileName);
+      return { profile: newProfileName };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getProfiles() {
     return { profiles: await Persist.getProfiles() };
   }

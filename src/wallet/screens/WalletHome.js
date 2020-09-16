@@ -15,6 +15,10 @@ import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
 
 class WalletHome extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { existingaccountname: '', newname: '' };
+  }
   async componentDidMount() {
     this.props.changeTabHighlight('wallet');
     const { dispatch } = this.props;
@@ -25,8 +29,18 @@ class WalletHome extends React.Component {
     this.props.history.push(`/wallet/login?profile=${profile}`);
   };
 
+  onRenameAccount = async event => {
+    event.preventDefault();
+    const { dispatch } = this.props;
+    const { existingaccountname, newname } = this.state;
+    try {
+      await dispatch(authActions.updateProfileName(existingaccountname, newname));
+    } catch (error) {}
+  };
+
   renderExistingProfile() {
     const { profiles } = this.props;
+    const { existingaccountname, newname } = this.state;
     if (profiles && profiles.length > 0) {
       return (
         <>
@@ -52,15 +66,29 @@ class WalletHome extends React.Component {
                   <div class='field'>
                     <label>Change Existing Account's Name</label>
                     <div class='ui left icon input'>
-                      <input type='text' placeholder="Existing Account's Name" />
+                      <input
+                        type='text'
+                        placeholder="Existing Account's Name"
+                        value={existingaccountname}
+                        onChange={event =>
+                          this.setState({ existingaccountname: event.target.value })
+                        }
+                      />
                       <i class='user icon'></i>
                     </div>
                     <div class='ui left icon input'>
-                      <input type='text' placeholder='New Name' />
+                      <input
+                        type='text'
+                        placeholder='New Name'
+                        value={newname}
+                        onChange={event => this.setState({ newname: event.target.value })}
+                      />
                       <i class='user icon'></i>
                     </div>
                   </div>
-                  <div class='ui blue submit button'>Rename</div>
+                  <div class='ui blue submit button' onClick={this.onRenameAccount}>
+                    Rename
+                  </div>
                 </div>
               </div>
               <div class='middle aligned column'>

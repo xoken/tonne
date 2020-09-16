@@ -9,6 +9,10 @@ class AuthService {
     return await wallet.createProfile(bip39Mnemonic, password);
   }
 
+  async updateProfileName(existingProfileName, newProfileName) {
+    return await wallet.updateProfileName(existingProfileName, newProfileName);
+  }
+
   async login(profileId, password) {
     return await wallet.login(profileId, password);
   }

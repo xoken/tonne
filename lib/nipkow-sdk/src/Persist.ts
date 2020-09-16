@@ -56,6 +56,27 @@ export const createProfile = async (
   }
 };
 
+export const updateProfileName = async (
+  existingProfileName: string,
+  newProfileName: string
+) => {
+  try {
+    profiles = new PouchDB('Profiles', {
+      revs_limit: 1,
+      auto_compaction: true,
+    });
+    const existingProfile: any = await profiles.find({
+      selector: { name: existingProfileName },
+    });
+    const response: any = await profiles.put({
+      _id: 'profiles',
+      _doc_id_rev: existingProfile._doc_id_rev,
+      name: newProfileName,
+    });
+    console.log(response);
+  } catch (error) {}
+};
+
 export const getProfiles = async () => {
   try {
     profiles = new PouchDB('Profiles', {
