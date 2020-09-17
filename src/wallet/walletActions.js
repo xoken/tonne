@@ -28,8 +28,8 @@ export const getOutputs = () => async (dispatch, getState, { serviceInjector }) 
       dispatch(getBalanceSuccess({ balance }));
     }
   } catch (error) {
-    console.log(error);
     dispatch(getOutputsFailure());
+    throw error;
   }
 };
 
@@ -39,8 +39,8 @@ export const getTransaction = txid => async (dispatch, getState, { serviceInject
     const { txoutputs } = await serviceInjector(WalletService).getTransaction(txid);
     dispatch(getTransactionSuccess({ txoutputs }));
   } catch (error) {
-    console.log(error);
     dispatch(getTransactionFailure());
+    throw error;
   }
 };
 

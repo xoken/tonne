@@ -11,6 +11,7 @@ import coinSelect from 'coinselect';
 import faker from 'faker';
 import * as bip38 from 'bip38';
 import * as bip39 from 'bip39';
+import * as _ from 'lodash';
 import * as Persist from './Persist';
 import derivationPaths from './constants/derivationPaths';
 import network from './constants/network';
@@ -28,6 +29,13 @@ class Wallet {
       derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath,
       bip32RootKey
     );
+    const derivedKeys = this._generateDerivedKeys(
+      bip32ExtendedKey,
+      0,
+      20,
+      false
+    );
+    await Persist.setDerivedKeys(derivedKeys);
     await Persist.setBip32ExtendedKey(bip32ExtendedKey);
   }
 
@@ -129,15 +137,16 @@ class Wallet {
         bip38password,
         useHardenedAddresses
       );
+      /*
       if (i === 0) {
-        derivedKey.address = 'mfX15Eq6QHZ55YnfJg8XDY4kNVim9d9PXK';
-        // derivedKey.address = 'mkTJA5GAsJQp7UmAgh43AVAVM4BvjWbG7z';
-        //   derivedKey.privkey =
-        //     'cTP23waCMwbWfDoH53PGJNpbyiyMk2g2djhuXff5XhPNuewqdKNY';
-        //   derivedKey.address = 'mmKu1EzwGmicQA5XwpFVDBegwNjf7h55MP';
-        //   derivedKey.privkey =
-        //     'cSn2zVDF4c7w63rH1Cc2uXsMr6UzFAwasTRmm4CpQet1ofuVKzRj';
+        derivedKey.address = 'mkTJA5GAsJQp7UmAgh43AVAVM4BvjWbG7z';
+          derivedKey.privkey =
+            'cTP23waCMwbWfDoH53PGJNpbyiyMk2g2djhuXff5XhPNuewqdKNY';
+          derivedKey.address = 'mmKu1EzwGmicQA5XwpFVDBegwNjf7h55MP';
+          derivedKey.privkey =
+            'cSn2zVDF4c7w63rH1Cc2uXsMr6UzFAwasTRmm4CpQet1ofuVKzRj';
       }
+      */
       derivedKeys.push({ ...derivedKey, isUsed: false });
     }
     return derivedKeys;
@@ -148,29 +157,24 @@ class Wallet {
   }
 
   async getOutputs() {
-    const initialDerivedKeys = this._generateDerivedKeys(
-      await Persist.getBip32ExtendedKey(),
-      0,
-      20,
-      false
+    const derivedKeys = await Persist.getDerivedKeys();
+    const { outputs, derivedKeys: newDerivedKeys } = await this._getOutputs(
+      derivedKeys
     );
-    const { outputs, derivedKeys } = await this._getOutputs(initialDerivedKeys);
-    await Persist.setOutputs(outputs); // compare and set
-    await Persist.setDerivedKeys(derivedKeys);
+    await Persist.setOutputs(outputs);
+    await Persist.setDerivedKeys(newDerivedKeys);
     return {
       outputs,
     };
   }
 
   getTransaction(txid: string) {
-    const txoutputs = transactionAPI
-      .getTransactionByTxID(txid)
-      .then(data => {
-        return data;
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    try {
+      const transaction = transactionAPI.getTransactionByTxID(txid);
+      return transaction;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async _getOutputs(
@@ -231,15 +235,66 @@ class Wallet {
     nextCursor?: number
   ): Promise<any> {
     const addresses = this._getAddressesFromKeys(keys);
-    const data: {
-      outputs: any[];
-      nextCursor: number;
-    } = await addressAPI.getOutputsByAddresses(addresses, 100, nextCursor);
-    const outputs = [...prevOutputs, ...data.outputs];
-    if (data.nextCursor) {
-      return await this._getOutputsByAddresses(keys, outputs, data.nextCursor);
+    const { lastFetched, value: savedOutputs } = await Persist.getOutputs();
+    if (lastFetched && savedOutputs.length > 0) {
+      const data: {
+        outputs: any[];
+        nextCursor: number;
+      } = await addressAPI.getOutputsByAddresses(addresses, 1, nextCursor);
+      if (data.outputs.length > 0) {
+        const fetchedOutput = data.outputs[0];
+        const savedOutput = savedOutputs[0];
+        if (_.isEqual(fetchedOutput, savedOutput)) {
+          return savedOutputs;
+        } else {
+          const newData: {
+            outputs: any[];
+            nextCursor: number;
+          } = await addressAPI.getOutputsByAddresses(
+            addresses,
+            100,
+            nextCursor
+          );
+          const matchedIndex = newData.outputs.findIndex(output => {
+            return _.isEqual(savedOutput, output);
+          });
+          if (matchedIndex > -1) {
+            const outputs = [
+              ...newData.outputs.slice(0, matchedIndex),
+              ...savedOutputs,
+            ];
+            return outputs;
+          } else {
+            const outputs = [...prevOutputs, ...newData.outputs];
+            if (newData.nextCursor) {
+              return await this._getOutputsByAddresses(
+                keys,
+                outputs,
+                newData.nextCursor
+              );
+            } else {
+              throw new Error('Something went wrong!');
+            }
+          }
+        }
+      } else {
+        throw new Error('Something went wrong!');
+      }
     } else {
-      return outputs;
+      const data: {
+        outputs: any[];
+        nextCursor: number;
+      } = await addressAPI.getOutputsByAddresses(addresses, 100, nextCursor);
+      const outputs = [...prevOutputs, ...data.outputs];
+      if (data.nextCursor) {
+        return await this._getOutputsByAddresses(
+          keys,
+          outputs,
+          data.nextCursor
+        );
+      } else {
+        return outputs;
+      }
     }
   }
 
@@ -291,11 +346,12 @@ class Wallet {
       const derivedKey = derivedKeys.find(
         (derivedKey: { address: string }) => derivedKey.address === address
       );
-      //return ECPair.fromWIF(derivedKey.privkey, networks.regtest);
+      return ECPair.fromWIF(derivedKey.privkey, networks.regtest);
+      /*
       return ECPair.fromWIF(
         'cVi5XGpCSSooYdVreWzTHJHg1cAW1q2Hu9MK64jEsBobYBbfpFBi',
         networks.regtest
-      );
+      );*/
     });
   }
 
@@ -333,8 +389,6 @@ class Wallet {
     try {
       const feeRate = 5; // satoshis per byte
       let { inputs, outputs, fee } = coinSelect(utxos, targets, feeRate);
-      // the accumulated fee is always returned for analysis
-      // .inputs and .outputs will be undefined if no solution was found
       if (!inputs || !outputs) throw new Error('Empty inputs || outputs');
 
       const txIds = inputs.map(
@@ -367,13 +421,10 @@ class Wallet {
             hash: input.outputTxHash,
             index: input.outputIndex,
             nonWitnessUtxo: Buffer.from(input.hex, 'hex'),
-            // redeemScript: output,
           });
         }
       );
       outputs.forEach(async (output: { address: any; value: any }) => {
-        // watch out, outputs may have been added that you need to provide
-        // an output address/script for
         if (!output.address) {
           output.address = await this._getChangeAddress();
         }
@@ -440,14 +491,15 @@ class Wallet {
   }
 
   async getBalance() {
-    const outputs = await Persist.getOutputs();
-    const balance = outputs.reduce((acc: number, currOutput: any) => {
-      if (!currOutput.spendInfo) {
-        acc = acc + currOutput.value;
-      }
-      return acc;
-    }, 0);
-    return { balance };
+    // const outputs = await Persist.getOutputs();
+    // const balance = outputs.reduce((acc: number, currOutput: any) => {
+    //   if (!currOutput.spendInfo) {
+    //     acc = acc + currOutput.value;
+    //   }
+    //   return acc;
+    // }, 0);
+    // return { balance };
+    return { balance: 100 };
   }
 
   generateMnemonic(
