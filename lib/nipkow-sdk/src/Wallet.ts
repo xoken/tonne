@@ -491,15 +491,14 @@ class Wallet {
   }
 
   async getBalance() {
-    // const outputs = await Persist.getOutputs();
-    // const balance = outputs.reduce((acc: number, currOutput: any) => {
-    //   if (!currOutput.spendInfo) {
-    //     acc = acc + currOutput.value;
-    //   }
-    //   return acc;
-    // }, 0);
-    // return { balance };
-    return { balance: 100 };
+    const { value: outputs } = await Persist.getOutputs();
+    const balance = outputs.reduce((acc: number, currOutput: any) => {
+      if (!currOutput.spendInfo) {
+        acc = acc + currOutput.value;
+      }
+      return acc;
+    }, 0);
+    return { balance };
   }
 
   generateMnemonic(
