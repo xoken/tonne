@@ -12,33 +12,12 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.history = createBrowserHistory();
-    this.state = { clickedTab: '' };
   }
-  walletClassName = '';
-  explorerClassName = '';
-  changeTabHighlight = prop => {
-    if (prop === 'explorer' && prop !== '') {
-      this.explorerClassName = prop + 'class';
-    } else if (prop === 'wallet' && prop !== '') {
-      this.walletClassName = prop + 'class';
-    } else {
-      this.explorerClassName = '';
-      this.walletClassName = '';
-    }
-    this.setState({
-      clickedTab: prop
-    });
-  };
 
   onBack = () => {
     this.history.goBack();
   };
-  componentDidMount() {
-    console.log(this.state.clickedTab + 'this.state.clickedTab');
-  }
-  componentDidUpdate(props) {
-    console.log(this.state.clickedTab + 'this.state.clickedTab');
-  }
+
   render() {
     return (
       <HashRouter>
@@ -57,14 +36,7 @@ class App extends React.Component {
             <img src={images.logo} className='d-inline-block align-top' alt='' loading='lazy' />
           </Link>
           <div className='cen'>
-            <Link
-              to='/explorer'
-              className={`navbar-brand ${this.explorerClassName}`}
-              onClick={event =>
-                this.setState({
-                  clickedTab: 'explorer'
-                })
-              }>
+            <Link to='/explorer' className='navbar-brand'>
               <img
                 src={images.blockexplorerlogo}
                 className='d-inline-block align-top headerblockexplorerlogo'
@@ -72,14 +44,7 @@ class App extends React.Component {
                 loading='lazy'
               />
             </Link>
-            <Link
-              to='/wallet'
-              className={`navbar-brand ${this.walletClassName}`}
-              onClick={event =>
-                this.setState({
-                  clickedTab: 'wallet'
-                })
-              }>
+            <Link to='/wallet' className='navbar-brand'>
               <img
                 src={images.walletlogo}
                 className='d-inline-block align-top headerwalletlogo'
@@ -92,13 +57,13 @@ class App extends React.Component {
         <div className='container main-container'>
           <Switch>
             <Route path='/wallet'>
-              <WalletHome changeTabHighlight={this.changeTabHighlight} />
+              <WalletHome />
             </Route>
             <Route path='/explorer'>
-              <ExplorerHome changeTabHighlight={this.changeTabHighlight} history={this.history} />
+              <ExplorerHome history={this.history} />
             </Route>
             <Route exact path='/'>
-              <Home changeTabHighlight={this.changeTabHighlight} />
+              <Home />
             </Route>
             <Route path='*'>
               <NoMatch />

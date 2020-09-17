@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Icon, Modal, Pagination } from 'semantic-ui-react';
+import { Button, Icon, Modal, Pagination, Dropdown, Grid } from 'semantic-ui-react';
 import { formatDistanceToNow } from 'date-fns';
 import SendTransaction from '../components/SendTransaction';
 import * as authActions from '../../auth/authActions';
@@ -21,7 +21,9 @@ class WalletDashboard extends React.Component {
       lastRefreshed: new Date(),
       autoRefreshToggle: false,
       selectnum: '',
-      txid: ''
+      txid: '',
+      renameProfileModal: false,
+      newname: ''
     };
   }
   transactionList = [];
@@ -57,9 +59,26 @@ class WalletDashboard extends React.Component {
     this.setState({ transactionModal: !transactionModal });
   };
 
+  onRenameAccount = async event => {
+    event.preventDefault();
+    const { dispatch } = this.props;
+    const { newname } = this.state;
+    try {
+      await dispatch(
+        authActions.updateProfileName(localStorage.getItem('currentprofile'), newname)
+      );
+      this.logout();
+    } catch (error) {}
+  };
+
   toggleSendTxPopup = () => {
     const { sendTxModal } = this.state;
     this.setState({ sendTxModal: !sendTxModal });
+  };
+
+  onRenameProfile = () => {
+    const { renameProfileModal } = this.state;
+    this.setState({ renameProfileModal: !renameProfileModal });
   };
 
   onRefresh = async () => {
@@ -376,17 +395,69 @@ class WalletDashboard extends React.Component {
     );
   }
 
+  renderRenameProfileModal() {
+    const { renameProfileModal, newname } = this.state;
+    return (
+      <Modal open={renameProfileModal} onClose={this.onRenameProfile} onOpen={this.onRenameProfile}>
+        <Modal.Header>Rename Current Profile</Modal.Header>
+        <Modal.Content>
+          <Modal.Description>
+            <Grid centered>
+              <Grid.Column textAlign='center' width={8}>
+                <div className='ui form'>
+                  <div className='field'>
+                    <label>Change Current Account's Name</label>
+                    <div className='ui left icon input'>
+                      <input
+                        type='text'
+                        placeholder='New Name'
+                        value={newname}
+                        onChange={event => this.setState({ newname: event.target.value })}
+                      />
+                      <i className='user icon'></i>
+                    </div>
+                  </div>
+                  <center>
+                    <div className='ui blue submit button' onClick={this.onRenameAccount}>
+                      Rename
+                    </div>
+                    <div className='ui blue submit button' onClick={this.onRenameProfile}>
+                      Cancel
+                    </div>
+                  </center>
+                </div>
+              </Grid.Column>
+            </Grid>
+          </Modal.Description>
+        </Modal.Content>
+      </Modal>
+    );
+  }
+
   render() {
     const { balance, isLoading } = this.props;
     return (
       <>
-        <div className='row'>
-          <div className='col-md-12'>
-            <button className='txbtn' onClick={this.logout}>
-              Logout
-            </button>
-          </div>
-        </div>
+        {
+          // <div className='row'>
+          //   <div className='col-md-12'>
+          //     <button className='txbtn' onClick={this.logout}>
+          //       Logout
+          //     </button>
+          //   </div>
+          // </div>
+        }
+        <Grid>
+          <Grid.Column floated='right' width={2}>
+            <Dropdown icon='setting'>
+              <Dropdown.Menu>
+                <Dropdown.Item text='Rename Profile' onClick={this.onRenameProfile} />
+                <Dropdown.Divider />
+                <Dropdown.Item icon='sign out' text='Logout' onClick={this.logout} />
+              </Dropdown.Menu>
+            </Dropdown>
+          </Grid.Column>
+        </Grid>
         <div className='row'>
           <div className='col-md-12 border-left-right'>
             <center>
@@ -416,7 +487,6 @@ class WalletDashboard extends React.Component {
             <div className='column'></div>
           </div>
         </div>
-
         <div className='ui grid'>
           <div className='left floated six wide column'>
             <h3>Recent Transactions</h3>
@@ -466,6 +536,7 @@ class WalletDashboard extends React.Component {
         {
           //this.renderSendTransactionModal()
         }
+        {this.renderRenameProfileModal()}
       </>
     );
   }

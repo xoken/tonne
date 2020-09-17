@@ -15,145 +15,39 @@ import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
 
 class WalletHome extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { existingaccountname: '', newname: '' };
-  }
   async componentDidMount() {
-    this.props.changeTabHighlight('wallet');
     const { dispatch } = this.props;
     dispatch(authActions.getProfiles());
   }
 
   onSelectProfile = profile => () => {
+    localStorage.setItem('currentprofile', profile);
     this.props.history.push(`/wallet/login?profile=${profile}`);
-  };
-
-  onRenameAccount = async event => {
-    event.preventDefault();
-    const { dispatch } = this.props;
-    const { existingaccountname, newname } = this.state;
-    try {
-      await dispatch(authActions.updateProfileName(existingaccountname, newname));
-    } catch (error) {}
   };
 
   renderExistingProfile() {
     const { profiles } = this.props;
-    const { existingaccountname, newname } = this.state;
     if (profiles && profiles.length > 0) {
       return (
         <>
-          <div class='ui placeholder segment'>
-            <div class='ui two column very relaxed stackable grid'>
-              <div class='column'>
-                <div class='ui segment'>
-                  <h5>Login to Existing Profile</h5>
-                  <List selection verticalAlign='middle'>
-                    {profiles.map((profile, index) => {
-                      const { name } = profile;
-                      return (
-                        <List.Item key={index} onClick={this.onSelectProfile(name)}>
-                          <List.Content>
-                            <List.Header>{name}</List.Header>
-                          </List.Content>
-                        </List.Item>
-                      );
-                    })}
-                  </List>
-                </div>
-                <div class='ui form'>
-                  <div class='field'>
-                    <label>Change Existing Account's Name</label>
-                    <div class='ui left icon input'>
-                      <input
-                        type='text'
-                        placeholder="Existing Account's Name"
-                        value={existingaccountname}
-                        onChange={event =>
-                          this.setState({ existingaccountname: event.target.value })
-                        }
-                      />
-                      <i class='user icon'></i>
-                    </div>
-                    <div class='ui left icon input'>
-                      <input
-                        type='text'
-                        placeholder='New Name'
-                        value={newname}
-                        onChange={event => this.setState({ newname: event.target.value })}
-                      />
-                      <i class='user icon'></i>
-                    </div>
-                  </div>
-                  <div class='ui blue submit button' onClick={this.onRenameAccount}>
-                    Rename
-                  </div>
-                </div>
-              </div>
-              <div class='middle aligned column'>
-                <div class='ui segment'>
-                  <div className='card text-center'>
-                    <div className='card-body'>
-                      <h5 className='card-title'>I already have a seed phrase</h5>
-                      <p className='card-text'>
-                        Import your existing wallet using a 12 word seed phrase
-                      </p>
-                      <Link to='/wallet/existing' className='generalbtns'>
-                        Wallet
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-                <div class='ui segment'>
-                  <div className='card text-center'>
-                    <div className='card-body'>
-                      <h5 className='card-title'>Yes, let's get set up!</h5>
-                      <p className='card-text'>This will create a new wallet and seed phrase</p>
-                      <Link to='/wallet/new' className='generalbtns'>
-                        Create a Wallet
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class='ui vertical divider'>Or</div>
-          </div>
-        </>
-      );
-    } else {
-      return (
-        <>
-          <div class='ui grid'>
-            <div class='eight wide middle aligned column'>
-              <div className='card text-center'>
-                <div className='card-body'>
-                  <h5 className='card-title'>I already have a seed phrase</h5>
-                  <p className='card-text'>
-                    Import your existing wallet using a 12 word seed phrase
-                  </p>
-                  <Link to='/wallet/existing' className='generalbtns'>
-                    Wallet
-                  </Link>
-                </div>
-              </div>
-            </div>
-            <div class='eight wide middle aligned column'>
-              <div className='card text-center'>
-                <div className='card-body'>
-                  <h5 className='card-title'>Yes, let's get set up!</h5>
-                  <p className='card-text'>This will create a new wallet and seed phrase</p>
-                  <Link to='/wallet/new' className='generalbtns'>
-                    Create a Wallet
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
+          <h5>Login to Existing Profile</h5>
+          <List selection verticalAlign='middle'>
+            {profiles.map((profile, index) => {
+              const { name } = profile;
+              return (
+                <List.Item key={index} onClick={this.onSelectProfile(name)}>
+                  <List.Content>
+                    <List.Header>{name}</List.Header>
+                  </List.Content>
+                </List.Item>
+              );
+            })}
+          </List>
+          <h5>OR</h5>
         </>
       );
     }
+    return null;
   }
 
   renderContent() {
@@ -167,7 +61,39 @@ class WalletHome extends React.Component {
     } else if (profile) {
       return <WalletDashboard />;
     } else {
-      return <>{this.renderExistingProfile()}</>;
+      return (
+        <>
+          <div className='row'>
+            <div className='col-sm-12'>{this.renderExistingProfile()}</div>
+          </div>
+          <div className='row'>
+            <div className='col-sm-6'>
+              <div className='card text-center'>
+                <div className='card-body'>
+                  <h5 className='card-title'>I already have a seed phrase</h5>
+                  <p className='card-text'>
+                    Import your existing wallet using a 12 word seed phrase
+                  </p>
+                  <Link to='/wallet/existing' className='generalbtns'>
+                    Wallet
+                  </Link>
+                </div>
+              </div>
+            </div>
+            <div className='col-sm-6'>
+              <div className='card text-center'>
+                <div className='card-body'>
+                  <h5 className='card-title'>Yes, let's get set up!</h5>
+                  <p className='card-text'>This will create a new wallet and seed phrase</p>
+                  <Link to='/wallet/new' className='generalbtns'>
+                    Create a Wallet
+                  </Link>
+                </div>
+              </div>
+            </div>
+          </div>
+        </>
+      );
     }
   }
 

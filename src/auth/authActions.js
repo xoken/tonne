@@ -81,15 +81,16 @@ export const createProfile = password => async (dispatch, getState, { serviceInj
   }
 };
 
-export const updateProfileName = (existingProfileName, newProfileName) => async (
+export const updateProfileName = (currentProfileName, newProfileName) => async (
   dispatch,
   getState,
   { serviceInjector }
 ) => {
+  console.log('authaction');
   dispatch(updateProfileNameRequest());
   try {
     const { profile } = await serviceInjector(AuthService).updateProfileName(
-      existingProfileName,
+      currentProfileName,
       newProfileName
     );
     dispatch(updateProfileNameSuccess({ profile }));

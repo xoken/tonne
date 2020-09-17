@@ -27,7 +27,6 @@ class ExplorerAddress extends React.Component {
   currentbatchnum = 1;
   nextcursor = '';
   pagescontainer = [];
-  noTransactions;
 
   initAddress = async () => {
     if (this.props.match.params.address !== undefined) {
@@ -202,31 +201,27 @@ class ExplorerAddress extends React.Component {
     this.cachecounter = 0;
     this.caching();
     console.log(this.addressCache.length + 'this.addressCache.length');
-    if (this.addressCache.length === 0) {
-      this.noTransactions = <div>No transactions found</div>;
-      console.log(this.noTransactions + 'this.noTransactions');
-    }
-    //  if (this.addressCache.length > 0) {
-    var tempindex = 1;
-    if (this.addressCache.length > this.outputsperpage) {
-      this.totalpagesavailable = Math.ceil(this.addressCache.length / this.outputsperpage);
-    } else {
-      this.totalpagesavailable = 1;
-    }
-    for (var c = 0; c < this.totalpagesavailable; c++) {
-      this.pagearray[c] = tempindex;
-      if (this.fixedpagearrlength === tempindex) {
-        break;
+    if (this.addressCache.length > 0) {
+      var tempindex = 1;
+      if (this.addressCache.length > this.outputsperpage) {
+        this.totalpagesavailable = Math.ceil(this.addressCache.length / this.outputsperpage);
+      } else {
+        this.totalpagesavailable = 1;
       }
-      tempindex += 1;
+      for (var c = 0; c < this.totalpagesavailable; c++) {
+        this.pagearray[c] = tempindex;
+        if (this.fixedpagearrlength === tempindex) {
+          break;
+        }
+        tempindex += 1;
+      }
+      this.batches = Math.ceil(this.totalpagesavailable / this.fixedpagearrlength);
+      this.currentbatchnum = Math.ceil(this.selected / this.fixedpagearrlength);
+      this.printpagination();
+      this.printresults();
+    } else {
+      //
     }
-    this.batches = Math.ceil(this.totalpagesavailable / this.fixedpagearrlength);
-    this.currentbatchnum = Math.ceil(this.selected / this.fixedpagearrlength);
-    this.printpagination();
-    this.printresults();
-    //  } else {
-    //
-    //  }
   };
 
   caching = () => {
@@ -426,7 +421,6 @@ class ExplorerAddress extends React.Component {
           </div>
           <div className='row'>
             <div className='col-md-12 col-lg-12'>
-              {this.noTransactions}
               <table id='txlist'>{this.txlist}</table>
             </div>
           </div>

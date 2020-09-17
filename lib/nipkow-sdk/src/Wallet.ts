@@ -435,9 +435,11 @@ class Wallet {
     }
   }
 
-  async updateProfileName(existingProfileName: string, newProfileName: string) {
+  async updateProfileName(currentProfileName: string, newProfileName: string) {
     try {
-      await Persist.updateProfileName(existingProfileName, newProfileName);
+      console.log('wallet.ts');
+
+      await Persist.updateProfileName(currentProfileName, newProfileName);
       return { profile: newProfileName };
     } catch (error) {
       throw error;
