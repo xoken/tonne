@@ -29,44 +29,61 @@ class WalletHome extends React.Component {
     if (profiles && profiles.length > 0) {
       return (
         <>
-          <h5>Login to Existing Profile</h5>
-          <List selection verticalAlign='middle'>
-            {profiles.map((profile, index) => {
-              const { name } = profile;
-              return (
-                <List.Item key={index} onClick={this.onSelectProfile(name)}>
-                  <List.Content>
-                    <List.Header>{name}</List.Header>
-                  </List.Content>
-                </List.Item>
-              );
-            })}
-          </List>
-          <h5>OR</h5>
+          <div class='ui placeholder segment'>
+            <div class='ui two column very relaxed stackable grid'>
+              <div class='column'>
+                <div class='ui segment'>
+                  <h5>Login to Existing Profile</h5>
+                  <List selection verticalAlign='middle'>
+                    {profiles.map((profile, index) => {
+                      const { name } = profile;
+                      return (
+                        <List.Item key={index} onClick={this.onSelectProfile(name)}>
+                          <List.Content>
+                            <List.Header>{name}</List.Header>
+                          </List.Content>
+                        </List.Item>
+                      );
+                    })}
+                  </List>
+                </div>
+              </div>
+              <div class='middle aligned column'>
+                <div class='ui segment'>
+                  <div className='card text-center'>
+                    <div className='card-body'>
+                      <h5 className='card-title'>I already have a seed phrase</h5>
+                      <p className='card-text'>
+                        Import your existing wallet using a 12 word seed phrase
+                      </p>
+                      <Link to='/wallet/existing' className='generalbtns'>
+                        Wallet
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+                <div class='ui segment'>
+                  <div className='card text-center'>
+                    <div className='card-body'>
+                      <h5 className='card-title'>Yes, let's get set up!</h5>
+                      <p className='card-text'>This will create a new wallet and seed phrase</p>
+                      <Link to='/wallet/new' className='generalbtns'>
+                        Create a Wallet
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class='ui vertical divider'>Or</div>
+          </div>
         </>
       );
-    }
-    return null;
-  }
-
-  renderContent() {
-    const { isLoading, profile } = this.props;
-    if (isLoading) {
-      return (
-        <Loader active size='massive'>
-          Loading
-        </Loader>
-      );
-    } else if (profile) {
-      return <WalletDashboard />;
     } else {
       return (
         <>
-          <div className='row'>
-            <div className='col-sm-12'>{this.renderExistingProfile()}</div>
-          </div>
-          <div className='row'>
-            <div className='col-sm-6'>
+          <div class='ui grid'>
+            <div class='eight wide middle aligned column'>
               <div className='card text-center'>
                 <div className='card-body'>
                   <h5 className='card-title'>I already have a seed phrase</h5>
@@ -79,7 +96,7 @@ class WalletHome extends React.Component {
                 </div>
               </div>
             </div>
-            <div className='col-sm-6'>
+            <div class='eight wide middle aligned column'>
               <div className='card text-center'>
                 <div className='card-body'>
                   <h5 className='card-title'>Yes, let's get set up!</h5>
@@ -93,6 +110,21 @@ class WalletHome extends React.Component {
           </div>
         </>
       );
+    }
+  }
+
+  renderContent() {
+    const { isLoading, profile } = this.props;
+    if (isLoading) {
+      return (
+        <Loader active size='massive'>
+          Loading
+        </Loader>
+      );
+    } else if (profile) {
+      return <WalletDashboard />;
+    } else {
+      return <>{this.renderExistingProfile()}</>;
     }
   }
 
