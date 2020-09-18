@@ -1,18 +1,22 @@
 import PouchDB from 'pouchdb';
+import MemoryAdapter from 'pouchdb-adapter-memory';
 import CryptoJS from 'crypto-js';
 import AES from 'crypto-js/aes';
 
+console.log(MemoryAdapter);
+PouchDB.plugin(MemoryAdapter);
 let profiles: any;
 let db: any;
+let keys: any;
 
 export const BIP32_EXTENDED_KEY = 'bip32ExtendedKey';
 export const DERIVED_KEYS = 'derivedKeys';
 export const OUTPUTS = 'outputs';
 export const UTXOS = 'utxos';
 
-const get = async (key: string) => await db.get(key);
+const get = async (db: any, key: string) => await db.get(key);
 
-const set = async (key: string, value: any) => {
+const set = async (db: any, key: string, value: any) => {
   const doc: any = await db.get(key);
   doc.value = value;
   await db.put(doc);
@@ -20,11 +24,14 @@ const set = async (key: string, value: any) => {
 
 export const init = async (dbName: string) => {
   db = new PouchDB(dbName, { revs_limit: 1, auto_compaction: true });
-  await bulkSet([
-    { key: BIP32_EXTENDED_KEY, value: null },
-    { key: DERIVED_KEYS, value: [] },
+  keys = new PouchDB('keys', { adapter: 'memory' });
+  await bulkSet(db, [
     { key: OUTPUTS, value: [] },
     { key: UTXOS, value: [] },
+  ]);
+  await bulkSet(keys, [
+    { key: BIP32_EXTENDED_KEY, value: null },
+    { key: DERIVED_KEYS, value: [] },
   ]);
 };
 
@@ -101,34 +108,34 @@ export const login = async (profile: string, password: string) => {
 };
 
 export const getBip32ExtendedKey = async () => {
-  const bip32ExtendedKeyDoc: any = await get(BIP32_EXTENDED_KEY);
+  const bip32ExtendedKeyDoc: any = await get(keys, BIP32_EXTENDED_KEY);
   return bip32ExtendedKeyDoc.value;
 };
 
 export const getDerivedKeys = async () => {
-  const derivedKeysDoc: any = await get(DERIVED_KEYS);
+  const derivedKeysDoc: any = await get(keys, DERIVED_KEYS);
   return derivedKeysDoc.value;
 };
 
 export const getOutputs = async () => {
-  const outputsDoc: any = await get(OUTPUTS);
+  const outputsDoc: any = await get(db, OUTPUTS);
   return outputsDoc.value;
 };
 
 export const getUtxos = async () => {
-  const utxosDoc: any = await get(UTXOS);
+  const utxosDoc: any = await get(db, UTXOS);
   return utxosDoc.value;
 };
 
 export const setBip32ExtendedKey = async (value: any) =>
-  await set(BIP32_EXTENDED_KEY, value);
+  await set(keys, BIP32_EXTENDED_KEY, value);
 
 export const setDerivedKeys = async (value: any) =>
-  await set(DERIVED_KEYS, value);
+  await set(keys, DERIVED_KEYS, value);
 
-export const setOutputs = async (value: any) => await set(OUTPUTS, value);
+export const setOutputs = async (value: any) => await set(db, OUTPUTS, value);
 
-export const setUtxos = async (value: any) => await set(UTXOS, value);
+export const setUtxos = async (value: any) => await set(db, UTXOS, value);
 
 export const updateDerivedKeys = async (value: any) => {
   const existingKeys = await getDerivedKeys();
@@ -136,17 +143,17 @@ export const updateDerivedKeys = async (value: any) => {
   await setDerivedKeys(newKeys);
 };
 
-export const bulkSet = async (inputs: any[]) => {
+export const bulkSet = async (db: any, inputs: any[]) => {
   const newData = inputs.map(element => {
     return { _id: element.key, value: element.value };
   });
   await db.bulkDocs(newData);
 };
 
-export const bulkUpdate = async (data: any[]) => {
+export const bulkUpdate = async (db: any, data: any[]) => {
   const newData = await Promise.all(
     data.map(async element => {
-      const doc: any = await get(element.key);
+      const doc: any = await get(db, element.key);
       doc.value = element.value;
       return doc;
     })
