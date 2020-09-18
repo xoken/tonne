@@ -11,6 +11,8 @@ import coinSelect from 'coinselect';
 import faker from 'faker';
 import * as bip38 from 'bip38';
 import * as bip39 from 'bip39';
+import * as _ from 'lodash';
+import { differenceInMinutes } from 'date-fns';
 import * as Persist from './Persist';
 import derivationPaths from './constants/derivationPaths';
 import network from './constants/network';
@@ -248,10 +250,14 @@ class Wallet {
     const usedDerivedKeys = derivedKeys.filter(
       (derivedKey: { isUsed: boolean }) => derivedKey.isUsed === true
     );
-    const addresses = usedDerivedKeys.map(
-      (usedDerivedKey: { address: any }) => usedDerivedKey.address
+    const chunkedUsedDerivedKeys = _.chunk(usedDerivedKeys, 1);
+    const data = await Promise.all(
+      chunkedUsedDerivedKeys.map(async chunkedUsedDerivedKey => {
+        const addresses = this._getAddressesFromKeys(chunkedUsedDerivedKey);
+        return await this._getUTXOsByAddresses(addresses);
+      })
     );
-    return await this._getUTXOsByAddresses(addresses);
+    return data.map(element => element.utxos).flat();
   }
 
   async _getUTXOsByAddresses(
@@ -304,37 +310,42 @@ class Wallet {
     amountInSatoshi: number,
     transactionFee: number
   ) {
-    const { utxos } = await this.getUTXOs();
-    const mUTXOs = utxos.map((utxo: any) => ({ ...utxo, isUsed: false }));
-    const cachedUTXOs = await Persist.getUtxos();
-    let finalUTXOs;
-    if (cachedUTXOs.length > 0) {
-      const mergedUTXOs = mUTXOs.map((mUTXO: any, index: string | number) => {
-        return Object.assign(mUTXO, cachedUTXOs[index]);
-      });
-      finalUTXOs = mergedUTXOs.filter(
-        (mergedUTXO: { isUsed: boolean }) => mergedUTXO.isUsed === false
-      );
-    } else {
-      await Persist.setUtxos(mUTXOs);
-      finalUTXOs = mUTXOs;
-    }
+    const utxos = await this.getUTXOs();
+    const mUTXOs: any[] = utxos.map((utxo: any) => ({
+      ...utxo,
+      isUsed: false,
+    }));
+    const { lastFetched, value: savedUTXOs } = await Persist.getUtxos();
     const targets = [
       { address: receiverAddress, value: Number(amountInSatoshi) },
     ];
-    await this._createSendTransaction(finalUTXOs, targets, transactionFee);
+    if (
+      savedUTXOs.length <= 0 ||
+      differenceInMinutes(new Date(), Date.parse(lastFetched)) > 30
+    ) {
+      await this._createSendTransaction(mUTXOs, targets, transactionFee);
+    } else {
+      debugger;
+      const mergedUTXOs = mUTXOs.map((mUTXO: any, index: string | number) => {
+        return Object.assign(mUTXO, savedUTXOs[index]);
+      });
+      debugger;
+      const finalUTXOs = mergedUTXOs.filter(
+        (mergedUTXO: { isUsed: boolean }) => mergedUTXO.isUsed === false
+      );
+      debugger;
+      await this._createSendTransaction(finalUTXOs, targets, transactionFee);
+    }
   }
 
   async _createSendTransaction(
-    utxos: [],
+    utxos: any[],
     targets: any[],
     transactionFee: number
   ) {
     try {
       const feeRate = 5; // satoshis per byte
       let { inputs, outputs, fee } = coinSelect(utxos, targets, feeRate);
-      // the accumulated fee is always returned for analysis
-      // .inputs and .outputs will be undefined if no solution was found
       if (!inputs || !outputs) throw new Error('Empty inputs || outputs');
 
       const txIds = inputs.map(

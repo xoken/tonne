@@ -21,7 +21,7 @@ class WalletDashboard extends React.Component {
       lastRefreshed: new Date(),
       autoRefreshToggle: false,
       selectnum: '',
-      txid: ''
+      txid: '',
     };
   }
   transactionList = [];
@@ -67,7 +67,7 @@ class WalletDashboard extends React.Component {
     await dispatch(walletActions.getOutputs());
     this.setState({
       lastRefreshed: new Date(),
-      timeSinceLastRefreshed: new Date()
+      timeSinceLastRefreshed: new Date(),
     });
   };
 
@@ -79,7 +79,7 @@ class WalletDashboard extends React.Component {
           Last refreshed{': '}
           {formatDistanceToNow(lastRefreshed, {
             includeSeconds: true,
-            addSuffix: true
+            addSuffix: true,
           })}
         </div>
       );
@@ -337,9 +337,9 @@ class WalletDashboard extends React.Component {
   };
 
   renderSendTransactionModal() {
-    const { sendTxModal } = this.state;
+    const { sendTransactionModal } = this.state;
     return (
-      <Modal open={sendTxModal} onClose={this.toggleSendTxPopup} onOpen={this.toggleSendTxPopup}>
+      <Modal open={sendTransactionModal}>
         <Modal.Header>Send Transactions</Modal.Header>
         <Modal.Content>
           <Modal.Description>
@@ -450,7 +450,7 @@ class WalletDashboard extends React.Component {
                 type='text'
                 onChange={event =>
                   this.setState({
-                    selectnum: event.target.value
+                    selectnum: event.target.value,
                   })
                 }
               />
@@ -460,19 +460,14 @@ class WalletDashboard extends React.Component {
             </form>
           </div>
         </div>
-        {
-          //this.renderTransactionModal()
-        }
-        {
-          //this.renderSendTransactionModal()
-        }
+        {this.renderSendTransactionModal()}
       </>
     );
   }
 
   componentWillUnmount() {
-    // clearInterval(this.timerID);
-    // clearInterval(this.autoRefreshTimer);
+    clearInterval(this.timerID);
+    clearInterval(this.autoRefreshTimer);
   }
 }
 
@@ -480,17 +475,17 @@ WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   balance: PropTypes.number.isRequired,
-  outputs: PropTypes.arrayOf(PropTypes.object)
+  outputs: PropTypes.arrayOf(PropTypes.object),
 };
 
 WalletDashboard.defaultProps = {
-  outputs: []
+  outputs: [],
 };
 
 const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
-  outputs: walletSelectors.getOutputs(state)
+  outputs: walletSelectors.getOutputs(state),
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));

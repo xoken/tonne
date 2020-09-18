@@ -117,7 +117,7 @@ export const getOutputs = async () => {
 
 export const getUtxos = async () => {
   const utxosDoc: any = await get(UTXOS);
-  return utxosDoc.value;
+  return { lastFetched: utxosDoc.lastFetched, value: utxosDoc.value };
 };
 
 export const setBip32ExtendedKey = async (value: any) =>
@@ -128,7 +128,10 @@ export const setDerivedKeys = async (value: any) =>
 
 export const setOutputs = async (value: any) => await set(OUTPUTS, value);
 
-export const setUtxos = async (value: any) => await set(UTXOS, value);
+export const setUtxos = async (value: any) => {
+  const newValue = { lastFetched: new Date(), value };
+  await set(UTXOS, { newValue });
+};
 
 export const updateDerivedKeys = async (value: any) => {
   const existingKeys = await getDerivedKeys();

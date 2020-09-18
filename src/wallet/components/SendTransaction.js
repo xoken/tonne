@@ -9,8 +9,8 @@ class SendTransaction extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      receiverAddress: '',
-      amountInSatoshi: '',
+      receiverAddress: 'n3mwgsZGA1u2HFsxZJhqwvMwRz7TauhM5E',
+      amountInSatoshi: '100000000',
       transactionFee: '',
       isError: false,
       message: '',
@@ -47,13 +47,13 @@ class SendTransaction extends React.Component {
     if (message) {
       if (isError) {
         return (
-          <div class='ui negative message'>
+          <div className='ui negative message'>
             <p>{message}</p>
           </div>
         );
       } else {
         return (
-          <div class='ui success message'>
+          <div className='ui success message'>
             <p>{message}</p>
           </div>
         );
