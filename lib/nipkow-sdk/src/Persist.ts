@@ -18,7 +18,9 @@ const get = async (db: any, key: string) => await db.get(key);
 
 const set = async (db: any, key: string, value: any) => {
   const doc: any = await db.get(key);
-  doc.value = value;
+  for (const prop in value) {
+    doc[prop] = value[prop];
+  }
   await db.put(doc);
 };
 
@@ -26,8 +28,8 @@ export const init = async (dbName: string) => {
   db = new PouchDB(dbName, { revs_limit: 1, auto_compaction: true });
   keys = new PouchDB('keys', { adapter: 'memory' });
   await bulkSet(db, [
-    { key: OUTPUTS, value: [] },
-    { key: UTXOS, value: [] },
+    { key: OUTPUTS, lastFetched: null, value: [] },
+    { key: UTXOS, lastFetched: null, value: [] },
   ]);
   await bulkSet(keys, [
     { key: BIP32_EXTENDED_KEY, value: null },
@@ -119,7 +121,7 @@ export const getDerivedKeys = async () => {
 
 export const getOutputs = async () => {
   const outputsDoc: any = await get(db, OUTPUTS);
-  return outputsDoc.value;
+  return { lastFetched: outputsDoc.lastFetched, value: outputsDoc.value };
 };
 
 export const getUtxos = async () => {
@@ -133,9 +135,12 @@ export const setBip32ExtendedKey = async (value: any) =>
 export const setDerivedKeys = async (value: any) =>
   await set(keys, DERIVED_KEYS, value);
 
-export const setOutputs = async (value: any) => await set(db, OUTPUTS, value);
-
 export const setUtxos = async (value: any) => await set(db, UTXOS, value);
+
+export const setOutputs = async (value: any) => {
+  const newValue = { lastFetched: new Date(), value };
+  await set(db, OUTPUTS, newValue);
+};
 
 export const updateDerivedKeys = async (value: any) => {
   const existingKeys = await getDerivedKeys();
@@ -145,7 +150,9 @@ export const updateDerivedKeys = async (value: any) => {
 
 export const bulkSet = async (db: any, inputs: any[]) => {
   const newData = inputs.map(element => {
-    return { _id: element.key, value: element.value };
+    const key = element['key'];
+    delete element.key;
+    return { ...element, _id: key };
   });
   await db.bulkDocs(newData);
 };
