@@ -13,19 +13,18 @@ import * as serviceWorker from './serviceWorker';
 import configureStore from './shared/store/configureStore';
 import { PersistGate } from 'redux-persist/integration/react';
 import 'semantic-ui-css/semantic.min.css';
-// import ExplorerAuth from './explorer/modules/ExplorerAuth';
+import Authenticator from './shared/modules/Authenticator';
 
 const { store, persistor } = configureStore();
 
-// if (
-//   localStorage.getItem('sessionkey') === null ||
-//   localStorage.getItem('sessionkey') === 'null' ||
-//   localStorage.getItem('sessionkey') === undefined ||
-//   localStorage.getItem('sessionkey') === ''
-// ) {
-//   ExplorerAuth.httpsauth();
-//   console.log('httpsauth called from index');
-// }
+if (
+  localStorage.getItem('sessionkey') === null ||
+  localStorage.getItem('sessionkey') === 'null' ||
+  localStorage.getItem('sessionkey') === undefined ||
+  localStorage.getItem('sessionkey') === ''
+) {
+  Authenticator.checkCredentials();
+}
 
 const PersistComponent = persistor
   ? props => <PersistGate {...props} loading={null} persistor={persistor} />

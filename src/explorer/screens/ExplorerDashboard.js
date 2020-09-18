@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import ExplorerAuth from '../modules/ExplorerAuth';
+import Authenticator from '../../shared/modules/Authenticator';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 
 class ExplorerDashboard extends React.Component {
@@ -271,7 +271,9 @@ class ExplorerDashboard extends React.Component {
   };
 
   componentDidMount() {
-    ExplorerAuth.test();
+    if (localStorage.getItem('sessionkey') === null) {
+      Authenticator.httpsauth(localStorage.getItem('username'), localStorage.getItem('password'));
+    }
     this.initDashboard();
   }
   render() {

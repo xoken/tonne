@@ -2,10 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { createBrowserHistory } from 'history';
 import { HashRouter, Link, Route, Switch } from 'react-router-dom';
+import { Icon } from 'semantic-ui-react';
 import ExplorerHome from './explorer/screens/ExplorerHome';
 import Home from './shared/components/home';
 import images from './shared/images';
 import NoMatch from './shared/components/noMatch';
+import GlobalSettings from './shared/components/GlobalSettings';
 import WalletHome from './wallet/screens/WalletHome';
 
 class App extends React.Component {
@@ -53,6 +55,11 @@ class App extends React.Component {
               />
             </Link>
           </div>
+          <div className='globalsettings'>
+            <Link to='/globalsettings' className='navbar-brand'>
+              <Icon name='settings' size='large' />
+            </Link>
+          </div>
         </nav>
         <div className='container main-container'>
           <Switch>
@@ -64,6 +71,9 @@ class App extends React.Component {
             </Route>
             <Route exact path='/'>
               <Home />
+            </Route>
+            <Route exact path='/globalsettings'>
+              <GlobalSettings />
             </Route>
             <Route path='*'>
               <NoMatch />

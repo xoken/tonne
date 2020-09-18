@@ -1,8 +1,8 @@
 const apis = require('nipkow-sdk');
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = 0;
 
-export default class ExplorerAuth {
-  static test = async () => {
+export default class Authenticator {
+  static checkCredentials = async () => {
     if (
       localStorage.getItem('username') === undefined ||
       localStorage.getItem('password') === undefined ||
@@ -12,14 +12,14 @@ export default class ExplorerAuth {
       localStorage.getItem('password') === null
     ) {
       this.setCredentials();
-      ExplorerAuth.httpsauth(localStorage.getItem('username'), localStorage.getItem('password'));
+      Authenticator.httpsauth(localStorage.getItem('username'), localStorage.getItem('password'));
       console.log('called from undefined');
     } else {
       if (
         localStorage.getItem('callsremaining') === null ||
         localStorage.getItem('callsremaining') <= 3
       ) {
-        ExplorerAuth.httpsauth(localStorage.getItem('username'), localStorage.getItem('password'));
+        Authenticator.httpsauth(localStorage.getItem('username'), localStorage.getItem('password'));
         console.log('httpsauth called from else in auth');
       }
     }
