@@ -14,7 +14,9 @@ const get = async (key: string) => await db.get(key);
 
 const set = async (key: string, value: any) => {
   const doc: any = await db.get(key);
-  doc.value = value;
+  for (const prop in value) {
+    doc[prop] = value[prop];
+  }
   await db.put(doc);
 };
 
@@ -23,8 +25,8 @@ export const init = async (dbName: string) => {
   await bulkSet([
     { key: BIP32_EXTENDED_KEY, value: null },
     { key: DERIVED_KEYS, value: [] },
-    { key: OUTPUTS, value: [] },
-    { key: UTXOS, value: [] },
+    { key: OUTPUTS, lastFetched: null, value: [] },
+    { key: UTXOS, lastFetched: null, value: [] },
   ]);
 };
 
@@ -112,7 +114,7 @@ export const getDerivedKeys = async () => {
 
 export const getOutputs = async () => {
   const outputsDoc: any = await get(OUTPUTS);
-  return outputsDoc.value;
+  return { lastFetched: outputsDoc.lastFetched, value: outputsDoc.value };
 };
 
 export const getUtxos = async () => {
@@ -121,14 +123,17 @@ export const getUtxos = async () => {
 };
 
 export const setBip32ExtendedKey = async (value: any) =>
-  await set(BIP32_EXTENDED_KEY, value);
+  await set(BIP32_EXTENDED_KEY, { value });
 
 export const setDerivedKeys = async (value: any) =>
-  await set(DERIVED_KEYS, value);
+  await set(DERIVED_KEYS, { value });
 
-export const setOutputs = async (value: any) => await set(OUTPUTS, value);
+export const setOutputs = async (value: any) => {
+  const newValue = { lastFetched: new Date(), value };
+  await set(OUTPUTS, newValue);
+};
 
-export const setUtxos = async (value: any) => await set(UTXOS, value);
+export const setUtxos = async (value: any) => await set(UTXOS, { value });
 
 export const updateDerivedKeys = async (value: any) => {
   const existingKeys = await getDerivedKeys();
@@ -138,7 +143,9 @@ export const updateDerivedKeys = async (value: any) => {
 
 export const bulkSet = async (inputs: any[]) => {
   const newData = inputs.map(element => {
-    return { _id: element.key, value: element.value };
+    const key = element['key'];
+    delete element.key;
+    return { ...element, _id: key };
   });
   await db.bulkDocs(newData);
 };
