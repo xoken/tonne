@@ -7,7 +7,7 @@ console.log(MemoryAdapter);
 PouchDB.plugin(MemoryAdapter);
 let profiles: any;
 let db: any;
-let keys: any;
+let credentials: any;
 
 export const BIP32_EXTENDED_KEY = 'bip32ExtendedKey';
 export const DERIVED_KEYS = 'derivedKeys';
@@ -26,12 +26,12 @@ const set = async (db: any, key: string, value: any) => {
 
 export const init = async (dbName: string) => {
   db = new PouchDB(dbName, { revs_limit: 1, auto_compaction: true });
-  keys = new PouchDB('keys', { adapter: 'memory' });
+  credentials = new PouchDB('credentials', { adapter: 'memory' });
   await bulkSet(db, [
     { key: OUTPUTS, lastFetched: null, value: [] },
     { key: UTXOS, lastFetched: null, value: [] },
   ]);
-  await bulkSet(keys, [
+  await bulkSet(credentials, [
     { key: BIP32_EXTENDED_KEY, value: null },
     { key: DERIVED_KEYS, value: [] },
   ]);
@@ -110,12 +110,12 @@ export const login = async (profile: string, password: string) => {
 };
 
 export const getBip32ExtendedKey = async () => {
-  const bip32ExtendedKeyDoc: any = await get(keys, BIP32_EXTENDED_KEY);
+  const bip32ExtendedKeyDoc: any = await get(credentials, BIP32_EXTENDED_KEY);
   return bip32ExtendedKeyDoc.value;
 };
 
 export const getDerivedKeys = async () => {
-  const derivedKeysDoc: any = await get(keys, DERIVED_KEYS);
+  const derivedKeysDoc: any = await get(credentials, DERIVED_KEYS);
   return derivedKeysDoc.value;
 };
 
@@ -130,10 +130,10 @@ export const getUtxos = async () => {
 };
 
 export const setBip32ExtendedKey = async (value: any) =>
-  await set(keys, BIP32_EXTENDED_KEY, value);
+  await set(credentials, BIP32_EXTENDED_KEY, value);
 
 export const setDerivedKeys = async (value: any) =>
-  await set(keys, DERIVED_KEYS, value);
+  await set(credentials, DERIVED_KEYS, value);
 
 export const setUtxos = async (value: any) => await set(db, UTXOS, value);
 
