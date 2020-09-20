@@ -18,12 +18,13 @@ const httpReq = axios.create({
 
 httpReq.interceptors.request.use(
   config => {
-    const token = localStorage.getItem('sessionkey');
+    const token =
+      '53c35e7737f71253cd759ebfe64ffcd45dd445363602e8f4e71cc4aea9ddf76b';
+    // const token = localStorage.getItem('sessionkey');
     config.headers.Authorization = token ? `Bearer ${token}` : '';
     return config;
   },
   error => {
-    console.log(error);
     return Promise.reject(error);
   }
 );
@@ -31,10 +32,8 @@ httpReq.interceptors.request.use(
 export const get = async (url: string, config?: AxiosRequestConfig) => {
   try {
     const response = await httpReq.get(url, config);
-    console.log(response);
     return response;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -46,10 +45,8 @@ export const post = async (
 ) => {
   try {
     const response = await httpReq.post(url, data, config);
-    console.log(response);
     return response;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -61,10 +58,8 @@ export const put = async (
 ) => {
   try {
     const response = await httpReq.put(url, data, config);
-    console.log(response);
     return response;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -72,10 +67,8 @@ export const put = async (
 export const deleteR = async (url: string, config?: AxiosRequestConfig) => {
   try {
     const response = await httpReq.delete(url, config);
-    console.log(response);
     return response;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
