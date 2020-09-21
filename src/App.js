@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { createBrowserHistory } from 'history';
-import { HashRouter, Link, Route, Switch } from 'react-router-dom';
+import { HashRouter, NavLink, Link, Route, Switch } from 'react-router-dom';
 import ExplorerHome from './explorer/screens/ExplorerHome';
+import { Menu } from 'semantic-ui-react';
 import Home from './shared/components/home';
 import images from './shared/images';
 import NoMatch from './shared/components/noMatch';
@@ -12,35 +13,12 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.history = createBrowserHistory();
-    this.state = { clickedTab: '' };
   }
-  walletClassName = '';
-  explorerClassName = '';
-  changeTabHighlight = prop => {
-    if (prop === 'explorer' && prop !== '') {
-      this.explorerClassName = prop + 'class';
-      this.walletClassName = '';
-    } else if (prop === 'wallet' && prop !== '') {
-      this.walletClassName = prop + 'class';
-      this.explorerClassName = '';
-    } else {
-      this.explorerClassName = '';
-      this.walletClassName = '';
-    }
-    this.setState({
-      clickedTab: prop
-    });
-  };
 
   onBack = () => {
     this.history.goBack();
   };
-  componentDidMount() {
-    console.log(this.state.clickedTab + 'this.state.clickedTab');
-  }
-  componentDidUpdate(props) {
-    console.log(this.state.clickedTab + 'this.state.clickedTab');
-  }
+
   render() {
     return (
       <HashRouter>
@@ -59,22 +37,22 @@ class App extends React.Component {
             <img src={images.logo} className='d-inline-block align-top' alt='' loading='lazy' />
           </Link>
           <div className='cen'>
-            <Link to='/explorer' className={`navbar-brand ${this.explorerClassName}`}>
+            <NavLink to='/explorer' activeClassName='activetab' className='navbar-brand'>
               <img
                 src={images.blockexplorerlogo}
-                className='d-inline-block align-top headerblockexplorerlogo'
+                className='d-inline-block align-top headerlogos'
                 alt=''
                 loading='lazy'
               />
-            </Link>
-            <Link to='/wallet' className={`navbar-brand ${this.walletClassName}`}>
+            </NavLink>
+            <NavLink to='/wallet' activeClassName='activetab' className='navbar-brand'>
               <img
                 src={images.walletlogo}
-                className='d-inline-block align-top headerwalletlogo'
+                className='d-inline-block align-top headerlogos'
                 alt=''
                 loading='lazy'
               />
-            </Link>
+            </NavLink>
           </div>
         </nav>
         <div className='container main-container'>

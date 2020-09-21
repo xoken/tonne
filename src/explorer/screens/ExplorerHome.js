@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
 import ExplorerAddress from './ExplorerAddress';
 import ExplorerBlockHeight from './ExplorerBlockHeight';
@@ -11,9 +11,6 @@ import NoMatch from '../../shared/components/noMatch';
 
 export default function ExplorerHome(props) {
   const { path } = useRouteMatch();
-  useEffect(() => {
-    props.changeTabHighlight('explorer');
-  }, []);
 
   return (
     <>

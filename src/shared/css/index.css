@@ -16,12 +16,6 @@ code {
 .navbar {
   margin-bottom: 50px;
 }
-.walletclass{
-  border-bottom:3px solid #eab300;
-}
-.explorerclass{
-  border-bottom:3px solid #eab300;
-}
 .opacitywhileload {
   animation-duration: 2s;
   animation-name: opacityload;
@@ -207,11 +201,12 @@ body {
   position: absolute;
   left: 0;
   right: 0;
+  top:5px;
   text-align: center;
 }
-.headerwalletlogo{
-  height:51px;
+.headerlogos{
+    height:50px !important;
 }
-.headerblockexplorerlogo{
-  height:51px;
+.activetab{
+  border-bottom:3px solid #eab300 !important;
 }
