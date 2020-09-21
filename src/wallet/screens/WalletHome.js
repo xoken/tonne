@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Route, Switch, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { List, Loader } from 'semantic-ui-react';
+import { List, Loader, Card } from 'semantic-ui-react';
 import ExistingWallet from './ExistingWallet';
 import Login from './Login';
 import NewWallet from './NewWallet';
@@ -29,10 +29,10 @@ class WalletHome extends React.Component {
     if (profiles && profiles.length > 0) {
       return (
         <>
-          <div class='ui placeholder segment'>
-            <div class='ui two column very relaxed stackable grid'>
-              <div class='column'>
-                <div class='ui segment'>
+          <div className='ui placeholder segment'>
+            <div className='ui two column very relaxed stackable grid centered'>
+              <div className='column'>
+                <div className='ui center aligned segment'>
                   <h5>Login to Existing Profile</h5>
                   <List selection verticalAlign='middle'>
                     {profiles.map((profile, index) => {
@@ -48,64 +48,75 @@ class WalletHome extends React.Component {
                   </List>
                 </div>
               </div>
-              <div class='middle aligned column'>
-                <div class='ui segment'>
-                  <div className='card text-center'>
-                    <div className='card-body'>
-                      <h5 className='card-title'>I already have a seed phrase</h5>
-                      <p className='card-text'>
-                        Import your existing wallet using a 12 word seed phrase
-                      </p>
+              <div className='ui horizontal divider disablehorizontal'>Or</div>
+              <div className='middle aligned column'>
+                <div className='ui segment cardnoborder'>
+                  <Card fluid>
+                    <Card.Content>
+                      <Card.Header>I already have a seed phrase</Card.Header>
+                      <Card.Description>
+                        <h4>Import your existing wallet using a 12 word seed phrase</h4>
+                      </Card.Description>
+                    </Card.Content>
+                    <Card.Content extra>
                       <Link to='/wallet/existing' className='generalbtns'>
                         Wallet
                       </Link>
-                    </div>
-                  </div>
+                    </Card.Content>
+                  </Card>
                 </div>
-                <div class='ui segment'>
-                  <div className='card text-center'>
-                    <div className='card-body'>
-                      <h5 className='card-title'>Yes, let's get set up!</h5>
-                      <p className='card-text'>This will create a new wallet and seed phrase</p>
+                <div className='ui segment cardnoborder'>
+                  <Card fluid>
+                    <Card.Content>
+                      <Card.Header>Yes, let's get set up!</Card.Header>
+                      <Card.Description>
+                        <h4>This will create a new wallet and seed phrase</h4>
+                      </Card.Description>
+                    </Card.Content>
+                    <Card.Content extra>
                       <Link to='/wallet/new' className='generalbtns'>
                         Create a Wallet
                       </Link>
-                    </div>
-                  </div>
+                    </Card.Content>
+                  </Card>
                 </div>
               </div>
             </div>
-            <div class='ui vertical divider'>Or</div>
+            <div className='ui vertical divider disablevertical'>Or</div>
           </div>
         </>
       );
     } else {
       return (
         <>
-          <div class='ui grid'>
-            <div class='eight wide middle aligned column'>
-              <div className='card text-center'>
-                <div className='card-body'>
-                  <h5 className='card-title'>I already have a seed phrase</h5>
-                  <p className='card-text'>
+          <div className='ui grid centered'>
+            <div className='eight wide middle aligned column cardnoborder'>
+              <Card fluid>
+                <Card.Content>
+                  <Card.Header>I already have a seed phrase</Card.Header>
+                  <Card.Description>
                     Import your existing wallet using a 12 word seed phrase
-                  </p>
+                  </Card.Description>
+                </Card.Content>
+                <Card.Content extra>
                   <Link to='/wallet/existing' className='generalbtns'>
                     Wallet
                   </Link>
-                </div>
-              </div>
+                </Card.Content>
+              </Card>
             </div>
-            <div class='eight wide middle aligned column'>
-              <div className='card text-center'>
-                <div className='card-body'>
-                  <h5 className='card-title'>Yes, let's get set up!</h5>
-                  <p className='card-text'>This will create a new wallet and seed phrase</p>
+            <div className='eight wide middle aligned column cardnoborder'>
+              <Card fluid>
+                <Card.Content>
+                  <Card.Header>Yes, let's get set up!</Card.Header>
+                  <Card.Description>This will create a new wallet and seed phrase</Card.Description>
+                </Card.Content>
+                <Card.Content extra>
                   <Link to='/wallet/new' className='generalbtns'>
                     Create a Wallet
                   </Link>
-                </div>
-              </div>
+                </Card.Content>
+              </Card>
             </div>
           </div>
         </>
