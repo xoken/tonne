@@ -31,7 +31,7 @@ class WalletHome extends React.Component {
         <>
           <div className='ui placeholder segment'>
             <div className='ui two column very relaxed stackable grid centered'>
-              <div className='column'>
+              <div className='middle aligned column'>
                 <div className='ui center aligned segment'>
                   <h5>Login to Existing Profile</h5>
                   <List selection verticalAlign='middle'>
