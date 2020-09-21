@@ -56,12 +56,10 @@ class WalletHome extends React.Component {
                       <Card.Header>I already have a seed phrase</Card.Header>
                       <Card.Description>
                         <h4>Import your existing wallet using a 12 word seed phrase</h4>
+                        <Link to='/wallet/existing' className='generalbtns'>
+                          Wallet
+                        </Link>
                       </Card.Description>
-                    </Card.Content>
-                    <Card.Content extra>
-                      <Link to='/wallet/existing' className='generalbtns'>
-                        Wallet
-                      </Link>
                     </Card.Content>
                   </Card>
                 </div>
@@ -71,12 +69,10 @@ class WalletHome extends React.Component {
                       <Card.Header>Yes, let's get set up!</Card.Header>
                       <Card.Description>
                         <h4>This will create a new wallet and seed phrase</h4>
+                        <Link to='/wallet/new' className='generalbtns'>
+                          Create a Wallet
+                        </Link>
                       </Card.Description>
-                    </Card.Content>
-                    <Card.Content extra>
-                      <Link to='/wallet/new' className='generalbtns'>
-                        Create a Wallet
-                      </Link>
                     </Card.Content>
                   </Card>
                 </div>
@@ -90,31 +86,29 @@ class WalletHome extends React.Component {
       return (
         <>
           <div className='ui grid centered'>
-            <div className='eight wide middle aligned column cardnoborder'>
+            <div className='eight wide middle aligned column'>
               <Card fluid>
                 <Card.Content>
                   <Card.Header>I already have a seed phrase</Card.Header>
                   <Card.Description>
-                    Import your existing wallet using a 12 word seed phrase
+                    <h4>Import your existing wallet using a 12 word seed phrase</h4>
+                    <Link to='/wallet/existing' className='generalbtns'>
+                      Wallet
+                    </Link>
                   </Card.Description>
-                </Card.Content>
-                <Card.Content extra>
-                  <Link to='/wallet/existing' className='generalbtns'>
-                    Wallet
-                  </Link>
                 </Card.Content>
               </Card>
             </div>
-            <div className='eight wide middle aligned column cardnoborder'>
+            <div className='eight wide middle aligned column'>
               <Card fluid>
                 <Card.Content>
                   <Card.Header>Yes, let's get set up!</Card.Header>
-                  <Card.Description>This will create a new wallet and seed phrase</Card.Description>
-                </Card.Content>
-                <Card.Content extra>
-                  <Link to='/wallet/new' className='generalbtns'>
-                    Create a Wallet
-                  </Link>
+                  <Card.Description>
+                    <h4>This will create a new wallet and seed phrase</h4>
+                    <Link to='/wallet/new' className='generalbtns'>
+                      Create a Wallet
+                    </Link>
+                  </Card.Description>
                 </Card.Content>
               </Card>
             </div>
