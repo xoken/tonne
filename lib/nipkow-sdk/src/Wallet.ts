@@ -169,7 +169,7 @@ class Wallet {
         return data;
       })
       .catch(err => {
-        console.log(err);
+        throw err;
       });
   }
 
@@ -427,6 +427,7 @@ class Wallet {
   async createProfile(bip39Mnemonic: string, password: string) {
     const cryptedText = AES.encrypt(bip39Mnemonic, password).toString();
     const profileName = faker.name.firstName();
+    localStorage.setItem('currentprofile', profileName);
     try {
       await Persist.createProfile(cryptedText, profileName);
       return { profile: profileName };
@@ -437,8 +438,6 @@ class Wallet {
 
   async updateProfileName(currentProfileName: string, newProfileName: string) {
     try {
-      console.log('wallet.ts');
-
       await Persist.updateProfileName(currentProfileName, newProfileName);
       return { profile: newProfileName };
     } catch (error) {

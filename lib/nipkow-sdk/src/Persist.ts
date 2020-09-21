@@ -60,8 +60,6 @@ export const updateProfileName = async (
   currentProfileName: string,
   newProfileName: string
 ) => {
-  console.log('Persist.ts');
-
   try {
     const existingProfiles: any = await profiles.get('profiles', {
       revs: true,
@@ -70,19 +68,17 @@ export const updateProfileName = async (
     const profileIndex = existingProfiles.value.findIndex(
       (profile: any) => profile.name === currentProfileName
     );
-    const latestValueArray = existingProfiles.value;
-    latestValueArray[profileIndex].name = newProfileName;
+    const profilesArray = existingProfiles.value;
+    profilesArray[profileIndex].name = newProfileName;
 
-    try {
-      const response: any = await profiles.put({
-        _id: 'profiles',
-        _rev: existingProfiles._rev,
-        value: latestValueArray,
-      });
-    } catch (err) {
-      console.log(err);
-    }
-  } catch (error) {}
+    const response: any = await profiles.put({
+      _id: 'profiles',
+      _rev: existingProfiles._rev,
+      value: profilesArray,
+    });
+  } catch (error) {
+    throw error;
+  }
 };
 
 export const getProfiles = async () => {

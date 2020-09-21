@@ -86,7 +86,6 @@ export const updateProfileName = (currentProfileName, newProfileName) => async (
   getState,
   { serviceInjector }
 ) => {
-  console.log('authaction');
   dispatch(updateProfileNameRequest());
   try {
     const { profile } = await serviceInjector(AuthService).updateProfileName(
@@ -94,9 +93,10 @@ export const updateProfileName = (currentProfileName, newProfileName) => async (
       newProfileName
     );
     dispatch(updateProfileNameSuccess({ profile }));
+    return false;
   } catch (error) {
-    console.log(error);
     dispatch(updateProfileNameFailure());
+    return true;
   }
 };
 

@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 import { Button, Icon, Modal, Pagination, Dropdown, Grid } from 'semantic-ui-react';
 import { formatDistanceToNow } from 'date-fns';
 import SendTransaction from '../components/SendTransaction';
+import RenameProfile from '../components/RenameProfile';
 import * as authActions from '../../auth/authActions';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
@@ -22,8 +23,7 @@ class WalletDashboard extends React.Component {
       autoRefreshToggle: false,
       selectnum: '',
       txid: '',
-      renameProfileModal: false,
-      newname: ''
+      renameProfileModal: false
     };
   }
   transactionList = [];
@@ -57,18 +57,6 @@ class WalletDashboard extends React.Component {
       this.setState({ txid: txidpar });
     }
     this.setState({ transactionModal: !transactionModal });
-  };
-
-  onRenameAccount = async event => {
-    event.preventDefault();
-    const { dispatch } = this.props;
-    const { newname } = this.state;
-    try {
-      await dispatch(
-        authActions.updateProfileName(localStorage.getItem('currentprofile'), newname)
-      );
-      this.logout();
-    } catch (error) {}
   };
 
   toggleSendTxPopup = () => {
@@ -396,40 +384,10 @@ class WalletDashboard extends React.Component {
   }
 
   renderRenameProfileModal() {
-    const { renameProfileModal, newname } = this.state;
+    const { renameProfileModal } = this.state;
     return (
       <Modal open={renameProfileModal} onClose={this.onRenameProfile} onOpen={this.onRenameProfile}>
-        <Modal.Header>Rename Current Profile</Modal.Header>
-        <Modal.Content>
-          <Modal.Description>
-            <Grid centered>
-              <Grid.Column textAlign='center' width={8}>
-                <div className='ui form'>
-                  <div className='field'>
-                    <label>Change Current Account's Name</label>
-                    <div className='ui left icon input'>
-                      <input
-                        type='text'
-                        placeholder='New Name'
-                        value={newname}
-                        onChange={event => this.setState({ newname: event.target.value })}
-                      />
-                      <i className='user icon'></i>
-                    </div>
-                  </div>
-                  <center>
-                    <div className='ui blue submit button' onClick={this.onRenameAccount}>
-                      Rename
-                    </div>
-                    <div className='ui blue submit button' onClick={this.onRenameProfile}>
-                      Cancel
-                    </div>
-                  </center>
-                </div>
-              </Grid.Column>
-            </Grid>
-          </Modal.Description>
-        </Modal.Content>
+        <RenameProfile onClose={this.onRenameProfile} logout={this.logout} />
       </Modal>
     );
   }
@@ -449,7 +407,7 @@ class WalletDashboard extends React.Component {
         }
         <Grid>
           <Grid.Column floated='right' width={2}>
-            <Dropdown icon='setting'>
+            <Dropdown icon={null} trigger={<Icon name='setting' size='large' />}>
               <Dropdown.Menu>
                 <Dropdown.Item text='Rename Profile' onClick={this.onRenameProfile} />
                 <Dropdown.Divider />

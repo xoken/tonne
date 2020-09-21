@@ -10,7 +10,6 @@ class AuthService {
   }
 
   async updateProfileName(currentProfileName, newProfileName) {
-    console.log('authservice');
     return await wallet.updateProfileName(currentProfileName, newProfileName);
   }
 
