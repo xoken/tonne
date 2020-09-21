@@ -2,18 +2,20 @@ import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Grid, Form, Button } from 'semantic-ui-react';
-import Authenticator from '../modules/Authenticator';
+import { httpsauth } from '../modules/Authenticator';
 
-class GlobalSettings extends React.Component {
+class Settings extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { newNexaIP: '', newPortNumber: '' };
+    this.state = { newNexaIP: '', newPortNumber: '', username: '', password: '' };
   }
 
   onSubmit = async () => {
     localStorage.setItem('hostname', this.state.newNexaIP);
     localStorage.setItem('port', this.state.newPortNumber);
-    Authenticator.httpsauth(localStorage.getItem('username'), localStorage.getItem('password'));
+    localStorage.setItem('username', this.state.username);
+    localStorage.setItem('password', this.state.password);
+    httpsauth(localStorage.getItem('username'), localStorage.getItem('password'));
     this.props.history.goBack();
   };
 
@@ -38,6 +40,21 @@ class GlobalSettings extends React.Component {
                     onChange={event => this.setState({ newPortNumber: event.target.value })}
                   />
                 </Form.Field>
+                <Form.Field>
+                  <label>Enter Username</label>
+                  <input
+                    placeholder=''
+                    onChange={event => this.setState({ username: event.target.value })}
+                  />
+                </Form.Field>
+                <Form.Field>
+                  <label>Enter Password</label>
+                  <input
+                    type='password'
+                    placeholder=''
+                    onChange={event => this.setState({ password: event.target.value })}
+                  />
+                </Form.Field>
                 <center>
                   <Button className='txbtn' onClick={this.onSubmit}>
                     Change
@@ -54,4 +71,4 @@ class GlobalSettings extends React.Component {
 
 const mapStateToProps = state => ({});
 
-export default withRouter(connect(mapStateToProps)(GlobalSettings));
+export default withRouter(connect(mapStateToProps)(Settings));

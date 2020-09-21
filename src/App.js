@@ -7,7 +7,7 @@ import ExplorerHome from './explorer/screens/ExplorerHome';
 import Home from './shared/components/home';
 import images from './shared/images';
 import NoMatch from './shared/components/noMatch';
-import GlobalSettings from './shared/components/GlobalSettings';
+import Settings from './shared/components/Settings';
 import WalletHome from './wallet/screens/WalletHome';
 
 class App extends React.Component {
@@ -55,8 +55,8 @@ class App extends React.Component {
               />
             </Link>
           </div>
-          <div className='globalsettings'>
-            <Link to='/globalsettings' className='navbar-brand'>
+          <div className='settings'>
+            <Link to='/settings' className='navbar-brand'>
               <Icon name='settings' size='large' />
             </Link>
           </div>
@@ -72,8 +72,8 @@ class App extends React.Component {
             <Route exact path='/'>
               <Home />
             </Route>
-            <Route exact path='/globalsettings'>
-              <GlobalSettings />
+            <Route exact path='/settings'>
+              <Settings />
             </Route>
             <Route path='*'>
               <NoMatch />

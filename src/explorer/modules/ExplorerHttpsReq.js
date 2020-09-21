@@ -1,4 +1,4 @@
-import Authenticator from '../../shared/modules/Authenticator';
+import { httpsauth } from '../../shared/modules/Authenticator';
 const apis = require('nipkow-sdk');
 
 export default class ExplorerHttpsReq {
@@ -7,7 +7,7 @@ export default class ExplorerHttpsReq {
       localStorage.getItem('callsremaining') === null ||
       localStorage.getItem('callsremaining') === 3
     ) {
-      Authenticator.httpsauth();
+      httpsauth();
     }
     localStorage.setItem(
       'callsremaining',
