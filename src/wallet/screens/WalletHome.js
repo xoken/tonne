@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Route, Switch, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { List, Loader } from 'semantic-ui-react';
+import { List, Loader, Card } from 'semantic-ui-react';
 import ExistingWallet from './ExistingWallet';
 import Login from './Login';
 import NewWallet from './NewWallet';
@@ -29,24 +29,93 @@ class WalletHome extends React.Component {
     if (profiles && profiles.length > 0) {
       return (
         <>
-          <h5>Login to Existing Profile</h5>
-          <List selection verticalAlign='middle'>
-            {profiles.map((profile, index) => {
-              const { name } = profile;
-              return (
-                <List.Item key={index} onClick={this.onSelectProfile(name)}>
-                  <List.Content>
-                    <List.Header>{name}</List.Header>
-                  </List.Content>
-                </List.Item>
-              );
-            })}
-          </List>
-          <h5>OR</h5>
+          <div className='ui placeholder segment'>
+            <div className='ui two column very relaxed stackable grid centered'>
+              <div className='middle aligned column'>
+                <div className='ui center aligned segment'>
+                  <h5>Login to Existing Profile</h5>
+                  <List selection verticalAlign='middle'>
+                    {profiles.map((profile, index) => {
+                      const { name } = profile;
+                      return (
+                        <List.Item key={index} onClick={this.onSelectProfile(name)}>
+                          <List.Content>
+                            <List.Header>{name}</List.Header>
+                          </List.Content>
+                        </List.Item>
+                      );
+                    })}
+                  </List>
+                </div>
+              </div>
+              <div className='ui horizontal divider disablehorizontal'>Or</div>
+              <div className='middle aligned column'>
+                <div className='ui segment cardnoborder'>
+                  <Card fluid>
+                    <Card.Content>
+                      <Card.Header>I already have a seed phrase</Card.Header>
+                      <Card.Description>
+                        <h4>Import your existing wallet using a 12 word seed phrase</h4>
+                        <Link to='/wallet/existing' className='generalbtns'>
+                          Wallet
+                        </Link>
+                      </Card.Description>
+                    </Card.Content>
+                  </Card>
+                </div>
+                <div className='ui segment cardnoborder'>
+                  <Card fluid>
+                    <Card.Content>
+                      <Card.Header>Yes, let's get set up!</Card.Header>
+                      <Card.Description>
+                        <h4>This will create a new wallet and seed phrase</h4>
+                        <Link to='/wallet/new' className='generalbtns'>
+                          Create a Wallet
+                        </Link>
+                      </Card.Description>
+                    </Card.Content>
+                  </Card>
+                </div>
+              </div>
+            </div>
+            <div className='ui vertical divider disablevertical'>Or</div>
+          </div>
+        </>
+      );
+    } else {
+      return (
+        <>
+          <div className='ui grid centered'>
+            <div className='eight wide middle aligned column'>
+              <Card fluid>
+                <Card.Content>
+                  <Card.Header>I already have a seed phrase</Card.Header>
+                  <Card.Description>
+                    <h4>Import your existing wallet using a 12 word seed phrase</h4>
+                    <Link to='/wallet/existing' className='generalbtns'>
+                      Wallet
+                    </Link>
+                  </Card.Description>
+                </Card.Content>
+              </Card>
+            </div>
+            <div className='eight wide middle aligned column'>
+              <Card fluid>
+                <Card.Content>
+                  <Card.Header>Yes, let's get set up!</Card.Header>
+                  <Card.Description>
+                    <h4>This will create a new wallet and seed phrase</h4>
+                    <Link to='/wallet/new' className='generalbtns'>
+                      Create a Wallet
+                    </Link>
+                  </Card.Description>
+                </Card.Content>
+              </Card>
+            </div>
+          </div>
         </>
       );
     }
-    return null;
   }
 
   renderContent() {
@@ -60,39 +129,7 @@ class WalletHome extends React.Component {
     } else if (profile) {
       return <WalletDashboard />;
     } else {
-      return (
-        <>
-          <div className='row'>
-            <div className='col-sm-12'>{this.renderExistingProfile()}</div>
-          </div>
-          <div className='row'>
-            <div className='col-sm-6'>
-              <div className='card text-center'>
-                <div className='card-body'>
-                  <h5 className='card-title'>I already have a seed phrase</h5>
-                  <p className='card-text'>
-                    Import your existing wallet using a 12 word seed phrase
-                  </p>
-                  <Link to='/wallet/existing' className='generalbtns'>
-                    Wallet
-                  </Link>
-                </div>
-              </div>
-            </div>
-            <div className='col-sm-6'>
-              <div className='card text-center'>
-                <div className='card-body'>
-                  <h5 className='card-title'>Yes, let's get set up!</h5>
-                  <p className='card-text'>This will create a new wallet and seed phrase</p>
-                  <Link to='/wallet/new' className='generalbtns'>
-                    Create a Wallet
-                  </Link>
-                </div>
-              </div>
-            </div>
-          </div>
-        </>
-      );
+      return <>{this.renderExistingProfile()}</>;
     }
   }
 
