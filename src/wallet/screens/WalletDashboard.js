@@ -35,7 +35,7 @@ class WalletDashboard extends React.Component {
     );
     const autoRefreshTimeInSecs = 1 * 60 * 1000;
     this.autoRefreshTimer = setInterval(() => {
-      this.onRefresh();
+      // this.onRefresh();
     }, autoRefreshTimeInSecs);
   }
 
