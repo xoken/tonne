@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import ExplorerAuth from '../modules/ExplorerAuth';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 
 class ExplorerDashboard extends React.Component {
@@ -34,18 +33,12 @@ class ExplorerDashboard extends React.Component {
       this.blockhei = this.props.match.params.blockheight;
       console.log(this.blockhei + 'this.blockhei');
     }
-    if (localStorage.getItem('username') !== undefined || localStorage.getItem('username') !== '') {
-      if (
-        localStorage.getItem('callsremaining') !== null ||
-        localStorage.getItem('callsremaining') > 3
-      ) {
-        this.rjdecoded = await ExplorerHttpsReq.httpsreq('getChainInfo');
-        if (this.rjdecoded !== undefined) {
-          this.summary();
-        }
-      }
+    this.rjdecoded = await ExplorerHttpsReq.httpsreq('getChainInfo');
+    if (this.rjdecoded !== undefined) {
+      this.summary();
     }
   };
+
   blockheiinit = () => {
     if (this.blockhei !== '') {
       //this.selected = (this.numberofpages - Math.ceil(this.blockhei/10));
@@ -114,15 +107,17 @@ class ExplorerDashboard extends React.Component {
     this.printpagination();
     this.callsec();
   };
+
   callsec = async () => {
     this.rjdecoded = await ExplorerHttpsReq.httpsreq('getBlocksByBlockHeights', this.heightlist);
     this.printresults();
     if (this.state.selectnum === '') {
       this.setState({
-        selectnum: 1
+        selectnum: 1,
       });
     }
   };
+
   pagebutton = event => {
     event.preventDefault();
     if (
@@ -266,12 +261,11 @@ class ExplorerDashboard extends React.Component {
       );
     }
     this.setState({
-      selectnum: this.selected
+      selectnum: this.selected,
     });
   };
 
   componentDidMount() {
-    ExplorerAuth.test();
     this.initDashboard();
   }
   render() {
@@ -324,7 +318,7 @@ class ExplorerDashboard extends React.Component {
                   type='text'
                   onChange={event =>
                     this.setState({
-                      selectnum: event.target.value
+                      selectnum: event.target.value,
                     })
                   }
                 />

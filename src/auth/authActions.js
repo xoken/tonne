@@ -35,8 +35,8 @@ export const getProfiles = () => async (dispatch, getState, { serviceInjector })
     const { profiles } = await serviceInjector(AuthService).getProfiles();
     dispatch(getProfileSuccess({ profiles }));
   } catch (error) {
-    console.log(error);
     dispatch(getProfileFailure());
+    throw error;
   }
 };
 
@@ -76,8 +76,8 @@ export const createProfile = password => async (dispatch, getState, { serviceInj
     dispatch(createProfileSuccess());
     dispatch(login(profile, password));
   } catch (error) {
-    console.log(error);
     dispatch(createProfileFailure());
+    throw error;
   }
 };
 
