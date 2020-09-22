@@ -1,46 +1,49 @@
-const apis = require('nipkow-sdk');
+import { httpClient, authAPI } from 'nipkow-sdk';
 
-async function checkCredentials() {
-  if (
-    localStorage.getItem('username') === undefined ||
-    localStorage.getItem('password') === undefined ||
-    localStorage.getItem('username') === '' ||
-    localStorage.getItem('password') === '' ||
-    localStorage.getItem('username') === null ||
-    localStorage.getItem('password') === null
-  ) {
-    setCredentials();
-    httpsauth(localStorage.getItem('username'), localStorage.getItem('password'));
-  } else {
-    if (
-      localStorage.getItem('callsremaining') === null ||
-      localStorage.getItem('callsremaining') <= 3
-    ) {
-      httpsauth(localStorage.getItem('username'), localStorage.getItem('password'));
+async function setConfig(nexaHost, nexaPort, username, password) {
+  try {
+    if (nexaHost && nexaPort && username && password) {
+      await init(nexaHost, nexaPort, username, password);
     }
+  } catch (error) {
+    setDefaultConfig();
+    throw error;
   }
 }
 
-async function httpsauth(username, password) {
-  const authData = await apis.authAPI
-    .login('' + username + '', '' + password + '')
-    .then(data => {
-      return data;
-    })
-    .catch(error => {
-      window.location.reload();
-    });
-  if (Object.keys(authData).length !== 0) {
-    localStorage.setItem('sessionkey', authData.auth.sessionKey);
-    localStorage.setItem('callsremaining', authData.auth.callsRemaining);
+async function setDefaultConfig() {
+  try {
+    const nexaHost = 'sb1.xoken.org';
+    const nexaPort = 9091;
+    const username = 'ExplorerUser';
+    const password = 'OTQ2Nzc1MDIwNDA5MDcyMTM2Ng';
+    if (nexaHost && nexaPort && username && password) {
+      await init(nexaHost, nexaPort, username, password);
+    }
+  } catch (error) {
+    throw error;
   }
 }
 
-function setCredentials() {
-  localStorage.setItem('username', 'ExplorerUser');
-  localStorage.setItem('password', 'OTQ2Nzc1MDIwNDA5MDcyMTM2Ng');
-  localStorage.setItem('hostname', 'sb1.xoken.org');
-  localStorage.setItem('port', 9091);
+async function init(nexaHost, nexaPort, username, password) {
+  try {
+    httpClient.init(nexaHost, nexaPort);
+    const {
+      auth: { sessionKey, callsRemaining },
+    } = await authAPI.login(username, password);
+    if (sessionKey) {
+      localStorage.setItem('nexaHost', nexaHost);
+      localStorage.setItem('nexaPort', nexaPort);
+      localStorage.setItem('userName', username);
+      localStorage.setItem('password', password);
+      localStorage.setItem('sessionKey', sessionKey);
+      localStorage.setItem('callsRemaining', callsRemaining);
+    } else {
+      throw new Error('Incorrect settings');
+    }
+  } catch (error) {
+    throw error;
+  }
 }
 
-export { checkCredentials, httpsauth, setCredentials };
+export { setConfig, setDefaultConfig };

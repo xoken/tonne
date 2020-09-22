@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
+import { Button } from 'semantic-ui-react';
 
 class Login extends React.Component {
   constructor(props) {
@@ -63,9 +64,9 @@ class Login extends React.Component {
                     </div>
                   )}
                 </div>
-                <button type='submit' className='txbtn' disabled={error ? true : false}>
+                <Button className='txbtn' disabled={error ? true : false}>
                   Continue
-                </button>
+                </Button>
               </form>
             </center>
           </div>

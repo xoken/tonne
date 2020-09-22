@@ -7,7 +7,7 @@ import ExplorerHome from './explorer/screens/ExplorerHome';
 import Home from './shared/components/home';
 import images from './shared/images';
 import NoMatch from './shared/components/noMatch';
-import Settings from './shared/components/Settings';
+import SettingsScreen from './shared/components/SettingsScreen';
 import WalletHome from './wallet/screens/WalletHome';
 
 class App extends React.Component {
@@ -73,7 +73,7 @@ class App extends React.Component {
               <Home />
             </Route>
             <Route exact path='/settings'>
-              <Settings />
+              <SettingsScreen />
             </Route>
             <Route path='*'>
               <NoMatch />

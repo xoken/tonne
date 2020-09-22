@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
+import { Button } from 'semantic-ui-react';
 
 class WalletPassword extends React.Component {
   constructor(props) {
@@ -29,9 +30,7 @@ class WalletPassword extends React.Component {
       } else {
         return (
           <>
-            <button type='submit' className='txbtn'>
-              Next
-            </button>
+            <Button className='txbtn'>Next</Button>
             <div className='greenalert'>Passwords matched!</div>
           </>
         );

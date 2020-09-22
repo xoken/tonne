@@ -21,7 +21,7 @@ class WalletDashboard extends React.Component {
       lastRefreshed: new Date(),
       autoRefreshToggle: false,
       selectnum: '',
-      txid: ''
+      txid: '',
     };
   }
   transactionList = [];
@@ -67,7 +67,7 @@ class WalletDashboard extends React.Component {
     await dispatch(walletActions.getOutputs());
     this.setState({
       lastRefreshed: new Date(),
-      timeSinceLastRefreshed: new Date()
+      timeSinceLastRefreshed: new Date(),
     });
   };
 
@@ -79,7 +79,7 @@ class WalletDashboard extends React.Component {
           Last refreshed{': '}
           {formatDistanceToNow(lastRefreshed, {
             includeSeconds: true,
-            addSuffix: true
+            addSuffix: true,
           })}
         </div>
       );
@@ -180,7 +180,6 @@ class WalletDashboard extends React.Component {
   //     } else {
   //       this.pagearray = [1, 2, 3, 4, 5, 6, 7, '-', this.numberofpages];
   //     }
-  //     //localStorage.setItem('outputCache', outputsGroupedBy);
   //     this.updatepagearray();
   //     this.printtransactions();
   //     debugger;
@@ -382,9 +381,9 @@ class WalletDashboard extends React.Component {
       <>
         <div className='row'>
           <div className='col-md-12'>
-            <button className='txbtn' onClick={this.logout}>
+            <Button className='txbtn' onClick={this.logout}>
               Logout
-            </button>
+            </Button>
           </div>
         </div>
         <div className='row'>
@@ -401,9 +400,9 @@ class WalletDashboard extends React.Component {
                     <h5>Your Current Balance is</h5>
                     <h4>{satoshiToBSV(balance)} BSV</h4>
                   </div>
-                  <div className='txbtn' onClick={this.toggleSendTxPopup}>
+                  <Button className='txbtn' onClick={this.toggleSendTxPopup}>
                     Send
-                  </div>
+                  </Button>
                 </>
               )}
             </center>
@@ -450,7 +449,7 @@ class WalletDashboard extends React.Component {
                 type='text'
                 onChange={event =>
                   this.setState({
-                    selectnum: event.target.value
+                    selectnum: event.target.value,
                   })
                 }
               />
@@ -480,17 +479,17 @@ WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   balance: PropTypes.number.isRequired,
-  outputs: PropTypes.arrayOf(PropTypes.object)
+  outputs: PropTypes.arrayOf(PropTypes.object),
 };
 
 WalletDashboard.defaultProps = {
-  outputs: []
+  outputs: [],
 };
 
 const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
-  outputs: walletSelectors.getOutputs(state)
+  outputs: walletSelectors.getOutputs(state),
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));

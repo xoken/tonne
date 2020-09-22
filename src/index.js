@@ -13,17 +13,13 @@ import * as serviceWorker from './serviceWorker';
 import configureStore from './shared/store/configureStore';
 import { PersistGate } from 'redux-persist/integration/react';
 import 'semantic-ui-css/semantic.min.css';
-import { checkCredentials } from './shared/modules/Authenticator';
+import { setDefaultConfig } from './shared/modules/Authenticator';
 
 const { store, persistor } = configureStore();
 
-if (
-  localStorage.getItem('sessionkey') === null ||
-  localStorage.getItem('sessionkey') === 'null' ||
-  localStorage.getItem('sessionkey') === undefined ||
-  localStorage.getItem('sessionkey') === ''
-) {
-  checkCredentials();
+const sessionKey = localStorage.getItem('sessionkey');
+if (!sessionKey) {
+  setDefaultConfig();
 }
 
 const PersistComponent = persistor
