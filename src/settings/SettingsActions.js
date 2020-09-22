@@ -4,6 +4,8 @@ async function setConfig(nexaHost, nexaPort, username, password) {
   try {
     if (nexaHost && nexaPort && username && password) {
       await init(nexaHost, nexaPort, username, password);
+    } else {
+      throw new Error('Incorrect settings');
     }
   } catch (error) {
     setDefaultConfig();

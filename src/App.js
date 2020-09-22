@@ -1,13 +1,13 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { createBrowserHistory } from 'history';
-import { HashRouter, Link, Route, Switch } from 'react-router-dom';
-import { Icon } from 'semantic-ui-react';
+import { HashRouter, NavLink, Link, Route, Switch } from 'react-router-dom';
+import { Button, Icon } from 'semantic-ui-react';
 import ExplorerHome from './explorer/screens/ExplorerHome';
 import Home from './shared/components/home';
 import images from './shared/images';
 import NoMatch from './shared/components/noMatch';
-import SettingsScreen from './shared/components/SettingsScreen';
+import SettingsScreen from './settings/screens/SettingsScreen';
 import WalletHome from './wallet/screens/WalletHome';
 
 class App extends React.Component {
@@ -33,44 +33,43 @@ class App extends React.Component {
           //   </div>
           // </div>
         }
-        <nav className='navbar navbar-expand-lg navbar-light'>
-          <Link to='/' id='logo' className='navbar-brand'>
-            <img src={images.logo} className='d-inline-block align-top' alt='' loading='lazy' />
-          </Link>
-          <div className='cen'>
-            <Link to='/explorer' className='navbar-brand'>
-              <img
-                src={images.blockexplorerlogo}
-                className='d-inline-block align-top headerblockexplorerlogo'
-                alt=''
-                loading='lazy'
-              />
-            </Link>
-            <Link to='/wallet' className='navbar-brand'>
-              <img
-                src={images.walletlogo}
-                className='d-inline-block align-top headerwalletlogo'
-                alt=''
-                loading='lazy'
-              />
-            </Link>
+        <div className='ui container'>
+          <div className='ui secondary labeled icon menu'>
+            <div className='header item'>
+              <Link to='/' className='' style={{ display: 'block' }}>
+                <img
+                  src={images.logo}
+                  className=''
+                  style={{ display: 'block', width: 150 }}
+                  alt='Xoken'
+                  loading='lazy'
+                />
+              </Link>
+            </div>
+            <div className='right menu'>
+              <NavLink to='/explorer' activeClassName='active' className='item'>
+                <Icon name='wpexplorer' />
+                Explorer
+              </NavLink>
+              <NavLink to='/wallet' activeClassName='active' className='item'>
+                <Icon name='google wallet' />
+                Wallet
+              </NavLink>
+              <NavLink to='/settings' className='ui item'>
+                <Icon name='setting' />
+                Settings
+              </NavLink>
+            </div>
           </div>
-          <div className='settings'>
-            <Link to='/settings' className='navbar-brand'>
-              <Icon name='settings' size='large' />
-            </Link>
-          </div>
-        </nav>
-        <div className='container main-container'>
           <Switch>
             <Route path='/wallet'>
-              <WalletHome />
+              <WalletHome changeTabHighlight={this.changeTabHighlight} />
             </Route>
             <Route path='/explorer'>
-              <ExplorerHome history={this.history} />
+              <ExplorerHome changeTabHighlight={this.changeTabHighlight} history={this.history} />
             </Route>
             <Route exact path='/'>
-              <Home />
+              <Home changeTabHighlight={this.changeTabHighlight} />
             </Route>
             <Route exact path='/settings'>
               <SettingsScreen />
@@ -79,15 +78,9 @@ class App extends React.Component {
               <NoMatch />
             </Route>
           </Switch>
-        </div>
-        <div className='container'>
-          <div className='row'>
-            <div className='col-md-12'>
-              <button type='button' className='generalbtns' onClick={this.onBack}>
-                Back
-              </button>
-            </div>
-          </div>
+          {/* <div className='row'>
+            <Button onClick={this.onBack}>Back</Button>
+          </div> */}
         </div>
       </HashRouter>
     );
