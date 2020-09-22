@@ -1,33 +1,30 @@
 import https from 'https';
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
-const httpReq = axios.create({
-  baseURL:
-    'https://' +
-    localStorage.getItem('hostname') +
-    ':' +
-    localStorage.getItem('port') +
-    '/v1',
-  httpsAgent: new https.Agent({
-    rejectUnauthorized: false,
-  }),
-  headers: {
-    'Content-Type': 'application/json',
-  },
-});
+let httpReq: AxiosInstance;
 
-httpReq.interceptors.request.use(
-  config => {
-    const token =
-      '53c35e7737f71253cd759ebfe64ffcd45dd445363602e8f4e71cc4aea9ddf76b';
-    // const token = localStorage.getItem('sessionkey');
-    config.headers.Authorization = token ? `Bearer ${token}` : '';
-    return config;
-  },
-  error => {
-    return Promise.reject(error);
-  }
-);
+export const init = (host: string, port: number) => {
+  httpReq = axios.create({
+    baseURL: `https://${host}:${port}/v1`,
+    httpsAgent: new https.Agent({
+      rejectUnauthorized: false,
+    }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+  httpReq.interceptors.request.use(
+    config => {
+      const token = localStorage.getItem('sessionKey');
+      config.headers.Authorization = token ? `Bearer ${token}` : '';
+      return config;
+    },
+    error => {
+      console.log(error);
+      return Promise.reject(error);
+    }
+  );
+};
 
 export const get = async (url: string, config?: AxiosRequestConfig) => {
   try {
