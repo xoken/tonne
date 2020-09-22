@@ -2,11 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { createBrowserHistory } from 'history';
 import { HashRouter, NavLink, Link, Route, Switch } from 'react-router-dom';
+import { Icon } from 'semantic-ui-react';
 import ExplorerHome from './explorer/screens/ExplorerHome';
-import { Menu } from 'semantic-ui-react';
 import Home from './shared/components/home';
 import images from './shared/images';
 import NoMatch from './shared/components/noMatch';
+import SettingsScreen from './shared/components/SettingsScreen';
 import WalletHome from './wallet/screens/WalletHome';
 
 class App extends React.Component {
@@ -54,6 +55,11 @@ class App extends React.Component {
               />
             </NavLink>
           </div>
+          <div className='settings'>
+            <Link to='/settings' className='navbar-brand'>
+              <Icon name='settings' size='large' />
+            </Link>
+          </div>
         </nav>
         <div className='container main-container'>
           <Switch>
@@ -65,6 +71,9 @@ class App extends React.Component {
             </Route>
             <Route exact path='/'>
               <Home changeTabHighlight={this.changeTabHighlight} />
+            </Route>
+            <Route exact path='/settings'>
+              <SettingsScreen />
             </Route>
             <Route path='*'>
               <NoMatch />

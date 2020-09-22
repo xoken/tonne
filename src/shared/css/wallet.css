@@ -82,7 +82,7 @@
   border-radius: 5px;
   border: none;
   cursor: pointer;
-  background-color: #eab300;
+  background-color: #eab300 !important;
   animation-duration: 1.5s;
   position: relative;
   animation-name: buttonslide;
@@ -312,4 +312,23 @@
   height: unset;
   overflow: unset;
   outline: unset;
+}
+
+.disablevertical{
+  display:block;
+}
+.disablehorizontal{
+  display:none !important;
+}
+
+@media (max-width: 768px) {
+  .disablevertical{
+    display:none !important;
+  }
+  .disablehorizontal{
+    display:block !important;
+  }
+}
+.cardnoborder > div{
+  box-shadow: none !important;
 }

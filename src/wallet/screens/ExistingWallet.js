@@ -6,6 +6,7 @@ import words from '../../shared/constants/wordlist/english';
 import alphabet from '../../shared/constants/alphabet/english';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
+import { Button } from 'semantic-ui-react';
 const crypto = require('crypto');
 
 class ExistingWallet extends React.Component {
@@ -225,9 +226,9 @@ class ExistingWallet extends React.Component {
 function MnemonicCompleted(props) {
   if (props.mncompleted === true) {
     return (
-      <div className='txbtn' onClick={props.continuefunction}>
+      <Button className='txbtn' onClick={props.continuefunction}>
         Continue
-      </div>
+      </Button>
     );
   } else {
     return <i></i>;
