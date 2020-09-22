@@ -313,3 +313,22 @@
   overflow: unset;
   outline: unset;
 }
+
+.disablevertical{
+  display:block;
+}
+.disablehorizontal{
+  display:none !important;
+}
+
+@media (max-width: 768px) {
+  .disablevertical{
+    display:none !important;
+  }
+  .disablehorizontal{
+    display:block !important;
+  }
+}
+.cardnoborder > div{
+  box-shadow: none !important;
+}

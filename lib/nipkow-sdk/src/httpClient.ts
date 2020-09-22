@@ -29,10 +29,8 @@ export const init = (host: string, port: number) => {
 export const get = async (url: string, config?: AxiosRequestConfig) => {
   try {
     const response = await httpReq.get(url, config);
-    console.log(response);
     return response;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -44,10 +42,8 @@ export const post = async (
 ) => {
   try {
     const response = await httpReq.post(url, data, config);
-    console.log(response);
     return response;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -59,10 +55,8 @@ export const put = async (
 ) => {
   try {
     const response = await httpReq.put(url, data, config);
-    console.log(response);
     return response;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
@@ -70,10 +64,8 @@ export const put = async (
 export const deleteR = async (url: string, config?: AxiosRequestConfig) => {
   try {
     const response = await httpReq.delete(url, config);
-    console.log(response);
     return response;
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
