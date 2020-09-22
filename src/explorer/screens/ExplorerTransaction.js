@@ -244,12 +244,12 @@ class ExplorerTransaction extends React.Component {
         this.tempoutputstring.push(
           <tr>
             <td colspan='2'>
-              <table class='outputinputtd'>
+              <table className='outputinputtd'>
                 <tr>
                   <td>
                     <b>spendingBlockHash</b>
                   </td>
-                  <td class='tdwordbreak'>
+                  <td className='tdwordbreak'>
                     <Link
                       to={
                         '/explorer/blockhash/' +
@@ -264,7 +264,7 @@ class ExplorerTransaction extends React.Component {
                   <td>
                     <b>spendingBlockHeight</b>
                   </td>
-                  <td class='tdwordbreak'>
+                  <td className='tdwordbreak'>
                     <Link
                       to={
                         '/explorer/blockheight/' +
@@ -279,7 +279,7 @@ class ExplorerTransaction extends React.Component {
                   <td>
                     <b>spendingTxId</b>
                   </td>
-                  <td class='tdwordbreak'>
+                  <td className='tdwordbreak'>
                     <Link
                       to={
                         '/explorer/transaction/' +
@@ -293,7 +293,7 @@ class ExplorerTransaction extends React.Component {
                   <td>
                     <b>spendingTxIndex</b>
                   </td>
-                  <td class='tdwordbreak'>
+                  <td className='tdwordbreak'>
                     {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxIndex}
                   </td>
                 </tr>

@@ -314,21 +314,21 @@
   outline: unset;
 }
 
-.disablevertical{
-  display:block;
+.disablevertical {
+  display: block;
 }
-.disablehorizontal{
-  display:none !important;
+.disablehorizontal {
+  display: none !important;
 }
 
 @media (max-width: 768px) {
-  .disablevertical{
-    display:none !important;
+  .disablevertical {
+    display: none !important;
   }
-  .disablehorizontal{
-    display:block !important;
+  .disablehorizontal {
+    display: block !important;
   }
 }
-.cardnoborder > div{
+.cardnoborder > div {
   box-shadow: none !important;
 }

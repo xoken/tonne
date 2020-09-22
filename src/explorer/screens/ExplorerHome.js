@@ -8,6 +8,7 @@ import ExplorerDashboard from './ExplorerDashboard';
 import ExplorerSearch from '../components/ExplorerSearch';
 import NoResultsFound from './NoResultsFound';
 import NoMatch from '../../shared/components/noMatch';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 export default function ExplorerHome(props) {
   const { path } = useRouteMatch();

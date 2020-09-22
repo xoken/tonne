@@ -1,19 +1,19 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import './shared/css/App.css';
-import './shared/css/address.css';
-import './shared/css/blockheight.css';
-import './shared/css/index.css';
-import './shared/css/mnemonic.css';
-import './shared/css/transaction.css';
-import './shared/css/wallet.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import configureStore from './shared/store/configureStore';
 import { PersistGate } from 'redux-persist/integration/react';
+import { setDefaultConfig } from './settings/SettingsActions';
+import './shared/css/App.css';
+import './shared/css/address.css';
+import './shared/css/blockheight.css';
+import './shared/css/mnemonic.css';
+import './shared/css/transaction.css';
+import './shared/css/wallet.css';
 import 'semantic-ui-css/semantic.min.css';
-import { setDefaultConfig } from './shared/modules/Authenticator';
+import './shared/css/main.css';
 
 const { store, persistor } = configureStore();
 

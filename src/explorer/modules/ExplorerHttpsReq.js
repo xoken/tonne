@@ -1,5 +1,5 @@
 import { addressAPI, blockAPI, chainAPI, transactionAPI } from 'nipkow-sdk';
-import { setConfig } from '../../shared/modules/Authenticator';
+import { setConfig } from '../../settings/SettingsActions';
 
 export default class ExplorerHttpsReq {
   static async httpsreq(...reqparameter) {
