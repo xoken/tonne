@@ -15,6 +15,7 @@ import * as Persist from './Persist';
 import derivationPaths from './constants/derivationPaths';
 import network from './constants/network';
 import { addressAPI } from './AddressAPI';
+import { chainAPI } from './ChainAPI';
 import { transactionAPI } from './TransactionAPI';
 
 class Wallet {
@@ -240,6 +241,22 @@ class Wallet {
       return await this._getOutputsByAddresses(keys, outputs, data.nextCursor);
     } else {
       return outputs;
+    }
+  }
+
+  async getChain() {
+    const chainData = chainAPI
+      .getChainInfo()
+      .then(data => {
+        return data;
+      })
+      .catch(err => {
+        console.log(err);
+      });
+    if (chainData) {
+      return chainData;
+    } else {
+      return false;
     }
   }
 

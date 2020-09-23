@@ -210,3 +210,8 @@ body {
 .activetab{
   border-bottom:3px solid #eab300 !important;
 }
+.statusbar{
+  position: absolute !important;
+  bottom: 0;
+  width: 100%;
+}
