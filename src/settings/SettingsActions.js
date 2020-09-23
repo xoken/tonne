@@ -31,7 +31,7 @@ async function init(nexaHost, nexaPort, username, password) {
   try {
     httpClient.init(nexaHost, nexaPort);
     const {
-      auth: { sessionKey, callsRemaining },
+      auth: { sessionKey, callsRemaining }
     } = await authAPI.login(username, password);
     if (sessionKey) {
       localStorage.setItem('nexaHost', nexaHost);
@@ -48,4 +48,4 @@ async function init(nexaHost, nexaPort, username, password) {
   }
 }
 
-export { setConfig, setDefaultConfig };
+export { setConfig, setDefaultConfig, init };
