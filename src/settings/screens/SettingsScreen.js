@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Grid, Form, Button, Message } from 'semantic-ui-react';
-import { setConfig } from '../SettingsActions';
+import { setConfig, testSettings } from '../SettingsActions';
 
 class SettingsScreen extends React.Component {
   constructor(props) {
@@ -14,6 +14,7 @@ class SettingsScreen extends React.Component {
       password: '',
       hasError: false,
       message: '',
+      isValidSettings: false,
     };
   }
 
@@ -31,6 +32,24 @@ class SettingsScreen extends React.Component {
     }
   };
 
+  onTestConnection = async () => {
+    const { nexaHost, nexaPort, username, password } = this.state;
+    if (nexaHost && nexaPort && username && password) {
+      try {
+        await testSettings(nexaHost, nexaPort, username, password);
+        this.setState({
+          hasError: false,
+          isValidSettings: true,
+          message: 'Connection test successful! Click the Save button to save your settings',
+        });
+      } catch (error) {
+        this.setState({ hasError: true, message: error.message });
+      }
+    } else {
+      this.setState({ hasError: true, message: 'Please enter all required field' });
+    }
+  };
+
   renderError() {
     const { hasError, message } = this.state;
     if (message) {
@@ -39,7 +58,7 @@ class SettingsScreen extends React.Component {
   }
 
   render() {
-    const { nexaHost, nexaPort, username, password, hasError } = this.state;
+    const { nexaHost, nexaPort, username, password, hasError, isValidSettings } = this.state;
     return (
       <>
         <div className='ui segment'>
@@ -82,7 +101,10 @@ class SettingsScreen extends React.Component {
                     />
                   </Form.Field>
                   {this.renderError()}
-                  <Button color='yellow' onClick={this.onSubmit}>
+                  <Button color='yellow' onClick={this.onTestConnection}>
+                    Test Connection
+                  </Button>
+                  <Button color='yellow' disabled={!isValidSettings} onClick={this.onSubmit}>
                     Save
                   </Button>
                 </Form>

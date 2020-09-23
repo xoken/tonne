@@ -8,7 +8,22 @@ async function setConfig(nexaHost, nexaPort, username, password) {
       throw new Error('Incorrect settings');
     }
   } catch (error) {
-    setDefaultConfig();
+    throw error;
+  }
+}
+
+async function testSettings(nexaHost, nexaPort, username, password) {
+  try {
+    httpClient.init(nexaHost, nexaPort);
+    const {
+      auth: { sessionKey },
+    } = await authAPI.login(username, password);
+    if (sessionKey) {
+      return true;
+    } else {
+      throw new Error('Incorrect settings');
+    }
+  } catch (error) {
     throw error;
   }
 }
@@ -48,4 +63,4 @@ async function init(nexaHost, nexaPort, username, password) {
   }
 }
 
-export { setConfig, setDefaultConfig };
+export { setConfig, setDefaultConfig, testSettings };
