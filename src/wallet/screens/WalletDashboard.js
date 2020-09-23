@@ -207,15 +207,6 @@ class WalletDashboard extends React.Component {
     const { balance, isLoading } = this.props;
     return (
       <>
-        {
-          // <div className='row'>
-          //   <div className='col-md-12'>
-          //     <button className='txbtn' onClick={this.logout}>
-          //       Logout
-          //     </button>
-          //   </div>
-          // </div>
-        }
         <Grid>
           <Grid.Column floated='right' width={2}>
             <Dropdown icon={null} trigger={<Icon name='setting' size='large' />}>

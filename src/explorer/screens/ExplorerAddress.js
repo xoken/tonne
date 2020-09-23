@@ -104,49 +104,6 @@ class ExplorerAddress extends React.Component {
       if (this.addressCache[i].spendInfo != null) {
         for (var b = 0; b < Object.keys(this.addressCache[i].spendInfo.spendData).length; b++) {
           this.txlist.push(
-            <>
-              <tr>
-                <td className='spendinfo0'>
-                  <hr />
-                  <table className='subtable'>
-                    <tr>
-                      <th>
-                        <p>
-                          <b>spendData</b>
-                        </p>
-                      </th>
-                    </tr>
-                    <tr>
-                      <td>
-                        <b>Spending Output Index:</b>
-                        {this.addressCache[i].spendInfo.spendData[b].spendingOutputIndex}
-                      </td>
-                      <td>
-                        <b>Value:</b>
-                        {this.addressCache[i].spendInfo.spendData[b].value}
-                      </td>
-                      <td>
-                        <b>Output Address:</b>{' '}
-                        <Link
-                          to={
-                            '/explorer/address/' +
-                            this.addressCache[i].spendInfo.spendData[b].outputAddress +
-                            '/""'
-                          }>
-                          {this.addressCache[i].spendInfo.spendData[b].outputAddress}
-                        </Link>
-                      </td>
-                    </tr>
-                  </table>
-                </td>
-              </tr>
-            </>
-          );
-        }
-      }
-      for (var a = 0; a < Object.keys(this.addressCache[i].prevOutpoint).length; a++) {
-        this.txlist.push(
-          <>
             <tr>
               <td className='spendinfo0'>
                 <hr />
@@ -154,28 +111,67 @@ class ExplorerAddress extends React.Component {
                   <tr>
                     <th>
                       <p>
-                        <b>prevOutpoint</b>
+                        <b>spendData</b>
                       </p>
                     </th>
                   </tr>
                   <tr>
-                    <td colspan='3'>
-                      <b>opTxHash:</b>{' '}
-                      {checkforinvalidtxid(this.addressCache[i].prevOutpoint[a][0].opTxHash)}
-                    </td>
-                  </tr>
-                  <tr>
                     <td>
-                      <b>opIndex:</b>
-                      {this.addressCache[i].prevOutpoint[a][0].opIndex}
+                      <b>Spending Output Index:</b>
+                      {this.addressCache[i].spendInfo.spendData[b].spendingOutputIndex}
                     </td>
-                    <td>{this.addressCache[i].prevOutpoint[a][1]}</td>
-                    <td>{this.addressCache[i].prevOutpoint[a][2]}</td>
+                    <td>
+                      <b>Value:</b>
+                      {this.addressCache[i].spendInfo.spendData[b].value}
+                    </td>
+                    <td>
+                      <b>Output Address:</b>{' '}
+                      <Link
+                        to={
+                          '/explorer/address/' +
+                          this.addressCache[i].spendInfo.spendData[b].outputAddress +
+                          '/""'
+                        }>
+                        {this.addressCache[i].spendInfo.spendData[b].outputAddress}
+                      </Link>
+                    </td>
                   </tr>
                 </table>
               </td>
             </tr>
-          </>
+          );
+        }
+      }
+      for (var a = 0; a < Object.keys(this.addressCache[i].prevOutpoint).length; a++) {
+        this.txlist.push(
+          <tr>
+            <td className='spendinfo0'>
+              <hr />
+              <table className='subtable'>
+                <tr>
+                  <th>
+                    <p>
+                      <b>prevOutpoint</b>
+                    </p>
+                  </th>
+                </tr>
+                <tr>
+                  <td colspan='3'>
+                    <b>opTxHash:</b>{' '}
+                    {checkforinvalidtxid(this.addressCache[i].prevOutpoint[a][0].opTxHash)}
+                  </td>
+                </tr>
+                <tr>
+                  <td>
+                    <b>opIndex:</b>
+                    {this.addressCache[i].prevOutpoint[a][0].opIndex}
+                  </td>
+                  <td>{this.addressCache[i].prevOutpoint[a][1]}</td>
+                  <td>{this.addressCache[i].prevOutpoint[a][2]}</td>
+                </tr>
+              </table>
+            </td>
+          </tr>
         );
       }
 
@@ -192,7 +188,7 @@ class ExplorerAddress extends React.Component {
       printbreaker += 1;
     }
     this.setState({
-      selectnum: this.selected
+      selectnum: this.selected,
     });
   };
 
@@ -332,7 +328,7 @@ class ExplorerAddress extends React.Component {
       this.printpagination();
     }
     this.setState({
-      leftright: this.currentbatchnum
+      leftright: this.currentbatchnum,
     });
   };
   rightlistener = async event => {
@@ -376,7 +372,7 @@ class ExplorerAddress extends React.Component {
       }
     }
     this.setState({
-      leftright: this.currentbatchnum
+      leftright: this.currentbatchnum,
     });
   };
 

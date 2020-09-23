@@ -70,9 +70,7 @@ export const updateProfileName = async (
   newProfileName: string
 ) => {
   try {
-    const existingProfiles: any = await profiles.get('profiles', {
-      revs: true,
-    });
+    const existingProfiles: any = await getProfiles();
 
     const profileIndex = existingProfiles.value.findIndex(
       (profile: any) => profile.name === currentProfileName
@@ -80,7 +78,7 @@ export const updateProfileName = async (
     const profilesArray = existingProfiles.value;
     profilesArray[profileIndex].name = newProfileName;
 
-    const response: any = await profiles.put({
+    await profiles.put({
       _id: 'profiles',
       _rev: existingProfiles._rev,
       value: profilesArray,
