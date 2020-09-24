@@ -3,7 +3,6 @@ import MemoryAdapter from 'pouchdb-adapter-memory';
 import CryptoJS from 'crypto-js';
 import AES from 'crypto-js/aes';
 
-console.log(MemoryAdapter);
 PouchDB.plugin(MemoryAdapter);
 let profiles: any;
 let db: any;

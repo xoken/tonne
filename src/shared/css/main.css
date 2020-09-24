@@ -225,3 +225,19 @@ div [class*='right floated'] {
   float: right;
   margin-right: 0.25em;
 }
+.main {
+  height: calc(100vh - 89px);
+  overflow-x: auto;
+  padding: 14px 0;
+}
+.page-footer {
+  height: 22px;
+  background-color: #fcd04a;
+}
+.ui.transparent.label,
+.ui.transparent.labels .label {
+  background-color: transparent;
+  border-radius: unset;
+  padding-top: 0px;
+  padding-bottom: 0px;
+}
