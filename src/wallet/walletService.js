@@ -5,8 +5,8 @@ class WalletService {
     this.store = store;
   }
 
-  async getOutputs() {
-    return await wallet.getOutputs();
+  async getOutputs(options) {
+    return await wallet.getOutputs(options);
   }
 
   async getTransaction(txid) {

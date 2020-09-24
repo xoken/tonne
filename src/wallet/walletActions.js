@@ -17,10 +17,10 @@ export const createSendTransactionRequest = createAction('CREATE_SEND_TRANSACTIO
 export const createSendTransactionSuccess = createAction('CREATE_SEND_TRANSACTION_SUCCESS');
 export const createSendTransactionFailure = createAction('CREATE_SEND_TRANSACTION_FAILURE');
 
-export const getOutputs = () => async (dispatch, getState, { serviceInjector }) => {
+export const getOutputs = options => async (dispatch, getState, { serviceInjector }) => {
   dispatch(getOutputsRequest());
   try {
-    const { outputs } = await serviceInjector(WalletService).getOutputs();
+    const { outputs } = await serviceInjector(WalletService).getOutputs(options);
     dispatch(getOutputsSuccess({ outputs }));
     if (outputs.length > 0) {
       dispatch(getBalanceRequest());
@@ -28,8 +28,8 @@ export const getOutputs = () => async (dispatch, getState, { serviceInjector }) 
       dispatch(getBalanceSuccess({ balance }));
     }
   } catch (error) {
-    console.log(error);
     dispatch(getOutputsFailure());
+    throw error;
   }
 };
 
@@ -39,8 +39,8 @@ export const getTransaction = txid => async (dispatch, getState, { serviceInject
     const { txoutputs } = await serviceInjector(WalletService).getTransaction(txid);
     dispatch(getTransactionSuccess({ txoutputs }));
   } catch (error) {
-    console.log(error);
     dispatch(getTransactionFailure());
+    throw error;
   }
 };
 

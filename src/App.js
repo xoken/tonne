@@ -2,13 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { createBrowserHistory } from 'history';
 import { HashRouter, NavLink, Link, Route, Switch } from 'react-router-dom';
+import { Button, Icon } from 'semantic-ui-react';
 import ExplorerHome from './explorer/screens/ExplorerHome';
-import { Menu } from 'semantic-ui-react';
 import Home from './shared/components/home';
 import images from './shared/images';
 import NoMatch from './shared/components/noMatch';
+import SettingsScreen from './settings/screens/SettingsScreen';
 import WalletHome from './wallet/screens/WalletHome';
-import StatusBar from './shared/components/StatusBar';
+import Footer from './shared/components/Footer';
 
 class App extends React.Component {
   constructor(props) {
@@ -24,66 +25,56 @@ class App extends React.Component {
     return (
       <>
         <HashRouter>
-          {
-            // <div className='titlecontainer'>
-            //   <div className='title'>Nipkow</div>
-            //   <div className='titlebarbtnscontainer'>
-            //     <button className='minimize'>-</button>
-            //     <button className='maximize'>&#9744;</button>
-            //     <button className='closeapp'>x</button>
-            //   </div>
-            // </div>
-          }
-          <nav className='navbar navbar-expand-lg navbar-light'>
-            <Link to='/' id='logo' className='navbar-brand'>
-              <img src={images.logo} className='d-inline-block align-top' alt='' loading='lazy' />
-            </Link>
-            <div className='cen'>
-              <NavLink to='/explorer' activeClassName='activetab' className='navbar-brand'>
-                <img
-                  src={images.blockexplorerlogo}
-                  className='d-inline-block align-top headerlogos'
-                  alt=''
-                  loading='lazy'
-                />
-              </NavLink>
-              <NavLink to='/wallet' activeClassName='activetab' className='navbar-brand'>
-                <img
-                  src={images.walletlogo}
-                  className='d-inline-block align-top headerlogos'
-                  alt=''
-                  loading='lazy'
-                />
-              </NavLink>
+          <div className='ui container'>
+            <div className='ui secondary labeled icon menu'>
+              <div className='header item'>
+                <Link to='/' className='' style={{ display: 'block' }}>
+                  <img
+                    src={images.logo}
+                    style={{ display: 'block', width: 150 }}
+                    alt='Xoken'
+                    loading='lazy'
+                  />
+                </Link>
+              </div>
+              <div className='right menu'>
+                <NavLink to='/explorer' activeClassName='active' className='item'>
+                  <Icon name='wpexplorer' />
+                  Explorer
+                </NavLink>
+                <NavLink to='/wallet' activeClassName='active' className='item'>
+                  <Icon name='google wallet' />
+                  Wallet
+                </NavLink>
+                <NavLink to='/settings' className='ui item'>
+                  <Icon name='setting' />
+                  Settings
+                </NavLink>
+              </div>
             </div>
-          </nav>
-          <div className='container main-container'>
             <Switch>
               <Route path='/wallet'>
-                <WalletHome changeTabHighlight={this.changeTabHighlight} />
+                <WalletHome />
               </Route>
               <Route path='/explorer'>
-                <ExplorerHome changeTabHighlight={this.changeTabHighlight} history={this.history} />
+                <ExplorerHome history={this.history} />
               </Route>
               <Route exact path='/'>
-                <Home changeTabHighlight={this.changeTabHighlight} />
+                <Home />
+              </Route>
+              <Route exact path='/settings'>
+                <SettingsScreen />
               </Route>
               <Route path='*'>
                 <NoMatch />
               </Route>
             </Switch>
-          </div>
-          <div className='container'>
-            <div className='row'>
-              <div className='col-md-12'>
-                <button type='button' className='generalbtns' onClick={this.onBack}>
-                  Back
-                </button>
-              </div>
-            </div>
+            {/* <div className='row'>
+            <Button onClick={this.onBack}>Back</Button>
+          </div> */}
           </div>
         </HashRouter>
-        <StatusBar />
+        <Footer />
       </>
     );
   }

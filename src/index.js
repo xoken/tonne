@@ -1,31 +1,26 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import './shared/css/App.css';
-import './shared/css/address.css';
-import './shared/css/blockheight.css';
-import './shared/css/index.css';
-import './shared/css/mnemonic.css';
-import './shared/css/transaction.css';
-import './shared/css/wallet.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import configureStore from './shared/store/configureStore';
 import { PersistGate } from 'redux-persist/integration/react';
+import { setDefaultConfig } from './settings/SettingsActions';
+import './shared/css/App.css';
+import './shared/css/address.css';
+import './shared/css/blockheight.css';
+import './shared/css/mnemonic.css';
+import './shared/css/transaction.css';
+import './shared/css/wallet.css';
 import 'semantic-ui-css/semantic.min.css';
-// import ExplorerAuth from './explorer/modules/ExplorerAuth';
+import './shared/css/main.css';
 
 const { store, persistor } = configureStore();
 
-// if (
-//   localStorage.getItem('sessionkey') === null ||
-//   localStorage.getItem('sessionkey') === 'null' ||
-//   localStorage.getItem('sessionkey') === undefined ||
-//   localStorage.getItem('sessionkey') === ''
-// ) {
-//   ExplorerAuth.httpsauth();
-//   console.log('httpsauth called from index');
-// }
+const sessionKey = localStorage.getItem('sessionKey');
+if (!sessionKey) {
+  setDefaultConfig();
+}
 
 const PersistComponent = persistor
   ? props => <PersistGate {...props} loading={null} persistor={persistor} />

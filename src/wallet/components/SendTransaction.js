@@ -47,13 +47,13 @@ class SendTransaction extends React.Component {
     if (message) {
       if (isError) {
         return (
-          <div class='ui negative message'>
+          <div className='ui negative message'>
             <p>{message}</p>
           </div>
         );
       } else {
         return (
-          <div class='ui success message'>
+          <div className='ui success message'>
             <p>{message}</p>
           </div>
         );
