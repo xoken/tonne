@@ -1,16 +1,7 @@
 import { addressAPI, blockAPI, chainAPI, transactionAPI } from 'nipkow-sdk';
-import { setConfig } from '../../settings/SettingsActions';
 
 export default class ExplorerHttpsReq {
   static async httpsreq(...reqparameter) {
-    const callsRemaining = Number(localStorage.getItem('callsRemaining'));
-    if (callsRemaining === 3) {
-      const nexaHost = localStorage.getItem('nexaHost');
-      const nexaPort = localStorage.getItem('nexaPort');
-      const username = localStorage.getItem('userName');
-      const password = localStorage.getItem('password');
-      await setConfig(nexaHost, nexaPort, username, password);
-    }
     let tobeReturned;
     switch (reqparameter[0]) {
       case 'getOutputsByAddress':

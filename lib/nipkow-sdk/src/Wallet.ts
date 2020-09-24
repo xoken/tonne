@@ -16,6 +16,7 @@ import * as Persist from './Persist';
 import derivationPaths from './constants/derivationPaths';
 import network from './constants/network';
 import { addressAPI } from './AddressAPI';
+import { chainAPI } from './ChainAPI';
 import { transactionAPI } from './TransactionAPI';
 
 class Wallet {
