@@ -1,52 +1,80 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Message } from 'semantic-ui-react';
-import { wallet } from 'nipkow-sdk';
+import { chainAPI } from 'nipkow-sdk';
 
 class Footer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      chain: null,
-      nexaHost: localStorage.getItem('nexaHost'),
       blocksSynced: null,
+      chain: null,
       chainTip: null,
     };
   }
 
-  async componentDidMount() {
+  componentDidMount() {
+    this.getChainInfo();
+    const autoRefreshTimeInSecs = 1 * 60 * 1000;
+    this.autoRefresh = setInterval(() => {
+      this.getChainInfo();
+    }, autoRefreshTimeInSecs);
+  }
+
+  async getChainInfo() {
+    const { nexaHost } = this.props;
     try {
-      const chainData = await wallet.getChain();
-      if (chainData) {
-        this.setState({ chain: chainData.chainInfo.chain });
+      if (nexaHost) {
+        const { chainInfo } = await chainAPI.getChainInfo();
+        if (chainInfo) {
+          const { chain, chainTip, blocksSynced } = chainInfo;
+          this.setState({ chain, chainTip, blocksSynced });
+        } else {
+          throw new Error('Chain information not found');
+        }
       } else {
-        throw new Error('Chain information not found');
+        throw new Error('Host not found!');
       }
     } catch (error) {
-      this.setState({ chain: 'UNKNOWN' });
+      this.setState({ blocksSynced: 'UNKNOWN', chain: 'UNKNOWN', chainTip: 'UNKNOWN' });
     }
   }
 
-  componentDidUpdate() {
-    console.log('Hi');
-    // if (this.state.nexaHost !== localStorage.getItem('hostname')) {
-    //   this.setState({ nexaHost: localStorage.getItem('hostname') });
-    //   this.getChain();
-    // }
+  componentDidUpdate(prevProps) {
+    if (this.props.nexaHost !== prevProps.nexaHost) {
+      this.getChainInfo();
+    }
   }
+
   render() {
-    const { chain, nexaHost } = this.state;
+    const { nexaHost } = this.props;
+    const { blocksSynced, chain, chainTip } = this.state;
     return (
-      <>
-        <Message visible className='statusbar'>
-          Nexa Host : {nexaHost}
-          Chain : {chain}
-        </Message>
-      </>
+      <footer className='page-footer'>
+        <div className='ui container'>
+          <div className='ui transparent label'>
+            Nexa Host: <div className='detail'>{nexaHost || 'UNKNOWN'}</div>
+          </div>
+          <div className='ui transparent label'>
+            Chain: <div className='detail'>{chain}</div>
+          </div>
+          <div className='ui transparent label'>
+            BlocksSynced: <div className='detail'>{blocksSynced}</div>
+          </div>
+          <div className='ui transparent label'>
+            ChainTip: <div className='detail'>{chainTip}</div>
+          </div>
+        </div>
+      </footer>
     );
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.autoRefresh);
   }
 }
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  nexaHost: state.settings.nexaHost,
+});
 
 export default connect(mapStateToProps)(Footer);

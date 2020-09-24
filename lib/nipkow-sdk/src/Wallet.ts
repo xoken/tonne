@@ -310,22 +310,6 @@ class Wallet {
     }
   }
 
-  async getChain() {
-    const chainData = chainAPI
-      .getChainInfo()
-      .then(data => {
-        return data;
-      })
-      .catch(err => {
-        console.log(err);
-      });
-    if (chainData) {
-      return chainData;
-    } else {
-      return false;
-    }
-  }
-
   async getUTXOs() {
     const derivedKeys = await Persist.getDerivedKeys();
     const usedDerivedKeys = derivedKeys.filter(

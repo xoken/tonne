@@ -5,7 +5,6 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import configureStore from './shared/store/configureStore';
 import { PersistGate } from 'redux-persist/integration/react';
-import { setDefaultConfig } from './settings/SettingsActions';
 import './shared/css/App.css';
 import './shared/css/address.css';
 import './shared/css/blockheight.css';
@@ -16,11 +15,6 @@ import 'semantic-ui-css/semantic.min.css';
 import './shared/css/main.css';
 
 const { store, persistor } = configureStore();
-
-const sessionKey = localStorage.getItem('sessionKey');
-if (!sessionKey) {
-  setDefaultConfig();
-}
 
 const PersistComponent = persistor
   ? props => <PersistGate {...props} loading={null} persistor={persistor} />
