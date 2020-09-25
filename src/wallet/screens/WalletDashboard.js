@@ -190,9 +190,9 @@ class WalletDashboard extends React.Component {
       <>
         <div className='row'>
           <div className='col-md-12'>
-            <button className='txbtn' onClick={this.logout}>
+            <Button className='txbtn' onClick={this.logout}>
               Logout
-            </button>
+            </Button>
           </div>
         </div>
         <div className='row'>
@@ -209,9 +209,9 @@ class WalletDashboard extends React.Component {
                     <h5>Your Current Balance is</h5>
                     <h4>{satoshiToBSV(balance)} BSV</h4>
                   </div>
-                  <div className='txbtn' onClick={this.toggleSendTransactionModal}>
+                  <Button className='txbtn' onClick={this.toggleSendTransactionModal}>
                     Send
-                  </div>
+                  </Button>
                 </>
               )}
             </center>

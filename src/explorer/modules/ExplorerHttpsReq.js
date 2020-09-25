@@ -1,23 +1,11 @@
-import ExplorerAuth from '../modules/ExplorerAuth';
-const apis = require('nipkow-sdk');
+import { addressAPI, blockAPI, chainAPI, transactionAPI } from 'nipkow-sdk';
 
 export default class ExplorerHttpsReq {
   static async httpsreq(...reqparameter) {
-    if (
-      localStorage.getItem('callsremaining') === null ||
-      localStorage.getItem('callsremaining') === 3
-    ) {
-      ExplorerAuth.httpsauth();
-    }
-    localStorage.setItem(
-      'callsremaining',
-      parseInt(localStorage.getItem('callsremaining'), 10) - 1
-    );
     let tobeReturned;
-    console.log(reqparameter[0]);
     switch (reqparameter[0]) {
       case 'getOutputsByAddress':
-        tobeReturned = apis.addressAPI
+        tobeReturned = addressAPI
           .getOutputsByAddress(reqparameter[1], reqparameter[2], reqparameter[3])
           .then(data => {
             return data;
@@ -27,7 +15,7 @@ export default class ExplorerHttpsReq {
           });
         break;
       case 'getBlockByBlockHash':
-        tobeReturned = apis.blockAPI
+        tobeReturned = blockAPI
           .getBlockByBlockHash(reqparameter[1])
           .then(data => {
             return data;
@@ -37,7 +25,7 @@ export default class ExplorerHttpsReq {
           });
         break;
       case 'getBlockByBlockHeight':
-        tobeReturned = apis.blockAPI
+        tobeReturned = blockAPI
           .getBlockByBlockHeight(reqparameter[1])
           .then(data => {
             return data;
@@ -47,7 +35,7 @@ export default class ExplorerHttpsReq {
           });
         break;
       case 'getBlocksByBlockHeights':
-        tobeReturned = apis.blockAPI
+        tobeReturned = blockAPI
           .getBlocksByBlockHeights(reqparameter[1])
           .then(data => {
             return data;
@@ -57,7 +45,7 @@ export default class ExplorerHttpsReq {
           });
         break;
       case 'getTXIDByHash':
-        tobeReturned = apis.blockAPI
+        tobeReturned = blockAPI
           .getTXIDByHash(reqparameter[1], reqparameter[2], reqparameter[3])
           .then(data => {
             return data;
@@ -67,7 +55,7 @@ export default class ExplorerHttpsReq {
           });
         break;
       case 'getChainInfo':
-        tobeReturned = apis.chainAPI
+        tobeReturned = chainAPI
           .getChainInfo()
           .then(data => {
             return data;
@@ -77,7 +65,7 @@ export default class ExplorerHttpsReq {
           });
         break;
       case 'getTransactionByTxID':
-        tobeReturned = apis.transactionAPI
+        tobeReturned = transactionAPI
           .getTransactionByTxID(reqparameter[1])
           .then(data => {
             return data;

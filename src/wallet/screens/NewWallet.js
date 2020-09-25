@@ -58,12 +58,12 @@ class NewWallet extends React.Component {
           for (var l = 1; l < mnwordarray[k].length; l++) {
             this.mndupl[k] += '*';
           }
-          this.morigfull += "<span class='mnword' id='" + k + "'>" + this.mndupl[k] + '</span>';
+          this.morigfull += "<span className='mnword' id='" + k + "'>" + this.mndupl[k] + '</span>';
         }
         this.mnorig.push(mnwordarray[k]);
 
         if (k !== mnwordarray.length) {
-          this.morigfull += "<span class='mnmargin'></span>";
+          this.morigfull += "<span className='mnmargin'></span>";
         }
       }
       globmnorig = this.mnorig;
