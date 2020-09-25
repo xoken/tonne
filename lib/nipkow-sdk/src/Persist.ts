@@ -185,7 +185,7 @@ export const updateDerivedKeys = async (value: any) => {
   await setDerivedKeys(newKeys);
 };
 
-export const bulkSet = async (db: any, inputs: any[]) => {
+const bulkSet = async (db: any, inputs: any[]) => {
   const newData = inputs.map(element => {
     const key = element['key'];
     delete element.key;
@@ -194,16 +194,16 @@ export const bulkSet = async (db: any, inputs: any[]) => {
   await db.bulkDocs(newData);
 };
 
-export const bulkUpdate = async (db: any, data: any[]) => {
-  const newData = await Promise.all(
-    data.map(async element => {
-      const doc: any = await get(db, element.key);
-      doc.value = element.value;
-      return doc;
-    })
-  );
-  await db.bulkDocs(newData);
-};
+// const bulkUpdate = async (db: any, data: any[]) => {
+//   const newData = await Promise.all(
+//     data.map(async element => {
+//       const doc: any = await get(db, element.key);
+//       doc.value = element.value;
+//       return doc;
+//     })
+//   );
+//   await db.bulkDocs(newData);
+// };
 
 export const destroy = async () => {
   try {
