@@ -35,7 +35,7 @@ class WalletDashboard extends React.Component {
     );
     const autoRefreshTimeInSecs = 1 * 60 * 1000;
     this.autoRefreshTimer = setInterval(() => {
-      this.onRefresh();
+      // this.onRefresh();
     }, autoRefreshTimeInSecs);
   }
 
@@ -153,10 +153,7 @@ class WalletDashboard extends React.Component {
   renderSendTransactionModal() {
     const { sendTransactionModal } = this.state;
     return (
-      <Modal
-        open={sendTransactionModal}
-        onClose={this.toggleSendTransactionModal}
-        onOpen={this.toggleSendTransactionModal}>
+      <Modal open={sendTransactionModal}>
         <Modal.Header>Send Transactions</Modal.Header>
         <Modal.Content>
           <Modal.Description>
@@ -256,6 +253,7 @@ class WalletDashboard extends React.Component {
             </form>
           </div>
         </div>
+        {this.renderSendTransactionModal()}
       </>
     );
   }

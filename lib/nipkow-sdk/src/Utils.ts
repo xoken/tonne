@@ -1,7 +1,8 @@
-import { Network, bip32, BIP32Interface } from 'bitcoinjs-lib';
-import derivationPaths from './constants/derivationPaths';
-import * as bip39 from 'bip39';
+// import { Network, bip32, BIP32Interface } from 'bitcoinjs-lib';
+// import derivationPaths from './constants/derivationPaths';
+// import * as bip39 from 'bip39';
 
+/*
 class Utils {
   mnemonicToSeed = async (
     bip39Mnemonic: string,
@@ -56,3 +57,14 @@ class Utils {
 }
 
 export default new Utils();
+*/
+
+export const isEqualOutput = (
+  utxo1: { outputTxHash: any; outputIndex: any },
+  utxo2: { outputTxHash: any; outputIndex: any }
+) => {
+  return (
+    utxo1.outputTxHash === utxo2.outputTxHash &&
+    utxo1.outputIndex === utxo2.outputIndex
+  );
+};

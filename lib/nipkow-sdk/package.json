@@ -56,6 +56,7 @@
     "bsv": "moneybutton/bsv#bsv2",
     "coinselect": "^3.1.12",
     "crypto-js": "^4.0.0",
+    "date-fns": "^2.16.1",
     "faker": "^5.1.0",
     "js-base64": "^3.4.5",
     "lodash-es": "^4.17.15",
