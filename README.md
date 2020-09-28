@@ -13,23 +13,24 @@ sudo apt install npm
 **Step 2:**
 
 ```
-git clone --single-branch --branch develop https://github.com/xoken/nipkow.git
+git clone https://github.com/xoken/nipkow.git
 ```
 
 ---
 
 **Step 3:**
-cd into the nipkow repo directory and run the following command.
+cd into the nipkow-sdk directory and run the following command.
+
+```
+cd /lib/nipkow-sdk
+```
 
 ```
 npm install
 ```
 
-when the installation is complete, continue running the following commands inside nipkow repo directory.
-
-```
-cd /lib/nipkow-sdk
-```
+**Step 4:**
+cd into the nipkow repo directory and run the following command.
 
 ```
 npm install
@@ -90,11 +91,15 @@ git pull
 ```
 
 ```
+cd /lib/nipkow-sdk
+```
+
+```
 npm install
 ```
 
 ```
-cd /lib/nipkow-sdk
+cd /nipkow
 ```
 
 ```
