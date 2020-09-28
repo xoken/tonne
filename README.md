@@ -21,7 +21,7 @@ cd into the nipkow-sdk directory and run the following command.
 
 ```bash
 #!/bin/bash
-cd /lib/nipkow-sdk
+cd lib/nipkow-sdk
 ```
 
 ```bash
@@ -31,6 +31,11 @@ npm install
 
 **Step 4:**
 cd into the nipkow repo directory and run the following command.
+
+```bash
+#!/bin/bash
+cd nipkow
+```
 
 ```bash
 #!/bin/bash
@@ -45,7 +50,7 @@ If you are not already in nipkow repo directory, cd into nipkow repo directory a
 
 ```bash
 #!/bin/bash
-cd /lib/nipkow-sdk
+cd lib/nipkow-sdk
 ```
 
 ```bash
@@ -61,6 +66,11 @@ If you are not already in nipkow repo directory, cd into nipkow repo directory a
 
 ```bash
 #!/bin/bash
+cd nipkow
+```
+
+```bash
+#!/bin/bash
 npm start
 ```
 
@@ -69,6 +79,11 @@ Keep this terminal window open.
 **Step 3:**
 Open a new terminal.
 If you are not already in nipkow repo directory, cd into nipkow repo directory and run the following command.
+
+```bash
+#!/bin/bash
+cd nipkow
+```
 
 ```bash
 #!/bin/bash
@@ -90,7 +105,7 @@ git pull
 
 ```bash
 #!/bin/bash
-cd /lib/nipkow-sdk
+cd lib/nipkow-sdk
 ```
 
 ```bash
@@ -100,7 +115,7 @@ npm install
 
 ```bash
 #!/bin/bash
-cd /nipkow
+cd nipkow
 ```
 
 ```bash
