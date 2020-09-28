@@ -9,13 +9,27 @@ class SendTransaction extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      receiverAddress: 'n3mwgsZGA1u2HFsxZJhqwvMwRz7TauhM5E',
-      amountInSatoshi: '100000000',
+      receiverAddress: '',
+      amountInSatoshi: '',
       transactionFee: '',
       isError: false,
       message: '',
     };
   }
+
+  onAmountChange = async event => {
+    const { dispatch } = this.props;
+    const { receiverAddress } = this.state;
+    this.setState({ amountInSatoshi: event.target.value });
+    try {
+      const transactionFee = await dispatch(
+        walletActions.getTransactionFee(receiverAddress, event.target.value)
+      );
+      this.setState({ isError: false, message: '', transactionFee });
+    } catch (error) {
+      this.setState({ isError: true, message: error.message });
+    }
+  };
 
   onSend = async () => {
     const { dispatch } = this.props;
@@ -76,7 +90,7 @@ class SendTransaction extends React.Component {
                 className='form-control'
                 id='receiverAddress'
                 value={receiverAddress}
-                placeholder='1xxxxxxxxxxxxxxxxxxxxxxxx'
+                placeholder='xxxxxxxxxxxxxxxxxxxxxxxxx'
                 onChange={event => this.setState({ receiverAddress: event.target.value })}
               />
             </div>
@@ -91,7 +105,7 @@ class SendTransaction extends React.Component {
                 className='form-control'
                 id='amount'
                 value={amountInSatoshi}
-                onChange={event => this.setState({ amountInSatoshi: event.target.value })}
+                onChange={this.onAmountChange}
               />
             </div>
             <div className='col-sm-5'>
@@ -99,7 +113,6 @@ class SendTransaction extends React.Component {
                 type='text'
                 readOnly
                 className='form-control-plaintext'
-                id='receiverAddress'
                 value={satoshiToBSV(Number(amountInSatoshi)) + ' BSV'}
               />
             </div>
@@ -117,7 +130,16 @@ class SendTransaction extends React.Component {
                 onChange={event => this.setState({ transactionFee: event.target.value })}
               />
             </div>
+            <div className='col-sm-5'>
+              <input
+                type='text'
+                readOnly
+                className='form-control-plaintext'
+                value={satoshiToBSV(Number(transactionFee)) + ' BSV'}
+              />
+            </div>
           </div>
+          <div className='form-group row'>Bitcoin SV Network Fee 0.0000096BSV</div>
           <div className='form-group row'>
             <div className='col-sm-12'>{this.renderMessage()}</div>
           </div>

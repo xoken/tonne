@@ -1,5 +1,6 @@
-export const satoshiToBSV = (satoshi) => {
-  return satoshi / 100000000;
+export const satoshiToBSV = satoshi => {
+  if (satoshi) return satoshi / 100000000;
+  return 0;
 };
 
 export const unique = (array, col) => [...new Set(array.map(() => col))];

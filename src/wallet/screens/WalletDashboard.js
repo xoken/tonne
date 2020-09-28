@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Icon, Modal, Pagination } from 'semantic-ui-react';
+import { Button, Icon, Modal, Grid } from 'semantic-ui-react';
 import { formatDistanceToNow } from 'date-fns';
 import SendTransaction from '../components/SendTransaction';
 import * as authActions from '../../auth/authActions';
@@ -24,7 +24,8 @@ class WalletDashboard extends React.Component {
 
   async componentDidMount() {
     const { dispatch } = this.props;
-    await dispatch(walletActions.getOutputs());
+    await dispatch(walletActions.getOutputs({ limit: 10 }));
+    await dispatch(walletActions.getBalance());
     this.setState({ lastRefreshed: new Date() });
     this.timerID = setInterval(
       () =>
@@ -52,12 +53,17 @@ class WalletDashboard extends React.Component {
   };
 
   onRefresh = async () => {
-    const { dispatch } = this.props;
-    await dispatch(walletActions.getOutputs({ diff: true }));
+    // const { dispatch } = this.props;
+    // await dispatch(walletActions.getOutputs({ limit: 2 }));
     this.setState({
       lastRefreshed: new Date(),
       timeSinceLastRefreshed: new Date(),
     });
+  };
+
+  onNextPage = async () => {
+    const { dispatch } = this.props;
+    await dispatch(walletActions.getOutputs({ limit: 10 }));
   };
 
   renderLastRefresh() {
@@ -86,51 +92,66 @@ class WalletDashboard extends React.Component {
       const outputsGroupedBy = groupBy(outputs, 'outputTxHash');
       return Object.entries(outputsGroupedBy).map((tx, index) => {
         return (
-          <div key={index.toString()} className='card' onClick={this.toggleTransactionDetailModal}>
-            <div className='card-header'>{tx[0]}</div>
-            <div className='card-body'>
+          <div
+            key={index.toString()}
+            className='ui segments'
+            onClick={this.toggleTransactionDetailModal}>
+            <div className='ui segment'>
+              <h4 className='ui header'>{`OutputTxHash: ${tx[0]}`}</h4>
+            </div>
+            <div className='ui segments'>
               {tx[1].map((output, txIndex) => {
                 return (
-                  <div key={txIndex.toString()} className='card'>
-                    <div className='card-body'>
-                      <p>{`Address: ${output.address}`}</p>
-                      <p>{`BlockHash: ${output.blockHash}`}</p>
-                      <p>{`BlockHeight: ${output.blockHeight}`}</p>
-                      <p>{`OutputIndex: ${output.outputIndex}`}</p>
-                      <p>{`OutputTxHash: ${output.outputTxHash}`}</p>
-                      <p>{`Address: ${output.address}`}</p>
-                      <p>{`SpendInfo: ${output.spendInfo}`}</p>
-                      <p>{`TxIndex: ${output.txIndex}`}</p>
-                      <p>{`Value: ${satoshiToBSV(output.value)}`}</p>
-                      <h3>SpendInfo</h3>
-                      {output.spendInfo && (
-                        <div>
+                  <div key={txIndex.toString()} className='ui secondary segment'>
+                    <p>{`Address: ${output.address}`}</p>
+                    <p>{`BlockHash: ${output.blockHash}`}</p>
+                    <p>{`BlockHeight: ${output.blockHeight}`}</p>
+                    <p>{`OutputIndex: ${output.outputIndex}`}</p>
+                    <p>{`TxIndex: ${output.txIndex}`}</p>
+                    <p>{`Value: ${satoshiToBSV(output.value)} BSV`}</p>
+
+                    <div className='ui segments'>
+                      <div className='ui segment'>
+                        <h4 className='ui header'>SpendInfo</h4>
+                      </div>
+                      {output.spendInfo ? (
+                        <div className='ui secondary segment'>
                           <p>{`spendingBlockHash: ${output.spendInfo.spendingBlockHash}`}</p>
                           <p>{`spendingBlockHeight: ${output.spendInfo.spendingBlockHeight}`}</p>
                           <p>{`spendingTxId: ${output.spendInfo.spendingTxId}`}</p>
                           <p>{`spendingTxIndex: ${output.spendInfo.spendingTxIndex}`}</p>
-                          <h4>Spend Data</h4>
-                          {output.spendInfo.spendData.map((sData, sDataIndex) => {
-                            return (
-                              <div key={sDataIndex.toString()}>
-                                <p>{`spendingOutputIndex: ${sData.spendingOutputIndex}`}</p>
-                                <p>{`value: ${sData.value}`}</p>
-                                <p>{`outputAddress: ${sData.outputAddress}`}</p>
-                                <hr />
-                              </div>
-                            );
-                          })}
+                          <div className='ui segments'>
+                            <div className='ui segment'>
+                              <h4 className='ui header'>Spend Data</h4>
+                            </div>
+                            {output.spendInfo.spendData.map((sData, sDataIndex) => {
+                              return (
+                                <div key={sDataIndex.toString()} className='ui secondary segment'>
+                                  <p>{`spendingOutputIndex: ${sData.spendingOutputIndex}`}</p>
+                                  <p>{`value: ${sData.value}`}</p>
+                                  <p>{`outputAddress: ${sData.outputAddress}`}</p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className='ui secondary segment'>
+                          <p>null</p>
                         </div>
                       )}
-                      <h3>PrevOutpoint</h3>
+                    </div>
+                    <div className='ui segments'>
+                      <div className='ui segment'>
+                        <h4 className='ui header'>PrevOutpoint</h4>
+                      </div>
                       {output.prevOutpoint.map((pOutpoint, pOutpointIndex) => {
                         return (
-                          <div key={pOutpointIndex.toString()}>
+                          <div key={pOutpointIndex.toString()} className='ui secondary segment'>
                             <p>{`opIndex: ${pOutpoint[0].opIndex}`}</p>
                             <p>{`opTxHash: ${pOutpoint[0].opTxHash}`}</p>
                             <p>{pOutpoint[1]}</p>
                             <p>{pOutpoint[2]}</p>
-                            <hr />
                           </div>
                         );
                       })}
@@ -147,7 +168,19 @@ class WalletDashboard extends React.Component {
   }
 
   renderPagination() {
-    return <Pagination size='mini' defaultActivePage={5} totalPages={10} />;
+    const { nextOutputsCursor } = this.props;
+    if (nextOutputsCursor) {
+      return (
+        <Grid centered columns={1}>
+          <Grid.Column>
+            <Button color='yellow' onClick={this.onNextPage}>
+              Next Page
+            </Button>
+          </Grid.Column>
+        </Grid>
+      );
+    }
+    return null;
   }
 
   renderSendTransactionModal() {
@@ -236,23 +269,8 @@ class WalletDashboard extends React.Component {
             {this.renderLastRefresh()}
           </div>
         </div>
-        <div className='row'>
-          <div className='col-md-12'>{this.renderTransaction()}</div>
-        </div>
-        <div className='row'>
-          <div className='col-md-12 col-lg-12 text-center'>
-            <nav aria-label='transactions navigation'>
-              <ul className='pagination justify-content-center'></ul>
-            </nav>
-            Enter page number
-            <form>
-              <input className='pagenuminput' size='5' type='text' />
-              <button className='btn btn-primary' type='submit'>
-                Go
-              </button>
-            </form>
-          </div>
-        </div>
+        {this.renderTransaction()}
+        {this.renderPagination()}
         {this.renderSendTransactionModal()}
       </>
     );
@@ -279,6 +297,7 @@ const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
   outputs: walletSelectors.getOutputs(state),
+  nextOutputsCursor: state.wallet.nextOutputsCursor,
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));

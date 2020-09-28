@@ -7,6 +7,7 @@ PouchDB.plugin(MemoryAdapter);
 
 let profiles: any;
 let db: any;
+let utxosDB: any;
 let credentials: any;
 
 export const BIP32_EXTENDED_KEY = 'bip32ExtendedKey';
@@ -27,16 +28,20 @@ const set = async (db: any, key: string, value: any) => {
 
 export const init = async (dbName: string) => {
   db = new PouchDB(dbName, { revs_limit: 1, auto_compaction: true });
+  utxosDB = new PouchDB(`${dbName}_UTXOS`, {
+    revs_limit: 1,
+    auto_compaction: true,
+  });
   // credentials = new PouchDB('credentials', { adapter: 'memory' });
   credentials = new PouchDB('credentials', {
     revs_limit: 1,
     auto_compaction: true,
   });
-  await bulkSet(db, [
-    { key: OUTPUTS, lastFetched: null, value: [] },
-    { key: UTXOS, lastFetched: null, value: [] },
-    { key: SPENT_UTXOS, lastUpdated: null, value: [] },
-  ]);
+  // await bulkSet(db, [
+  //   { key: OUTPUTS, lastFetched: null, value: [] },
+  //   { key: UTXOS, lastFetched: null, value: [] },
+  //   { key: SPENT_UTXOS, lastUpdated: null, value: [] },
+  // ]);
   await bulkSet(credentials, [
     { key: BIP32_EXTENDED_KEY, value: null },
     { key: DERIVED_KEYS, value: [] },
@@ -125,9 +130,24 @@ export const getDerivedKeys = async () => {
   return derivedKeysDoc.value;
 };
 
-export const getOutputs = async () => {
-  const outputsDoc: any = await get(db, OUTPUTS);
-  return { lastFetched: outputsDoc.lastFetched, value: outputsDoc.value };
+export const getOutputs = async (options?: {
+  startkey?: string;
+  limit?: number;
+  diff?: boolean;
+}) => {
+  const response = await db.allDocs({
+    include_docs: true,
+    ...options,
+    skip: options?.startkey ? 1 : false,
+  });
+  if (response && response.rows.length > 0) {
+    const nextOutputsCursor = response.rows[response.rows.length - 1].id;
+    const outputs = response.rows.map((row: { doc: any }) => row.doc);
+    const totalOutputs = response.total_rows;
+    return { totalOutputs, nextOutputsCursor, outputs };
+  } else {
+    return { nextOutputsCursor: null, outputs: [], totalOutputs: 0 };
+  }
 };
 
 export const getUtxos = async () => {
@@ -146,9 +166,17 @@ export const setBip32ExtendedKey = async (value: any) =>
 export const setDerivedKeys = async (value: any) =>
   await set(credentials, DERIVED_KEYS, { value });
 
-export const setUtxos = async (value: any) => {
-  const newValue = { lastFetched: new Date(), value };
-  await set(db, UTXOS, { newValue });
+export const setUtxos = async (utxos: any) => {
+  // const newValue = { lastFetched: new Date(), value };
+  // await set(db, UTXOS, { newValue });
+  const targetLength = String(utxos.length - 1).length;
+  const docs = utxos.map((output: any, index: number) => {
+    return {
+      _id: `${String(index).padStart(targetLength, '0')}`,
+      ...output,
+    };
+  });
+  await utxosDB.bulkDocs(docs);
 };
 
 export const setStxos = async (value: any) => {
@@ -166,17 +194,23 @@ export const addNewUtxos = async (newUtxos: any) => {
 };
 
 export const addNewOutputs = async (newOutputs: any) => {
-  const { value: existingOutputs } = await getOutputs();
-  const newValue = {
-    lastFetched: new Date(),
-    value: [...newOutputs, ...existingOutputs],
-  };
-  await set(db, OUTPUTS, { newValue });
+  // const { value: existingOutputs } = await getOutputs();
+  // const newValue = {
+  //   lastFetched: new Date(),
+  //   value: [...newOutputs, ...existingOutputs],
+  // };
+  // await set(db, OUTPUTS, { newValue });
 };
 
-export const setOutputs = async (value: any) => {
-  const newValue = { lastFetched: new Date(), value };
-  await set(db, OUTPUTS, newValue);
+export const setOutputs = async (outputs: any) => {
+  const targetLength = String(outputs.length - 1).length;
+  const docs = outputs.map((output: any, index: number) => {
+    return {
+      _id: `${String(index).padStart(targetLength, '0')}`,
+      ...output,
+    };
+  });
+  await db.bulkDocs(docs);
 };
 
 export const updateDerivedKeys = async (value: any) => {
@@ -208,6 +242,8 @@ const bulkSet = async (db: any, inputs: any[]) => {
 export const destroy = async () => {
   try {
     await db.destroy();
+    await credentials.destroy();
+    await utxosDB.destroy();
     return true;
   } catch (error) {
     throw error;

@@ -1,10 +1,13 @@
 import { createReducer } from 'redux-act';
 import * as actions from './walletActions';
+import * as authActions from '../auth/authActions';
 
 const INITIAL_STATE = {
   isLoading: false,
   balance: 0,
+  nextOutputsCursor: null,
   outputs: [],
+  totalOutputs: null,
 };
 
 export default createReducer(
@@ -26,9 +29,11 @@ export default createReducer(
       ...state,
       isLoading: true,
     }),
-    [actions.getOutputsSuccess]: (state, { outputs }) => ({
+    [actions.getOutputsSuccess]: (state, { outputs, totalOutputs, nextOutputsCursor }) => ({
       ...state,
       outputs: [...state.outputs, ...outputs],
+      totalOutputs,
+      nextOutputsCursor,
       isLoading: false,
     }),
     [actions.getOutputsFailure]: state => ({
@@ -46,6 +51,14 @@ export default createReducer(
     [actions.getTransactionFailure]: state => ({
       ...state,
       isLoading: false,
+    }),
+    [authActions.logoutSuccess]: state => ({
+      ...state,
+      isLoading: false,
+      balance: 0,
+      nextOutputsCursor: null,
+      outputs: [],
+      totalOutputs: null,
     }),
   },
   INITIAL_STATE
