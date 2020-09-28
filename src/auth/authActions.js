@@ -13,6 +13,10 @@ export const createProfileRequest = createAction('CREATE_PROFILE_REQUEST');
 export const createProfileSuccess = createAction('CREATE_PROFILE_SUCCESS');
 export const createProfileFailure = createAction('CREATE_PROFILE_FAILURE');
 
+export const updateProfileNameRequest = createAction('UPDATE_PROFILE_NAME_REQUEST');
+export const updateProfileNameSuccess = createAction('UPDATE_PROFILE_NAME_SUCCESS');
+export const updateProfileNameFailure = createAction('UPDATE_PROFILE_NAME_FAILURE');
+
 export const setMnemonicRequest = createAction('SET_MNEMONIC_REQUEST');
 export const setMnemonicSuccess = createAction('SET_MNEMONIC_SUCCESS');
 export const setMnemonicFailure = createAction('SET_MNEMONIC_FAILURE');
@@ -66,7 +70,7 @@ export const createProfile = password => async (dispatch, getState, { serviceInj
   dispatch(createProfileRequest());
   try {
     const {
-      auth: { bip39Mnemonic },
+      auth: { bip39Mnemonic }
     } = getState();
     const { profile } = await serviceInjector(AuthService).createProfile(bip39Mnemonic, password);
     dispatch(createProfileSuccess());
@@ -74,6 +78,25 @@ export const createProfile = password => async (dispatch, getState, { serviceInj
   } catch (error) {
     dispatch(createProfileFailure());
     throw error;
+  }
+};
+
+export const updateProfileName = (currentProfileName, newProfileName) => async (
+  dispatch,
+  getState,
+  { serviceInjector }
+) => {
+  dispatch(updateProfileNameRequest());
+  try {
+    const { profile } = await serviceInjector(AuthService).updateProfileName(
+      currentProfileName,
+      newProfileName
+    );
+    dispatch(updateProfileNameSuccess({ profile }));
+    return false;
+  } catch (error) {
+    dispatch(updateProfileNameFailure());
+    return true;
   }
 };
 

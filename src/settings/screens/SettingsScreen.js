@@ -65,59 +65,57 @@ class SettingsScreen extends React.Component {
   render() {
     const { nexaHost, nexaPort, userName, password, hasError, isValidSettings } = this.state;
     return (
-      <>
-        <div className='ui segment'>
-          <Grid centered>
-            <Grid.Row centered columns={2}>
-              <Grid.Column>
-                <Form success={!hasError} error={hasError}>
-                  <h4 className='ui dividing header'>Nipkow Settings</h4>
-                  <Form.Field required>
-                    <label>Enter Nexa IP Address or hostname</label>
-                    <input
-                      placeholder='0.0.0.0 or www.example.com'
-                      value={nexaHost}
-                      onChange={event => this.setState({ nexaHost: event.target.value })}
-                    />
-                  </Form.Field>
-                  <Form.Field required>
-                    <label>Enter Port Number</label>
-                    <input
-                      placeholder='0000'
-                      value={nexaPort}
-                      onChange={event => this.setState({ nexaPort: event.target.value })}
-                    />
-                  </Form.Field>
-                  <Form.Field required>
-                    <label>Enter Username</label>
-                    <input
-                      placeholder='Nexa Username'
-                      value={userName}
-                      onChange={event => this.setState({ userName: event.target.value })}
-                    />
-                  </Form.Field>
-                  <Form.Field required>
-                    <label>Enter Password</label>
-                    <input
-                      type='password'
-                      placeholder='Nexa Password'
-                      value={password}
-                      onChange={event => this.setState({ password: event.target.value })}
-                    />
-                  </Form.Field>
-                  {this.renderError()}
-                  <Button color='yellow' onClick={this.onTestConnection}>
-                    Test Connection
-                  </Button>
-                  <Button color='yellow' disabled={!isValidSettings} onClick={this.onSubmit}>
-                    Save
-                  </Button>
-                </Form>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
-        </div>
-      </>
+      <div className='ui segment'>
+        <Grid centered>
+          <Grid.Row centered columns={2}>
+            <Grid.Column>
+              <Form success={!hasError} error={hasError}>
+                <h4 className='ui dividing header'>Nipkow Settings</h4>
+                <Form.Field required>
+                  <label>Enter Nexa IP Address or hostname</label>
+                  <input
+                    placeholder='0.0.0.0 or www.example.com'
+                    value={nexaHost}
+                    onChange={event => this.setState({ nexaHost: event.target.value })}
+                  />
+                </Form.Field>
+                <Form.Field required>
+                  <label>Enter Port Number</label>
+                  <input
+                    placeholder='0000'
+                    value={nexaPort}
+                    onChange={event => this.setState({ nexaPort: event.target.value })}
+                  />
+                </Form.Field>
+                <Form.Field required>
+                  <label>Enter Username</label>
+                  <input
+                    placeholder='Nexa Username'
+                    value={userName}
+                    onChange={event => this.setState({ userName: event.target.value })}
+                  />
+                </Form.Field>
+                <Form.Field required>
+                  <label>Enter Password</label>
+                  <input
+                    type='password'
+                    placeholder='Nexa Password'
+                    value={password}
+                    onChange={event => this.setState({ password: event.target.value })}
+                  />
+                </Form.Field>
+                {this.renderError()}
+                <Button color='yellow' onClick={this.onTestConnection}>
+                  Test Connection
+                </Button>
+                <Button color='yellow' disabled={!isValidSettings} onClick={this.onSubmit}>
+                  Save
+                </Button>
+              </Form>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      </div>
     );
   }
 }

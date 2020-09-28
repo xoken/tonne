@@ -56,46 +56,44 @@ class WalletPassword extends React.Component {
   render() {
     const { password, confirmPassword } = this.state;
     return (
-      <>
-        <div className='row'>
-          <div className='col-md-12 centerall'>
-            <h5>Choose a password to encrypt your wallet keys.</h5>
-            <h6 className='generalheadingscolor'>
-              Include alphabets, numbers and special characters in your password.
-            </h6>
-            <br />
-            <form onSubmit={this.handleNext}>
-              <div className='form-group'>
-                <center>
-                  <label>Password</label>
-                  <input
-                    type='password'
-                    id='password'
-                    className='form-control passinputwidth'
-                    placeholder='Password'
-                    value={password}
-                    onChange={event => this.setState({ password: event.target.value })}
-                  />
+      <div className='row'>
+        <div className='col-md-12 centerall'>
+          <h5>Choose a password to encrypt your wallet keys.</h5>
+          <h6 className='generalheadingscolor'>
+            Include alphabets, numbers and special characters in your password.
+          </h6>
+          <br />
+          <form onSubmit={this.handleNext}>
+            <div className='form-group'>
+              <center>
+                <label>Password</label>
+                <input
+                  type='password'
+                  id='password'
+                  className='form-control passinputwidth'
+                  placeholder='Password'
+                  value={password}
+                  onChange={event => this.setState({ password: event.target.value })}
+                />
 
-                  <br />
-                  <label>Confirm Password</label>
-                  <input
-                    type='password'
-                    id='confirmPassword'
-                    className='form-control passinputwidth'
-                    placeholder='Confirm Password'
-                    value={confirmPassword}
-                    onChange={event => this.setState({ confirmPassword: event.target.value })}
-                  />
-                </center>
-              </div>
-              {this.renderPasswordMatchStatus()}
-              <br />
-              {this.renderPasswordStrength()}
-            </form>
-          </div>
+                <br />
+                <label>Confirm Password</label>
+                <input
+                  type='password'
+                  id='confirmPassword'
+                  className='form-control passinputwidth'
+                  placeholder='Confirm Password'
+                  value={confirmPassword}
+                  onChange={event => this.setState({ confirmPassword: event.target.value })}
+                />
+              </center>
+            </div>
+            {this.renderPasswordMatchStatus()}
+            <br />
+            {this.renderPasswordStrength()}
+          </form>
         </div>
-      </>
+      </div>
     );
   }
 }

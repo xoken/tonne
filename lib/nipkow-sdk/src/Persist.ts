@@ -71,6 +71,29 @@ export const createProfile = async (
   }
 };
 
+export const updateProfileName = async (
+  currentProfileName: string,
+  newProfileName: string
+) => {
+  try {
+    const existingProfiles: any = await getProfiles();
+
+    const profileIndex = existingProfiles.value.findIndex(
+      (profile: any) => profile.name === currentProfileName
+    );
+    const profilesArray = existingProfiles.value;
+    profilesArray[profileIndex].name = newProfileName;
+
+    await profiles.put({
+      _id: 'profiles',
+      _rev: existingProfiles._rev,
+      value: profilesArray,
+    });
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getProfiles = async () => {
   try {
     profiles = new PouchDB('Profiles', {
