@@ -9,8 +9,8 @@ class SendTransaction extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      receiverAddress: '',
-      amountInSatoshi: '',
+      receiverAddress: 'n3mwgsZGA1u2HFsxZJhqwvMwRz7TauhM5E',
+      amountInSatoshi: '100000000',
       transactionFee: '',
       isError: false,
       message: '',
