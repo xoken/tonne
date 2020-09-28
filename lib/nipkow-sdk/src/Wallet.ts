@@ -667,9 +667,19 @@ class Wallet {
   async createProfile(bip39Mnemonic: string, password: string) {
     const cryptedText = AES.encrypt(bip39Mnemonic, password).toString();
     const profileName = faker.name.firstName();
+    localStorage.setItem('currentprofile', profileName);
     try {
       await Persist.createProfile(cryptedText, profileName);
       return { profile: profileName };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  async updateProfileName(currentProfileName: string, newProfileName: string) {
+    try {
+      await Persist.updateProfileName(currentProfileName, newProfileName);
+      return { profile: newProfileName };
     } catch (error) {
       throw error;
     }

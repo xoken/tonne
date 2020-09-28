@@ -34,44 +34,41 @@ class Login extends React.Component {
   render() {
     const { password, error } = this.state;
     return (
-      <>
-        <div className='row'>
-          <div className='col-md-12 centerall'>
-            <center>
-              <form onSubmit={this.handleContinue}>
-                <div className='form-group'>
-                  <label>
-                    Your wallet is encrypted with a password. Please enter your password to unlock
-                    it.
-                  </label>
-                  <label>Password</label>
-                  <input
-                    type='password'
-                    className='form-control passinputwidth'
-                    id='password'
-                    placeholder='Password'
-                    value={password}
-                    onChange={event =>
-                      this.setState({
-                        password: event.target.value,
-                        error: '',
-                      })
-                    }
-                  />
-                  {error && (
-                    <div className='invalid-feedback' style={{ display: 'block' }}>
-                      {error}
-                    </div>
-                  )}
-                </div>
-                <Button className='txbtn' disabled={error ? true : false}>
-                  Continue
-                </Button>
-              </form>
-            </center>
-          </div>
+      <div className='row'>
+        <div className='col-md-12 centerall'>
+          <center>
+            <form onSubmit={this.handleContinue}>
+              <div className='form-group'>
+                <label>
+                  Your wallet is encrypted with a password. Please enter your password to unlock it.
+                </label>
+                <label>Password</label>
+                <input
+                  type='password'
+                  className='form-control passinputwidth'
+                  id='password'
+                  placeholder='Password'
+                  value={password}
+                  onChange={event =>
+                    this.setState({
+                      password: event.target.value,
+                      error: '',
+                    })
+                  }
+                />
+                {error && (
+                  <div className='invalid-feedback' style={{ display: 'block' }}>
+                    {error}
+                  </div>
+                )}
+              </div>
+              <Button className='txbtn' disabled={error ? true : false}>
+                Continue
+              </Button>
+            </form>
+          </center>
         </div>
-      </>
+      </div>
     );
   }
 }

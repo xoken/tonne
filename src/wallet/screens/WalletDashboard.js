@@ -2,9 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Icon, Modal, Grid } from 'semantic-ui-react';
+import { Button, Dropdown, Icon, Modal, Grid } from 'semantic-ui-react';
 import { formatDistanceToNow } from 'date-fns';
 import SendTransaction from '../components/SendTransaction';
+import RenameProfile from '../components/RenameProfile';
 import * as authActions from '../../auth/authActions';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
@@ -17,6 +18,7 @@ class WalletDashboard extends React.Component {
     this.state = {
       sendTransactionModal: false,
       transactionDetailModal: false,
+      renameProfileModal: false,
       lastRefreshed: null,
       timeSinceLastRefreshed: null,
     };
@@ -50,6 +52,11 @@ class WalletDashboard extends React.Component {
   toggleSendTransactionModal = () => {
     const { sendTransactionModal } = this.state;
     this.setState({ sendTransactionModal: !sendTransactionModal });
+  };
+
+  onRenameProfile = () => {
+    const { renameProfileModal } = this.state;
+    this.setState({ renameProfileModal: !renameProfileModal });
   };
 
   onRefresh = async () => {
@@ -217,17 +224,30 @@ class WalletDashboard extends React.Component {
     );
   }
 
+  renderRenameProfileModal() {
+    const { renameProfileModal } = this.state;
+    return (
+      <Modal open={renameProfileModal} onClose={this.onRenameProfile} onOpen={this.onRenameProfile}>
+        <RenameProfile onClose={this.onRenameProfile} logout={this.logout} />
+      </Modal>
+    );
+  }
+
   render() {
     const { balance, isLoading } = this.props;
     return (
       <>
-        <div className='row'>
-          <div className='col-md-12'>
-            <Button className='txbtn' onClick={this.logout}>
-              Logout
-            </Button>
-          </div>
-        </div>
+        <Grid>
+          <Grid.Column floated='right' width={2}>
+            <Dropdown icon={null} trigger={<Icon name='setting' size='large' />}>
+              <Dropdown.Menu>
+                <Dropdown.Item text='Rename Profile' onClick={this.onRenameProfile} />
+                <Dropdown.Divider />
+                <Dropdown.Item icon='sign out' text='Logout' onClick={this.logout} />
+              </Dropdown.Menu>
+            </Dropdown>
+          </Grid.Column>
+        </Grid>
         <div className='row'>
           <div className='col-md-12 border-left-right'>
             <center>
@@ -257,7 +277,6 @@ class WalletDashboard extends React.Component {
             <div className='column'></div>
           </div>
         </div>
-
         <div className='ui grid'>
           <div className='left floated six wide column'>
             <h3>Recent Transactions</h3>
@@ -272,6 +291,7 @@ class WalletDashboard extends React.Component {
         {this.renderTransaction()}
         {this.renderPagination()}
         {this.renderSendTransactionModal()}
+        {this.renderRenameProfileModal()}
       </>
     );
   }

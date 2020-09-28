@@ -29,26 +29,24 @@ class ExplorerSearch extends React.Component {
 
   render() {
     return (
-      <>
-        <div className='row'>
-          <div className='col-md-12 col-lg-12'>
-            <center>
-              <form onSubmit={this.onSearchClick}>
-                <input
-                  className='pagenuminput'
-                  placeholder='TXID / Address / BlockHeight'
-                  size='50'
-                  type='text'
-                  onChange={event => this.setState({ searchterm: event.target.value })}
-                />
-                <button className='btn btn-primary' type='submit'>
-                  Search
-                </button>
-              </form>
-            </center>
-          </div>
+      <div className='row'>
+        <div className='col-md-12 col-lg-12'>
+          <center>
+            <form onSubmit={this.onSearchClick}>
+              <input
+                className='pagenuminput'
+                placeholder='TXID / Address / BlockHeight'
+                size='50'
+                type='text'
+                onChange={event => this.setState({ searchterm: event.target.value })}
+              />
+              <button className='btn btn-primary' type='submit'>
+                Search
+              </button>
+            </form>
+          </center>
         </div>
-      </>
+      </div>
     );
   }
 }

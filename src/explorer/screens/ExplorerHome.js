@@ -10,9 +10,8 @@ import NoResultsFound from './NoResultsFound';
 import NoMatch from '../../shared/components/noMatch';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
-export default function ExplorerHome(props) {
+export default function ExplorerHome() {
   const { path } = useRouteMatch();
-
   return (
     <>
       <ExplorerSearch />
