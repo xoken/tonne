@@ -200,14 +200,14 @@ class ExistingWallet extends React.Component {
             <center>
               <MnemonicCompleted
                 mncompleted={this.state.mncompleted}
-                continuefunction={this.onContinue.bind(this)}
+                continuefunction={this.onContinue}
               />
             </center>
           </div>
         </div>
 
         {/* <div className="dispnone"> */}
-        <div>
+        {/* <div>
           <div>
             <textarea
               rows='2'
@@ -218,7 +218,7 @@ class ExistingWallet extends React.Component {
           <button type='button' className='btn btn-primary btn-md' onClick={this.onContinue}>
             Continue
           </button>
-        </div>
+        </div> */}
       </>
     );
   }
