@@ -7,7 +7,6 @@ const INITIAL_STATE = {
   balance: 0,
   nextOutputsCursor: null,
   outputs: [],
-  totalOutputs: null,
 };
 
 export default createReducer(
@@ -29,11 +28,10 @@ export default createReducer(
       ...state,
       isLoading: true,
     }),
-    [actions.getOutputsSuccess]: (state, { outputs, totalOutputs, nextOutputsCursor }) => ({
+    [actions.getOutputsSuccess]: (state, { outputs, nextOutputsCursor }) => ({
       ...state,
       outputs: [...state.outputs, ...outputs],
-      totalOutputs,
-      nextOutputsCursor,
+      nextOutputsCursor: nextOutputsCursor ? nextOutputsCursor : state.nextOutputsCursor,
       isLoading: false,
     }),
     [actions.getOutputsFailure]: state => ({

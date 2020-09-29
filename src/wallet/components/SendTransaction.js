@@ -17,6 +17,11 @@ class SendTransaction extends React.Component {
     };
   }
 
+  async componentDidMount() {
+    const { dispatch } = this.props;
+    await dispatch(walletActions.getUTXOs());
+  }
+
   onAmountChange = async event => {
     const { dispatch } = this.props;
     const { receiverAddress } = this.state;
@@ -81,10 +86,10 @@ class SendTransaction extends React.Component {
       <div className='container'>
         <form>
           <div className='form-group row'>
-            <label htmlFor='receiverAddress' className='col-sm-2 col-form-label'>
+            <label htmlFor='receiverAddress' className='col-sm-4 col-form-label'>
               Pay to
             </label>
-            <div className='col-sm-10'>
+            <div className='col-sm-5'>
               <input
                 type='text'
                 className='form-control'
@@ -96,7 +101,7 @@ class SendTransaction extends React.Component {
             </div>
           </div>
           <div className='form-group row'>
-            <label htmlFor='amount' className='col-sm-2 col-form-label'>
+            <label htmlFor='amount' className='col-sm-4 col-form-label'>
               Amount
             </label>
             <div className='col-sm-5'>
@@ -108,7 +113,7 @@ class SendTransaction extends React.Component {
                 onChange={this.onAmountChange}
               />
             </div>
-            <div className='col-sm-5'>
+            <div className='col-sm-3'>
               <input
                 type='text'
                 readOnly
@@ -118,7 +123,7 @@ class SendTransaction extends React.Component {
             </div>
           </div>
           <div className='form-group row'>
-            <label htmlFor='transactionFee' className='col-sm-2 col-form-label'>
+            <label htmlFor='transactionFee' className='col-sm-4 col-form-label'>
               Fee
             </label>
             <div className='col-sm-5'>
@@ -130,7 +135,7 @@ class SendTransaction extends React.Component {
                 onChange={event => this.setState({ transactionFee: event.target.value })}
               />
             </div>
-            <div className='col-sm-5'>
+            <div className='col-sm-3'>
               <input
                 type='text'
                 readOnly
@@ -139,7 +144,12 @@ class SendTransaction extends React.Component {
               />
             </div>
           </div>
-          <div className='form-group row'>Bitcoin SV Network Fee 0.0000096BSV</div>
+          <div className='form-group row'>
+            <label className='col-sm-4 control-label'>Bitcoin SV Network Fee</label>
+            <div className='col-sm-4'>
+              <p className='form-control-static'>{`${5} satoshis per byte`}</p>
+            </div>
+          </div>
           <div className='form-group row'>
             <div className='col-sm-12'>{this.renderMessage()}</div>
           </div>

@@ -5,6 +5,10 @@ export const getOutputsRequest = createAction('GET_OUTPUTS_REQUEST');
 export const getOutputsSuccess = createAction('GET_OUTPUTS_SUCCESS');
 export const getOutputsFailure = createAction('GET_OUTPUTS_FAILURE');
 
+export const getUTXOsRequest = createAction('GET_UTXOS_REQUEST');
+export const getUTXOsSuccess = createAction('GET_UTXOS_SUCCESS');
+export const getUTXOsFailure = createAction('GET_UTXOS_FAILURE');
+
 export const getBalanceRequest = createAction('GET_BALANCE_REQUEST');
 export const getBalanceSuccess = createAction('GET_BALANCE_SUCCESS');
 export const getBalanceFailure = createAction('GET_BALANCE_FAILURE');
@@ -30,12 +34,19 @@ export const getOutputs = options => async (dispatch, getState, { serviceInjecto
     if (startkey) {
       options.startkey = startkey;
     }
-    const { totalOutputs, outputs, nextOutputsCursor } = await serviceInjector(
-      WalletService
-    ).getOutputs(options);
-    dispatch(getOutputsSuccess({ outputs, totalOutputs, nextOutputsCursor }));
+    const { outputs, nextOutputsCursor } = await serviceInjector(WalletService).getOutputs(options);
+    dispatch(getOutputsSuccess({ outputs, nextOutputsCursor }));
   } catch (error) {
     dispatch(getOutputsFailure());
+    throw error;
+  }
+};
+
+export const getUTXOs = options => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(getUTXOsRequest());
+  try {
+    await serviceInjector(WalletService).getUTXOs(options);
+  } catch (error) {
     throw error;
   }
 };
