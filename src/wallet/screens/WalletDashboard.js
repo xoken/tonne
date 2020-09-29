@@ -194,7 +194,7 @@ class WalletDashboard extends React.Component {
   renderRenameProfileModal() {
     const { renameProfileModal } = this.state;
     return (
-      <Modal open={renameProfileModal} onClose={this.onRenameProfile} onOpen={this.onRenameProfile}>
+      <Modal open={renameProfileModal}>
         <RenameProfile onClose={this.onRenameProfile} logout={this.logout} />
       </Modal>
     );
