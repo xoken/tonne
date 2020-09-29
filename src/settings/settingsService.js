@@ -35,10 +35,10 @@ class SettingsService {
   }
 
   async setDefaultConfig() {
-    const nexaHost = 'sb1.xoken.org';
+    const nexaHost = 'sb2.xoken.org';
     const nexaPort = 9091;
     const userName = 'ExplorerUser';
-    const password = 'OTQ2Nzc1MDIwNDA5MDcyMTM2Ng';
+    const password = 'MjYxNjM5NjQyMjU0NzMxMjQyNw';
     const { sessionKey, callsRemaining } = await this.setConfig(
       nexaHost,
       nexaPort,

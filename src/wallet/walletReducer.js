@@ -28,10 +28,11 @@ export default createReducer(
       ...state,
       isLoading: true,
     }),
-    [actions.getOutputsSuccess]: (state, { outputs, nextOutputsCursor }) => ({
+    [actions.getOutputsSuccess]: (state, { outputs, nextOutputsCursor, diffBalance }) => ({
       ...state,
       outputs: [...state.outputs, ...outputs],
       nextOutputsCursor: nextOutputsCursor ? nextOutputsCursor : state.nextOutputsCursor,
+      balance: diffBalance ? state.balance + diffBalance : state.balance,
       isLoading: false,
     }),
     [actions.getOutputsFailure]: state => ({
