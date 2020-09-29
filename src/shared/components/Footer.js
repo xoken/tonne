@@ -16,7 +16,7 @@ class Footer extends React.Component {
     this.getChainInfo();
     const autoRefreshTimeInSecs = 1 * 60 * 1000;
     this.autoRefresh = setInterval(() => {
-      // this.getChainInfo();
+      this.getChainInfo();
     }, autoRefreshTimeInSecs);
   }
 

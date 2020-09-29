@@ -516,7 +516,6 @@ class Wallet {
   }
 
   async _updateUTXOs(inputs: any[], utxos: any[]) {
-    debugger;
     const newUtxos = [...utxos];
     const spentUtxo: any = [];
     inputs.forEach(input => {
@@ -609,7 +608,7 @@ class Wallet {
       psbt.finalizeAllInputs();
       const transactionHex = psbt.extractTransaction(true).toHex();
       const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
-      // await transactionAPI.broadcastRawTransaction(base64);
+      await transactionAPI.broadcastRawTransaction(base64);
       await this._updateUTXOs(inputs, utxos);
     } catch (error) {
       throw error;
@@ -639,7 +638,6 @@ class Wallet {
     //   (mergedUTXO: { isUsed: boolean }) => mergedUTXO.isUsed === false
     // );
     // }
-    debugger;
     const { utxos } = await Persist.getUTXOs();
     const targets = [
       { address: receiverAddress, value: Number(amountInSatoshi) },
