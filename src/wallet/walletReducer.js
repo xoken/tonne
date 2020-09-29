@@ -31,7 +31,7 @@ export default createReducer(
     [actions.getOutputsSuccess]: (state, { outputs, nextOutputsCursor, diffBalance }) => ({
       ...state,
       outputs: [...state.outputs, ...outputs],
-      nextOutputsCursor: nextOutputsCursor ? nextOutputsCursor : state.nextOutputsCursor,
+      nextOutputsCursor: nextOutputsCursor,
       balance: diffBalance ? state.balance + diffBalance : state.balance,
       isLoading: false,
     }),
