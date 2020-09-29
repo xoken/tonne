@@ -58,12 +58,12 @@ class NewWallet extends React.Component {
           for (var l = 1; l < mnwordarray[k].length; l++) {
             this.mndupl[k] += '*';
           }
-          this.morigfull += "<span className='mnword' id='" + k + "'>" + this.mndupl[k] + '</span>';
+          this.morigfull += "<span class='mnword' id='" + k + "'>" + this.mndupl[k] + '</span>';
         }
         this.mnorig.push(mnwordarray[k]);
 
         if (k !== mnwordarray.length) {
-          this.morigfull += "<span className='mnmargin'></span>";
+          this.morigfull += "<span class='mnmargin'></span>";
         }
       }
       globmnorig = this.mnorig;
@@ -83,26 +83,28 @@ class NewWallet extends React.Component {
     }
 
     return (
-      <div className='row'>
-        <div className='col-md-12 centerall'>
-          <h5 className='generalheadingscolor'>
-            Please write down these words on a piece of paper. This seed will help recover your
-            wallet in the future.
-          </h5>
-          <div>
-            <div className='mnemonic' id='mnemonic'></div>
+      <>
+        <div className='row'>
+          <div className='col-md-12 centerall'>
+            <h5 className='generalheadingscolor'>
+              Please write down these words on a piece of paper. This seed will help recover your
+              wallet in the future.
+            </h5>
+            <div>
+              <div className='mnemonic' id='mnemonic'></div>
+            </div>
+            <div id='unmaskhint'></div>
+
+            <button type='button' className='generalbtns' onClick={this.generateMnemonic}>
+              Generate Mnemonic
+            </button>
+            <br />
+            {continu}
+
+            <p></p>
           </div>
-          <div id='unmaskhint'></div>
-
-          <button type='button' className='generalbtns' onClick={this.generateMnemonic}>
-            Generate Mnemonic
-          </button>
-          <br />
-          {continu}
-
-          <p></p>
         </div>
-      </div>
+      </>
     );
   }
 }
