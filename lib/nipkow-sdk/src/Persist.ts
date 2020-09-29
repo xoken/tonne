@@ -76,12 +76,16 @@ export const updateProfileName = async (
   newProfileName: string
 ) => {
   try {
-    const existingProfiles: any = await getProfiles();
+    const existingProfiles: any = await profiles.get('profiles', {
+      revs: true,
+    });
 
     const profileIndex = existingProfiles.value.findIndex(
       (profile: any) => profile.name === currentProfileName
     );
+
     const profilesArray = existingProfiles.value;
+
     profilesArray[profileIndex].name = newProfileName;
 
     await profiles.put({

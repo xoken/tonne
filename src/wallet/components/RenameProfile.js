@@ -12,9 +12,7 @@ class RenameProfile extends React.Component {
       updateError: false
     };
   }
-  onRenameAccount = async event => {
-    event.preventDefault();
-
+  onRenameAccount = async () => {
     const { dispatch } = this.props;
     const { newname } = this.state;
     try {
@@ -68,7 +66,7 @@ class RenameProfile extends React.Component {
                     <div className='ui blue submit button' onClick={this.onRenameAccount}>
                       Rename
                     </div>
-                    <div className='ui blue submit button' onClick={this.props.onRenameProfile}>
+                    <div className='ui blue submit button' onClick={this.props.onClose}>
                       Cancel
                     </div>
                   </center>
