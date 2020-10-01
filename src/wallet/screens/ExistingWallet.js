@@ -200,7 +200,7 @@ class ExistingWallet extends React.Component {
             <center>
               <MnemonicCompleted
                 mncompleted={this.state.mncompleted}
-                continuefunction={this.onContinue.bind(this)}
+                continuefunction={this.onContinue}
               />
             </center>
           </div>

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Icon, Modal, Pagination, Dropdown, Grid } from 'semantic-ui-react';
+import { Button, Dropdown, Icon, Modal, Segment } from 'semantic-ui-react';
 import { formatDistanceToNow } from 'date-fns';
 import SendTransaction from '../components/SendTransaction';
 import RenameProfile from '../components/RenameProfile';
@@ -26,7 +26,8 @@ class WalletDashboard extends React.Component {
 
   async componentDidMount() {
     const { dispatch } = this.props;
-    await dispatch(walletActions.getOutputs());
+    await dispatch(walletActions.getOutputs({ limit: 5 }));
+    await dispatch(walletActions.getBalance());
     this.setState({ lastRefreshed: new Date() });
     this.timerID = setInterval(
       () =>
@@ -37,7 +38,7 @@ class WalletDashboard extends React.Component {
     );
     const autoRefreshTimeInSecs = 1 * 60 * 1000;
     this.autoRefreshTimer = setInterval(() => {
-      // this.onRefresh();
+      this.onRefresh();
     }, autoRefreshTimeInSecs);
   }
 
@@ -67,16 +68,23 @@ class WalletDashboard extends React.Component {
     });
   };
 
+  onNextPage = async () => {
+    const { dispatch } = this.props;
+    await dispatch(walletActions.getOutputs({ limit: 5 }));
+  };
+
   renderLastRefresh() {
     const { lastRefreshed } = this.state;
     if (lastRefreshed) {
       return (
         <div className='right floated'>
-          Last refreshed{`: `}
-          {formatDistanceToNow(lastRefreshed, {
-            includeSeconds: true,
-            addSuffix: true,
-          })}
+          <p>
+            Last refreshed{`: `}
+            {formatDistanceToNow(lastRefreshed, {
+              includeSeconds: true,
+              addSuffix: true,
+            })}
+          </p>
         </div>
       );
     }
@@ -93,54 +101,70 @@ class WalletDashboard extends React.Component {
       const outputsGroupedBy = groupBy(outputs, 'outputTxHash');
       return Object.entries(outputsGroupedBy).map((tx, index) => {
         return (
-          <div key={index.toString()} className='card' onClick={this.toggleTransactionDetailModal}>
-            <div className='card-header'>{tx[0]}</div>
-            <div className='card-body'>
+          <div
+            key={index.toString()}
+            className='ui segments'
+            onClick={this.toggleTransactionDetailModal}>
+            <div className='ui grey inverted segment'>
+              <h4 className='ui header'>{`OutputTxHash: ${tx[0]}`}</h4>
+            </div>
+            <div className='ui segments'>
               {tx[1].map((output, txIndex) => {
                 return (
-                  <div key={txIndex.toString()} className='card'>
-                    <div className='card-body'>
-                      <p>{`Address: ${output.address}`}</p>
-                      <p>{`BlockHash: ${output.blockHash}`}</p>
-                      <p>{`BlockHeight: ${output.blockHeight}`}</p>
-                      <p>{`OutputIndex: ${output.outputIndex}`}</p>
-                      <p>{`OutputTxHash: ${output.outputTxHash}`}</p>
-                      <p>{`Address: ${output.address}`}</p>
-                      <p>{`SpendInfo: ${output.spendInfo}`}</p>
-                      <p>{`TxIndex: ${output.txIndex}`}</p>
-                      <p>{`Value: ${satoshiToBSV(output.value)}`}</p>
-                      <h3>SpendInfo</h3>
-                      {output.spendInfo && (
-                        <div>
+                  <div key={txIndex.toString()} className='ui basic segment'>
+                    <p>{`Address: ${output.address}`}</p>
+                    <p>{`BlockHash: ${output.blockHash}`}</p>
+                    <p>{`BlockHeight: ${output.blockHeight}`}</p>
+                    <p>{`OutputIndex: ${output.outputIndex}`}</p>
+                    <p>{`TxIndex: ${output.txIndex}`}</p>
+                    <p>{`Value: ${satoshiToBSV(output.value)} BSV`}</p>
+
+                    <div className='ui segments'>
+                      <div className='ui grey secondary inverted segment'>
+                        <h4 className='ui header'>SpendInfo</h4>
+                      </div>
+                      {output.spendInfo ? (
+                        <div className='ui segment'>
                           <p>{`spendingBlockHash: ${output.spendInfo.spendingBlockHash}`}</p>
                           <p>{`spendingBlockHeight: ${output.spendInfo.spendingBlockHeight}`}</p>
                           <p>{`spendingTxId: ${output.spendInfo.spendingTxId}`}</p>
                           <p>{`spendingTxIndex: ${output.spendInfo.spendingTxIndex}`}</p>
-                          <h4>Spend Data</h4>
-                          {output.spendInfo.spendData.map((sData, sDataIndex) => {
-                            return (
-                              <div key={sDataIndex.toString()}>
-                                <p>{`spendingOutputIndex: ${sData.spendingOutputIndex}`}</p>
-                                <p>{`value: ${sData.value}`}</p>
-                                <p>{`outputAddress: ${sData.outputAddress}`}</p>
-                                <hr />
-                              </div>
-                            );
-                          })}
+                          <div className='ui segments'>
+                            <div className='ui grey tertiary inverted segment'>
+                              <h4 className='ui header'>Spend Data</h4>
+                            </div>
+                            {output.spendInfo.spendData.map((sData, sDataIndex) => {
+                              return (
+                                <div key={sDataIndex.toString()} className='ui segment'>
+                                  <p>{`spendingOutputIndex: ${sData.spendingOutputIndex}`}</p>
+                                  <p>{`value: ${sData.value}`}</p>
+                                  <p>{`outputAddress: ${sData.outputAddress}`}</p>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ) : (
+                        <div className='ui segment'>
+                          <p>null</p>
                         </div>
                       )}
-                      <h3>PrevOutpoint</h3>
-                      {output.prevOutpoint.map((pOutpoint, pOutpointIndex) => {
-                        return (
-                          <div key={pOutpointIndex.toString()}>
-                            <p>{`opIndex: ${pOutpoint[0].opIndex}`}</p>
-                            <p>{`opTxHash: ${pOutpoint[0].opTxHash}`}</p>
-                            <p>{pOutpoint[1]}</p>
-                            <p>{pOutpoint[2]}</p>
-                            <hr />
-                          </div>
-                        );
-                      })}
+                    </div>
+                    <div className='ui segments'>
+                      <div className='ui grey secondary inverted segment'>
+                        <h4 className='ui header'>PrevOutpoint</h4>
+                      </div>
+                      {output.prevOutpoint &&
+                        output.prevOutpoint.map((pOutpoint, pOutpointIndex) => {
+                          return (
+                            <div key={pOutpointIndex.toString()} className='ui segment'>
+                              <p>{`opIndex: ${pOutpoint[0].opIndex}`}</p>
+                              <p>{`opTxHash: ${pOutpoint[0].opTxHash}`}</p>
+                              <p>{pOutpoint[1]}</p>
+                              <p>{pOutpoint[2]}</p>
+                            </div>
+                          );
+                        })}
                     </div>
                   </div>
                 );
@@ -154,7 +178,17 @@ class WalletDashboard extends React.Component {
   }
 
   renderPagination() {
-    return <Pagination size='mini' defaultActivePage={5} totalPages={10} />;
+    const { nextOutputsCursor } = this.props;
+    if (nextOutputsCursor) {
+      return (
+        <Segment basic textAlign='center'>
+          <Button color='yellow' onClick={this.onNextPage}>
+            Next Page
+          </Button>
+        </Segment>
+      );
+    }
+    return null;
   }
 
   renderSendTransactionModal() {
@@ -204,45 +238,36 @@ class WalletDashboard extends React.Component {
     const { balance, isLoading } = this.props;
     return (
       <>
-        <Grid>
-          <Grid.Column floated='right' width={2}>
-            <Dropdown icon={null} trigger={<Icon name='setting' size='large' />}>
+        <div className='ui center aligned segment'>
+          <div className='ui basic clearing segment'>
+            <Dropdown
+              button
+              className='circular icon top left right floated'
+              icon='setting'
+              additionPosition='top'
+              pointing>
               <Dropdown.Menu>
                 <Dropdown.Item text='Rename Profile' onClick={this.onRenameProfile} />
                 <Dropdown.Divider />
-                <Dropdown.Item icon='sign out' text='Logout' onClick={this.logout} />
+                <Dropdown.Item text='Logout' onClick={this.logout} />
               </Dropdown.Menu>
             </Dropdown>
-          </Grid.Column>
-        </Grid>
-        <div className='row'>
-          <div className='col-md-12 border-left-right'>
-            <center>
-              <div className='cryptologo'>
-                <img src={images.bsv} alt='' />
+          </div>
+          {isLoading ? (
+            <img alt='Loading' src={images.loading} className='loadinggif' />
+          ) : (
+            <>
+              <img className='ui small centered image' src={images.bsv} alt='BitcoinSV' />
+              <div className='ui header'>
+                Your Current Balance is
+                <br />
+                {satoshiToBSV(balance)} BSV
               </div>
-              {isLoading ? (
-                <img alt='Loading' src={images.loading} className='loadinggif' />
-              ) : (
-                <>
-                  <div className='gracefuload'>
-                    <h5>Your Current Balance is</h5>
-                    <h4>{satoshiToBSV(balance)} BSV</h4>
-                  </div>
-                  <Button className='txbtn' onClick={this.toggleSendTransactionModal}>
-                    Send
-                  </Button>
-                </>
-              )}
-            </center>
-          </div>
-        </div>
-        <div className='ui two column centered grid'>
-          <div className='column'></div>
-          <div className='four column centered row'>
-            <div className='column'></div>
-            <div className='column'></div>
-          </div>
+              <Button color='yellow' onClick={this.toggleSendTransactionModal}>
+                Send
+              </Button>
+            </>
+          )}
         </div>
         <div className='ui grid'>
           <div className='left floated six wide column'>
@@ -255,26 +280,8 @@ class WalletDashboard extends React.Component {
             {this.renderLastRefresh()}
           </div>
         </div>
-        <div className='row'>
-          <div className='col-md-12'>{this.renderTransaction()}</div>
-        </div>
-        <div className='row'>
-          <div className='col-md-12 col-lg-12 text-center'>
-            <nav aria-label='transactions navigation'>
-              <ul className='pagination justify-content-center'></ul>
-            </nav>
-            Enter page number
-            <form>
-              <input className='pagenuminput' size='5' type='text' />
-              <button className='btn btn-primary' type='submit'>
-                Go
-              </button>
-            </form>
-          </div>
-        </div>
-        {
-          //this.renderTransactionModal()
-        }
+        {this.renderTransaction()}
+        {this.renderPagination()}
         {this.renderSendTransactionModal()}
         {this.renderRenameProfileModal()}
       </>
@@ -302,6 +309,7 @@ const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
   outputs: walletSelectors.getOutputs(state),
+  nextOutputsCursor: state.wallet.nextOutputsCursor,
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));

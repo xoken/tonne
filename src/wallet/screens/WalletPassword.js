@@ -19,7 +19,9 @@ class WalletPassword extends React.Component {
     try {
       await dispatch(authActions.createProfile(password));
       this.props.history.push('/wallet');
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   renderPasswordMatchStatus() {

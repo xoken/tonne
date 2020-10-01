@@ -9,13 +9,32 @@ class SendTransaction extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      receiverAddress: 'n3mwgsZGA1u2HFsxZJhqwvMwRz7TauhM5E',
-      amountInSatoshi: '100000000',
+      receiverAddress: '',
+      amountInSatoshi: '',
       transactionFee: '',
       isError: false,
       message: '',
     };
   }
+
+  async componentDidMount() {
+    const { dispatch } = this.props;
+    await dispatch(walletActions.getUTXOs());
+  }
+
+  onAmountChange = async event => {
+    const { dispatch } = this.props;
+    const { receiverAddress } = this.state;
+    this.setState({ amountInSatoshi: event.target.value });
+    try {
+      const transactionFee = await dispatch(
+        walletActions.getTransactionFee(receiverAddress, event.target.value)
+      );
+      this.setState({ isError: false, message: '', transactionFee });
+    } catch (error) {
+      this.setState({ isError: true, message: error.message });
+    }
+  };
 
   onSend = async () => {
     const { dispatch } = this.props;
@@ -67,22 +86,22 @@ class SendTransaction extends React.Component {
       <div className='container'>
         <form>
           <div className='form-group row'>
-            <label htmlFor='receiverAddress' className='col-sm-2 col-form-label'>
+            <label htmlFor='receiverAddress' className='col-sm-4 col-form-label'>
               Pay to
             </label>
-            <div className='col-sm-10'>
+            <div className='col-sm-5'>
               <input
                 type='text'
                 className='form-control'
                 id='receiverAddress'
                 value={receiverAddress}
-                placeholder='1xxxxxxxxxxxxxxxxxxxxxxxx'
+                placeholder='xxxxxxxxxxxxxxxxxxxxxxxxx'
                 onChange={event => this.setState({ receiverAddress: event.target.value })}
               />
             </div>
           </div>
           <div className='form-group row'>
-            <label htmlFor='amount' className='col-sm-2 col-form-label'>
+            <label htmlFor='amount' className='col-sm-4 col-form-label'>
               Amount
             </label>
             <div className='col-sm-5'>
@@ -91,21 +110,20 @@ class SendTransaction extends React.Component {
                 className='form-control'
                 id='amount'
                 value={amountInSatoshi}
-                onChange={event => this.setState({ amountInSatoshi: event.target.value })}
+                onChange={this.onAmountChange}
               />
             </div>
-            <div className='col-sm-5'>
+            <div className='col-sm-3'>
               <input
                 type='text'
                 readOnly
                 className='form-control-plaintext'
-                id='receiverAddress'
                 value={satoshiToBSV(Number(amountInSatoshi)) + ' BSV'}
               />
             </div>
           </div>
           <div className='form-group row'>
-            <label htmlFor='transactionFee' className='col-sm-2 col-form-label'>
+            <label htmlFor='transactionFee' className='col-sm-4 col-form-label'>
               Fee
             </label>
             <div className='col-sm-5'>
@@ -116,6 +134,20 @@ class SendTransaction extends React.Component {
                 value={transactionFee}
                 onChange={event => this.setState({ transactionFee: event.target.value })}
               />
+            </div>
+            <div className='col-sm-3'>
+              <input
+                type='text'
+                readOnly
+                className='form-control-plaintext'
+                value={satoshiToBSV(Number(transactionFee)) + ' BSV'}
+              />
+            </div>
+          </div>
+          <div className='form-group row'>
+            <label className='col-sm-4 control-label'>Bitcoin SV Network Fee</label>
+            <div className='col-sm-4'>
+              <p className='form-control-static'>{`${5} satoshis per byte`}</p>
             </div>
           </div>
           <div className='form-group row'>

@@ -70,7 +70,7 @@ export const createProfile = password => async (dispatch, getState, { serviceInj
   dispatch(createProfileRequest());
   try {
     const {
-      auth: { bip39Mnemonic }
+      auth: { bip39Mnemonic },
     } = getState();
     const { profile } = await serviceInjector(AuthService).createProfile(bip39Mnemonic, password);
     dispatch(createProfileSuccess());
