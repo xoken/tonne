@@ -32,6 +32,10 @@ class WalletService {
   async createSendTransaction(receiverAddress, amountInSatoshi, transactionFee) {
     return await wallet.createSendTransaction(receiverAddress, amountInSatoshi, transactionFee);
   }
+
+  async getAddressInfo() {
+    return await wallet.getAddressInfo();
+  }
 }
 
 export default WalletService;

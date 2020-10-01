@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 import { Button, Dropdown, Icon, Modal, Segment } from 'semantic-ui-react';
 import { formatDistanceToNow } from 'date-fns';
 import SendTransaction from '../components/SendTransaction';
+import ReceiveTransaction from '../components/ReceiveTransaction';
 import RenameProfile from '../components/RenameProfile';
 import * as authActions from '../../auth/authActions';
 import * as walletActions from '../walletActions';
@@ -17,6 +18,7 @@ class WalletDashboard extends React.Component {
     super(props);
     this.state = {
       sendTransactionModal: false,
+      receiveTransactionModal: false,
       transactionDetailModal: false,
       renameProfileModal: false,
       lastRefreshed: null,
@@ -52,6 +54,11 @@ class WalletDashboard extends React.Component {
   toggleSendTransactionModal = () => {
     const { sendTransactionModal } = this.state;
     this.setState({ sendTransactionModal: !sendTransactionModal });
+  };
+
+  toggleReceiveTransactionModal = () => {
+    const { receiveTransactionModal } = this.state;
+    this.setState({ receiveTransactionModal: !receiveTransactionModal });
   };
 
   onRenameProfile = () => {
@@ -205,6 +212,23 @@ class WalletDashboard extends React.Component {
     );
   }
 
+  renderReceiveTransactionModal() {
+    const { receiveTransactionModal } = this.state;
+    return (
+      <Modal open={receiveTransactionModal}>
+        <Modal.Header>Receive Transactions</Modal.Header>
+        <Modal.Content>
+          <Modal.Description>
+            <ReceiveTransaction onClose={this.toggleReceiveTransactionModal} />
+          </Modal.Description>
+        </Modal.Content>
+        <Modal.Actions>
+          <Button content='Ok' onClick={this.toggleReceiveTransactionModal} positive />
+        </Modal.Actions>
+      </Modal>
+    );
+  }
+
   renderTransactionModal() {
     const { transactionDetailModal } = this.state;
     return (
@@ -266,6 +290,9 @@ class WalletDashboard extends React.Component {
               <Button color='yellow' onClick={this.toggleSendTransactionModal}>
                 Send
               </Button>
+              <Button color='yellow' onClick={this.toggleReceiveTransactionModal}>
+                Receive
+              </Button>
             </>
           )}
         </div>
@@ -283,6 +310,7 @@ class WalletDashboard extends React.Component {
         {this.renderTransaction()}
         {this.renderPagination()}
         {this.renderSendTransactionModal()}
+        {this.renderReceiveTransactionModal()}
         {this.renderRenameProfileModal()}
       </>
     );

@@ -25,6 +25,10 @@ export const createSendTransactionRequest = createAction('CREATE_SEND_TRANSACTIO
 export const createSendTransactionSuccess = createAction('CREATE_SEND_TRANSACTION_SUCCESS');
 export const createSendTransactionFailure = createAction('CREATE_SEND_TRANSACTION_FAILURE');
 
+export const getAddressInfoRequest = createAction('GET_ADDRESS_INFO_REQUEST');
+export const getAddressInfoSuccess = createAction('GET_ADDRESS_INFO_SUCCESS');
+export const getAddressInfoFailure = createAction('GET_ADDRESS_INFO_FAILURE');
+
 export const getOutputs = options => async (dispatch, getState, { serviceInjector }) => {
   dispatch(getOutputsRequest());
   try {
@@ -38,13 +42,9 @@ export const getOutputs = options => async (dispatch, getState, { serviceInjecto
       const { outputs, nextOutputsCursor } = await serviceInjector(WalletService).getOutputs(
         options
       );
-      const diffBalance = outputs.reduce((acc, currOutput) => {
-        if ('spendInfo' in currOutput && !currOutput.spendInfo) {
-          acc = acc + currOutput.value;
-        }
-        return acc;
-      }, 0);
-      dispatch(getOutputsSuccess({ outputs, nextOutputsCursor, diffBalance }));
+      const { balance } = await serviceInjector(WalletService).getBalance();
+      dispatch(getOutputsSuccess({ outputs, nextOutputsCursor }));
+      dispatch(getBalanceSuccess({ balance }));
     } else {
       const { outputs, nextOutputsCursor } = await serviceInjector(WalletService).getOutputs(
         options
@@ -120,6 +120,17 @@ export const createSendTransaction = (receiverAddress, amountInSatoshi, transact
     dispatch(createSendTransactionSuccess(response));
   } catch (error) {
     dispatch(createSendTransactionFailure());
+    throw error;
+  }
+};
+
+export const getAddressInfo = () => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(getAddressInfoRequest());
+  try {
+    const { addressInfo } = await serviceInjector(WalletService).getAddressInfo();
+    dispatch(getAddressInfoSuccess({ addressInfo }));
+  } catch (error) {
+    dispatch(getAddressInfoFailure());
     throw error;
   }
 };
