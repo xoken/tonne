@@ -355,13 +355,13 @@ class Wallet {
           diffUTXOs[index]
         );
         if (!isPresent) {
-          newDiffUtxos.push(diffUTXOs[index]);
+          newDiffUtxos.push({ ...diffUTXOs[index], isSpent: false });
         } else {
           const diffInMinutes = differenceInMinutes(
             new Date(),
             Date.parse(lastUpdated)
           );
-          if (diffInMinutes >= 0) {
+          if (diffInMinutes > 30) {
             newDiffUtxos.push({
               ...diffUTXOs[index],
               _id,
