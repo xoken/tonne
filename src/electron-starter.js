@@ -11,8 +11,8 @@ function createWindow() {
     //frame: false,
     webPreferences: {
       nodeIntegration: true,
-      webSecurity: false,
-    },
+      webSecurity: false
+    }
   });
   // win.maximize();
   win.show();

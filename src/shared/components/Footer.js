@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { chainAPI } from 'nipkow-sdk';
+import { Button } from 'semantic-ui-react';
 
 class Footer extends React.Component {
   constructor(props) {
@@ -9,6 +10,7 @@ class Footer extends React.Component {
       blocksSynced: null,
       chain: null,
       chainTip: null,
+      statusButton: false
     };
   }
 
@@ -45,26 +47,53 @@ class Footer extends React.Component {
     }
   }
 
-  render() {
+  onStatusButtonHover = () => {
     const { nexaHost } = this.props;
-    const { blocksSynced, chain, chainTip } = this.state;
+    const { statusButton, blocksSynced, chain, chainTip } = this.state;
+    console.log(this.state.blocksSynced);
+    if (statusButton) {
+      return (
+        <>
+          <footer className='page-footer'>
+            <div className='ui container'>
+              <div className='ui transparent label'>
+                Nexa Host: <div className='detail'>{nexaHost || 'UNKNOWN'}</div>
+              </div>
+              <div className='ui transparent label'>
+                Chain: <div className='detail'>{chain}</div>
+              </div>
+              <div className='ui transparent label'>
+                BlocksSynced: <div className='detail'>{blocksSynced}</div>
+              </div>
+              <div className='ui transparent label'>
+                ChainTip: <div className='detail'>{chainTip}</div>
+              </div>
+            </div>
+          </footer>
+        </>
+      );
+    } else {
+      return <></>;
+    }
+  };
+  onStatusButtonToggle = () => {
+    this.setState({ statusButton: !this.state.statusButton });
+    console.log(this.state.blocksSynced);
+  };
+  render() {
+    console.log(this.state.statusButton);
+
     return (
-      <footer className='page-footer'>
-        <div className='ui container'>
-          <div className='ui transparent label'>
-            Nexa Host: <div className='detail'>{nexaHost || 'UNKNOWN'}</div>
-          </div>
-          <div className='ui transparent label'>
-            Chain: <div className='detail'>{chain}</div>
-          </div>
-          <div className='ui transparent label'>
-            BlocksSynced: <div className='detail'>{blocksSynced}</div>
-          </div>
-          <div className='ui transparent label'>
-            ChainTip: <div className='detail'>{chainTip}</div>
-          </div>
-        </div>
-      </footer>
+      <>
+        <Button
+          regular
+          color='yellow'
+          onMouseOver={this.onStatusButtonToggle}
+          className='statusbutton'>
+          Connection status
+        </Button>
+        {this.onStatusButtonHover()}
+      </>
     );
   }
 
@@ -74,7 +103,7 @@ class Footer extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  nexaHost: state.settings.nexaHost,
+  nexaHost: state.settings.nexaHost
 });
 
 export default connect(mapStateToProps)(Footer);

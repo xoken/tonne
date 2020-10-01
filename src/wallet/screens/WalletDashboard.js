@@ -20,7 +20,7 @@ class WalletDashboard extends React.Component {
       transactionDetailModal: false,
       renameProfileModal: false,
       lastRefreshed: null,
-      timeSinceLastRefreshed: null,
+      timeSinceLastRefreshed: null
     };
   }
 
@@ -32,7 +32,7 @@ class WalletDashboard extends React.Component {
     this.timerID = setInterval(
       () =>
         this.setState({
-          timeSinceLastRefreshed: new Date(),
+          timeSinceLastRefreshed: new Date()
         }),
       1000
     );
@@ -64,7 +64,7 @@ class WalletDashboard extends React.Component {
     await dispatch(walletActions.getOutputs({ diff: true }));
     this.setState({
       lastRefreshed: new Date(),
-      timeSinceLastRefreshed: new Date(),
+      timeSinceLastRefreshed: new Date()
     });
   };
 
@@ -82,7 +82,7 @@ class WalletDashboard extends React.Component {
             Last refreshed{`: `}
             {formatDistanceToNow(lastRefreshed, {
               includeSeconds: true,
-              addSuffix: true,
+              addSuffix: true
             })}
           </p>
         </div>
@@ -298,18 +298,18 @@ WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   balance: PropTypes.number.isRequired,
-  outputs: PropTypes.arrayOf(PropTypes.object),
+  outputs: PropTypes.arrayOf(PropTypes.object)
 };
 
 WalletDashboard.defaultProps = {
-  outputs: [],
+  outputs: []
 };
 
 const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
   outputs: walletSelectors.getOutputs(state),
-  nextOutputsCursor: state.wallet.nextOutputsCursor,
+  nextOutputsCursor: state.wallet.nextOutputsCursor
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));
