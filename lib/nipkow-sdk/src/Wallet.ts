@@ -8,7 +8,7 @@ import {
 } from 'bitcoinjs-lib';
 import AES from 'crypto-js/aes';
 import coinSelect from 'coinselect';
-import faker from 'faker';
+import faker, { address } from 'faker';
 import * as bip38 from 'bip38';
 import * as bip39 from 'bip39';
 import * as _ from 'lodash';
@@ -342,11 +342,9 @@ class Wallet {
 
   async getUTXOs() {
     const derivedKeys = await Persist.getDerivedKeys();
-    const {
-      utxos,
-      derivedKeys: newDerivedKeys,
-      diffUTXOs,
-    } = await this._getUTXOs(derivedKeys);
+    const { derivedKeys: newDerivedKeys, diffUTXOs } = await this._getUTXOs(
+      derivedKeys
+    );
     if (diffUTXOs.length > 0) {
       const { lastUpdated } = await Persist.getOutputsLastUpdated();
       const newDiffUtxos = [];
@@ -355,13 +353,13 @@ class Wallet {
           diffUTXOs[index]
         );
         if (!isPresent) {
-          newDiffUtxos.push(diffUTXOs[index]);
+          newDiffUtxos.push({ ...diffUTXOs[index], isSpent: false });
         } else {
           const diffInMinutes = differenceInMinutes(
             new Date(),
             Date.parse(lastUpdated)
           );
-          if (diffInMinutes >= 0) {
+          if (diffInMinutes > 30) {
             newDiffUtxos.push({
               ...diffUTXOs[index],
               _id,
@@ -738,6 +736,55 @@ class Wallet {
 
   logout() {
     return Persist.destroy();
+  }
+
+  async getAddressInfo() {
+    const derivedKeys = await Persist.getDerivedKeys();
+    const addresses = this._getAddressesFromKeys(derivedKeys);
+    const { outputs } = await this.getOutputs();
+    const outputsGroupedByAddress = _.groupBy(outputs, output => {
+      return output.address;
+    });
+    const addressInfo: {
+      address: string;
+      currentBalance: number;
+      lastTransaction: any;
+    }[] = [];
+    for (const [key, value] of Object.entries(outputsGroupedByAddress)) {
+      const currentBalance = value.reduce((acc: number, currOutput: any) => {
+        if (!currOutput.isSpent) {
+          acc = acc + currOutput.value;
+        }
+        return acc;
+      }, 0);
+      addressInfo.push({
+        address: key,
+        currentBalance,
+        lastTransaction: value[0].address,
+      });
+    }
+    const newAddressInfo = addresses.map(address => {
+      const found = addressInfo.find(
+        (info: { address: any }) => info.address === address
+      );
+      if (found) {
+        return {
+          address,
+          isUsed: true,
+          currentBalance: found.currentBalance,
+          lastTransaction: found.lastTransaction,
+        };
+      } else {
+        return { address, isUsed: false };
+      }
+    });
+    newAddressInfo.sort((x, y) => {
+      // true values first
+      // return x === y ? 0 : x ? -1 : 1;
+      // false values first
+      return x.isUsed === y.isUsed ? 0 : x.isUsed ? 1 : -1;
+    });
+    return { addressInfo: newAddressInfo };
   }
 }
 

@@ -48,7 +48,7 @@ export const init = async (dbName: string) => {
   credentials = new PouchDB('credentials', {
     revs_limit: 1,
     auto_compaction: true,
-    // adapter: 'memory',
+    adapter: 'memory',
   });
   await bulkSet(credentials, [
     { key: BIP32_EXTENDED_KEY, value: null },
