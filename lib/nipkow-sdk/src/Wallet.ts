@@ -30,7 +30,21 @@ class Wallet {
       derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath,
       bip32RootKey
     );
-    await this._generateDerivedKeys(bip32ExtendedKey, 0, 20, false);
+    const derivedKeys = await Persist.getDerivedKeys();
+    const countOfUnusedKeys = this._countOfUnusedKeys(derivedKeys);
+    if (derivedKeys.length > 0 && countOfUnusedKeys <= 20) {
+      const lastKeyIndex = derivedKeys[derivedKeys.length - 1].indexText
+        .split('/')
+        .pop();
+      await this._generateDerivedKeys(
+        bip32ExtendedKey,
+        Number(lastKeyIndex) + 1,
+        20 - countOfUnusedKeys,
+        false
+      );
+    } else {
+      await this._generateDerivedKeys(bip32ExtendedKey, 0, 20, false);
+    }
     await Persist.setBip32ExtendedKey(bip32ExtendedKey);
   }
 
@@ -177,24 +191,14 @@ class Wallet {
     diff?: boolean;
   }) {
     const derivedKeys = await Persist.getDerivedKeys();
-    const chunkedDerivedKeys = derivedKeys.slice(0, 20);
-    const {
-      outputs,
-      derivedKeys: newDerivedKeys,
-      diffOutputs,
-    } = await this._getOutputs(chunkedDerivedKeys);
-    // const chunkedDerivedKeys = _.chunk(derivedKeys, 20);
-    // const data = await Promise.all(
-    //   chunkedDerivedKeys.map(async chunkedDerivedKey => {
-    //     return await this._getOutputs(chunkedDerivedKey);
-    //   })
-    // );
-    // const utxos = data.flat();
+    const { derivedKeys: newDerivedKeys, diffOutputs } = await this._getOutputs(
+      derivedKeys
+    );
+    await Persist.insertOutputs(diffOutputs);
+    await Persist.setDerivedKeys(newDerivedKeys);
     if (options?.diff) {
       return { outputs: diffOutputs };
     } else {
-      await Persist.setOutputs(diffOutputs);
-      await Persist.setDerivedKeys(newDerivedKeys);
       return await Persist.getOutputs(options);
     }
   }
@@ -205,7 +209,13 @@ class Wallet {
     prevDiffOutputs: any[] = [],
     prevKeys: any[] = []
   ): Promise<any> {
-    const outputs = await this._getOutputsByAddresses(derivedKeys);
+    const chunkedUsedDerivedKeys = _.chunk(derivedKeys, 20);
+    const data = await Promise.all(
+      chunkedUsedDerivedKeys.map(async chunkedUsedDerivedKey => {
+        return await this._getOutputsByAddresses(chunkedUsedDerivedKey);
+      })
+    );
+    const outputs = data.flat();
     const diffOutputs = await this._getDiffOutputs(outputs);
     const updatedKeys = derivedKeys.map(
       (key: { address: any; indexText: string }) => {
@@ -286,11 +296,34 @@ class Wallet {
       outputs: any[];
       nextCursor: number;
     } = await addressAPI.getOutputsByAddresses(addresses, 100, nextCursor);
-    const outputs = [...prevOutputs, ...data.outputs];
-    if (data.nextCursor) {
-      return await this._getOutputsByAddresses(keys, outputs, data.nextCursor);
+    const { lastFetched } = await Persist.getOutputsLastFetched();
+    if (lastFetched) {
+      const diffOutputs = await this._getDiffOutputs(data.outputs);
+      if (diffOutputs.length > 0) {
+        const outputs = [...prevOutputs, ...data.outputs];
+        if (data.nextCursor) {
+          return await this._getOutputsByAddresses(
+            keys,
+            outputs,
+            data.nextCursor
+          );
+        } else {
+          return outputs;
+        }
+      } else {
+        return diffOutputs;
+      }
     } else {
-      return outputs;
+      const outputs = [...prevOutputs, ...data.outputs];
+      if (data.nextCursor) {
+        return await this._getOutputsByAddresses(
+          keys,
+          outputs,
+          data.nextCursor
+        );
+      } else {
+        return outputs;
+      }
     }
     // }
   }
@@ -307,43 +340,42 @@ class Wallet {
     return newOutputs;
   }
 
-  async getUTXOs(options?: { diff?: boolean }) {
+  async getUTXOs() {
     const derivedKeys = await Persist.getDerivedKeys();
     const {
       utxos,
       derivedKeys: newDerivedKeys,
       diffUTXOs,
     } = await this._getUTXOs(derivedKeys);
-    // if (options?.diff) {
-    //   const { value: savedUtxos } = await Persist.getUtxos();
-    //   if (utxos.length > 0 && savedUtxos.length > 0) {
-    //     const fetchedUtxo = utxos[0];
-    //     const savedUtxo = savedUtxos[0];
-    //     if (isEqualOutput(fetchedUtxo, savedUtxo)) {
-    //       return { utxos: [] };
-    //     } else {
-    //       const matchedIndex = utxos.findIndex((utxo: any) => {
-    //         return isEqualOutput(savedUtxo, utxo);
-    //       });
-    //       if (matchedIndex > -1) {
-    //         const newUtxos = [...utxos.slice(0, matchedIndex)];
-    //         await Persist.addNewUtxos(newUtxos);
-    //         await Persist.setDerivedKeys(newDerivedKeys);
-    //         return { utxos: newUtxos };
-    //       } else {
-    //         return { utxos: [] };
-    //       }
-    //     }
-    //   } else {
-    //     return { utxos: [] };
-    //   }
-    // } else {
-    await Persist.setUTXOs(diffUTXOs);
+    if (diffUTXOs.length > 0) {
+      const { lastUpdated } = await Persist.getOutputsLastUpdated();
+      const newDiffUtxos = [];
+      for (let index = 0; index < diffUTXOs.length; index++) {
+        const { isPresent, _id, _rev } = await Persist.isInOutputsNew(
+          diffUTXOs[index]
+        );
+        if (!isPresent) {
+          newDiffUtxos.push(diffUTXOs[index]);
+        } else {
+          const diffInMinutes = differenceInMinutes(
+            new Date(),
+            Date.parse(lastUpdated)
+          );
+          if (diffInMinutes >= 0) {
+            newDiffUtxos.push({
+              ...diffUTXOs[index],
+              _id,
+              _rev,
+              isSpent: false,
+            });
+          }
+        }
+      }
+      if (newDiffUtxos.length > 0) {
+        await Persist.updateOutputs(newDiffUtxos);
+      }
+    }
     await Persist.setDerivedKeys(newDerivedKeys);
-    // return {
-    //   utxos,
-    // };
-    // }
   }
 
   async _getUTXOs(
@@ -515,22 +547,6 @@ class Wallet {
     });
   }
 
-  async _updateUTXOs(inputs: any[], utxos: any[]) {
-    const newUtxos = [...utxos];
-    const spentUtxo: any = [];
-    inputs.forEach(input => {
-      const utxoIndex = utxos.findIndex(utxo => utxo.address === input.address);
-      spentUtxo.push(newUtxos[utxoIndex]);
-      delete newUtxos[utxoIndex];
-      /*newUtxos[utxoIndex] = {
-         ...newUtxos[utxoIndex],
-         isUsed: true,
-      };*/
-    });
-    // await Persist.setStxos(spentUtxo);
-    // await Persist.setUtxos(newUtxos);
-  }
-
   async _createSendTransaction(
     utxos: any[],
     targets: any[],
@@ -609,7 +625,11 @@ class Wallet {
       const transactionHex = psbt.extractTransaction(true).toHex();
       const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
       await transactionAPI.broadcastRawTransaction(base64);
-      await this._updateUTXOs(inputs, utxos);
+      const spentUtxos = inputs.map((input: any) => ({
+        ...input,
+        isSpent: true,
+      }));
+      await Persist.updateOutputs(spentUtxos);
     } catch (error) {
       throw error;
     }
@@ -700,7 +720,7 @@ class Wallet {
   async getBalance() {
     const { outputs } = await Persist.getOutputs();
     const balance = outputs.reduce((acc: number, currOutput: any) => {
-      if ('spendInfo' in currOutput && !currOutput.spendInfo) {
+      if (!currOutput.isSpent) {
         acc = acc + currOutput.value;
       }
       return acc;

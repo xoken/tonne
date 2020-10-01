@@ -34,8 +34,10 @@ export const getOutputs = options => async (dispatch, getState, { serviceInjecto
     if (startkey) {
       options.startkey = startkey;
     }
-    const { outputs, nextOutputsCursor } = await serviceInjector(WalletService).getOutputs(options);
     if (options.diff) {
+      const { outputs, nextOutputsCursor } = await serviceInjector(WalletService).getOutputs(
+        options
+      );
       const diffBalance = outputs.reduce((acc, currOutput) => {
         if ('spendInfo' in currOutput && !currOutput.spendInfo) {
           acc = acc + currOutput.value;
@@ -44,6 +46,9 @@ export const getOutputs = options => async (dispatch, getState, { serviceInjecto
       }, 0);
       dispatch(getOutputsSuccess({ outputs, nextOutputsCursor, diffBalance }));
     } else {
+      const { outputs, nextOutputsCursor } = await serviceInjector(WalletService).getOutputs(
+        options
+      );
       dispatch(getOutputsSuccess({ outputs, nextOutputsCursor }));
     }
   } catch (error) {
@@ -52,10 +57,10 @@ export const getOutputs = options => async (dispatch, getState, { serviceInjecto
   }
 };
 
-export const getUTXOs = options => async (dispatch, getState, { serviceInjector }) => {
+export const getUTXOs = () => async (dispatch, getState, { serviceInjector }) => {
   dispatch(getUTXOsRequest());
   try {
-    await serviceInjector(WalletService).getUTXOs(options);
+    await serviceInjector(WalletService).getUTXOs();
   } catch (error) {
     throw error;
   }

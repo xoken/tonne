@@ -9,7 +9,6 @@ PouchDB.plugin(pouchdbFind);
 
 let profiles: any;
 let outputsDB: any;
-let utxosDB: any;
 let credentials: any;
 
 export const BIP32_EXTENDED_KEY = 'bip32ExtendedKey';
@@ -42,10 +41,10 @@ export const init = async (dbName: string) => {
     revs_limit: 1,
     auto_compaction: true,
   });
-  utxosDB = new PouchDB(`${dbName}_utxos`, {
-    revs_limit: 1,
-    auto_compaction: true,
-  });
+  // utxosDB = new PouchDB(`${dbName}_utxos`, {
+  //   revs_limit: 1,
+  //   auto_compaction: true,
+  // });
   credentials = new PouchDB('credentials', {
     revs_limit: 1,
     auto_compaction: true,
@@ -183,57 +182,69 @@ export const getUTXOs = async (options?: {
   limit?: number;
   diff?: boolean;
 }) => {
-  const response = await utxosDB.allDocs({
-    include_docs: true,
-    ...options,
-    endkey: '_design',
-    inclusive_end: false,
-    skip: options?.startkey ? 1 : false,
+  // const response = await utxosDB.allDocs({
+  //   include_docs: true,
+  //   ...options,
+  //   endkey: '_design',
+  //   inclusive_end: false,
+  //   skip: options?.startkey ? 1 : false,
+  // });
+  // if (response && response.rows.length > 0) {
+  //   const utxos = response.rows.map((row: { doc: any; id: string }) => ({
+  //     ...row.doc,
+  //     id: row.id,
+  //   }));
+  //   return { utxos };
+  // } else {
+  //   return { utxos: [] };
+  // }
+
+  await outputsDB.createIndex({
+    index: { fields: ['isSpent'] },
   });
-  if (response && response.rows.length > 0) {
-    const utxos = response.rows.map((row: { doc: any; id: string }) => ({
-      ...row.doc,
-      id: row.id,
-    }));
-    return { utxos };
-  } else {
-    return { utxos: [] };
-  }
+  const outputDoc = await outputsDB.find({
+    selector: {
+      isSpent: { $eq: false },
+    },
+  });
+  if (outputDoc.docs.length > 0) return { utxos: outputDoc.docs };
+  return { utxos: [] };
 };
 
-export const setUTXOs = async (utxos: any) => {
-  if (utxos.length > 0) {
-    const { utxos: existingUtxos } = await getUTXOs();
-    const existingUtxosLength = existingUtxos.length;
-    const docs = utxos.map((utxo: any, index: number) => {
-      return {
-        _id: `${String(existingUtxosLength + index).padStart(20, '0')}`,
-        ...utxo,
-      };
-    });
-    docs.push({
-      _id: 'lastFetched',
-      value: new Date(),
-    });
-    docs.push({
-      _id: 'lastUpdated',
-      value: null,
-    });
-    await utxosDB.bulkDocs(docs);
-  }
-};
+// export const setUTXOs = async (utxos: any) => {
+//   if (utxos.length > 0) {
+//     const { utxos: existingUtxos } = await getUTXOs();
+//     const existingUtxosLength = existingUtxos.length;
+//     const docs = utxos.map((utxo: any, index: number) => {
+//       return {
+//         _id: `${String(existingUtxosLength + index).padStart(20, '0')}`,
+//         ...utxo,
+//       };
+//     });
+//     docs.push({
+//       _id: 'lastFetched',
+//       value: new Date(),
+//     });
+//     docs.push({
+//       _id: 'lastUpdated',
+//       value: null,
+//     });
+//     await utxosDB.bulkDocs(docs);
+//   }
+// };
 
 export const isInUTXOs = async (output: {
   outputTxHash: string;
   outputIndex: number;
 }) => {
-  await utxosDB.createIndex({
-    index: { fields: ['outputTxHash', 'outputIndex'] },
+  await outputsDB.createIndex({
+    index: { fields: ['outputTxHash', 'outputIndex', 'isSpent'] },
   });
-  const outputDoc = await utxosDB.find({
+  const outputDoc = await outputsDB.find({
     selector: {
       outputTxHash: { $eq: output.outputTxHash },
       outputIndex: { $eq: output.outputIndex },
+      isSpent: false,
     },
   });
   if (outputDoc.docs.length > 0) return true;
@@ -262,21 +273,86 @@ export const getOutputs = async (options?: {
   }
 };
 
-export const setOutputs = async (outputs: any) => {
-  if (outputs.length > 0) {
-    const { outputs: existingOutputs } = await getOutputs();
-    // const targetLength = String(Math.max(existingOutputs.length - 1, 0)).length;
-    // const targetLength = String(utxos.length - 1).length;
-    const existingOutputsLength = existingOutputs.length;
-    const docs = outputs.map((output: any, index: number) => {
-      return {
-        // _id: `${String(targetLength + index).padStart(targetLength, '0')}`,
-        // _id: `${String(index).padStart(targetLength, '0')}`,
-        _id: `${String(existingOutputsLength + index).padStart(20, '0')}`,
-        ...output,
-      };
+export const getOutputsLastFetched = async () => {
+  const response = await outputsDB.allDocs({
+    startkey: 'lastFetched',
+    endkey: 'lastFetched',
+    include_docs: true,
+  });
+  if (response && response.rows.length > 0 && response.rows[0].doc) {
+    return { lastFetched: response.rows[0].doc.value };
+  } else {
+    return { lastFetched: null };
+  }
+};
+
+export const getOutputsLastUpdated = async () => {
+  const response = await outputsDB.allDocs({
+    startkey: 'lastUpdated',
+    endkey: 'lastUpdated',
+    include_docs: true,
+  });
+  if (response && response.rows.length > 0 && response.rows[0].doc) {
+    return {
+      lastUpdated: response.rows[0].doc.value,
+      doc: response.rows[0].doc,
+    };
+  } else {
+    return { lastUpdated: null, doc: null };
+  }
+};
+
+export const insertOutputs = async (outputs: any) => {
+  // if (outputs.length > 0) {
+  const { outputs: existingOutputs } = await getOutputs();
+  // const targetLength = String(Math.max(existingOutputs.length - 1, 0)).length;
+  // const targetLength = String(utxos.length - 1).length;
+  const existingOutputsLength = existingOutputs.length;
+  const docs = outputs.map((output: any, index: number) => {
+    return {
+      // _id: `${String(targetLength + index).padStart(targetLength, '0')}`,
+      // _id: `${String(index).padStart(targetLength, '0')}`,
+      _id: `${String(existingOutputsLength + index).padStart(20, '0')}`,
+      isSpent: output.spendInfo ? true : false,
+      ...output,
+    };
+  });
+  docs.push({
+    _id: 'lastFetched',
+    value: new Date(),
+  });
+  docs.push({
+    _id: 'lastUpdated',
+    value: null,
+  });
+  await outputsDB.bulkDocs(docs);
+  // }
+};
+
+export const updateOutputs = async (outputs: any) => {
+  const { doc } = await getOutputsLastUpdated();
+  // const existingOutputsLength = existingOutputs.length;
+  // const docs = outputs.map((output: any, index: number) => {
+  //   return {
+  //     _id: `${String(existingOutputsLength + index).padStart(20, '0')}`,
+  //     isSpent: output.spendInfo ? true : false,
+  //     ...output,
+  //   };
+  // });
+  outputs.push({
+    _id: 'lastUpdated',
+    _rev: doc._rev,
+    value: new Date(),
+  });
+  try {
+    const results = await outputsDB.bulkDocs(outputs);
+    results.forEach((result: { error: any }) => {
+      if (result.error) {
+        throw new Error('Error in updating utxos');
+      }
     });
-    await outputsDB.bulkDocs(docs);
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -295,6 +371,28 @@ export const isInOutputs = async (output: {
   });
   if (outputDoc.docs.length > 0) return true;
   return false;
+};
+
+export const isInOutputsNew = async (output: {
+  outputTxHash: string;
+  outputIndex: number;
+}) => {
+  await outputsDB.createIndex({
+    index: { fields: ['outputTxHash', 'outputIndex'] },
+  });
+  const outputDoc = await outputsDB.find({
+    selector: {
+      outputTxHash: { $eq: output.outputTxHash },
+      outputIndex: { $eq: output.outputIndex },
+    },
+  });
+  if (outputDoc.docs.length > 0)
+    return {
+      isPresent: true,
+      _id: outputDoc.docs[0]._id,
+      _rev: outputDoc.docs[0]._rev,
+    };
+  return { isPresent: false, _id: null, _rev: null };
 };
 
 // export const getStxos = async () => {
@@ -338,8 +436,8 @@ export const isInOutputs = async (output: {
 
 export const destroy = async () => {
   try {
-    await outputsDB.destroy();
-    await utxosDB.destroy();
+    // await outputsDB.destroy();
+    // await utxosDB.destroy();
     await credentials.destroy();
     return true;
   } catch (error) {
