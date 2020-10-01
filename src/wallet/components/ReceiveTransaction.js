@@ -20,8 +20,8 @@ class ReceiveTransaction extends React.Component {
   renderAddressInfo() {
     const { addressInfo } = this.props;
     return addressInfo.map(({ address, currentBalance, isUsed, lastTransaction }) => (
-      <Table.Row disabled={isUsed}>
-        <Table.Cell>{address}</Table.Cell>
+      <Table.Row>
+        <Table.Cell disabled={isUsed}>{address}</Table.Cell>
         <Table.Cell>
           {currentBalance !== null ? satoshiToBSV(Number(currentBalance)) + ' BSV' : ''}
         </Table.Cell>
