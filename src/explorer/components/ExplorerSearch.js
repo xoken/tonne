@@ -33,16 +33,24 @@ class ExplorerSearch extends React.Component {
         <div className='col-md-12 col-lg-12'>
           <center>
             <form onSubmit={this.onSearchClick}>
-              <input
-                className='pagenuminput'
-                placeholder='TXID / Address / BlockHeight'
-                size='50'
-                type='text'
-                onChange={event => this.setState({ searchterm: event.target.value })}
-              />
-              <button className='btn btn-primary' type='submit'>
-                Search
-              </button>
+              <div className='ui form'>
+                <div className='inline fields'>
+                  <div className='three wide field'></div>
+                  <div className='eight wide field'>
+                    <input
+                      type='text'
+                      placeholder='TXID / Address / BlockHeight'
+                      onChange={event => this.setState({ searchterm: event.target.value })}
+                    />
+                  </div>
+                  <div className='two wide field'>
+                    <button className='btn btn-primary' type='submit'>
+                      Search
+                    </button>
+                  </div>
+                  <div className='three wide field'></div>
+                </div>
+              </div>
             </form>
           </center>
         </div>

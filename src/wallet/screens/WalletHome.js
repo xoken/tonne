@@ -31,13 +31,16 @@ class WalletHome extends React.Component {
       <Segment placeholder>
         <Grid columns={2} textAlign='center'>
           {profiles && profiles.length > 0 && (
-            <Grid.Column>
+            <Grid.Column verticalAlign='middle'>
               <Header>Login to Existing Profile</Header>
               <List selection verticalAlign='middle'>
                 {profiles.map((profile, index) => {
                   const { name } = profile;
                   return (
-                    <List.Item key={index} onClick={this.onSelectProfile(name)}>
+                    <List.Item
+                      key={index}
+                      onClick={this.onSelectProfile(name)}
+                      className='ui inverted yellow button custommargin'>
                       <List.Content>
                         <List.Header>{name}</List.Header>
                       </List.Content>
@@ -124,13 +127,13 @@ const styles = {
     display: 'block',
     flexWrap: 'nowrap',
     marginRight: '-15',
-    marginLeft: '-15',
-  },
+    marginLeft: '-15'
+  }
 };
 const mapStateToProps = state => ({
   isLoading: authSelectors.isLoading(state),
   profile: authSelectors.getProfile(state),
-  profiles: authSelectors.getProfiles(state),
+  profiles: authSelectors.getProfiles(state)
 });
 
 export default withRouter(connect(mapStateToProps)(WalletHome));

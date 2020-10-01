@@ -11,9 +11,10 @@ class SendTransaction extends React.Component {
     this.state = {
       receiverAddress: '',
       amountInSatoshi: '',
-      transactionFee: '',
+      transactionFee: 0,
       isError: false,
       message: '',
+      sliderValue: 0
     };
   }
 
@@ -80,8 +81,31 @@ class SendTransaction extends React.Component {
     }
   }
 
+  onexponentialSliderChange = event => {
+    //Math.floor(a * Math.pow(b, x.value));1.03
+    this.setState({
+      transactionFee: Math.floor(Math.pow(1.03, event.target.value)),
+      sliderValue: event.target.value
+    });
+  };
+
+  onTransactionFeeChange = event => {
+    this.setState({
+      transactionFee: event.target.value
+    });
+    if (event.target.value !== '' && event.target.value !== '0') {
+      this.setState({
+        sliderValue: Math.log(event.target.value) / Math.log(1.03)
+      });
+    } else {
+      this.setState({
+        sliderValue: 0
+      });
+    }
+  };
+
   render() {
-    const { receiverAddress, amountInSatoshi, transactionFee } = this.state;
+    const { receiverAddress, amountInSatoshi, transactionFee, sliderValue } = this.state;
     return (
       <div className='container'>
         <form>
@@ -105,13 +129,7 @@ class SendTransaction extends React.Component {
               Amount
             </label>
             <div className='col-sm-5'>
-              <input
-                type='number'
-                className='form-control'
-                id='amount'
-                value={amountInSatoshi}
-                onChange={this.onAmountChange}
-              />
+              <input type='number' className='form-control' id='amount' value={amountInSatoshi} />
             </div>
             <div className='col-sm-3'>
               <input
@@ -132,7 +150,7 @@ class SendTransaction extends React.Component {
                 className='form-control'
                 id='transactionFee'
                 value={transactionFee}
-                onChange={event => this.setState({ transactionFee: event.target.value })}
+                onChange={this.onTransactionFeeChange}
               />
             </div>
             <div className='col-sm-3'>
@@ -143,6 +161,21 @@ class SendTransaction extends React.Component {
                 value={satoshiToBSV(Number(transactionFee)) + ' BSV'}
               />
             </div>
+          </div>
+          <div className='form-group row'>
+            <label htmlFor='transactionFee' className='col-sm-4 col-form-label'></label>
+            <div className='col-sm-5'>
+              <input
+                type='range'
+                min='0'
+                max='1200'
+                step='1'
+                value={sliderValue}
+                onChange={this.onexponentialSliderChange}
+                style={{ width: '100%' }}
+              />
+            </div>
+            <div className='col-sm-3'></div>
           </div>
           <div className='form-group row'>
             <label className='col-sm-4 control-label'>Bitcoin SV Network Fee</label>
@@ -166,13 +199,13 @@ class SendTransaction extends React.Component {
 }
 
 SendTransaction.propTypes = {
-  dispatch: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired
 };
 
 SendTransaction.defaultProps = {};
 
 const mapStateToProps = state => ({
-  isLoading: walletSelectors.isLoading(state),
+  isLoading: walletSelectors.isLoading(state)
 });
 
 export default connect(mapStateToProps)(SendTransaction);
