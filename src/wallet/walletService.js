@@ -9,10 +9,6 @@ class WalletService {
     return await wallet.getOutputs(options);
   }
 
-  async getDiffOutputs(options) {
-    return await wallet.getDiffOutputs(options);
-  }
-
   async getUTXOs() {
     return await wallet.getUTXOs();
   }

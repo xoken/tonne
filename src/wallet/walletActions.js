@@ -51,6 +51,18 @@ export const getOutputs = options => async (dispatch, getState, { serviceInjecto
       );
       dispatch(getOutputsSuccess({ outputs, nextOutputsCursor }));
     }
+    const { outputs, nextOutputsCursor } = await serviceInjector(WalletService).getOutputs(options);
+    if (options.diff) {
+      const diffBalance = outputs.reduce((acc, currOutput) => {
+        if ('spendInfo' in currOutput && !currOutput.spendInfo) {
+          acc = acc + currOutput.value;
+        }
+        return acc;
+      }, 0);
+      dispatch(getOutputsSuccess({ outputs, nextOutputsCursor, diffBalance }));
+    } else {
+      dispatch(getOutputsSuccess({ outputs, nextOutputsCursor }));
+    }
   } catch (error) {
     dispatch(getOutputsFailure());
     throw error;

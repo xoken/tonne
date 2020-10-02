@@ -229,8 +229,18 @@ div [class*='right floated'] {
   height: calc(100vh - 89px);
   overflow-x: auto;
   padding: 14px 0;
+  /* display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content:center; */
+}
+.statusbutton{
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
 }
 .page-footer {
+  text-align: center;
   height: 22px;
   background-color: #fcd04a;
 }
@@ -240,4 +250,16 @@ div [class*='right floated'] {
   border-radius: unset;
   padding-top: 0px;
   padding-bottom: 0px;
+}
+
+.custommargin{
+  margin-top:10px !important;
+  margin-bottom:10px !important;
+}
+.statusbarclosed{
+  visibility: hidden;
+  transition: all 0.35s ease-in-out;
+}
+.statusbaropen{
+  visibility: visible;
 }

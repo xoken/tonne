@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { createBrowserHistory } from 'history';
 import { HashRouter, Route, Switch } from 'react-router-dom';
-import { Button } from 'semantic-ui-react';
+import { Button, Container } from 'semantic-ui-react';
 import ExplorerHome from './explorer/screens/ExplorerHome';
 import Home from './shared/components/home';
 import NoMatch from './shared/components/noMatch';
@@ -34,7 +34,7 @@ class App extends React.Component {
         <HashRouter>
           <Header />
           <main className='main'>
-            <div className='ui container'>
+            <Container>
               <Switch>
                 <Route path='/wallet'>
                   <WalletHome />
@@ -52,7 +52,7 @@ class App extends React.Component {
                   <NoMatch />
                 </Route>
               </Switch>
-            </div>
+            </Container>
           </main>
           {/* <div className='row'>
             <Button onClick={this.onBack}>Back</Button>
@@ -65,7 +65,7 @@ class App extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  sessionKey: state.settings.sessionKey,
+  sessionKey: state.settings.sessionKey
 });
 
 export default connect(mapStateToProps)(App);
