@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Dropdown, Icon, Modal, Segment } from 'semantic-ui-react';
+import { Button, Dropdown, Icon, Modal, Segment, Accordion, Grid } from 'semantic-ui-react';
 import { formatDistanceToNow } from 'date-fns';
 import SendTransaction from '../components/SendTransaction';
 import ReceiveTransaction from '../components/ReceiveTransaction';
@@ -23,6 +23,7 @@ class WalletDashboard extends React.Component {
       renameProfileModal: false,
       lastRefreshed: null,
       timeSinceLastRefreshed: null,
+      activeIndex: 0
     };
   }
 
@@ -34,7 +35,7 @@ class WalletDashboard extends React.Component {
     this.timerID = setInterval(
       () =>
         this.setState({
-          timeSinceLastRefreshed: new Date(),
+          timeSinceLastRefreshed: new Date()
         }),
       1000
     );
@@ -71,7 +72,7 @@ class WalletDashboard extends React.Component {
     await dispatch(walletActions.getOutputs({ diff: true }));
     this.setState({
       lastRefreshed: new Date(),
-      timeSinceLastRefreshed: new Date(),
+      timeSinceLastRefreshed: new Date()
     });
   };
 
@@ -89,7 +90,7 @@ class WalletDashboard extends React.Component {
             Last refreshed{`: `}
             {formatDistanceToNow(lastRefreshed, {
               includeSeconds: true,
-              addSuffix: true,
+              addSuffix: true
             })}
           </p>
         </div>
@@ -102,81 +103,188 @@ class WalletDashboard extends React.Component {
     dispatch(authActions.logout());
   };
 
+  // renderTransaction() {
+  //   const { isLoading, outputs } = this.props;
+  //   if (!isLoading && outputs.length > 0) {
+  //     const outputsGroupedBy = groupBy(outputs, 'outputTxHash');
+  //     return Object.entries(outputsGroupedBy).map((tx, index) => {
+  //       return (
+  //         <div
+  //           key={index.toString()}
+  //           className='ui segments'
+  //           onClick={this.toggleTransactionDetailModal}>
+  //           <div className='ui grey inverted segment'>
+  //             <h4 className='ui header'>{`OutputTxHash: ${tx[0]}`}</h4>
+  //           </div>
+  //           <div className='ui segments'>
+  //             {tx[1].map((output, txIndex) => {
+  //               return (
+  //                 <div key={txIndex.toString()} className='ui basic segment'>
+  //                   <p>{`Address: ${output.address}`}</p>
+  //                   <p>{`BlockHash: ${output.blockHash}`}</p>
+  //                   <p>{`BlockHeight: ${output.blockHeight}`}</p>
+  //                   <p>{`OutputIndex: ${output.outputIndex}`}</p>
+  //                   <p>{`TxIndex: ${output.txIndex}`}</p>
+  //                   <p>{`Value: ${satoshiToBSV(output.value)} BSV`}</p>
+  //
+  //                   <div className='ui segments'>
+  //                     <div className='ui grey secondary inverted segment'>
+  //                       <h4 className='ui header'>SpendInfo</h4>
+  //                     </div>
+  //                     {output.spendInfo ? (
+  //                       <div className='ui segment'>
+  //                         <p>{`spendingBlockHash: ${output.spendInfo.spendingBlockHash}`}</p>
+  //                         <p>{`spendingBlockHeight: ${output.spendInfo.spendingBlockHeight}`}</p>
+  //                         <p>{`spendingTxId: ${output.spendInfo.spendingTxId}`}</p>
+  //                         <p>{`spendingTxIndex: ${output.spendInfo.spendingTxIndex}`}</p>
+  //                         <div className='ui segments'>
+  //                           <div className='ui grey tertiary inverted segment'>
+  //                             <h4 className='ui header'>Spend Data</h4>
+  //                           </div>
+  //                           {output.spendInfo.spendData.map((sData, sDataIndex) => {
+  //                             return (
+  //                               <div key={sDataIndex.toString()} className='ui segment'>
+  //                                 <p>{`spendingOutputIndex: ${sData.spendingOutputIndex}`}</p>
+  //                                 <p>{`value: ${sData.value}`}</p>
+  //                                 <p>{`outputAddress: ${sData.outputAddress}`}</p>
+  //                               </div>
+  //                             );
+  //                           })}
+  //                         </div>
+  //                       </div>
+  //                     ) : (
+  //                       <div className='ui segment'>
+  //                         <p>null</p>
+  //                       </div>
+  //                     )}
+  //                   </div>
+  //                   <div className='ui segments'>
+  //                     <div className='ui grey secondary inverted segment'>
+  //                       <h4 className='ui header'>PrevOutpoint</h4>
+  //                     </div>
+  //                     {output.prevOutpoint &&
+  //                       output.prevOutpoint.map((pOutpoint, pOutpointIndex) => {
+  //                         return (
+  //                           <div key={pOutpointIndex.toString()} className='ui segment'>
+  //                             <p>{`opIndex: ${pOutpoint[0].opIndex}`}</p>
+  //                             <p>{`opTxHash: ${pOutpoint[0].opTxHash}`}</p>
+  //                             <p>{pOutpoint[1]}</p>
+  //                             <p>{pOutpoint[2]}</p>
+  //                           </div>
+  //                         );
+  //                       })}
+  //                   </div>
+  //                 </div>
+  //               );
+  //             })}
+  //           </div>
+  //         </div>
+  //       );
+  //     });
+  //   }
+  //   return null;
+  // }
+
+  transactionHeadingDetails = tx => {
+    return (
+      <>
+        <Grid.Column width={2}>Satoshis:</Grid.Column>
+        <Grid.Column width={3}>{tx.value}</Grid.Column>
+        <Grid.Column width={2}>Value: </Grid.Column>
+        <Grid.Column width={3}>{satoshiToBSV(tx.value)} BSV</Grid.Column>
+      </>
+    );
+  };
+
+  handleClick = (e, titleProps) => {
+    const { index } = titleProps;
+    const { activeIndex } = this.state;
+    const newIndex = activeIndex === index ? -1 : index;
+
+    this.setState({ activeIndex: newIndex });
+  };
+
   renderTransaction() {
+    const { activeIndex } = this.state;
     const { isLoading, outputs } = this.props;
     if (!isLoading && outputs.length > 0) {
       const outputsGroupedBy = groupBy(outputs, 'outputTxHash');
       return Object.entries(outputsGroupedBy).map((tx, index) => {
         return (
-          <div
-            key={index.toString()}
-            className='ui segments'
-            onClick={this.toggleTransactionDetailModal}>
-            <div className='ui grey inverted segment'>
-              <h4 className='ui header'>{`OutputTxHash: ${tx[0]}`}</h4>
-            </div>
-            <div className='ui segments'>
-              {tx[1].map((output, txIndex) => {
-                return (
-                  <div key={txIndex.toString()} className='ui basic segment'>
-                    <p>{`Address: ${output.address}`}</p>
-                    <p>{`BlockHash: ${output.blockHash}`}</p>
-                    <p>{`BlockHeight: ${output.blockHeight}`}</p>
-                    <p>{`OutputIndex: ${output.outputIndex}`}</p>
-                    <p>{`TxIndex: ${output.txIndex}`}</p>
-                    <p>{`Value: ${satoshiToBSV(output.value)} BSV`}</p>
+          <div key={index.toString()}>
+            <Accordion>
+              <Accordion.Title
+                active={activeIndex === index}
+                index={index}
+                onClick={this.handleClick}>
+                <Icon name='dropdown' />
+                <Grid divided='vertically'>
+                  <Grid.Row>
+                    <Grid.Column width={2}>Transaction ID:</Grid.Column>
+                    <Grid.Column width={4}>{tx[0]}</Grid.Column>
 
-                    <div className='ui segments'>
-                      <div className='ui grey secondary inverted segment'>
-                        <h4 className='ui header'>SpendInfo</h4>
+                    {this.transactionHeadingDetails(tx[1][index])}
+                  </Grid.Row>
+                </Grid>
+              </Accordion.Title>
+              <Accordion.Content active={activeIndex === index}>
+                <div>
+                  {tx[1].map((output, txIndex) => {
+                    return (
+                      <div key={txIndex.toString()}>
+                        <Grid divided='vertically'>
+                          <Grid.Row columns={2}>
+                            <Grid.Column>
+                              <b>Inputs</b>
+                            </Grid.Column>
+                            <Grid.Column>
+                              <div>
+                                <b>Outputs</b>
+                                {output.spendInfo ? (
+                                  <div>
+                                    <div>
+                                      {output.spendInfo.spendData.map((sData, sDataIndex) => {
+                                        return (
+                                          <div key={sDataIndex.toString()}>
+                                            <Grid divided='vertically'>
+                                              <Grid.Row columns={2}>
+                                                <Grid.Column>
+                                                  <p>{`Output Address: ${sData.outputAddress}`}</p>
+                                                </Grid.Column>
+                                                <Grid.Column>
+                                                  <p>{`value: ${sData.value}`}</p>
+                                                </Grid.Column>
+                                              </Grid.Row>
+                                            </Grid>
+                                          </div>
+                                        );
+                                      })}
+                                    </div>
+                                  </div>
+                                ) : (
+                                  <div>
+                                    <Grid divided='vertically'>
+                                      <Grid.Row columns={2}>
+                                        <Grid.Column>
+                                          <p>Output Address: null</p>
+                                        </Grid.Column>
+                                        <Grid.Column>
+                                          <p>value: null</p>
+                                        </Grid.Column>
+                                      </Grid.Row>
+                                    </Grid>
+                                  </div>
+                                )}
+                              </div>
+                            </Grid.Column>
+                          </Grid.Row>
+                        </Grid>
                       </div>
-                      {output.spendInfo ? (
-                        <div className='ui segment'>
-                          <p>{`spendingBlockHash: ${output.spendInfo.spendingBlockHash}`}</p>
-                          <p>{`spendingBlockHeight: ${output.spendInfo.spendingBlockHeight}`}</p>
-                          <p>{`spendingTxId: ${output.spendInfo.spendingTxId}`}</p>
-                          <p>{`spendingTxIndex: ${output.spendInfo.spendingTxIndex}`}</p>
-                          <div className='ui segments'>
-                            <div className='ui grey tertiary inverted segment'>
-                              <h4 className='ui header'>Spend Data</h4>
-                            </div>
-                            {output.spendInfo.spendData.map((sData, sDataIndex) => {
-                              return (
-                                <div key={sDataIndex.toString()} className='ui segment'>
-                                  <p>{`spendingOutputIndex: ${sData.spendingOutputIndex}`}</p>
-                                  <p>{`value: ${sData.value}`}</p>
-                                  <p>{`outputAddress: ${sData.outputAddress}`}</p>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ) : (
-                        <div className='ui segment'>
-                          <p>null</p>
-                        </div>
-                      )}
-                    </div>
-                    <div className='ui segments'>
-                      <div className='ui grey secondary inverted segment'>
-                        <h4 className='ui header'>PrevOutpoint</h4>
-                      </div>
-                      {output.prevOutpoint &&
-                        output.prevOutpoint.map((pOutpoint, pOutpointIndex) => {
-                          return (
-                            <div key={pOutpointIndex.toString()} className='ui segment'>
-                              <p>{`opIndex: ${pOutpoint[0].opIndex}`}</p>
-                              <p>{`opTxHash: ${pOutpoint[0].opTxHash}`}</p>
-                              <p>{pOutpoint[1]}</p>
-                              <p>{pOutpoint[2]}</p>
-                            </div>
-                          );
-                        })}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
+                    );
+                  })}
+                </div>
+              </Accordion.Content>
+            </Accordion>
           </div>
         );
       });
@@ -326,18 +434,18 @@ WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   balance: PropTypes.number.isRequired,
-  outputs: PropTypes.arrayOf(PropTypes.object),
+  outputs: PropTypes.arrayOf(PropTypes.object)
 };
 
 WalletDashboard.defaultProps = {
-  outputs: [],
+  outputs: []
 };
 
 const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
   outputs: walletSelectors.getOutputs(state),
-  nextOutputsCursor: state.wallet.nextOutputsCursor,
+  nextOutputsCursor: state.wallet.nextOutputsCursor
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));
