@@ -5,6 +5,7 @@ import { withRouter } from 'react-router-dom';
 import { Button, Dropdown, Icon, Modal, Segment } from 'semantic-ui-react';
 import { formatDistanceToNow } from 'date-fns';
 import SendTransaction from '../components/SendTransaction';
+import ReceiveTransaction from '../components/ReceiveTransaction';
 import RenameProfile from '../components/RenameProfile';
 import * as authActions from '../../auth/authActions';
 import * as walletActions from '../walletActions';
@@ -17,10 +18,11 @@ class WalletDashboard extends React.Component {
     super(props);
     this.state = {
       sendTransactionModal: false,
+      receiveTransactionModal: false,
       transactionDetailModal: false,
       renameProfileModal: false,
       lastRefreshed: null,
-      timeSinceLastRefreshed: null
+      timeSinceLastRefreshed: null,
     };
   }
 
@@ -32,7 +34,7 @@ class WalletDashboard extends React.Component {
     this.timerID = setInterval(
       () =>
         this.setState({
-          timeSinceLastRefreshed: new Date()
+          timeSinceLastRefreshed: new Date(),
         }),
       1000
     );
@@ -54,6 +56,11 @@ class WalletDashboard extends React.Component {
     this.setState({ sendTransactionModal: !sendTransactionModal });
   };
 
+  toggleReceiveTransactionModal = () => {
+    const { receiveTransactionModal } = this.state;
+    this.setState({ receiveTransactionModal: !receiveTransactionModal });
+  };
+
   onRenameProfile = () => {
     const { renameProfileModal } = this.state;
     this.setState({ renameProfileModal: !renameProfileModal });
@@ -64,7 +71,7 @@ class WalletDashboard extends React.Component {
     await dispatch(walletActions.getOutputs({ diff: true }));
     this.setState({
       lastRefreshed: new Date(),
-      timeSinceLastRefreshed: new Date()
+      timeSinceLastRefreshed: new Date(),
     });
   };
 
@@ -82,7 +89,7 @@ class WalletDashboard extends React.Component {
             Last refreshed{`: `}
             {formatDistanceToNow(lastRefreshed, {
               includeSeconds: true,
-              addSuffix: true
+              addSuffix: true,
             })}
           </p>
         </div>
@@ -205,6 +212,23 @@ class WalletDashboard extends React.Component {
     );
   }
 
+  renderReceiveTransactionModal() {
+    const { receiveTransactionModal } = this.state;
+    return (
+      <Modal open={receiveTransactionModal}>
+        <Modal.Header>Receive Transactions</Modal.Header>
+        <Modal.Content>
+          <Modal.Description>
+            <ReceiveTransaction onClose={this.toggleReceiveTransactionModal} />
+          </Modal.Description>
+        </Modal.Content>
+        <Modal.Actions>
+          <Button content='Ok' onClick={this.toggleReceiveTransactionModal} positive />
+        </Modal.Actions>
+      </Modal>
+    );
+  }
+
   renderTransactionModal() {
     const { transactionDetailModal } = this.state;
     return (
@@ -266,6 +290,9 @@ class WalletDashboard extends React.Component {
               <Button color='yellow' onClick={this.toggleSendTransactionModal}>
                 Send
               </Button>
+              <Button color='yellow' onClick={this.toggleReceiveTransactionModal}>
+                Receive
+              </Button>
             </>
           )}
         </div>
@@ -283,6 +310,7 @@ class WalletDashboard extends React.Component {
         {this.renderTransaction()}
         {this.renderPagination()}
         {this.renderSendTransactionModal()}
+        {this.renderReceiveTransactionModal()}
         {this.renderRenameProfileModal()}
       </>
     );
@@ -298,18 +326,18 @@ WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   balance: PropTypes.number.isRequired,
-  outputs: PropTypes.arrayOf(PropTypes.object)
+  outputs: PropTypes.arrayOf(PropTypes.object),
 };
 
 WalletDashboard.defaultProps = {
-  outputs: []
+  outputs: [],
 };
 
 const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
   outputs: walletSelectors.getOutputs(state),
-  nextOutputsCursor: state.wallet.nextOutputsCursor
+  nextOutputsCursor: state.wallet.nextOutputsCursor,
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));

@@ -17,7 +17,7 @@ import * as authSelectors from '../../auth/authSelectors';
 class WalletHome extends React.Component {
   async componentDidMount() {
     const { dispatch } = this.props;
-    dispatch(authActions.getProfiles());
+    await dispatch(authActions.getProfiles());
   }
 
   onSelectProfile = profile => () => {

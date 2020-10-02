@@ -14,7 +14,7 @@ class SendTransaction extends React.Component {
       transactionFee: 0,
       isError: false,
       message: '',
-      sliderValue: 0
+      sliderValue: 0,
     };
   }
 
@@ -85,21 +85,21 @@ class SendTransaction extends React.Component {
     //Math.floor(a * Math.pow(b, x.value));1.03
     this.setState({
       transactionFee: Math.floor(Math.pow(1.03, event.target.value)),
-      sliderValue: event.target.value
+      sliderValue: event.target.value,
     });
   };
 
   onTransactionFeeChange = event => {
     this.setState({
-      transactionFee: event.target.value
+      transactionFee: event.target.value,
     });
     if (event.target.value !== '' && event.target.value !== '0') {
       this.setState({
-        sliderValue: Math.log(event.target.value) / Math.log(1.03)
+        sliderValue: Math.log(event.target.value) / Math.log(1.03),
       });
     } else {
       this.setState({
-        sliderValue: 0
+        sliderValue: 0,
       });
     }
   };
@@ -161,6 +161,20 @@ class SendTransaction extends React.Component {
                 value={satoshiToBSV(Number(transactionFee)) + ' BSV'}
               />
             </div>
+            <div className='col-sm-3'>
+              <input
+                type='text'
+                readOnly
+                className='form-control-plaintext'
+                value={satoshiToBSV(Number(transactionFee)) + ' BSV'}
+              />
+            </div>
+          </div>
+          <div className='form-group row'>
+            <label className='col-sm-4 control-label'>Bitcoin SV Network Fee</label>
+            <div className='col-sm-4'>
+              <p className='form-control-static'>{`${5} satoshis per byte`}</p>
+            </div>
           </div>
           <div className='form-group row'>
             <label htmlFor='transactionFee' className='col-sm-4 col-form-label'></label>
@@ -199,13 +213,13 @@ class SendTransaction extends React.Component {
 }
 
 SendTransaction.propTypes = {
-  dispatch: PropTypes.func.isRequired
+  dispatch: PropTypes.func.isRequired,
 };
 
 SendTransaction.defaultProps = {};
 
 const mapStateToProps = state => ({
-  isLoading: walletSelectors.isLoading(state)
+  isLoading: walletSelectors.isLoading(state),
 });
 
 export default connect(mapStateToProps)(SendTransaction);

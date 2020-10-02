@@ -9,7 +9,7 @@ class WalletService {
     return await wallet.getOutputs(options);
   }
 
-  async getUTXOs(options) {
+  async getUTXOs() {
     return await wallet.getUTXOs();
   }
 
@@ -27,6 +27,10 @@ class WalletService {
 
   async createSendTransaction(receiverAddress, amountInSatoshi, transactionFee) {
     return await wallet.createSendTransaction(receiverAddress, amountInSatoshi, transactionFee);
+  }
+
+  async getAddressInfo() {
+    return await wallet.getAddressInfo();
   }
 }
 

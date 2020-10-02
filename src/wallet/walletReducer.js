@@ -7,6 +7,7 @@ const INITIAL_STATE = {
   balance: 0,
   nextOutputsCursor: null,
   outputs: [],
+  addressInfo: [],
 };
 
 export default createReducer(
@@ -28,11 +29,10 @@ export default createReducer(
       ...state,
       isLoading: true,
     }),
-    [actions.getOutputsSuccess]: (state, { outputs, nextOutputsCursor, diffBalance }) => ({
+    [actions.getOutputsSuccess]: (state, { outputs, nextOutputsCursor }) => ({
       ...state,
       outputs: [...state.outputs, ...outputs],
       nextOutputsCursor: nextOutputsCursor,
-      balance: diffBalance ? state.balance + diffBalance : state.balance,
       isLoading: false,
     }),
     [actions.getOutputsFailure]: state => ({
@@ -50,6 +50,19 @@ export default createReducer(
     [actions.getTransactionFailure]: state => ({
       ...state,
       isLoading: false,
+    }),
+    [actions.getAddressInfoRequest]: state => ({
+      ...state,
+      isLoading: true,
+    }),
+    [actions.getAddressInfoSuccess]: (state, { addressInfo }) => ({
+      ...state,
+      isLoading: false,
+      addressInfo,
+    }),
+    [actions.getAddressInfoFailure]: state => ({
+      ...state,
+      isLoading: true,
     }),
     [authActions.logoutSuccess]: state => ({
       ...state,
