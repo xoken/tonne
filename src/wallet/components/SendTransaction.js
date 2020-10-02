@@ -11,7 +11,7 @@ class SendTransaction extends React.Component {
     this.state = {
       receiverAddress: '',
       amountInSatoshi: '',
-      transactionFee: 0,
+      transactionFee: 5,
       isError: false,
       message: '',
       sliderValue: 0,
@@ -129,7 +129,13 @@ class SendTransaction extends React.Component {
               Amount
             </label>
             <div className='col-sm-5'>
-              <input type='number' className='form-control' id='amount' value={amountInSatoshi} />
+              <input
+                type='text'
+                className='form-control'
+                id='amount'
+                value={amountInSatoshi}
+                onChange={event => this.setState({ amountInSatoshi: event.target.value })}
+              />
             </div>
             <div className='col-sm-3'>
               <input
@@ -140,7 +146,7 @@ class SendTransaction extends React.Component {
               />
             </div>
           </div>
-          <div className='form-group row'>
+          {/* <div className='form-group row'>
             <label htmlFor='transactionFee' className='col-sm-4 col-form-label'>
               Fee
             </label>
@@ -169,15 +175,17 @@ class SendTransaction extends React.Component {
                 value={satoshiToBSV(Number(transactionFee)) + ' BSV'}
               />
             </div>
-          </div>
-          <div className='form-group row'>
+          </div> */}
+          {/* <div className='form-group row'>
             <label className='col-sm-4 control-label'>Bitcoin SV Network Fee</label>
             <div className='col-sm-4'>
               <p className='form-control-static'>{`${5} satoshis per byte`}</p>
             </div>
-          </div>
+          </div> */}
           <div className='form-group row'>
-            <label htmlFor='transactionFee' className='col-sm-4 col-form-label'></label>
+            <label htmlFor='transactionFee' className='col-sm-4 col-form-label'>
+              Bitcoin SV Network Fee
+            </label>
             <div className='col-sm-5'>
               <input
                 type='range'
@@ -189,14 +197,21 @@ class SendTransaction extends React.Component {
                 style={{ width: '100%' }}
               />
             </div>
-            <div className='col-sm-3'></div>
+            <div className='col-sm-3'>
+              <input
+                type='text'
+                readOnly
+                className='form-control-plaintext'
+                value={satoshiToBSV(Number(transactionFee)) + ' BSV'}
+              />
+            </div>
           </div>
-          <div className='form-group row'>
+          {/* <div className='form-group row'>
             <label className='col-sm-4 control-label'>Bitcoin SV Network Fee</label>
             <div className='col-sm-4'>
               <p className='form-control-static'>{`${5} satoshis per byte`}</p>
             </div>
-          </div>
+          </div> */}
           <div className='form-group row'>
             <div className='col-sm-12'>{this.renderMessage()}</div>
           </div>
