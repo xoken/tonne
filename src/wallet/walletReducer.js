@@ -32,7 +32,8 @@ export default createReducer(
     [actions.getOutputsSuccess]: (state, { outputs, nextOutputsCursor }) => ({
       ...state,
       outputs: [...state.outputs, ...outputs],
-      nextOutputsCursor: nextOutputsCursor,
+      nextOutputsCursor:
+        nextOutputsCursor !== undefined ? nextOutputsCursor : state.nextOutputsCursor,
       isLoading: false,
     }),
     [actions.getOutputsFailure]: state => ({

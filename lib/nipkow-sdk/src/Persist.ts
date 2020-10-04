@@ -12,10 +12,6 @@ let outputsDB: any;
 let credentials: any;
 
 export const BIP32_EXTENDED_KEY = 'bip32ExtendedKey';
-export const DERIVED_KEYS = 'derivedKeys';
-export const OUTPUTS = 'outputs';
-export const UTXOS = 'utxos';
-// export const SPENT_UTXOS = 'stxos';
 
 const get = async (db: any, key: string) => await db.get(key);
 
@@ -27,33 +23,17 @@ const set = async (db: any, key: string, value: any) => {
   await db.put(doc);
 };
 
-const bulkSet = async (db: any, inputs: any[]) => {
-  const newData = inputs.map(element => {
-    const key = element['key'];
-    delete element.key;
-    return { ...element, _id: key };
-  });
-  await db.bulkDocs(newData);
-};
-
 export const init = async (dbName: string) => {
-  outputsDB = new PouchDB(`${dbName}_outputs`, {
+  outputsDB = new PouchDB(`${dbName}`, {
     revs_limit: 1,
     auto_compaction: true,
   });
-  // utxosDB = new PouchDB(`${dbName}_utxos`, {
-  //   revs_limit: 1,
-  //   auto_compaction: true,
-  // });
   credentials = new PouchDB('credentials', {
     revs_limit: 1,
     auto_compaction: true,
     adapter: 'memory',
   });
-  await bulkSet(credentials, [
-    { key: BIP32_EXTENDED_KEY, value: null },
-    { key: DERIVED_KEYS, value: [] },
-  ]);
+  await credentials.bulkDocs([{ _id: BIP32_EXTENDED_KEY, value: null }]);
 };
 
 export const createProfile = async (
@@ -163,92 +143,35 @@ export const getBip32ExtendedKey = async () => {
 export const setBip32ExtendedKey = async (value: any) =>
   await set(credentials, BIP32_EXTENDED_KEY, { value });
 
-export const updateDerivedKeys = async (value: any) => {
-  const existingKeys = await getDerivedKeys();
-  const newKeys = [...existingKeys, ...value];
-  await setDerivedKeys(newKeys);
-};
-
 export const getDerivedKeys = async () => {
-  const derivedKeysDoc: any = await get(credentials, DERIVED_KEYS);
-  return derivedKeysDoc.value;
+  const response = await outputsDB.allDocs({
+    include_docs: true,
+    startkey: 'key',
+    endkey: 'key\ufff0',
+  });
+  if (response && response.rows.length > 0) {
+    const existingDerivedKeys = response.rows.map(
+      (row: { doc: any }) => row.doc
+    );
+    return { existingDerivedKeys };
+  } else {
+    return { existingDerivedKeys: [] };
+  }
 };
 
-export const setDerivedKeys = async (value: any) =>
-  await set(credentials, DERIVED_KEYS, { value });
-
-export const getUTXOs = async (options?: {
-  startkey?: string;
-  limit?: number;
-  diff?: boolean;
-}) => {
-  // const response = await utxosDB.allDocs({
-  //   include_docs: true,
-  //   ...options,
-  //   endkey: '_design',
-  //   inclusive_end: false,
-  //   skip: options?.startkey ? 1 : false,
-  // });
-  // if (response && response.rows.length > 0) {
-  //   const utxos = response.rows.map((row: { doc: any; id: string }) => ({
-  //     ...row.doc,
-  //     id: row.id,
-  //   }));
-  //   return { utxos };
-  // } else {
-  //   return { utxos: [] };
-  // }
-
-  await outputsDB.createIndex({
-    index: { fields: ['isSpent'] },
+export const upsertDerivedKeys = async (keys: any) => {
+  const { existingDerivedKeys } = await getDerivedKeys();
+  let keyId = existingDerivedKeys.length - 1;
+  const docs = keys.map((key: any, index: number) => {
+    if (!key._id) {
+      keyId = keyId + 1;
+    }
+    return {
+      _id: key._id ? key._id : `key-${String(keyId).padStart(20, '0')}`,
+      ...key,
+    };
   });
-  const outputDoc = await outputsDB.find({
-    selector: {
-      isSpent: { $eq: false },
-    },
-  });
-  if (outputDoc.docs.length > 0) return { utxos: outputDoc.docs };
-  return { utxos: [] };
-};
-
-// export const setUTXOs = async (utxos: any) => {
-//   if (utxos.length > 0) {
-//     const { utxos: existingUtxos } = await getUTXOs();
-//     const existingUtxosLength = existingUtxos.length;
-//     const docs = utxos.map((utxo: any, index: number) => {
-//       return {
-//         _id: `${String(existingUtxosLength + index).padStart(20, '0')}`,
-//         ...utxo,
-//       };
-//     });
-//     docs.push({
-//       _id: 'lastFetched',
-//       value: new Date(),
-//     });
-//     docs.push({
-//       _id: 'lastUpdated',
-//       value: null,
-//     });
-//     await utxosDB.bulkDocs(docs);
-//   }
-// };
-
-export const isInUTXOs = async (output: {
-  outputTxHash: string;
-  outputIndex: number;
-}) => {
-  await outputsDB.createIndex({
-    index: { fields: ['outputTxHash', 'outputIndex', 'isSpent'] },
-  });
-  const outputDoc = await outputsDB.find({
-    selector: {
-      outputTxHash: { $eq: output.outputTxHash },
-      outputIndex: { $eq: output.outputIndex },
-      isSpent: false,
-    },
-  });
-  if (outputDoc.docs.length > 0) return true;
-  return false;
+  await outputsDB.bulkDocs(docs);
 };
 
 export const getOutputs = async (options?: {
@@ -259,8 +182,8 @@ export const getOutputs = async (options?: {
   const response = await outputsDB.allDocs({
     include_docs: true,
     ...options,
-    endkey: '_design',
-    inclusive_end: false,
+    startkey: options?.startkey || 'output',
+    endkey: 'output\ufff0',
     skip: options?.startkey ? 1 : false,
   });
   if (response && response.rows.length > 0) {
@@ -274,31 +197,27 @@ export const getOutputs = async (options?: {
 };
 
 export const getOutputsLastFetched = async () => {
-  const response = await outputsDB.allDocs({
-    startkey: 'lastFetched',
-    endkey: 'lastFetched',
-    include_docs: true,
-  });
-  if (response && response.rows.length > 0 && response.rows[0].doc) {
-    return { lastFetched: response.rows[0].doc.value };
-  } else {
+  try {
+    const doc = await outputsDB.get('lastFetched');
+    return {
+      lastFetched: doc.value,
+      doc,
+    };
+  } catch (error) {
     return { lastFetched: null };
+    // throw error;
   }
 };
 
 export const getOutputsLastUpdated = async () => {
-  const response = await outputsDB.allDocs({
-    startkey: 'lastUpdated',
-    endkey: 'lastUpdated',
-    include_docs: true,
-  });
-  if (response && response.rows.length > 0 && response.rows[0].doc) {
+  try {
+    const doc = await outputsDB.get('lastUpdated');
     return {
-      lastUpdated: response.rows[0].doc.value,
-      doc: response.rows[0].doc,
+      lastUpdated: doc.value,
+      doc,
     };
-  } else {
-    return { lastUpdated: null, doc: null };
+  } catch (error) {
+    throw error;
   }
 };
 
@@ -312,7 +231,7 @@ export const insertOutputs = async (outputs: any) => {
     return {
       // _id: `${String(targetLength + index).padStart(targetLength, '0')}`,
       // _id: `${String(index).padStart(targetLength, '0')}`,
-      _id: `${String(existingOutputsLength + index).padStart(20, '0')}`,
+      _id: `output-${String(existingOutputsLength + index).padStart(20, '0')}`,
       isSpent: output.spendInfo ? true : false,
       ...output,
     };
@@ -395,49 +314,43 @@ export const isInOutputsNew = async (output: {
   return { isPresent: false, _id: null, _rev: null };
 };
 
-// export const getStxos = async () => {
-//   const stxosDoc: any = await get(db, SPENT_UTXOS);
-//   return { lastUpdated: stxosDoc.lastUpdated, value: stxosDoc.value };
-// };
+export const getUTXOs = async (options?: {
+  startkey?: string;
+  limit?: number;
+  diff?: boolean;
+}) => {
+  await outputsDB.createIndex({
+    index: { fields: ['isSpent'] },
+  });
+  const outputDoc = await outputsDB.find({
+    selector: {
+      isSpent: { $eq: false },
+    },
+  });
+  if (outputDoc.docs.length > 0) return { utxos: outputDoc.docs };
+  return { utxos: [] };
+};
 
-// export const setStxos = async (value: any) => {
-//   const newValue = { lastUpdated: new Date(), value };
-//   await set(db, SPENT_UTXOS, { newValue });
-// };
-
-// export const addNewUtxos = async (newUtxos: any) => {
-//   const { value: existingUtxos } = await getUtxos();
-//   const newValue = {
-//     lastFetched: new Date(),
-//     value: [...newUtxos, ...existingUtxos],
-//   };
-//   await set(db, UTXOS, { newValue });
-// };
-
-// export const addNewOutputs = async (newOutputs: any) => {
-//   const { value: existingOutputs } = await getOutputs();
-//   const newValue = {
-//     lastFetched: new Date(),
-//     value: [...newOutputs, ...existingOutputs],
-//   };
-//   await set(db, OUTPUTS, { newValue });
-// };
-
-// const bulkUpdate = async (db: any, data: any[]) => {
-//   const newData = await Promise.all(
-//     data.map(async element => {
-//       const doc: any = await get(db, element.key);
-//       doc.value = element.value;
-//       return doc;
-//     })
-//   );
-//   await db.bulkDocs(newData);
-// };
+export const isInUTXOs = async (output: {
+  outputTxHash: string;
+  outputIndex: number;
+}) => {
+  await outputsDB.createIndex({
+    index: { fields: ['outputTxHash', 'outputIndex', 'isSpent'] },
+  });
+  const outputDoc = await outputsDB.find({
+    selector: {
+      outputTxHash: { $eq: output.outputTxHash },
+      outputIndex: { $eq: output.outputIndex },
+      isSpent: false,
+    },
+  });
+  if (outputDoc.docs.length > 0) return true;
+  return false;
+};
 
 export const destroy = async () => {
   try {
-    // await outputsDB.destroy();
-    // await utxosDB.destroy();
     await credentials.destroy();
     return true;
   } catch (error) {

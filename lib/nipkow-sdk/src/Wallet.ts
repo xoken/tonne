@@ -30,22 +30,26 @@ class Wallet {
       derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath,
       bip32RootKey
     );
-    const derivedKeys = await Persist.getDerivedKeys();
-    const countOfUnusedKeys = this._countOfUnusedKeys(derivedKeys);
-    if (derivedKeys.length > 0 && countOfUnusedKeys <= 20) {
-      const lastKeyIndex = derivedKeys[derivedKeys.length - 1].indexText
-        .split('/')
-        .pop();
-      await this._generateDerivedKeys(
+    const { existingDerivedKeys } = await Persist.getDerivedKeys();
+    const countOfUnusedKeys = this._countOfUnusedKeys(existingDerivedKeys);
+    if (countOfUnusedKeys < 20) {
+      let lastKeyIndex = -1;
+      if (existingDerivedKeys.length > 0) {
+        lastKeyIndex = existingDerivedKeys[
+          existingDerivedKeys.length - 1
+        ].indexText
+          .split('/')
+          .pop();
+      }
+      const { derivedKeys: newDerivedKeys } = await this._generateDerivedKeys(
         bip32ExtendedKey,
         Number(lastKeyIndex) + 1,
         20 - countOfUnusedKeys,
         false
       );
-    } else {
-      await this._generateDerivedKeys(bip32ExtendedKey, 0, 20, false);
+      await Persist.upsertDerivedKeys(newDerivedKeys);
+      await Persist.setBip32ExtendedKey(bip32ExtendedKey);
     }
-    await Persist.setBip32ExtendedKey(bip32ExtendedKey);
   }
 
   _mnemonicToSeedSync(bip39Mnemonic: string, password?: string): Buffer {
@@ -112,6 +116,45 @@ class Wallet {
       pubkey: keyPair.publicKey,
       network: network.BITCOIN_SV_REGTEST,
     }).address!;
+    let indexText =
+      derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath + '/' + index;
+    if (useHardenedAddresses) {
+      indexText = indexText + "'";
+    }
+    return { indexText, address };
+  }
+
+  /*_generateDerivedAddresss(
+    bip32ExtendedKey: string,
+    index: number,
+    useBip38?: boolean,
+    bip38password: string = '',
+    useHardenedAddresses?: boolean
+  ) {
+    const bip32Interface = bip32.fromBase58(
+      bip32ExtendedKey,
+      network.BITCOIN_SV_REGTEST
+    );
+    let key;
+    if (useHardenedAddresses) {
+      key = bip32Interface.deriveHardened(index);
+    } else {
+      key = bip32Interface.derive(index);
+    }
+    const useUncompressed = useBip38;
+    let keyPair = ECPair.fromPrivateKey(key.privateKey!, {
+      network: network.BITCOIN_SV_REGTEST,
+    });
+    if (useUncompressed) {
+      keyPair = ECPair.fromPrivateKey(key.privateKey!, {
+        compressed: false,
+        network: network.BITCOIN_SV_REGTEST,
+      });
+    }
+    const address = payments.p2pkh({
+      pubkey: keyPair.publicKey,
+      network: network.BITCOIN_SV_REGTEST,
+    }).address!;
     const hasPrivkey = !key.isNeutered();
     let privkey;
     if (hasPrivkey) {
@@ -127,7 +170,7 @@ class Wallet {
       indexText = indexText + "'";
     }
     return { indexText, address, pubkey, privkey };
-  }
+  }*/
 
   async _generateDerivedKeys(
     bip32ExtendedKey: string,
@@ -156,8 +199,7 @@ class Wallet {
       // }
       derivedKeys.push({ ...derivedKey, isUsed: false });
     }
-    await Persist.updateDerivedKeys(derivedKeys);
-    return derivedKeys;
+    return { derivedKeys };
   }
 
   _getAddressesFromKeys(derivedKeys: any[]) {
@@ -190,17 +232,23 @@ class Wallet {
     pageNo?: number;
     diff?: boolean;
   }) {
-    const derivedKeys = await Persist.getDerivedKeys();
-    const { derivedKeys: newDerivedKeys, diffOutputs } = await this._getOutputs(
-      derivedKeys
-    );
-    await Persist.insertOutputs(diffOutputs);
-    await Persist.setDerivedKeys(newDerivedKeys);
-    if (options?.diff) {
-      return { outputs: diffOutputs };
-    } else {
-      return await Persist.getOutputs(options);
+    const { existingDerivedKeys } = await Persist.getDerivedKeys();
+    if (existingDerivedKeys.length > 0) {
+      const {
+        derivedKeys: newDerivedKeys,
+        diffOutputs,
+      } = await this._getOutputs(existingDerivedKeys);
+      if (diffOutputs.length > 0) {
+        await Persist.insertOutputs(diffOutputs);
+        await Persist.upsertDerivedKeys(newDerivedKeys);
+      }
+      if (options?.diff) {
+        return { outputs: diffOutputs };
+      } else {
+        return await Persist.getOutputs(options);
+      }
     }
+    return { outputs: [] };
   }
 
   async _getOutputs(
@@ -218,11 +266,14 @@ class Wallet {
     const outputs = data.flat();
     const diffOutputs = await this._getDiffOutputs(outputs);
     const updatedKeys = derivedKeys.map(
-      (key: { address: any; indexText: string }) => {
-        const found = outputs.some(
-          (output: { address: any }) => output.address === key.address
-        );
-        return { ...key, isUsed: found };
+      (key: { address: string; indexText: string; isUsed: boolean }) => {
+        if (!key.isUsed) {
+          const found = outputs.some(
+            (output: { address: any }) => output.address === key.address
+          );
+          return { ...key, isUsed: found };
+        }
+        return key;
       }
     );
     const newOutputs = [...prevOutputs, ...outputs];
@@ -234,7 +285,7 @@ class Wallet {
       const lastKeyIndex = derivedKeys[derivedKeys.length - 1].indexText
         .split('/')
         .pop();
-      const nextDerivedKeys = await this._generateDerivedKeys(
+      const { derivedKeys: nextDerivedKeys } = await this._generateDerivedKeys(
         bip32ExtendedKey,
         Number(lastKeyIndex) + 1,
         20 - countOfUnusedKeys,
@@ -261,37 +312,6 @@ class Wallet {
     nextCursor?: number
   ): Promise<any> {
     const addresses = this._getAddressesFromKeys(keys);
-    // const { outputs: savedOutputs } = await Persist.getOutputs();
-    // if (savedOutputs.length > 0) {
-    // const data: {
-    //   outputs: any[];
-    //   nextCursor: number;
-    // } = await addressAPI.getOutputsByAddresses(addresses, 1, nextCursor);
-    // if (data.outputs.length > 0) {
-    // const fetchedOutput = data.outputs[0];
-    // if (!(await Persist.isInOutputs(fetchedOutput))) {
-    // const newData: {
-    //   outputs: any[];
-    //   nextCursor: number;
-    // } = await addressAPI.getOutputsByAddresses(addresses, 100, nextCursor);
-    // const outputs = [...prevOutputs, ...newData.outputs];
-    // if (newData.nextCursor) {
-    //   return await this._getOutputsByAddresses(
-    //     keys,
-    //     outputs,
-    //     newData.nextCursor
-    //   );
-    // } else {
-    //   return outputs;
-    // }
-    // } else {
-    // return [];
-    // return saved output
-    // }
-    // } else {
-    //   return [];
-    // }
-    // } else {
     const data: {
       outputs: any[];
       nextCursor: number;
@@ -299,8 +319,8 @@ class Wallet {
     const { lastFetched } = await Persist.getOutputsLastFetched();
     if (lastFetched) {
       const diffOutputs = await this._getDiffOutputs(data.outputs);
-      if (diffOutputs.length > 0) {
-        const outputs = [...prevOutputs, ...data.outputs];
+      if (diffOutputs.length === data.outputs.length) {
+        const outputs = [...prevOutputs, ...diffOutputs];
         if (data.nextCursor) {
           return await this._getOutputsByAddresses(
             keys,
@@ -325,7 +345,6 @@ class Wallet {
         return outputs;
       }
     }
-    // }
   }
 
   async _getDiffOutputs(outputs: any) {
@@ -341,45 +360,48 @@ class Wallet {
   }
 
   async getUTXOs() {
-    const derivedKeys = await Persist.getDerivedKeys();
-    const { derivedKeys: newDerivedKeys, diffUTXOs } = await this._getUTXOs(
-      derivedKeys
-    );
-    if (diffUTXOs.length > 0) {
-      const { lastUpdated } = await Persist.getOutputsLastUpdated();
-      const newDiffUtxos = [];
-      for (let index = 0; index < diffUTXOs.length; index++) {
-        const { isPresent, _id, _rev } = await Persist.isInOutputsNew(
-          diffUTXOs[index]
-        );
-        if (!isPresent) {
-          newDiffUtxos.push({ ...diffUTXOs[index], isSpent: false });
-        } else {
-          const diffInMinutes = differenceInMinutes(
-            new Date(),
-            Date.parse(lastUpdated)
+    const { existingDerivedKeys } = await Persist.getDerivedKeys();
+    if (existingDerivedKeys.length > 0) {
+      const { derivedKeys: newDerivedKeys, diffUTXOs } = await this._getUTXOs(
+        existingDerivedKeys
+      );
+      if (diffUTXOs.length > 0) {
+        const { lastUpdated } = await Persist.getOutputsLastUpdated();
+        const newDiffUtxos = [];
+        for (let index = 0; index < diffUTXOs.length; index++) {
+          const { isPresent, _id, _rev } = await Persist.isInOutputsNew(
+            diffUTXOs[index]
           );
-          if (diffInMinutes > 30) {
-            newDiffUtxos.push({
-              ...diffUTXOs[index],
-              _id,
-              _rev,
-              isSpent: false,
-            });
+          if (!isPresent) {
+            newDiffUtxos.push({ ...diffUTXOs[index], isSpent: false });
+          } else {
+            const diffInMinutes = differenceInMinutes(
+              new Date(),
+              Date.parse(lastUpdated)
+            );
+            if (diffInMinutes > 30) {
+              newDiffUtxos.push({
+                ...diffUTXOs[index],
+                _id,
+                _rev,
+                isSpent: false,
+              });
+            }
           }
         }
-      }
-      if (newDiffUtxos.length > 0) {
-        await Persist.updateOutputs(newDiffUtxos);
+        if (newDiffUtxos.length > 0) {
+          await Persist.upsertDerivedKeys(newDerivedKeys);
+          debugger;
+          // await Persist.updateOutputs(newDiffUtxos);
+        }
       }
     }
-    await Persist.setDerivedKeys(newDerivedKeys);
   }
 
   async _getUTXOs(
     derivedKeys: any[],
     prevUtxos: any[] = [],
-    prevDiffOutputs: any[] = [],
+    prevDiffUtxos: any[] = [],
     prevKeys: any[] = []
   ): Promise<any> {
     const chunkedUsedDerivedKeys = _.chunk(derivedKeys, 20);
@@ -391,15 +413,18 @@ class Wallet {
     const utxos = data.flat();
     const diffUTXOs = await this._getDiffUTXOs(utxos);
     const updatedKeys = derivedKeys.map(
-      (key: { address: any; indexText: string }) => {
-        const found = utxos.some(
-          (output: { address: any }) => output.address === key.address
-        );
-        return { ...key, isUsed: found };
+      (key: { address: string; indexText: string; isUsed: boolean }) => {
+        if (!key.isUsed) {
+          const found = utxos.some(
+            (utxo: { address: any }) => utxo.address === key.address
+          );
+          return { ...key, isUsed: found };
+        }
+        return key;
       }
     );
     const newUtxos = [...prevUtxos, ...utxos];
-    const newDiffOutputs = [...prevDiffOutputs, ...diffUTXOs];
+    const newDiffUtxos = [...prevDiffUtxos, ...diffUTXOs];
     const newKeys = [...prevKeys, ...updatedKeys];
     const countOfUnusedKeys = this._countOfUnusedKeys(newKeys);
     if (countOfUnusedKeys < 20) {
@@ -407,7 +432,7 @@ class Wallet {
       const lastKeyIndex = derivedKeys[derivedKeys.length - 1].indexText
         .split('/')
         .pop();
-      const nextDerivedKeys = await this._generateDerivedKeys(
+      const { derivedKeys: nextDerivedKeys } = await this._generateDerivedKeys(
         bip32ExtendedKey,
         Number(lastKeyIndex) + 1,
         20 - countOfUnusedKeys,
@@ -416,13 +441,13 @@ class Wallet {
       return await this._getUTXOs(
         nextDerivedKeys,
         newUtxos,
-        newDiffOutputs,
+        newDiffUtxos,
         newKeys
       );
     } else {
       return {
         utxos: newUtxos,
-        diffUTXOs: newDiffOutputs,
+        diffUTXOs: newDiffUtxos,
         derivedKeys: newKeys,
       };
     }
@@ -434,74 +459,31 @@ class Wallet {
     nextCursor?: number
   ): Promise<any> {
     const addresses = this._getAddressesFromKeys(keys);
-    // const { lastFetched, value: savedUtxos } = await Persist.getUtxos();
-    // if (lastFetched && savedUtxos.length > 0) {
-    //   const data: {
-    //     utxos: any[];
-    //     nextCursor: number;
-    //   } = await addressAPI.getUTXOsByAddresses(addresses, 1, nextCursor);
-    //   if (data.utxos.length > 0) {
-    //     const fetchedUtxo = data.utxos[0];
-    //     const savedUtxo = savedUtxos[0];
-    //     if (isEqualOutput(fetchedUtxo, savedUtxo)) {
-    //       return savedUtxos;
-    //     } else {
-    //       const newData: {
-    //         utxos: any[];
-    //         nextCursor: number;
-    //       } = await addressAPI.getUTXOsByAddresses(addresses, 100, nextCursor);
-    //       const { lastUpdated, value: savedStxos } = await Persist.getStxos();
-    //       if (differenceInMinutes(new Date(), Date.parse(lastUpdated)) > 30) {
-    //         Persist.setStxos([]);
-    //       } else {
-    //         savedStxos.forEach(
-    //           (savedStxo: { outputTxHash: any; outputIndex: any }) => {
-    //             const foundIndex = newData.utxos.findIndex(utxo =>
-    //               isEqualOutput(savedStxo, utxo)
-    //             );
-    //             if (foundIndex > -1) {
-    //               delete newData.utxos[foundIndex];
-    //             }
-    //           }
-    //         );
-    //       }
-    //       const matchedIndex = newData.utxos.findIndex(utxo => {
-    //         return isEqualOutput(savedUtxo, utxo);
-    //       });
-    //       if (matchedIndex > -1) {
-    //         const utxos = [
-    //           ...newData.utxos.slice(0, matchedIndex),
-    //           ...savedUtxos,
-    //         ];
-    //         return utxos;
-    //       } else {
-    //         const utxos = [...prevUtxos, ...newData.utxos];
-    //         if (newData.nextCursor) {
-    //           return await this._getUTXOsByAddresses(
-    //             keys,
-    //             utxos,
-    //             newData.nextCursor
-    //           );
-    //         } else {
-    //           throw new Error('Something went wrong!');
-    //         }
-    //       }
-    //     }
-    //   } else {
-    //     return [];
-    //   }
-    // } else {
     const data: {
       utxos: any[];
       nextCursor: number;
     } = await addressAPI.getUTXOsByAddresses(addresses, 100, nextCursor);
-    const utxos = [...prevUtxos, ...data.utxos];
-    if (data.nextCursor) {
-      return await this._getUTXOsByAddresses(keys, utxos, data.nextCursor);
+    const { lastFetched } = await Persist.getOutputsLastFetched();
+    if (lastFetched) {
+      const diffUTXOs = await this._getDiffUTXOs(data.utxos);
+      if (diffUTXOs.length === data.utxos.length) {
+        const utxos = [...prevUtxos, ...diffUTXOs];
+        if (data.nextCursor) {
+          return await this._getUTXOsByAddresses(keys, utxos, data.nextCursor);
+        } else {
+          return utxos;
+        }
+      } else {
+        return diffUTXOs;
+      }
     } else {
-      return utxos;
+      const utxos = [...prevUtxos, ...data.utxos];
+      if (data.nextCursor) {
+        return await this._getUTXOsByAddresses(keys, utxos, data.nextCursor);
+      } else {
+        return utxos;
+      }
     }
-    // }
   }
 
   async _getDiffUTXOs(utxos: any[]) {
@@ -517,23 +499,23 @@ class Wallet {
   }
 
   async _getChangeAddress() {
-    const derivedKeys = await Persist.getDerivedKeys();
-    const ununsedKeyIndex = derivedKeys.findIndex(
+    const { existingDerivedKeys } = await Persist.getDerivedKeys();
+    const ununsedKeyIndex = existingDerivedKeys.findIndex(
       (derivedKey: { isUsed: boolean }) => derivedKey.isUsed === false
     );
-    const newDerivedKeys = [...derivedKeys];
+    const newDerivedKeys = [...existingDerivedKeys];
     newDerivedKeys[ununsedKeyIndex] = {
       ...newDerivedKeys[ununsedKeyIndex],
       isUsed: true,
     };
-    Persist.setDerivedKeys(newDerivedKeys);
+    Persist.upsertDerivedKeys(newDerivedKeys);
     return newDerivedKeys[ununsedKeyIndex].address;
   }
 
   async _getKeys(addresses: string[]): Promise<object[]> {
-    const derivedKeys = await Persist.getDerivedKeys();
+    const { existingDerivedKeys } = await Persist.getDerivedKeys();
     return addresses.map(address => {
-      const derivedKey = derivedKeys.find(
+      const derivedKey = existingDerivedKeys.find(
         (derivedKey: { address: string }) => derivedKey.address === address
       );
       return ECPair.fromWIF(derivedKey.privkey, networks.regtest);
@@ -611,7 +593,6 @@ class Wallet {
           value: output.value,
         });
       });
-
       const addresses = merged.map(input => input.address);
       const keys: object[] = await this._getKeys(addresses);
       keys.forEach((key: any, i) => {
@@ -627,7 +608,8 @@ class Wallet {
         ...input,
         isSpent: true,
       }));
-      await Persist.updateOutputs(spentUtxos);
+      debugger;
+      // await Persist.updateOutputs(spentUtxos);
     } catch (error) {
       throw error;
     }
@@ -638,24 +620,6 @@ class Wallet {
     amountInSatoshi: number,
     transactionFee: number
   ) {
-    // const mUTXOs: any[] = utxos.map((utxo: any) => ({
-    //   ...utxo,
-    //   isUsed: false,
-    // }));
-    // const { lastFetched, value: savedUTXOs } = await Persist.getUtxos();
-    // if (
-    //   savedUTXOs.length <= 0 ||
-    //   differenceInMinutes(new Date(), Date.parse(lastFetched)) > 30
-    // ) {
-    // await this._createSendTransaction(mUTXOs, targets);
-    // } else {
-    // const mergedUTXOs = mUTXOs.map((mUTXO: any, index: string | number) => {
-    //   return Object.assign(mUTXO, savedUTXOs[index]);
-    // });
-    // const finalUTXOs = mergedUTXOs.filter(
-    //   (mergedUTXO: { isUsed: boolean }) => mergedUTXO.isUsed === false
-    // );
-    // }
     const { utxos } = await Persist.getUTXOs();
     const targets = [
       { address: receiverAddress, value: Number(amountInSatoshi) },
@@ -739,7 +703,7 @@ class Wallet {
   }
 
   async getAddressInfo() {
-    const derivedKeys = await Persist.getDerivedKeys();
+    /*const { existingDerivedKeys } = await Persist.getDerivedKeys();
     const addresses = this._getAddressesFromKeys(derivedKeys);
     const { outputs } = await this.getOutputs();
     const outputsGroupedByAddress = _.groupBy(outputs, output => {
@@ -783,8 +747,9 @@ class Wallet {
       // return x === y ? 0 : x ? -1 : 1;
       // false values first
       return x.isUsed === y.isUsed ? 0 : x.isUsed ? 1 : -1;
-    });
-    return { addressInfo: newAddressInfo };
+    });*/
+    // return { addressInfo: newAddressInfo };
+    return { addressInfo: [] };
   }
 }
 

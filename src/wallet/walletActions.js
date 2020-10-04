@@ -39,28 +39,18 @@ export const getOutputs = options => async (dispatch, getState, { serviceInjecto
       options.startkey = startkey;
     }
     if (options.diff) {
-      const { outputs, nextOutputsCursor } = await serviceInjector(WalletService).getOutputs(
-        options
-      );
-      const { balance } = await serviceInjector(WalletService).getBalance();
-      dispatch(getOutputsSuccess({ outputs, nextOutputsCursor }));
-      dispatch(getBalanceSuccess({ balance }));
+      const { outputs } = await serviceInjector(WalletService).getOutputs(options);
+      if (outputs.length > 0) {
+        const { balance } = await serviceInjector(WalletService).getBalance();
+        dispatch(getOutputsSuccess({ outputs }));
+        dispatch(getBalanceSuccess({ balance }));
+      } else {
+        dispatch(getOutputsSuccess({ outputs }));
+      }
     } else {
       const { outputs, nextOutputsCursor } = await serviceInjector(WalletService).getOutputs(
         options
       );
-      dispatch(getOutputsSuccess({ outputs, nextOutputsCursor }));
-    }
-    const { outputs, nextOutputsCursor } = await serviceInjector(WalletService).getOutputs(options);
-    if (options.diff) {
-      const diffBalance = outputs.reduce((acc, currOutput) => {
-        if ('spendInfo' in currOutput && !currOutput.spendInfo) {
-          acc = acc + currOutput.value;
-        }
-        return acc;
-      }, 0);
-      dispatch(getOutputsSuccess({ outputs, nextOutputsCursor, diffBalance }));
-    } else {
       dispatch(getOutputsSuccess({ outputs, nextOutputsCursor }));
     }
   } catch (error) {
