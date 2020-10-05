@@ -7,7 +7,7 @@ const INITIAL_STATE = {
   balance: 0,
   nextOutputsCursor: null,
   outputs: [],
-  addressInfo: [],
+  addressInfo: null,
 };
 
 export default createReducer(
@@ -32,7 +32,8 @@ export default createReducer(
     [actions.getOutputsSuccess]: (state, { outputs, nextOutputsCursor }) => ({
       ...state,
       outputs: [...state.outputs, ...outputs],
-      nextOutputsCursor: nextOutputsCursor,
+      nextOutputsCursor:
+        nextOutputsCursor !== undefined ? nextOutputsCursor : state.nextOutputsCursor,
       isLoading: false,
     }),
     [actions.getOutputsFailure]: state => ({
@@ -70,7 +71,6 @@ export default createReducer(
       balance: 0,
       nextOutputsCursor: null,
       outputs: [],
-      totalOutputs: null,
     }),
   },
   INITIAL_STATE

@@ -234,7 +234,7 @@ div [class*='right floated'] {
   align-items: center;
   justify-content:center; */
 }
-.statusbutton{
+.statusbutton {
   position: absolute;
   bottom: 0px;
   right: 0px;
@@ -252,14 +252,17 @@ div [class*='right floated'] {
   padding-bottom: 0px;
 }
 
-.custommargin{
-  margin-top:10px !important;
-  margin-bottom:10px !important;
+.custommargin {
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
 }
-.statusbarclosed{
+.statusbarclosed {
   visibility: hidden;
   transition: all 0.35s ease-in-out;
 }
-.statusbaropen{
+.statusbaropen {
   visibility: visible;
+}
+.used-address {
+  color: rgba(40, 40, 40, 0.3);
 }

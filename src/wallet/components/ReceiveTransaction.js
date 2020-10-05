@@ -17,31 +17,73 @@ class ReceiveTransaction extends React.Component {
     await dispatch(walletActions.getAddressInfo());
   }
 
-  renderAddressInfo() {
+  onCopy = () => {
+    const {
+      addressInfo: { unusedAddress },
+    } = this.props;
+    navigator.clipboard.writeText(unusedAddress);
+  };
+
+  renderUnusedAddressInfo() {
     const { addressInfo } = this.props;
-    return addressInfo.map(({ address, currentBalance, isUsed, lastTransaction }) => (
-      <Table.Row>
-        <Table.Cell disabled={isUsed}>{address}</Table.Cell>
-        <Table.Cell>
-          {currentBalance !== null ? satoshiToBSV(Number(currentBalance)) + ' BSV' : ''}
-        </Table.Cell>
-        <Table.Cell>{lastTransaction}</Table.Cell>
-      </Table.Row>
-    ));
+    if (addressInfo) {
+      const { unusedAddress } = addressInfo;
+      return (
+        <>
+          <h3 class='ui header'>Unused address</h3>
+          <div class='ui icon message'>
+            <i class='copy outline link icon' onClick={this.onCopy}></i>
+            <div class='content'>
+              <div class='header'>{unusedAddress}</div>
+            </div>
+          </div>
+        </>
+      );
+    }
+    return null;
+  }
+
+  renderUsedAddressInfo() {
+    const { addressInfo } = this.props;
+    if (addressInfo) {
+      const { usedAddressInfo } = addressInfo;
+      if (usedAddressInfo.length > 0) {
+        return (
+          <>
+            <h3 class='ui header'>Used address</h3>
+            <Table celled>
+              <Table.Header>
+                <Table.Row>
+                  <Table.HeaderCell>Address</Table.HeaderCell>
+                  <Table.HeaderCell>Current Balance</Table.HeaderCell>
+                  <Table.HeaderCell>Last Transaction By</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {usedAddressInfo.map(({ address, currentBalance, lastTransaction }) => (
+                  <Table.Row>
+                    <Table.Cell className='used-address'>{address}</Table.Cell>
+                    <Table.Cell>
+                      {currentBalance !== null ? satoshiToBSV(Number(currentBalance)) + ' BSV' : ''}
+                    </Table.Cell>
+                    <Table.Cell>{lastTransaction}</Table.Cell>
+                  </Table.Row>
+                ))}
+              </Table.Body>
+            </Table>
+          </>
+        );
+      }
+    }
+    return null;
   }
 
   render() {
     return (
-      <Table celled>
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell>Address</Table.HeaderCell>
-            <Table.HeaderCell>Current Balance</Table.HeaderCell>
-            <Table.HeaderCell>Last Transaction By</Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>{this.renderAddressInfo()}</Table.Body>
-      </Table>
+      <>
+        {this.renderUnusedAddressInfo()}
+        {this.renderUsedAddressInfo()}
+      </>
     );
   }
 }

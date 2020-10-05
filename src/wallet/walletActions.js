@@ -39,28 +39,18 @@ export const getOutputs = options => async (dispatch, getState, { serviceInjecto
       options.startkey = startkey;
     }
     if (options.diff) {
-      const { outputs, nextOutputsCursor } = await serviceInjector(WalletService).getOutputs(
-        options
-      );
-      const { balance } = await serviceInjector(WalletService).getBalance();
-      dispatch(getOutputsSuccess({ outputs, nextOutputsCursor }));
-      dispatch(getBalanceSuccess({ balance }));
+      const { outputs } = await serviceInjector(WalletService).getOutputs(options);
+      if (outputs.length > 0) {
+        const { balance } = await serviceInjector(WalletService).getBalance();
+        dispatch(getOutputsSuccess({ outputs }));
+        dispatch(getBalanceSuccess({ balance }));
+      } else {
+        dispatch(getOutputsSuccess({ outputs }));
+      }
     } else {
       const { outputs, nextOutputsCursor } = await serviceInjector(WalletService).getOutputs(
         options
       );
-      dispatch(getOutputsSuccess({ outputs, nextOutputsCursor }));
-    }
-    const { outputs, nextOutputsCursor } = await serviceInjector(WalletService).getOutputs(options);
-    if (options.diff) {
-      const diffBalance = outputs.reduce((acc, currOutput) => {
-        if ('spendInfo' in currOutput && !currOutput.spendInfo) {
-          acc = acc + currOutput.value;
-        }
-        return acc;
-      }, 0);
-      dispatch(getOutputsSuccess({ outputs, nextOutputsCursor, diffBalance }));
-    } else {
       dispatch(getOutputsSuccess({ outputs, nextOutputsCursor }));
     }
   } catch (error) {
@@ -89,7 +79,7 @@ export const getBalance = () => async (dispatch, getState, { serviceInjector }) 
   }
 };
 
-export const getTransactionFee = (receiverAddress, amountInSatoshi) => async (
+export const getTransactionFee = (receiverAddress, amountInSatoshi, feeRate) => async (
   dispatch,
   getState,
   { serviceInjector }
@@ -98,7 +88,8 @@ export const getTransactionFee = (receiverAddress, amountInSatoshi) => async (
   try {
     const fee = await serviceInjector(WalletService).getTransactionFee(
       receiverAddress,
-      amountInSatoshi
+      amountInSatoshi,
+      feeRate
     );
     return fee;
   } catch (error) {
@@ -117,7 +108,7 @@ export const getTransaction = txid => async (dispatch, getState, { serviceInject
   }
 };
 
-export const createSendTransaction = (receiverAddress, amountInSatoshi, transactionFee) => async (
+export const createSendTransaction = (receiverAddress, amountInSatoshi, satoshisPerByte) => async (
   dispatch,
   getState,
   { serviceInjector }
@@ -127,9 +118,11 @@ export const createSendTransaction = (receiverAddress, amountInSatoshi, transact
     const response = await serviceInjector(WalletService).createSendTransaction(
       receiverAddress,
       amountInSatoshi,
-      transactionFee
+      satoshisPerByte
     );
     dispatch(createSendTransactionSuccess(response));
+    const { balance } = await serviceInjector(WalletService).getBalance();
+    dispatch(getBalanceSuccess({ balance }));
   } catch (error) {
     dispatch(createSendTransactionFailure());
     throw error;

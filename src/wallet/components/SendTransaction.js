@@ -11,10 +11,10 @@ class SendTransaction extends React.Component {
     this.state = {
       receiverAddress: '',
       amountInSatoshi: '',
-      transactionFee: 0,
+      transactionFee: '',
+      feeRate: 5,
       isError: false,
       message: '',
-      sliderValue: 0
     };
   }
 
@@ -25,11 +25,12 @@ class SendTransaction extends React.Component {
 
   onAmountChange = async event => {
     const { dispatch } = this.props;
-    const { receiverAddress } = this.state;
+    const { receiverAddress, feeRate } = this.state;
     this.setState({ amountInSatoshi: event.target.value });
     try {
+      debugger;
       const transactionFee = await dispatch(
-        walletActions.getTransactionFee(receiverAddress, event.target.value)
+        walletActions.getTransactionFee(receiverAddress, event.target.value, Number(feeRate))
       );
       this.setState({ isError: false, message: '', transactionFee });
     } catch (error) {
@@ -39,15 +40,11 @@ class SendTransaction extends React.Component {
 
   onSend = async () => {
     const { dispatch } = this.props;
-    const { receiverAddress, amountInSatoshi, transactionFee } = this.state;
+    const { receiverAddress, amountInSatoshi, feeRate } = this.state;
     if (receiverAddress && amountInSatoshi) {
       try {
         await dispatch(
-          walletActions.createSendTransaction(
-            receiverAddress,
-            amountInSatoshi,
-            Number(transactionFee)
-          )
+          walletActions.createSendTransaction(receiverAddress, amountInSatoshi, Number(feeRate))
         );
         this.setState({ isError: false, message: 'Transaction Successful' });
       } catch (error) {
@@ -81,31 +78,32 @@ class SendTransaction extends React.Component {
     }
   }
 
-  onexponentialSliderChange = event => {
-    //Math.floor(a * Math.pow(b, x.value));1.03
+  onexponentialSliderChange = async event => {
+    const { dispatch } = this.props;
+    const { receiverAddress, amountInSatoshi } = this.state;
     this.setState({
-      transactionFee: Math.floor(Math.pow(1.03, event.target.value)),
-      sliderValue: event.target.value
+      feeRate: event.target.value,
+      // fee: Math.floor(Math.pow(1.03, event.target.value)),
     });
-  };
-
-  onTransactionFeeChange = event => {
-    this.setState({
-      transactionFee: event.target.value
-    });
-    if (event.target.value !== '' && event.target.value !== '0') {
-      this.setState({
-        sliderValue: Math.log(event.target.value) / Math.log(1.03)
-      });
-    } else {
-      this.setState({
-        sliderValue: 0
-      });
+    if (Number(amountInSatoshi) > 0) {
+      try {
+        const transactionFee = await dispatch(
+          walletActions.getTransactionFee(
+            receiverAddress,
+            amountInSatoshi,
+            Number(event.target.value)
+          )
+        );
+        console.log(transactionFee);
+        this.setState({ isError: false, message: '', transactionFee });
+      } catch (error) {
+        this.setState({ isError: true, message: error.message });
+      }
     }
   };
 
   render() {
-    const { receiverAddress, amountInSatoshi, transactionFee, sliderValue } = this.state;
+    const { receiverAddress, amountInSatoshi, transactionFee, feeRate } = this.state;
     return (
       <div className='container'>
         <form>
@@ -130,11 +128,11 @@ class SendTransaction extends React.Component {
             </label>
             <div className='col-sm-5'>
               <input
-                type='number'
+                type='text'
                 className='form-control'
                 id='amount'
                 value={amountInSatoshi}
-                onChange={event => this.setState({ amountInSatoshi: event.target.value })}
+                onChange={this.onAmountChange}
               />
             </div>
             <div className='col-sm-3'>
@@ -148,59 +146,26 @@ class SendTransaction extends React.Component {
           </div>
           <div className='form-group row'>
             <label htmlFor='transactionFee' className='col-sm-4 col-form-label'>
-              Fee
+              Network Fee (Satoshis/byte)
             </label>
             <div className='col-sm-5'>
               <input
-                type='number'
-                className='form-control'
-                id='transactionFee'
-                value={transactionFee}
-                onChange={this.onTransactionFeeChange}
-              />
-            </div>
-            <div className='col-sm-3'>
-              <input
-                type='text'
-                readOnly
-                className='form-control-plaintext'
-                value={satoshiToBSV(Number(transactionFee)) + ' BSV'}
-              />
-            </div>
-            <div className='col-sm-3'>
-              <input
-                type='text'
-                readOnly
-                className='form-control-plaintext'
-                value={satoshiToBSV(Number(transactionFee)) + ' BSV'}
-              />
-            </div>
-          </div>
-          <div className='form-group row'>
-            <label className='col-sm-4 control-label'>Bitcoin SV Network Fee</label>
-            <div className='col-sm-4'>
-              <p className='form-control-static'>{`${5} satoshis per byte`}</p>
-            </div>
-          </div>
-          <div className='form-group row'>
-            <label htmlFor='transactionFee' className='col-sm-4 col-form-label'></label>
-            <div className='col-sm-5'>
-              <input
                 type='range'
-                min='0'
-                max='1200'
+                min='5'
+                max='50000000'
                 step='1'
-                value={sliderValue}
+                value={feeRate}
                 onChange={this.onexponentialSliderChange}
                 style={{ width: '100%' }}
               />
             </div>
-            <div className='col-sm-3'></div>
-          </div>
-          <div className='form-group row'>
-            <label className='col-sm-4 control-label'>Bitcoin SV Network Fee</label>
-            <div className='col-sm-4'>
-              <p className='form-control-static'>{`${5} satoshis per byte`}</p>
+            <div className='col-sm-3'>
+              <input
+                type='text'
+                readOnly
+                className='form-control-plaintext'
+                value={`${satoshiToBSV(Number(transactionFee))} BSV (${feeRate} satoshis/byte)`}
+              />
             </div>
           </div>
           <div className='form-group row'>
@@ -219,13 +184,13 @@ class SendTransaction extends React.Component {
 }
 
 SendTransaction.propTypes = {
-  dispatch: PropTypes.func.isRequired
+  dispatch: PropTypes.func.isRequired,
 };
 
 SendTransaction.defaultProps = {};
 
 const mapStateToProps = state => ({
-  isLoading: walletSelectors.isLoading(state)
+  isLoading: walletSelectors.isLoading(state),
 });
 
 export default connect(mapStateToProps)(SendTransaction);
