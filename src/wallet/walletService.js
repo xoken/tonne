@@ -13,8 +13,8 @@ class WalletService {
     return await wallet.getUTXOs();
   }
 
-  getTransactionFee(receiverAddress, amountInSatoshi) {
-    return wallet.getTransactionFee(receiverAddress, amountInSatoshi);
+  getTransactionFee(receiverAddress, amountInSatoshi, feeRate) {
+    return wallet.getTransactionFee(receiverAddress, amountInSatoshi, feeRate);
   }
 
   async getTransaction(txid) {

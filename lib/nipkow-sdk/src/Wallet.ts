@@ -633,16 +633,19 @@ class Wallet {
     await this._createSendTransaction(utxos, targets, feeRate);
   }
 
-  async getTransactionFee(receiverAddress: string, amountInSatoshi: number) {
+  async getTransactionFee(
+    receiverAddress: string,
+    amountInSatoshi: number,
+    feeRate: number
+  ) {
     try {
       const { utxos } = await Persist.getUTXOs();
-      const feeRate = 5; // satoshis per byte
       const targets = [
         { address: receiverAddress, value: Number(amountInSatoshi) },
       ];
       let { inputs, outputs, fee } = coinSelect(utxos, targets, feeRate);
-      if (!inputs) throw new Error('Not sufficient funds');
-      if (!outputs) throw new Error('No Receiver specified');
+      // if (!inputs) throw new Error('Not sufficient funds');
+      // if (!outputs) throw new Error('No Receiver specified');
       return fee;
     } catch (error) {
       throw error;

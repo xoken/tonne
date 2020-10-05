@@ -79,7 +79,7 @@ export const getBalance = () => async (dispatch, getState, { serviceInjector }) 
   }
 };
 
-export const getTransactionFee = (receiverAddress, amountInSatoshi) => async (
+export const getTransactionFee = (receiverAddress, amountInSatoshi, feeRate) => async (
   dispatch,
   getState,
   { serviceInjector }
@@ -88,7 +88,8 @@ export const getTransactionFee = (receiverAddress, amountInSatoshi) => async (
   try {
     const fee = await serviceInjector(WalletService).getTransactionFee(
       receiverAddress,
-      amountInSatoshi
+      amountInSatoshi,
+      feeRate
     );
     return fee;
   } catch (error) {

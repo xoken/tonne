@@ -28,8 +28,9 @@ class SendTransaction extends React.Component {
     const { receiverAddress, feeRate } = this.state;
     this.setState({ amountInSatoshi: event.target.value });
     try {
+      debugger;
       const transactionFee = await dispatch(
-        walletActions.getTransactionFee(receiverAddress, event.target.value, feeRate)
+        walletActions.getTransactionFee(receiverAddress, event.target.value, Number(feeRate))
       );
       this.setState({ isError: false, message: '', transactionFee });
     } catch (error) {
@@ -43,7 +44,7 @@ class SendTransaction extends React.Component {
     if (receiverAddress && amountInSatoshi) {
       try {
         await dispatch(
-          walletActions.createSendTransaction(receiverAddress, amountInSatoshi, feeRate)
+          walletActions.createSendTransaction(receiverAddress, amountInSatoshi, Number(feeRate))
         );
         this.setState({ isError: false, message: 'Transaction Successful' });
       } catch (error) {
@@ -77,11 +78,29 @@ class SendTransaction extends React.Component {
     }
   }
 
-  onexponentialSliderChange = event => {
+  onexponentialSliderChange = async event => {
+    const { dispatch } = this.props;
+    const { receiverAddress, amountInSatoshi } = this.state;
     this.setState({
       feeRate: event.target.value,
       // fee: Math.floor(Math.pow(1.03, event.target.value)),
     });
+    if (Number(amountInSatoshi) > 0) {
+      try {
+        debugger;
+        const transactionFee = await dispatch(
+          walletActions.getTransactionFee(
+            receiverAddress,
+            amountInSatoshi,
+            Number(event.target.value)
+          )
+        );
+        console.log(transactionFee);
+        this.setState({ isError: false, message: '', transactionFee });
+      } catch (error) {
+        this.setState({ isError: true, message: error.message });
+      }
+    }
   };
 
   render() {
@@ -114,7 +133,7 @@ class SendTransaction extends React.Component {
                 className='form-control'
                 id='amount'
                 value={amountInSatoshi}
-                onChange={event => this.setState({ amountInSatoshi: event.target.value })}
+                onChange={this.onAmountChange}
               />
             </div>
             <div className='col-sm-3'>
