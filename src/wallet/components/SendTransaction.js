@@ -15,6 +15,7 @@ class SendTransaction extends React.Component {
       feeRate: 5,
       isError: false,
       message: '',
+      sliderValue: 1
     };
   }
 
@@ -32,7 +33,11 @@ class SendTransaction extends React.Component {
       const transactionFee = await dispatch(
         walletActions.getTransactionFee(receiverAddress, event.target.value, Number(feeRate))
       );
-      this.setState({ isError: false, message: '', transactionFee });
+      this.setState({
+        isError: false,
+        message: '',
+        transactionFee
+      });
     } catch (error) {
       this.setState({ isError: true, message: error.message });
     }
@@ -81,10 +86,18 @@ class SendTransaction extends React.Component {
   onexponentialSliderChange = async event => {
     const { dispatch } = this.props;
     const { receiverAddress, amountInSatoshi } = this.state;
-    this.setState({
-      feeRate: event.target.value,
-      // fee: Math.floor(Math.pow(1.03, event.target.value)),
-    });
+    const tempFeeRate = Math.floor(Math.pow(1.03, event.target.value));
+    if (tempFeeRate <= 5) {
+      this.setState({
+        feeRate: 5,
+        sliderValue: 1
+      });
+    } else {
+      this.setState({
+        feeRate: Math.floor(Math.pow(1.03, event.target.value)),
+        sliderValue: event.target.value
+      });
+    }
     if (Number(amountInSatoshi) > 0) {
       try {
         const transactionFee = await dispatch(
@@ -103,7 +116,7 @@ class SendTransaction extends React.Component {
   };
 
   render() {
-    const { receiverAddress, amountInSatoshi, transactionFee, feeRate } = this.state;
+    const { receiverAddress, amountInSatoshi, transactionFee, feeRate, sliderValue } = this.state;
     return (
       <div className='container'>
         <form>
@@ -152,9 +165,9 @@ class SendTransaction extends React.Component {
               <input
                 type='range'
                 min='5'
-                max='50000000'
+                max='5000'
                 step='1'
-                value={feeRate}
+                value={sliderValue}
                 onChange={this.onexponentialSliderChange}
                 style={{ width: '100%' }}
               />
@@ -184,13 +197,13 @@ class SendTransaction extends React.Component {
 }
 
 SendTransaction.propTypes = {
-  dispatch: PropTypes.func.isRequired,
+  dispatch: PropTypes.func.isRequired
 };
 
 SendTransaction.defaultProps = {};
 
 const mapStateToProps = state => ({
-  isLoading: walletSelectors.isLoading(state),
+  isLoading: walletSelectors.isLoading(state)
 });
 
 export default connect(mapStateToProps)(SendTransaction);
