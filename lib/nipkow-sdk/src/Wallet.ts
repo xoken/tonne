@@ -8,7 +8,7 @@ import {
 } from 'bitcoinjs-lib';
 import AES from 'crypto-js/aes';
 import coinSelect from 'coinselect';
-import faker from 'faker';
+import faker, { address } from 'faker';
 import * as bip38 from 'bip38';
 import * as bip39 from 'bip39';
 import * as _ from 'lodash';
@@ -30,6 +30,7 @@ class Wallet {
       derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath,
       bip32RootKey
     );
+    await Persist.setBip32ExtendedKey(bip32ExtendedKey);
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
     const countOfUnusedKeys = this._countOfUnusedKeys(existingDerivedKeys);
     if (countOfUnusedKeys < 20) {
@@ -48,7 +49,6 @@ class Wallet {
         false
       );
       await Persist.upsertDerivedKeys(newDerivedKeys);
-      await Persist.setBip32ExtendedKey(bip32ExtendedKey);
     }
   }
 
@@ -124,13 +124,13 @@ class Wallet {
     return { indexText, address };
   }
 
-  /*_generateDerivedAddresss(
+  _getPrivKey(
     bip32ExtendedKey: string,
     index: number,
     useBip38?: boolean,
     bip38password: string = '',
     useHardenedAddresses?: boolean
-  ) {
+  ): { privkey: string } {
     const bip32Interface = bip32.fromBase58(
       bip32ExtendedKey,
       network.BITCOIN_SV_REGTEST
@@ -151,26 +151,26 @@ class Wallet {
         network: network.BITCOIN_SV_REGTEST,
       });
     }
-    const address = payments.p2pkh({
-      pubkey: keyPair.publicKey,
-      network: network.BITCOIN_SV_REGTEST,
-    }).address!;
+    // const address = payments.p2pkh({
+    //   pubkey: keyPair.publicKey,
+    //   network: network.BITCOIN_SV_REGTEST,
+    // }).address!;
     const hasPrivkey = !key.isNeutered();
-    let privkey;
+    let privkey = '';
     if (hasPrivkey) {
       privkey = keyPair.toWIF();
       if (useBip38) {
         privkey = bip38.encrypt(keyPair.privateKey!, false, bip38password);
       }
     }
-    const pubkey = keyPair.publicKey.toString('hex');
-    let indexText =
-      derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath + '/' + index;
-    if (useHardenedAddresses) {
-      indexText = indexText + "'";
-    }
-    return { indexText, address, pubkey, privkey };
-  }*/
+    // const pubkey = keyPair.publicKey.toString('hex');
+    // let indexText =
+    //   derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath + '/' + index;
+    // if (useHardenedAddresses) {
+    //   indexText = indexText + "'";
+    // }
+    return { privkey };
+  }
 
   async _generateDerivedKeys(
     bip32ExtendedKey: string,
@@ -216,11 +216,9 @@ class Wallet {
   }
 
   _countOfUnusedKeys(keys: any[]) {
-    return keys.reduce((acc: number, currKey: { isUsed: any }) => {
+    return keys.reduce((acc: number, currKey: { isUsed: boolean }) => {
       if (!currKey.isUsed) {
         acc = acc + 1;
-      } else {
-        acc = 0;
       }
       return acc;
     }, 0);
@@ -239,7 +237,7 @@ class Wallet {
         diffOutputs,
       } = await this._getOutputs(existingDerivedKeys);
       if (diffOutputs.length > 0) {
-        await Persist.insertOutputs(diffOutputs);
+        await Persist.upsertOutputs(diffOutputs);
         await Persist.upsertDerivedKeys(newDerivedKeys);
       }
       if (options?.diff) {
@@ -390,9 +388,9 @@ class Wallet {
           }
         }
         if (newDiffUtxos.length > 0) {
-          await Persist.upsertDerivedKeys(newDerivedKeys);
           debugger;
-          // await Persist.updateOutputs(newDiffUtxos);
+          await Persist.upsertDerivedKeys(newDerivedKeys);
+          await Persist.updateOutputs(newDiffUtxos);
         }
       }
     }
@@ -514,11 +512,18 @@ class Wallet {
 
   async _getKeys(addresses: string[]): Promise<object[]> {
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
+    const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
     return addresses.map(address => {
       const derivedKey = existingDerivedKeys.find(
         (derivedKey: { address: string }) => derivedKey.address === address
       );
-      return ECPair.fromWIF(derivedKey.privkey, networks.regtest);
+      const KeyIndex = derivedKey.indexText.split('/').pop();
+      const { privkey } = this._getPrivKey(
+        bip32ExtendedKey,
+        Number(KeyIndex),
+        false
+      );
+      return ECPair.fromWIF(privkey, networks.regtest);
       /*
       return ECPair.fromWIF(
         'cVi5XGpCSSooYdVreWzTHJHg1cAW1q2Hu9MK64jEsBobYBbfpFBi',
@@ -527,29 +532,24 @@ class Wallet {
     });
   }
 
-  async _createSendTransaction(
-    utxos: any[],
-    targets: any[],
-    transactionFee: number
-  ) {
+  async _createSendTransaction(utxos: any[], targets: any[], feeRate: number) {
     try {
-      let feeRate = 5; // satoshis per byte
-      if (transactionFee === 0) {
-        feeRate = 0;
-      }
-      let { inputs, outputs, fee } = coinSelect(utxos, targets, feeRate);
+      // let feeRate = 5; // satoshis per byte
+      // if (transactionFee === 0) {
+      //   feeRate = 0;
+      // }
+      let { inputs, outputs } = coinSelect(utxos, targets, feeRate);
       if (!inputs || !outputs) throw new Error('Empty inputs or outputs');
-
-      if (transactionFee !== fee) {
-        const changeOutputs = outputs.filter((output: { address: any }) => {
-          if (!output.address) return true;
-          return false;
-        });
-        const diffFee = fee - transactionFee;
-        if (changeOutputs.length > 0) {
-          changeOutputs[0].value = Number(changeOutputs[0].value) + diffFee;
-        }
-      }
+      // if (transactionFee !== fee) {
+      //   const changeOutputs = outputs.filter((output: { address: any }) => {
+      //     if (!output.address) return true;
+      //     return false;
+      //   });
+      //   const diffFee = fee - transactionFee;
+      //   if (changeOutputs.length > 0) {
+      //     changeOutputs[0].value = Number(changeOutputs[0].value) + diffFee;
+      //   }
+      // }
 
       const txIds = inputs.map(
         (input: { outputTxHash: any }) => input.outputTxHash
@@ -584,7 +584,8 @@ class Wallet {
           });
         }
       );
-      outputs.forEach(async (output: { address: any; value: any }) => {
+      for (let index = 0; index < outputs.length; index++) {
+        const output = outputs[index];
         if (!output.address) {
           output.address = await this._getChangeAddress();
         }
@@ -592,7 +593,8 @@ class Wallet {
           address: output.address,
           value: output.value,
         });
-      });
+      }
+
       const addresses = merged.map(input => input.address);
       const keys: object[] = await this._getKeys(addresses);
       keys.forEach((key: any, i) => {
@@ -603,13 +605,17 @@ class Wallet {
       psbt.finalizeAllInputs();
       const transactionHex = psbt.extractTransaction(true).toHex();
       const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
-      await transactionAPI.broadcastRawTransaction(base64);
-      const spentUtxos = inputs.map((input: any) => ({
-        ...input,
-        isSpent: true,
-      }));
-      debugger;
-      // await Persist.updateOutputs(spentUtxos);
+      const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
+        base64
+      );
+      if (txBroadcast) {
+        const spentUtxos = inputs.map((input: any) => ({
+          ...input,
+          isSpent: true,
+          confirmed: false,
+        }));
+        await Persist.updateOutputs(spentUtxos);
+      }
     } catch (error) {
       throw error;
     }
@@ -618,13 +624,13 @@ class Wallet {
   async createSendTransaction(
     receiverAddress: string,
     amountInSatoshi: number,
-    transactionFee: number
+    feeRate: number
   ) {
     const { utxos } = await Persist.getUTXOs();
     const targets = [
       { address: receiverAddress, value: Number(amountInSatoshi) },
     ];
-    await this._createSendTransaction(utxos, targets, transactionFee);
+    await this._createSendTransaction(utxos, targets, feeRate);
   }
 
   async getTransactionFee(receiverAddress: string, amountInSatoshi: number) {
@@ -703,13 +709,16 @@ class Wallet {
   }
 
   async getAddressInfo() {
-    /*const { existingDerivedKeys } = await Persist.getDerivedKeys();
-    const addresses = this._getAddressesFromKeys(derivedKeys);
+    const { existingDerivedKeys } = await Persist.getDerivedKeys();
+    const unusedDerivedKey = existingDerivedKeys.find(
+      (existingDerivedKey: { isUsed: any }) =>
+        existingDerivedKey.isUsed === false
+    );
     const { outputs } = await this.getOutputs();
     const outputsGroupedByAddress = _.groupBy(outputs, output => {
       return output.address;
     });
-    const addressInfo: {
+    const usedAddressInfo: {
       address: string;
       currentBalance: number;
       lastTransaction: any;
@@ -721,35 +730,15 @@ class Wallet {
         }
         return acc;
       }, 0);
-      addressInfo.push({
+      usedAddressInfo.push({
         address: key,
         currentBalance,
         lastTransaction: value[0].address,
       });
     }
-    const newAddressInfo = addresses.map(address => {
-      const found = addressInfo.find(
-        (info: { address: any }) => info.address === address
-      );
-      if (found) {
-        return {
-          address,
-          isUsed: true,
-          currentBalance: found.currentBalance,
-          lastTransaction: found.lastTransaction,
-        };
-      } else {
-        return { address, isUsed: false };
-      }
-    });
-    newAddressInfo.sort((x, y) => {
-      // true values first
-      // return x === y ? 0 : x ? -1 : 1;
-      // false values first
-      return x.isUsed === y.isUsed ? 0 : x.isUsed ? 1 : -1;
-    });*/
-    // return { addressInfo: newAddressInfo };
-    return { addressInfo: [] };
+    return {
+      addressInfo: { unusedAddress: unusedDerivedKey.address, usedAddressInfo },
+    };
   }
 }
 

@@ -25,8 +25,8 @@ class WalletService {
     return await wallet.getBalance();
   }
 
-  async createSendTransaction(receiverAddress, amountInSatoshi, transactionFee) {
-    return await wallet.createSendTransaction(receiverAddress, amountInSatoshi, transactionFee);
+  async createSendTransaction(receiverAddress, amountInSatoshi, satoshisPerByte) {
+    return await wallet.createSendTransaction(receiverAddress, amountInSatoshi, satoshisPerByte);
   }
 
   async getAddressInfo() {

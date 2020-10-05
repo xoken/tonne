@@ -107,7 +107,7 @@ export const getTransaction = txid => async (dispatch, getState, { serviceInject
   }
 };
 
-export const createSendTransaction = (receiverAddress, amountInSatoshi, transactionFee) => async (
+export const createSendTransaction = (receiverAddress, amountInSatoshi, satoshisPerByte) => async (
   dispatch,
   getState,
   { serviceInjector }
@@ -117,9 +117,11 @@ export const createSendTransaction = (receiverAddress, amountInSatoshi, transact
     const response = await serviceInjector(WalletService).createSendTransaction(
       receiverAddress,
       amountInSatoshi,
-      transactionFee
+      satoshisPerByte
     );
     dispatch(createSendTransactionSuccess(response));
+    const { balance } = await serviceInjector(WalletService).getBalance();
+    dispatch(getBalanceSuccess({ balance }));
   } catch (error) {
     dispatch(createSendTransactionFailure());
     throw error;

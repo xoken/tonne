@@ -31,7 +31,7 @@ export const init = async (dbName: string) => {
   credentials = new PouchDB('credentials', {
     revs_limit: 1,
     auto_compaction: true,
-    adapter: 'memory',
+    // adapter: 'memory',
   });
   await credentials.bulkDocs([{ _id: BIP32_EXTENDED_KEY, value: null }]);
 };
@@ -160,18 +160,20 @@ export const getDerivedKeys = async () => {
 };
 
 export const upsertDerivedKeys = async (keys: any) => {
-  const { existingDerivedKeys } = await getDerivedKeys();
-  let keyId = existingDerivedKeys.length - 1;
-  const docs = keys.map((key: any, index: number) => {
-    if (!key._id) {
-      keyId = keyId + 1;
-    }
-    return {
-      _id: key._id ? key._id : `key-${String(keyId).padStart(20, '0')}`,
-      ...key,
-    };
-  });
-  await outputsDB.bulkDocs(docs);
+  if (keys.length > 0) {
+    const { existingDerivedKeys } = await getDerivedKeys();
+    let keyId = existingDerivedKeys.length - 1;
+    const docs = keys.map((key: any, index: number) => {
+      if (!key._id) {
+        keyId = keyId + 1;
+      }
+      return {
+        _id: key._id ? key._id : `key-${String(keyId).padStart(20, '0')}`,
+        ...key,
+      };
+    });
+    await outputsDB.bulkDocs(docs);
+  }
 };
 
 export const getOutputs = async (options?: {
@@ -189,10 +191,9 @@ export const getOutputs = async (options?: {
   if (response && response.rows.length > 0) {
     const nextOutputsCursor = response.rows[response.rows.length - 1].id;
     const outputs = response.rows.map((row: { doc: any }) => row.doc);
-    const totalOutputs = response.rows.length;
-    return { totalOutputs, nextOutputsCursor, outputs };
+    return { nextOutputsCursor, outputs };
   } else {
-    return { nextOutputsCursor: null, outputs: [], totalOutputs: 0 };
+    return { nextOutputsCursor: null, outputs: [] };
   }
 };
 
@@ -221,43 +222,35 @@ export const getOutputsLastUpdated = async () => {
   }
 };
 
-export const insertOutputs = async (outputs: any) => {
-  // if (outputs.length > 0) {
-  const { outputs: existingOutputs } = await getOutputs();
-  // const targetLength = String(Math.max(existingOutputs.length - 1, 0)).length;
-  // const targetLength = String(utxos.length - 1).length;
-  const existingOutputsLength = existingOutputs.length;
-  const docs = outputs.map((output: any, index: number) => {
-    return {
-      // _id: `${String(targetLength + index).padStart(targetLength, '0')}`,
-      // _id: `${String(index).padStart(targetLength, '0')}`,
-      _id: `output-${String(existingOutputsLength + index).padStart(20, '0')}`,
-      isSpent: output.spendInfo ? true : false,
-      ...output,
-    };
-  });
-  docs.push({
-    _id: 'lastFetched',
-    value: new Date(),
-  });
-  docs.push({
-    _id: 'lastUpdated',
-    value: null,
-  });
-  await outputsDB.bulkDocs(docs);
-  // }
+export const upsertOutputs = async (outputs: any) => {
+  if (outputs.length > 0) {
+    const { outputs: existingOutputs } = await getOutputs();
+    let outputId = existingOutputs.length - 1;
+    const docs = outputs.map((output: any, index: number) => {
+      if (!output._id) {
+        outputId = outputId + 1;
+      }
+      return {
+        _id: `output-${String(outputId).padStart(20, '0')}`,
+        isSpent: output.spendInfo ? true : false,
+        confirmed: true,
+        ...output,
+      };
+    });
+    docs.push({
+      _id: 'lastFetched',
+      value: new Date(),
+    });
+    docs.push({
+      _id: 'lastUpdated',
+      value: null,
+    });
+    await outputsDB.bulkDocs(docs);
+  }
 };
 
 export const updateOutputs = async (outputs: any) => {
   const { doc } = await getOutputsLastUpdated();
-  // const existingOutputsLength = existingOutputs.length;
-  // const docs = outputs.map((output: any, index: number) => {
-  //   return {
-  //     _id: `${String(existingOutputsLength + index).padStart(20, '0')}`,
-  //     isSpent: output.spendInfo ? true : false,
-  //     ...output,
-  //   };
-  // });
   outputs.push({
     _id: 'lastUpdated',
     _rev: doc._rev,

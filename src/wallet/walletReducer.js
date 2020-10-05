@@ -7,7 +7,7 @@ const INITIAL_STATE = {
   balance: 0,
   nextOutputsCursor: null,
   outputs: [],
-  addressInfo: [],
+  addressInfo: null,
 };
 
 export default createReducer(
@@ -71,7 +71,6 @@ export default createReducer(
       balance: 0,
       nextOutputsCursor: null,
       outputs: [],
-      totalOutputs: null,
     }),
   },
   INITIAL_STATE
