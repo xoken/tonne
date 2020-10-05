@@ -10,7 +10,7 @@ class Footer extends React.Component {
       blocksSynced: null,
       chain: null,
       chainTip: null,
-      statusButton: false
+      statusButton: false,
     };
   }
 
@@ -18,7 +18,7 @@ class Footer extends React.Component {
     this.getChainInfo();
     const autoRefreshTimeInSecs = 1 * 60 * 1000;
     this.autoRefresh = setInterval(() => {
-      this.getChainInfo();
+      // this.getChainInfo();
     }, autoRefreshTimeInSecs);
   }
 
@@ -50,7 +50,6 @@ class Footer extends React.Component {
   onStatusButtonHover = () => {
     const { nexaHost } = this.props;
     const { statusButton, blocksSynced, chain, chainTip } = this.state;
-    console.log(this.state.blocksSynced);
     if (statusButton) {
       return (
         <>
@@ -76,20 +75,15 @@ class Footer extends React.Component {
       return <></>;
     }
   };
+
   onStatusButtonToggle = () => {
     this.setState({ statusButton: !this.state.statusButton });
-    console.log(this.state.blocksSynced);
   };
-  render() {
-    console.log(this.state.statusButton);
 
+  render() {
     return (
       <>
-        <Button
-          regular
-          color='yellow'
-          onMouseOver={this.onStatusButtonToggle}
-          className='statusbutton'>
+        <Button color='yellow' onMouseOver={this.onStatusButtonToggle} className='statusbutton'>
           Connection status
         </Button>
         {this.onStatusButtonHover()}
@@ -103,7 +97,7 @@ class Footer extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  nexaHost: state.settings.nexaHost
+  nexaHost: state.settings.nexaHost,
 });
 
 export default connect(mapStateToProps)(Footer);
