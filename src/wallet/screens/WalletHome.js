@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Route, Switch, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Divider, Grid, Header, List, Loader, Segment } from 'semantic-ui-react';
+import { Divider, Grid, GridColumn, Header, List, Loader, Segment } from 'semantic-ui-react';
 import ExistingWallet from './ExistingWallet';
 import Login from './Login';
 import NewWallet from './NewWallet';
@@ -28,52 +28,56 @@ class WalletHome extends React.Component {
   renderExistingProfile() {
     const { profiles } = this.props;
     return (
-      <Segment placeholder>
-        <Grid columns={2} textAlign='center'>
-          {profiles && profiles.length > 0 && (
-            <Grid.Column verticalAlign='middle'>
-              <Header>Login to Existing Profile</Header>
-              <List selection verticalAlign='middle'>
-                {profiles.map((profile, index) => {
-                  const { name } = profile;
-                  return (
-                    <List.Item
-                      key={index}
-                      onClick={this.onSelectProfile(name)}
-                      className='ui inverted yellow button custommargin'>
-                      <List.Content>
-                        <List.Header>{name}</List.Header>
-                      </List.Content>
-                    </List.Item>
-                  );
-                })}
-              </List>
-            </Grid.Column>
-          )}
-          <Grid.Column>
-            <Grid.Row style={styles.row}>
+      <Grid verticalAlign='middle' style={{ height: '100%' }}>
+        <GridColumn>
+          <Segment placeholder>
+            <Grid columns={2} textAlign='center'>
+              {profiles && profiles.length > 0 && (
+                <Grid.Column verticalAlign='middle'>
+                  <Header>Login to Existing Profile</Header>
+                  <List selection verticalAlign='middle'>
+                    {profiles.map((profile, index) => {
+                      const { name } = profile;
+                      return (
+                        <List.Item
+                          key={index}
+                          onClick={this.onSelectProfile(name)}
+                          className='ui inverted yellow button custommargin'>
+                          <List.Content>
+                            <List.Header>{name}</List.Header>
+                          </List.Content>
+                        </List.Item>
+                      );
+                    })}
+                  </List>
+                </Grid.Column>
+              )}
               <Grid.Column>
-                <Header>I already have a seed phrase</Header>
-                <p>Import your existing wallet using a 12 word seed phrase</p>
-                <Link to='/wallet/existing' className='ui yellow button'>
-                  Existing Wallet
-                </Link>
+                <Grid.Row style={styles.row}>
+                  <Grid.Column>
+                    <Header>I already have a seed phrase</Header>
+                    <p>Import your existing wallet using a 12 word seed phrase</p>
+                    <Link to='/wallet/existing' className='ui yellow button'>
+                      Existing Wallet
+                    </Link>
+                  </Grid.Column>
+                </Grid.Row>
+                <Divider horizontal>Or</Divider>
+                <Grid.Row style={styles.row}>
+                  <Grid.Column>
+                    <Header>Yes, let's get set up!</Header>
+                    <p>This will create a new wallet and seed phrase</p>
+                    <Link to='/wallet/new' className='ui yellow button'>
+                      Create a Wallet
+                    </Link>
+                  </Grid.Column>
+                </Grid.Row>
               </Grid.Column>
-            </Grid.Row>
-            <Divider horizontal>Or</Divider>
-            <Grid.Row style={styles.row}>
-              <Grid.Column>
-                <Header>Yes, let's get set up!</Header>
-                <p>This will create a new wallet and seed phrase</p>
-                <Link to='/wallet/new' className='ui yellow button'>
-                  Create a Wallet
-                </Link>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid.Column>
-        </Grid>
-        {profiles && profiles.length > 0 && <Divider vertical>Or</Divider>}
-      </Segment>
+            </Grid>
+            {profiles && profiles.length > 0 && <Divider vertical>Or</Divider>}
+          </Segment>
+        </GridColumn>
+      </Grid>
     );
   }
 
@@ -127,13 +131,13 @@ const styles = {
     display: 'block',
     flexWrap: 'nowrap',
     marginRight: '-15',
-    marginLeft: '-15'
-  }
+    marginLeft: '-15',
+  },
 };
 const mapStateToProps = state => ({
   isLoading: authSelectors.isLoading(state),
   profile: authSelectors.getProfile(state),
-  profiles: authSelectors.getProfiles(state)
+  profiles: authSelectors.getProfiles(state),
 });
 
 export default withRouter(connect(mapStateToProps)(WalletHome));

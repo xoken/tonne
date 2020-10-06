@@ -162,7 +162,7 @@ body {
 .wordbreak {
   word-break: break-all;
 }
-.titlecontainer {
+/* .titlecontainer {
   background-image: linear-gradient(45deg, white, transparent, white);
   background-color: grey;
   height: 23px;
@@ -180,7 +180,7 @@ body {
   -webkit-app-region: no-drag;
   position: fixed;
   right: 0px;
-}
+} */
 .minimize,
 .maximize,
 .closeapp {
@@ -216,23 +216,17 @@ body {
 .activetab {
   border-bottom: 3px solid #eab300 !important;
 }
-div [class*='left floated'] {
-  float: left;
-  margin-left: 0.25em;
-}
-
-div [class*='right floated'] {
-  float: right;
-  margin-right: 0.25em;
-}
 .main {
   height: calc(100vh - 89px);
   overflow-x: auto;
-  padding: 14px 0;
-  /* display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content:center; */
+  /* padding: 14px 0; */
+}
+.main > .container {
+  height: 100%;
+}
+.row {
+  margin-left: 0;
+  margin-right: 0;
 }
 .statusbutton {
   position: absolute;

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Dropdown, Icon, Modal, Segment, Accordion, Grid } from 'semantic-ui-react';
+import { Button, Dropdown, Icon, Modal, Segment, Accordion, Grid, Header } from 'semantic-ui-react';
 import { formatDistanceToNow } from 'date-fns';
 import SendTransaction from '../components/SendTransaction';
 import ReceiveTransaction from '../components/ReceiveTransaction';
@@ -23,7 +23,7 @@ class WalletDashboard extends React.Component {
       renameProfileModal: false,
       lastRefreshed: null,
       timeSinceLastRefreshed: null,
-      activeIndex: 0
+      activeIndex: 0,
     };
   }
 
@@ -35,13 +35,13 @@ class WalletDashboard extends React.Component {
     this.timerID = setInterval(
       () =>
         this.setState({
-          timeSinceLastRefreshed: new Date()
+          timeSinceLastRefreshed: new Date(),
         }),
       1000
     );
     const autoRefreshTimeInSecs = 1 * 60 * 1000;
     this.autoRefreshTimer = setInterval(() => {
-      // this.onRefresh();
+      this.onRefresh();
     }, autoRefreshTimeInSecs);
   }
 
@@ -72,7 +72,7 @@ class WalletDashboard extends React.Component {
     await dispatch(walletActions.getOutputs({ diff: true }));
     this.setState({
       lastRefreshed: new Date(),
-      timeSinceLastRefreshed: new Date()
+      timeSinceLastRefreshed: new Date(),
     });
   };
 
@@ -90,7 +90,7 @@ class WalletDashboard extends React.Component {
             Last refreshed{`: `}
             {formatDistanceToNow(lastRefreshed, {
               includeSeconds: true,
-              addSuffix: true
+              addSuffix: true,
             })}
           </p>
         </div>
@@ -200,92 +200,95 @@ class WalletDashboard extends React.Component {
     const { index } = titleProps;
     const { activeIndex } = this.state;
     const newIndex = activeIndex === index ? -1 : index;
-
     this.setState({ activeIndex: newIndex });
   };
 
   renderTransaction() {
     const { activeIndex } = this.state;
     const { isLoading, outputs } = this.props;
+
+    const renderAddress = outputs => {
+      if (outputs.length > 1) {
+        return `${outputs[0].address} ...`;
+      } else if (outputs.length > 0) {
+        return `${outputs[0].address}`;
+      }
+    };
+
     if (!isLoading && outputs.length > 0) {
       const outputsGroupedBy = groupBy(outputs, 'outputTxHash');
       return Object.entries(outputsGroupedBy).map((tx, index) => {
         return (
-          <div key={index.toString()}>
-            <Accordion>
-              <Accordion.Title
-                active={activeIndex === index}
-                index={index}
-                onClick={this.handleClick}>
-                <Icon name='dropdown' />
-                <Grid divided='vertically'>
-                  <Grid.Row>
-                    <Grid.Column width={2}>Transaction ID:</Grid.Column>
-                    <Grid.Column width={4}>{tx[0]}</Grid.Column>
-
-                    {this.transactionHeadingDetails(tx[1][index])}
-                  </Grid.Row>
-                </Grid>
-              </Accordion.Title>
-              <Accordion.Content active={activeIndex === index}>
-                <div>
-                  {tx[1].map((output, txIndex) => {
-                    return (
-                      <div key={txIndex.toString()}>
-                        <Grid divided='vertically'>
-                          <Grid.Row columns={2}>
-                            <Grid.Column>
-                              <b>Inputs</b>
-                            </Grid.Column>
-                            <Grid.Column>
-                              <div>
-                                <b>Outputs</b>
-                                {output.spendInfo ? (
-                                  <div>
-                                    <div>
-                                      {output.spendInfo.spendData.map((sData, sDataIndex) => {
-                                        return (
-                                          <div key={sDataIndex.toString()}>
-                                            <Grid divided='vertically'>
-                                              <Grid.Row columns={2}>
-                                                <Grid.Column>
-                                                  <p>{`Output Address: ${sData.outputAddress}`}</p>
-                                                </Grid.Column>
-                                                <Grid.Column>
-                                                  <p>{`value: ${sData.value}`}</p>
-                                                </Grid.Column>
-                                              </Grid.Row>
-                                            </Grid>
-                                          </div>
-                                        );
-                                      })}
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <div>
-                                    <Grid divided='vertically'>
-                                      <Grid.Row columns={2}>
-                                        <Grid.Column>
-                                          <p>Output Address: null</p>
-                                        </Grid.Column>
-                                        <Grid.Column>
-                                          <p>value: null</p>
-                                        </Grid.Column>
-                                      </Grid.Row>
-                                    </Grid>
-                                  </div>
-                                )}
-                              </div>
-                            </Grid.Column>
-                          </Grid.Row>
+          <Accordion key={index.toString()}>
+            <Accordion.Title index={index} onClick={this.handleClick}>
+              <Grid>
+                <Grid.Column floated='left' width={15}>
+                  {/* <Icon name='dropdown' /> */}
+                  {`${renderAddress(tx[1])} | ${tx[0]}`}
+                </Grid.Column>
+                <Grid.Column floated='right' width={1}>
+                  {/* Credit 20 BSV */}
+                </Grid.Column>
+              </Grid>
+            </Accordion.Title>
+            <Accordion.Content active={activeIndex === index}>
+              {tx[1].map((output, txIndex) => {
+                return (
+                  <Grid divided columns='two' key={txIndex.toString()}>
+                    <Grid.Row>
+                      <Grid.Column>
+                        <Header as='h4'>Inputs</Header>
+                      </Grid.Column>
+                      <Grid.Column>
+                        <Header as='h4'>Outputs</Header>
+                        <Grid>
+                          <Grid.Column width='10'>
+                            <p>{output.address}</p>
+                          </Grid.Column>
+                          <Grid.Column width='6' textAlign='right'>
+                            <p>{`${satoshiToBSV(output.value)} BSV`}</p>
+                          </Grid.Column>
                         </Grid>
-                      </div>
-                    );
-                  })}
-                </div>
-              </Accordion.Content>
-            </Accordion>
-          </div>
+                        {/* {output.spendInfo ? (
+                          <div>
+                            {output.spendInfo.spendData.map((sData, sDataIndex) => {
+                              return (
+                                <div key={sDataIndex.toString()}>
+                                  <Grid divided='vertically'>
+                                    <Grid.Row columns={2}>
+                                      <Grid.Column>
+                                        <p>{`${sData.outputAddress}`}</p>
+                                      </Grid.Column>
+                                      <Grid.Column>
+                                        <p>{`${sData.value}`}</p>
+                                      </Grid.Column>
+                                    </Grid.Row>
+                                  </Grid>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <div>
+                            <Grid divided='vertically'>
+                              <Grid.Row columns={2}>
+                                <Grid.Column>
+                                  <p>Output Address: null</p>
+                                </Grid.Column>
+                                <Grid.Column>
+                                  <p>value: null</p>
+                                </Grid.Column>
+                              </Grid.Row>
+                            </Grid>
+                          </div>
+                        )} */}
+                      </Grid.Column>
+                    </Grid.Row>
+                  </Grid>
+                );
+              })}
+            </Accordion.Content>
+          </Accordion>
         );
       });
     }
@@ -434,18 +437,18 @@ WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   balance: PropTypes.number.isRequired,
-  outputs: PropTypes.arrayOf(PropTypes.object)
+  outputs: PropTypes.arrayOf(PropTypes.object),
 };
 
 WalletDashboard.defaultProps = {
-  outputs: []
+  outputs: [],
 };
 
 const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
   outputs: walletSelectors.getOutputs(state),
-  nextOutputsCursor: state.wallet.nextOutputsCursor
+  nextOutputsCursor: state.wallet.nextOutputsCursor,
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));

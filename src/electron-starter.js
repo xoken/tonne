@@ -11,8 +11,8 @@ function createWindow() {
     //frame: false,
     webPreferences: {
       nodeIntegration: true,
-      webSecurity: false
-    }
+      webSecurity: false,
+    },
   });
   // win.maximize();
   win.show();
@@ -25,7 +25,7 @@ function createWindow() {
   win.loadURL(url);
   //win.webContents.send('win', win);
   // Open the DevTools.
-  win.webContents.openDevTools();
+  // win.webContents.openDevTools();
 }
 
 // This method will be called when Electron has finished
