@@ -65,7 +65,7 @@ class App extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  sessionKey: state.settings.sessionKey
+  sessionKey: state.settings.sessionKey,
 });
 
 export default connect(mapStateToProps)(App);
