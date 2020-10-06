@@ -15,7 +15,8 @@ class SendTransaction extends React.Component {
       feeRate: 5,
       isError: false,
       message: '',
-      sliderValue: 1
+      sliderValue: 1,
+      maxSliderValue: Math.floor(Math.log(1000000000) / Math.log(1.05))
     };
   }
 
@@ -29,15 +30,22 @@ class SendTransaction extends React.Component {
     const { receiverAddress, feeRate } = this.state;
     this.setState({ amountInSatoshi: event.target.value });
     try {
-      debugger;
       const transactionFee = await dispatch(
         walletActions.getTransactionFee(receiverAddress, event.target.value, Number(feeRate))
       );
-      this.setState({
-        isError: false,
-        message: '',
-        transactionFee
-      });
+      if (Number(transactionFee) >= 50000000) {
+        this.setState({
+          isError: false,
+          message: '',
+          transactionFee: 50000000
+        });
+      } else {
+        this.setState({
+          isError: false,
+          message: '',
+          transactionFee
+        });
+      }
     } catch (error) {
       this.setState({ isError: true, message: error.message });
     }
@@ -85,17 +93,25 @@ class SendTransaction extends React.Component {
 
   onexponentialSliderChange = async event => {
     const { dispatch } = this.props;
+    const feeRate = event.target.value;
     const { receiverAddress, amountInSatoshi } = this.state;
-    const tempFeeRate = Math.floor(Math.pow(1.03, event.target.value));
+    const tempFeeRate = Math.floor(Math.pow(1.05, feeRate));
     if (tempFeeRate <= 5) {
       this.setState({
         feeRate: 5,
-        sliderValue: 1
+        sliderValue: feeRate
       });
-    } else {
+    }
+    // else if (tempFeeRate >= 1000000000) {
+    //   this.setState({
+    //     feeRate: 1000000000,
+    //     sliderValue: event.target.value
+    //   });
+    // }
+    else {
       this.setState({
-        feeRate: Math.floor(Math.pow(1.03, event.target.value)),
-        sliderValue: event.target.value
+        feeRate: Math.floor(Math.pow(1.05, feeRate)),
+        sliderValue: feeRate
       });
     }
     if (Number(amountInSatoshi) > 0) {
@@ -104,27 +120,55 @@ class SendTransaction extends React.Component {
           walletActions.getTransactionFee(
             receiverAddress,
             amountInSatoshi,
-            Number(event.target.value)
+            Math.floor(Math.pow(1.05, Number(feeRate)))
           )
         );
         console.log(transactionFee);
-        this.setState({ isError: false, message: '', transactionFee });
+        if (Number(transactionFee) >= 50000000) {
+          this.setState({
+            isError: false,
+            message: '',
+            transactionFee: 50000000,
+            //  sliderDisabled: true,
+            maxSliderValue: feeRate
+            //sliderValue: feeRate
+          });
+        } else {
+          this.setState({
+            isError: false,
+            message: '',
+            //  sliderDisabled: false,
+            transactionFee
+          });
+        }
       } catch (error) {
         this.setState({ isError: true, message: error.message });
       }
+    } else {
+      this.setState({
+        isError: false,
+        message: '',
+        transactionFee: 0
+      });
     }
   };
-
+  componentDidMount() {
+    document.getElementById('feerate').max = this.state.maxSliderValue;
+  }
+  componentDidUpdate() {
+    document.getElementById('feerate').max = this.state.maxSliderValue;
+  }
   render() {
+    const { dispatch } = this.props;
     const { receiverAddress, amountInSatoshi, transactionFee, feeRate, sliderValue } = this.state;
     return (
       <div className='container'>
         <form>
           <div className='form-group row'>
-            <label htmlFor='receiverAddress' className='col-sm-4 col-form-label'>
+            <label htmlFor='receiverAddress' className='col-sm-3 col-form-label'>
               Pay to
             </label>
-            <div className='col-sm-5'>
+            <div className='col-sm-6'>
               <input
                 type='text'
                 className='form-control'
@@ -136,10 +180,10 @@ class SendTransaction extends React.Component {
             </div>
           </div>
           <div className='form-group row'>
-            <label htmlFor='amount' className='col-sm-4 col-form-label'>
+            <label htmlFor='amount' className='col-sm-3 col-form-label'>
               Amount
             </label>
-            <div className='col-sm-5'>
+            <div className='col-sm-6'>
               <input
                 type='text'
                 className='form-control'
@@ -158,14 +202,14 @@ class SendTransaction extends React.Component {
             </div>
           </div>
           <div className='form-group row'>
-            <label htmlFor='transactionFee' className='col-sm-4 col-form-label'>
+            <label htmlFor='transactionFee' className='col-sm-3 col-form-label'>
               Network Fee (Satoshis/byte)
             </label>
-            <div className='col-sm-5'>
+            <div className='col-sm-6'>
               <input
+                id='feerate'
                 type='range'
-                min='5'
-                max='5000'
+                min='1'
                 step='1'
                 value={sliderValue}
                 onChange={this.onexponentialSliderChange}
