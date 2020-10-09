@@ -17,6 +17,7 @@ class SendTransaction extends React.Component {
       message: '',
       sliderValue: 1,
       maxSliderValue: Math.floor(Math.log(1000000000) / Math.log(1.05)),
+      sliderDisabled: true,
     };
   }
 
@@ -28,31 +29,39 @@ class SendTransaction extends React.Component {
 
   componentDidUpdate() {
     document.getElementById('feerate').max = this.state.maxSliderValue;
+    document.getElementById('feerate').disabled = this.state.sliderDisabled;
   }
 
   onAmountChange = async event => {
     const { dispatch } = this.props;
-    const { receiverAddress, feeRate } = this.state;
+    const { receiverAddress, feeRate, sliderValue } = this.state;
     this.setState({ amountInSatoshi: event.target.value });
-    try {
-      const transactionFee = await dispatch(
-        walletActions.getTransactionFee(receiverAddress, event.target.value, Number(feeRate))
-      );
-      if (Number(transactionFee) >= 50000000) {
-        this.setState({
-          isError: false,
-          message: '',
-          transactionFee: 50000000,
-        });
-      } else {
-        this.setState({
-          isError: false,
-          message: '',
-          transactionFee,
-        });
+    if (event.target.value <= 0) {
+      this.setState({ sliderValue: 1, sliderDisabled: true, feeRate: 5, transactionFee: 0 });
+    } else {
+      this.setState({ sliderDisabled: false });
+      try {
+        const transactionFee = await dispatch(
+          walletActions.getTransactionFee(receiverAddress, event.target.value, Number(feeRate))
+        );
+        if (Number(transactionFee) >= 50000000) {
+          this.setState({
+            isError: false,
+            message: '',
+            transactionFee: 50000000,
+            maxSliderValue: sliderValue,
+            feeRate: Math.floor(Math.pow(1.05, sliderValue)),
+          });
+        } else {
+          this.setState({
+            isError: false,
+            message: '',
+            transactionFee,
+          });
+        }
+      } catch (error) {
+        this.setState({ isError: true, message: error.message });
       }
-    } catch (error) {
-      this.setState({ isError: true, message: error.message });
     }
   };
 
@@ -98,14 +107,36 @@ class SendTransaction extends React.Component {
 
   onexponentialSliderChange = async event => {
     const { dispatch } = this.props;
-    const feeRate = event.target.value;
+    const sliderVal = event.target.value;
     const { receiverAddress, amountInSatoshi } = this.state;
-    const tempFeeRate = Math.floor(Math.pow(1.05, feeRate));
+    const tempFeeRate = Math.floor(Math.pow(1.05, sliderVal));
     if (tempFeeRate <= 5) {
-      this.setState({
-        feeRate: 5,
-        sliderValue: feeRate,
-      });
+      if (Number(amountInSatoshi) > 0) {
+        try {
+          const transactionFee = await dispatch(
+            walletActions.getTransactionFee(
+              receiverAddress,
+              amountInSatoshi,
+              Math.floor(Math.pow(1.05, Number(sliderVal)))
+            )
+          );
+          this.setState({
+            isError: false,
+            message: '',
+            feeRate: 5,
+            sliderValue: sliderVal,
+            transactionFee: transactionFee,
+          });
+        } catch (error) {
+          this.setState({ isError: true, message: error.message });
+        }
+      } else {
+        this.setState({
+          isError: false,
+          message: '',
+          transactionFee: 0,
+        });
+      }
     }
     // else if (tempFeeRate >= 1000000000) {
     //   this.setState({
@@ -115,46 +146,47 @@ class SendTransaction extends React.Component {
     // }
     else {
       this.setState({
-        feeRate: Math.floor(Math.pow(1.05, feeRate)),
-        sliderValue: feeRate,
+        feeRate: Math.floor(Math.pow(1.05, sliderVal)),
+        sliderValue: sliderVal,
       });
-    }
-    if (Number(amountInSatoshi) > 0) {
-      try {
-        const transactionFee = await dispatch(
-          walletActions.getTransactionFee(
-            receiverAddress,
-            amountInSatoshi,
-            Math.floor(Math.pow(1.05, Number(feeRate)))
-          )
-        );
-        console.log(transactionFee);
-        if (Number(transactionFee) >= 50000000) {
-          this.setState({
-            isError: false,
-            message: '',
-            transactionFee: 50000000,
-            //  sliderDisabled: true,
-            maxSliderValue: feeRate,
-            //sliderValue: feeRate
-          });
-        } else {
-          this.setState({
-            isError: false,
-            message: '',
-            //  sliderDisabled: false,
-            transactionFee,
-          });
+
+      if (Number(amountInSatoshi) > 0) {
+        try {
+          const transactionFee = await dispatch(
+            walletActions.getTransactionFee(
+              receiverAddress,
+              amountInSatoshi,
+              Math.floor(Math.pow(1.05, Number(sliderVal)))
+            )
+          );
+          console.log(transactionFee);
+          if (Number(transactionFee) >= 50000000) {
+            this.setState({
+              isError: false,
+              message: '',
+              transactionFee: 50000000,
+              //  sliderDisabled: true,
+              maxSliderValue: sliderVal,
+              //sliderValue: feeRate
+            });
+          } else {
+            this.setState({
+              isError: false,
+              message: '',
+              //  sliderDisabled: false,
+              transactionFee,
+            });
+          }
+        } catch (error) {
+          this.setState({ isError: true, message: error.message });
         }
-      } catch (error) {
-        this.setState({ isError: true, message: error.message });
+      } else {
+        this.setState({
+          isError: false,
+          message: '',
+          transactionFee: 0,
+        });
       }
-    } else {
-      this.setState({
-        isError: false,
-        message: '',
-        transactionFee: 0,
-      });
     }
   };
 
