@@ -314,7 +314,7 @@ class WalletDashboard extends React.Component {
   renderReceiveTransactionModal() {
     const { receiveTransactionModal } = this.state;
     return (
-      <Modal open={receiveTransactionModal}>
+      <Modal size='large' open={receiveTransactionModal}>
         <Modal.Header>Receive Transactions</Modal.Header>
         <Modal.Content>
           <Modal.Description>

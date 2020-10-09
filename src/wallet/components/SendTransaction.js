@@ -117,7 +117,7 @@ class SendTransaction extends React.Component {
             walletActions.getTransactionFee(
               receiverAddress,
               amountInSatoshi,
-              Math.floor(Math.pow(1.05, Number(sliderVal)))
+              Math.floor(Math.pow(5, Number(sliderVal)))
             )
           );
           this.setState({

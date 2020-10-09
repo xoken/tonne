@@ -887,9 +887,16 @@ class Wallet {
       let outgoing = 0;
       outputs.forEach((output) => {
         if (output.spendInfo) {
-          outgoing = outgoing + output.value;
-        } else {
-          incoming = incoming + output.value;
+          output.spendInfo.spendData.forEach((element: { value: number }) => {
+            outgoing = outgoing + element.value;
+          });
+        }
+        if (output.prevOutpoint) {
+          output.prevOutpoint.forEach((element: any[]) => {
+            if (element.length === 3) {
+              incoming = incoming + element[2];
+            }
+          });
         }
       });
       usedAddressInfo.push({
