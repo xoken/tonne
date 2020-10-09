@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { Segment, Grid } from 'semantic-ui-react';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 
 class ExplorerDashboard extends React.Component {
@@ -64,40 +65,44 @@ class ExplorerDashboard extends React.Component {
     console.log('summary' + this.pagearray);
     this.summarysection.push(
       <>
-        <tr>
-          <td>
-            <b>Chainwork</b>
-            <br />
-            {this.rjdecoded.chainInfo.chainwork}
-          </td>
-          <td>
-            <b>Blocks Synced</b>
-            <br />
-            {this.rjdecoded.chainInfo.blocksSynced}
-          </td>
-          <td>
-            <b>Chain Tip</b>
-            <br />
-            {this.rjdecoded.chainInfo.chainTip}
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <b>Chain</b>
-            <br />
-            {this.rjdecoded.chainInfo.chain}
-          </td>
-          <td>
-            <b>Synced Block Hash</b>
-            <br />
-            <div className='wordbreak'>{this.rjdecoded.chainInfo.syncedBlockHash}</div>
-          </td>
-          <td>
-            <b>Chain Tip Hash</b>
-            <br />
-            <div className='wordbreak'>{this.rjdecoded.chainInfo.chainTipHash}</div>
-          </td>
-        </tr>
+        <Grid>
+          <Grid.Row columns={4} divided>
+            <Grid.Column>
+              <h3>Chainwork</h3>
+              {this.rjdecoded.chainInfo.chainwork}
+            </Grid.Column>
+            <Grid.Column>
+              <h3>Blocks Synced</h3>
+              <Link to={'/explorer/blockheight/' + this.rjdecoded.chainInfo.blocksSynced + '/""'}>
+                {this.rjdecoded.chainInfo.blocksSynced}
+              </Link>
+            </Grid.Column>
+            <Grid.Column>
+              <h3>Chain Tip</h3>
+              <Link to={'/explorer/blockheight/' + this.rjdecoded.chainInfo.chainTip + '/""'}>
+                {this.rjdecoded.chainInfo.chainTip}
+              </Link>
+            </Grid.Column>
+            <Grid.Column>
+              <h3>Chain</h3>
+              {this.rjdecoded.chainInfo.chain}
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2} divided>
+            <Grid.Column>
+              <h3>Synced Block Hash</h3>
+              <Link to={'/explorer/blockhash/' + this.rjdecoded.chainInfo.syncedBlockHash + '/""'}>
+                <div className='wordbreak'>{this.rjdecoded.chainInfo.syncedBlockHash}</div>
+              </Link>
+            </Grid.Column>
+            <Grid.Column>
+              <h3>Chain Tip Hash</h3>
+              <Link to={'/explorer/blockhash/' + this.rjdecoded.chainInfo.chainTipHash + '/""'}>
+                <div className='wordbreak'>{this.rjdecoded.chainInfo.chainTipHash}</div>
+              </Link>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
       </>
     );
     console.table(this.summarysection);
@@ -113,7 +118,7 @@ class ExplorerDashboard extends React.Component {
     this.printresults();
     if (this.state.selectnum === '') {
       this.setState({
-        selectnum: 1,
+        selectnum: 1
       });
     }
   };
@@ -224,14 +229,32 @@ class ExplorerDashboard extends React.Component {
   printresults = () => {
     this.resultsrow.length = 0;
     this.resultsrow.push(
-      <tr className='thborder'>
-        <th>Height</th>
-        <th>Timestamp (UTC)</th>
-        <th>Age</th>
-        <th>Block Version</th>
-        <th>Transactions</th>
-        <th>Size(Bytes)</th>
-      </tr>
+      <Segment.Group horizontal>
+        <Segment className='cen'>
+          <Grid columns={6} divided>
+            <Grid.Row>
+              <Grid.Column>
+                <h3>Height</h3>
+              </Grid.Column>
+              <Grid.Column>
+                <h3>Timestamp (UTC)</h3>
+              </Grid.Column>
+              <Grid.Column>
+                <h3>Age</h3>
+              </Grid.Column>
+              <Grid.Column>
+                <h3>Block Version</h3>
+              </Grid.Column>
+              <Grid.Column>
+                <h3>Transactions</h3>
+              </Grid.Column>
+              <Grid.Column>
+                <h3>Size(Bytes)</h3>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </Segment>
+      </Segment.Group>
     );
     this.size = Object.keys(this.rjdecoded.blocks).length;
     var todaysdate, age;
@@ -240,28 +263,34 @@ class ExplorerDashboard extends React.Component {
       todaysdate = Date.now() - this.rjdecoded.blocks[i].header.blockTimestamp * 1000;
       age = new Date(todaysdate);
       this.resultsrow.push(
-        <tr className='tablerowbottom'>
-          <td className='blockheights'>
-            <Link to={'/explorer/blockheight/' + this.rjdecoded.blocks[i].height + '/""'}>
-              {this.rjdecoded.blocks[i].height}
-            </Link>
-          </td>
-          <td>
-            {this.date.getDate()}/{this.date.getMonth() + 1}/{this.date.getFullYear()}
-            <br />
-            {this.date.getHours()}:{this.date.getMinutes()}:{this.date.getSeconds()}
-          </td>
-          <td>
-            {age.getHours()}:{age.getMinutes()}:{age.getSeconds()}
-          </td>
-          <td>{this.rjdecoded.blocks[i].header.blockVersion}</td>
-          <td>{this.rjdecoded.blocks[i].txCount}</td>
-          <td>{this.rjdecoded.blocks[i].size}</td>
-        </tr>
+        <Segment.Group horizontal>
+          <Segment color='yellow' className='cen'>
+            <Grid columns={6} divided>
+              <Grid.Row>
+                <Grid.Column>
+                  <Link to={'/explorer/blockheight/' + this.rjdecoded.blocks[i].height + '/""'}>
+                    {this.rjdecoded.blocks[i].height}
+                  </Link>
+                </Grid.Column>
+                <Grid.Column>
+                  {this.date.getDate()}/{this.date.getMonth() + 1}/{this.date.getFullYear()}
+                  <br />
+                  {this.date.getHours()}:{this.date.getMinutes()}:{this.date.getSeconds()}
+                </Grid.Column>
+                <Grid.Column>
+                  {age.getHours()}:{age.getMinutes()}:{age.getSeconds()}
+                </Grid.Column>
+                <Grid.Column>{this.rjdecoded.blocks[i].header.blockVersion} </Grid.Column>
+                <Grid.Column>{this.rjdecoded.blocks[i].txCount} </Grid.Column>
+                <Grid.Column>{this.rjdecoded.blocks[i].size} </Grid.Column>
+              </Grid.Row>
+            </Grid>
+          </Segment>
+        </Segment.Group>
       );
     }
     this.setState({
-      selectnum: this.selected,
+      selectnum: this.selected
     });
   };
 
@@ -277,57 +306,54 @@ class ExplorerDashboard extends React.Component {
           //    </button>
         }
         <div className='opacitywhileload'>
-          <div className='row'>
-            <div className='col-md-12 col-lg-12'>
-              <h4>Summary</h4>
-            </div>
-          </div>
-          <div className='row'>
-            <div className='col-md-12 col-lg-12'>
-              <table border='1'>
-                <tbody>{this.summarysection}</tbody>
-              </table>
-            </div>
-          </div>
-          <hr />
-          <div className='row'>
-            <div className='col-lg-12 col-md-12'>
-              <h4>Latest Blocks</h4>
-            </div>
-          </div>
-          <div className='row'>
-            <div className='col-md-12 col-lg-12'>
+          <Segment.Group>
+            <Segment>
+              <h2>Summary</h2>
+            </Segment>
+            <Segment className='cen'>{this.summarysection}</Segment>
+            <Segment>
+              <h2>Latest Blocks</h2>
+            </Segment>
+            <Segment>
               <div className='latestblocks'>
                 <table>
                   <tbody>{this.resultsrow}</tbody>
                 </table>
               </div>
               <br />
-            </div>
-          </div>
-          <div className='row'>
-            <div className='col-md-12 col-lg-12 text-center'>
+            </Segment>
+            <Segment>
               <nav aria-label='transactions navigation'>
                 <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
               </nav>
-              Enter page number
+              <center>Enter page number</center>
               <form onSubmit={this.pagebutton}>
-                <input
-                  className='pagenuminput'
-                  size='5'
-                  type='text'
-                  onChange={event =>
-                    this.setState({
-                      selectnum: event.target.value,
-                    })
-                  }
-                />
-                <button className='btn btn-primary' type='submit'>
-                  Go
-                </button>
+                <div className='ui form'>
+                  <div className='inline fields'>
+                    <div className='six wide field'></div>
+                    <div className='three wide field'>
+                      <input
+                        className='pagenuminput'
+                        size='5'
+                        type='text'
+                        onChange={event =>
+                          this.setState({
+                            selectnum: event.target.value
+                          })
+                        }
+                      />
+                    </div>
+                    <div className='one wide field'>
+                      <button className='btn btn-primary' type='submit'>
+                        Go
+                      </button>
+                    </div>
+                    <div className='six wide field'></div>
+                  </div>
+                </div>
               </form>
-            </div>
-          </div>
+            </Segment>
+          </Segment.Group>
         </div>
       </>
     );

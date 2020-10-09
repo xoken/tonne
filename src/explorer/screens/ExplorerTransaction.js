@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { Segment, Grid } from 'semantic-ui-react';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 
 class ExplorerTransaction extends React.Component {
@@ -55,70 +56,81 @@ class ExplorerTransaction extends React.Component {
       if (txidpar !== '0000000000000000000000000000000000000000000000000000000000000000') {
         return <Link to={'/explorer/transaction/' + txidpar}>{txidpar}</Link>;
       } else {
-        return <div>{txidpar}</div>;
+        return <div>Newly minted coins</div>;
+      }
+    }
+    function checkforinvalidaddress(txaddress) {
+      if (txaddress) {
+        return <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>;
+      } else {
+        return <div>Newly minted coins</div>;
       }
     }
     this.summarysect1.push(
       <>
-        <tr>
-          <td>
-            <b>Block</b>
-          </td>
-          <td>
-            <div id='blocktitle'>(# {this.rjdecoded.tx.blockHeight} )</div>
-            <br />
-            <div id='blockhash'>
-              BlockHash -{' '}
-              <Link to={'/explorer/blockhash/' + this.rjdecoded.tx.blockHash + '/""'}>
-                {this.rjdecoded.tx.blockHash}
-              </Link>
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <b>Transaction Version</b>
-          </td>
-          <td>
-            <div id='txversion'>{this.rjdecoded.tx.tx.txVersion}</div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <b>Locktime</b>
-          </td>
-          <td>
-            <div id='txlocktime'>{this.rjdecoded.tx.tx.txLockTime}</div>
-          </td>
-        </tr>
+        <Grid>
+          <Grid.Row columns={2}>
+            <Grid.Column>
+              <b>Block</b>
+            </Grid.Column>
+            <Grid.Column>
+              <div id='blocktitle'>(# {this.rjdecoded.tx.blockHeight} )</div>
+
+              <div id='blockhash'>
+                BlockHash -
+                <Link to={'/explorer/blockhash/' + this.rjdecoded.tx.blockHash + '/""'}>
+                  {this.rjdecoded.tx.blockHash}
+                </Link>
+              </div>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column>
+              <b>Transaction Version</b>
+            </Grid.Column>
+            <Grid.Column>
+              <div id='txversion'>{this.rjdecoded.tx.tx.txVersion}</div>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column>
+              <b>Locktime</b>
+            </Grid.Column>
+            <Grid.Column>
+              <div id='txlocktime'>{this.rjdecoded.tx.tx.txLockTime}</div>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
       </>
     );
     this.summarysect2.push(
       <>
-        <tr>
-          <td>
-            <b>txIndex</b>
-          </td>
-          <td>
-            <div id='txindex'>{this.rjdecoded.tx.txIndex}</div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <b>Size</b>
-          </td>
-          <td>
-            <div id='size'>{this.rjdecoded.tx.size}</div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <b>Fees</b>
-          </td>
-          <td>
-            <div id='fees'>{this.rjdecoded.tx.fees}</div>
-          </td>
-        </tr>
+        <Grid>
+          <Grid.Row columns={2}>
+            <Grid.Column>
+              <b>txIndex</b>
+            </Grid.Column>
+            <Grid.Column>
+              <div id='txindex'>{this.rjdecoded.tx.txIndex}</div>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column>
+              <b>Size</b>
+            </Grid.Column>
+            <Grid.Column>
+              <div>{this.rjdecoded.tx.size}</div>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column>
+              <b>Fees</b>
+            </Grid.Column>
+            <Grid.Column>
+              <div>{this.rjdecoded.tx.fees}</div>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
       </>
     );
     this.inputs = Object.keys(this.rjdecoded.tx.tx.txInps).length;
@@ -127,179 +139,192 @@ class ExplorerTransaction extends React.Component {
     this.txid = this.rjdecoded.tx.txId;
     for (var i = 0; i < Object.keys(this.rjdecoded.tx.merkleBranch).length; i++) {
       this.merklebranchsection.push(
-        <tr>
-          <td>
-            <b>nodeValue : </b>
-          </td>
-          <td className='tdbordright'>{this.rjdecoded.tx.merkleBranch[i].nodeValue}</td>
-          <td>
-            <b>isLeftNode : </b>
-          </td>
-          <td>{this.rjdecoded.tx.merkleBranch[i].isLeftNode}</td>
-        </tr>
+        <Grid>
+          <Grid.Row columns={4} divided>
+            <Grid.Column>
+              <b>nodeValue : </b>
+            </Grid.Column>
+            <Grid.Column className='tdwordbreak'>
+              {this.rjdecoded.tx.merkleBranch[i].nodeValue}
+            </Grid.Column>
+            <Grid.Column>
+              <b>isLeftNode : </b>
+            </Grid.Column>
+            <Grid.Column>{this.rjdecoded.tx.merkleBranch[i].isLeftNode} </Grid.Column>
+          </Grid.Row>
+        </Grid>
       );
     }
     this.inputaddress.push(
-      <tr>
-        <td></td>
-        <td className='tdpadd'>
-          <b>Inputs:</b>
-        </td>
-      </tr>
+      <Grid>
+        <Grid.Row columns={1}>
+          <Grid.Column>
+            <b>Inputs:</b>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     );
     this.tempoutputstring.push(
-      <tr>
-        <td></td>
-        <td className='tdpadd'>
-          <b>Outputs:</b>
-        </td>
-      </tr>
+      <Grid>
+        <Grid.Row columns={1}>
+          <Grid.Column>
+            <b>Outputs:</b>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     );
     for (var j = 0; j < this.inputs; j++) {
       this.inputaddress.push(
-        <tr>
-          <td className='tdnum'>({j + 1}).</td>
-          <td className='tdpadd'>
-            <table className='outputinputtd'>
-              <tr>
-                <td>
-                  <b>Address</b>
-                </td>
-                <td className='tdwordbreak'>
-                  <Link to={'/explorer/address/' + this.rjdecoded.tx.tx.txInps[j].address}>
-                    {this.rjdecoded.tx.tx.txInps[j].address}
-                  </Link>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <b>outpointTxID</b>
-                </td>
-                <td className='tdwordbreak'>
-                  {checkforinvalidtxid(this.rjdecoded.tx.tx.txInps[j].outpointTxID)}
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <b>value</b>
-                </td>
-                <td className='tdwordbreak'>{this.rjdecoded.tx.tx.txInps[j].value}</td>
-              </tr>
-              <tr>
-                <td>
-                  <b>txInputIndex</b>
-                </td>
-                <td className='tdwordbreak'>{this.rjdecoded.tx.tx.txInps[j].txInputIndex}</td>
-              </tr>
-              <tr>
-                <td>
-                  <b>outpointIndex</b>
-                </td>
-                <td className='tdwordbreak'>{this.rjdecoded.tx.tx.txInps[j].outpointIndex}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
+        <Grid>
+          <Grid.Row columns={2}>
+            <Grid.Column width={2}>({j + 1}). </Grid.Column>
+            <Grid.Column width={14}>
+              <Grid>
+                <Grid.Row columns={2}>
+                  <Grid.Column>
+                    <b>Address</b>
+                  </Grid.Column>
+                  <Grid.Column className='tdwordbreak'>
+                    {checkforinvalidaddress(this.rjdecoded.tx.tx.txInps[j].address)}
+                  </Grid.Column>
+                </Grid.Row>
+                <Grid.Row columns={2}>
+                  <Grid.Column>
+                    <b>outpointTxID</b>
+                  </Grid.Column>
+                  <Grid.Column className='tdwordbreak'>
+                    {checkforinvalidtxid(this.rjdecoded.tx.tx.txInps[j].outpointTxID)}
+                  </Grid.Column>
+                </Grid.Row>
+                <Grid.Row columns={2}>
+                  <Grid.Column>
+                    <b>value</b>
+                  </Grid.Column>
+                  <Grid.Column>{this.rjdecoded.tx.tx.txInps[j].value}</Grid.Column>
+                </Grid.Row>
+                <Grid.Row columns={2}>
+                  <Grid.Column>
+                    <b>txInputIndex</b>
+                  </Grid.Column>
+                  <Grid.Column>{this.rjdecoded.tx.tx.txInps[j].txInputIndex}</Grid.Column>
+                </Grid.Row>
+                <Grid.Row columns={2}>
+                  <Grid.Column>
+                    <b>outpointIndex</b>
+                  </Grid.Column>
+                  <Grid.Column>{this.rjdecoded.tx.tx.txInps[j].outpointIndex}</Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
       );
     }
     for (var z = 0; z < this.outputs; z++) {
       this.tempoutputstring.push(
-        <tr>
-          <td className='tdnum'>({z + 1}).</td>
-          <td className='tdpadd'>
-            <table className='outputinputtd'>
-              <tr>
-                <td>
-                  <b>address</b>
-                </td>
-                <td className='tdwordbreak'>
-                  <Link to={'/explorer/address/' + this.rjdecoded.tx.tx.txOuts[z].address}>
-                    {this.rjdecoded.tx.tx.txOuts[z].address}
-                  </Link>
-                </td>
-              </tr>
-              <tr>
-                <td>
-                  <b>lockingScript</b>
-                </td>
-                <td className='tdwordbreak'>{this.rjdecoded.tx.tx.txOuts[z].lockingScript}</td>
-              </tr>
-              <tr>
-                <td>
-                  <b>value</b>
-                </td>
-                <td className='tdwordbreak'>{this.rjdecoded.tx.tx.txOuts[z].value}</td>
-              </tr>
-              <tr>
-                <td>
-                  <b>outputIndex</b>
-                </td>
-                <td className='tdwordbreak'>{this.rjdecoded.tx.tx.txOuts[z].outputIndex}</td>
-              </tr>
-            </table>
-          </td>
-        </tr>
+        <Grid>
+          <Grid.Row columns={2}>
+            <Grid.Column width={2}>({z + 1}).</Grid.Column>
+            <Grid.Column width={14}>
+              <Grid>
+                <Grid.Row columns={2}>
+                  <Grid.Column>
+                    <b>address</b>
+                  </Grid.Column>
+                  <Grid.Column className='tdwordbreak'>
+                    <Link to={'/explorer/address/' + this.rjdecoded.tx.tx.txOuts[z].address}>
+                      {this.rjdecoded.tx.tx.txOuts[z].address}
+                    </Link>
+                  </Grid.Column>
+                </Grid.Row>
+                <Grid.Row columns={2}>
+                  <Grid.Column>
+                    <b>lockingScript</b>
+                  </Grid.Column>
+                  <Grid.Column className='tdwordbreak'>
+                    {this.rjdecoded.tx.tx.txOuts[z].lockingScript}
+                  </Grid.Column>
+                </Grid.Row>
+                <Grid.Row columns={2}>
+                  <Grid.Column>
+                    <b>value</b>
+                  </Grid.Column>
+                  <Grid.Column>{this.rjdecoded.tx.tx.txOuts[z].value} </Grid.Column>
+                </Grid.Row>
+                <Grid.Row columns={2}>
+                  <Grid.Column>
+                    <b>outputIndex</b>
+                  </Grid.Column>
+                  <Grid.Column>{this.rjdecoded.tx.tx.txOuts[z].outputIndex}</Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
       );
       if (this.rjdecoded.tx.tx.txOuts[z].txSpendInfo != null) {
         this.tempoutputstring.push(
-          <tr>
-            <td colspan='2'>
-              <table className='outputinputtd'>
-                <tr>
-                  <td>
-                    <b>spendingBlockHash</b>
-                  </td>
-                  <td className='tdwordbreak'>
-                    <Link
-                      to={
-                        '/explorer/blockhash/' +
-                        this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingBlockHash +
-                        '/""'
-                      }>
-                      {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingBlockHash}
-                    </Link>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <b>spendingBlockHeight</b>
-                  </td>
-                  <td className='tdwordbreak'>
-                    <Link
-                      to={
-                        '/explorer/blockheight/' +
-                        this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingBlockHeight +
-                        '/""'
-                      }>
-                      {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingBlockHeight}
-                    </Link>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <b>spendingTxId</b>
-                  </td>
-                  <td className='tdwordbreak'>
-                    <Link
-                      to={
-                        '/explorer/transaction/' +
-                        this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxId
-                      }>
-                      {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxId}
-                    </Link>
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <b>spendingTxIndex</b>
-                  </td>
-                  <td className='tdwordbreak'>
-                    {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxIndex}
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
+          <Grid>
+            <Grid.Row columns={2}>
+              <Grid.Column width={2}></Grid.Column>
+              <Grid.Column width={14}>
+                <Grid>
+                  <Grid.Row columns={2}>
+                    <Grid.Column>
+                      <b>spendingBlockHash</b>
+                    </Grid.Column>
+                    <Grid.Column className='tdwordbreak'>
+                      <Link
+                        to={
+                          '/explorer/blockhash/' +
+                          this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingBlockHash +
+                          '/""'
+                        }>
+                        {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingBlockHash}
+                      </Link>
+                    </Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row columns={2}>
+                    <Grid.Column>
+                      <b>spendingBlockHeight</b>
+                    </Grid.Column>
+                    <Grid.Column>
+                      <Link
+                        to={
+                          '/explorer/blockheight/' +
+                          this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingBlockHeight +
+                          '/""'
+                        }>
+                        {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingBlockHeight}
+                      </Link>
+                    </Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row columns={2}>
+                    <Grid.Column>
+                      <b>spendingTxId</b>
+                    </Grid.Column>
+                    <Grid.Column className='tdwordbreak'>
+                      <Link
+                        to={
+                          '/explorer/transaction/' +
+                          this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxId
+                        }>
+                        {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxId}
+                      </Link>
+                    </Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row columns={2}>
+                    <Grid.Column>
+                      <b>spendingTxIndex</b>
+                    </Grid.Column>
+                    <Grid.Column>
+                      {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxIndex}
+                    </Grid.Column>
+                  </Grid.Row>
+                </Grid>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
         );
         for (
           var b = 0;
@@ -307,50 +332,55 @@ class ExplorerTransaction extends React.Component {
           b++
         ) {
           this.tempoutputstring.push(
-            <tr>
-              <td colspan='2'>
-                <table className='outputinputtd'>
-                  <tr>
-                    <br />
-                    <td colspan='2'>
-                      <b>
-                        <h5>spendData</h5>
-                      </b>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <b>spendingOutputIndex</b>
-                    </td>
-                    <td className='tdwordbreak'>
-                      {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].spendingOutputIndex}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <b>value</b>
-                    </td>
-                    <td className='tdwordbreak'>
-                      {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].value}
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <b>outputAddress</b>
-                    </td>
-                    <td className='tdwordbreak'>
-                      <Link
-                        to={
-                          '/explorer/address/' +
-                          this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].outputAddress
-                        }>
-                        {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].outputAddress}
-                      </Link>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
+            <Grid>
+              <Grid.Row columns={2}>
+                <Grid.Column width={2}></Grid.Column>
+                <Grid.Column width={14}>
+                  <Grid>
+                    <Grid.Row columns={1}>
+                      <Grid.Column>
+                        <b>
+                          <h5>spendData</h5>
+                        </b>
+                      </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row columns={2}>
+                      <Grid.Column>
+                        <b>spendingOutputIndex</b>
+                      </Grid.Column>
+                      <Grid.Column>
+                        {
+                          this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b]
+                            .spendingOutputIndex
+                        }
+                      </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row columns={2}>
+                      <Grid.Column>
+                        <b>value</b>
+                      </Grid.Column>
+                      <Grid.Column>
+                        {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].value}
+                      </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row columns={2}>
+                      <Grid.Column>
+                        <b>outputAddress</b>
+                      </Grid.Column>
+                      <Grid.Column className='tdwordbreak'>
+                        <Link
+                          to={
+                            '/explorer/address/' +
+                            this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].outputAddress
+                          }>
+                          {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].outputAddress}
+                        </Link>
+                      </Grid.Column>
+                    </Grid.Row>
+                  </Grid>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
           );
         }
       } else {
@@ -376,55 +406,49 @@ class ExplorerTransaction extends React.Component {
           Back
         </Link>
         <div className='opacitywhileload'>
-          <div className='row'>
-            <div className='col-md-12 col-lg-12'>
-              <h4>Transaction</h4>
-              <div id='txid'>{this.txid}</div>
-              <hr />
-            </div>
-          </div>
-          <div className='row'>
-            <div className='col-md-12 col-lg-12'>
-              <h4>Summary</h4>
-            </div>
-          </div>
-          <div className='row'>
-            <div className='col-md-6 col-lg-6 summaryblock1'>
-              <table className='tdborderbottom'>{this.summarysect1}</table>
-            </div>
-            <div className='col-md-6 col-lg-6 summaryblock1'>
-              <table className='tdborderbottom'>{this.summarysect2}</table>
-            </div>
-          </div>
-          <br />
-          <hr />
-          <br />
-          <div className='row'>
-            <div className='col-md-12 col-lg-12'>
-              <center>
-                <h4>MerkleBranch</h4>
-              </center>
-              <table id='merklebranchsection'>{this.merklebranchsection}</table>
-            </div>
-          </div>
+          <Segment.Group>
+            <Segment>
+              <h2>Transaction</h2>
+              <div id='txid'>
+                <h3>{this.txid}</h3>
+              </div>
+            </Segment>
+            <Segment>
+              <h2>Summary</h2>
+            </Segment>
+            <Segment>
+              <Grid columns={2} divided>
+                <Grid.Row>
+                  <Grid.Column>{this.summarysect1}</Grid.Column>
+                  <Grid.Column>{this.summarysect2}</Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Segment>
+            <Segment>
+              <Grid columns={1}>
+                <Grid.Row>
+                  <Grid.Column className='cen'>
+                    <h2>MerkleBranch</h2>
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Segment>
+            <Segment>{this.merklebranchsection}</Segment>
 
-          <hr />
-          <div className='row'>
-            <div className='col-md-12 col-lg-12'>
+            <Segment>
               <h5>
                 <div>{this.inputs}</div> Inputs, <div>{this.outputs}</div> Outputs
               </h5>
-              <hr />
-            </div>
-          </div>
-          <div className='row'>
-            <div className='col-md-6 col-lg-6'>
-              <table id='inputaddress'>{this.inputaddress}</table>
-            </div>
-            <div className='col-md-6 col-lg-6'>
-              <table id='outputaddress'>{this.tempoutputstring}</table>
-            </div>
-          </div>
+            </Segment>
+            <Segment>
+              <Grid columns={2}>
+                <Grid.Row>
+                  <Grid.Column>{this.inputaddress}</Grid.Column>
+                  <Grid.Column>{this.tempoutputstring}</Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Segment>
+          </Segment.Group>
         </div>
       </>
     );
