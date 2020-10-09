@@ -12,7 +12,7 @@ import faker from 'faker';
 import * as bip38 from 'bip38';
 import * as bip39 from 'bip39';
 import * as _ from 'lodash';
-import { differenceInMinutes } from 'date-fns';
+// import { differenceInMinutes } from 'date-fns';
 import * as Persist from './Persist';
 import derivationPaths from './constants/derivationPaths';
 import network from './constants/network';
@@ -460,161 +460,182 @@ class Wallet {
       const { txs } = await transactionAPI.getTransactionsByTxIDs(
         unconfirmedTxIds
       );
-      // debugger;
       if (txs.length > 0) {
-        const confirmedTxs = unconfirmedTransactions.map(
+        const updatedUnconfirmedTransactions = unconfirmedTransactions.map(
           (unconfirmedTx: { txId: any }) => {
             const isConfirmed = txs.find(
               (tx: { txId: any }) => tx.txId === unconfirmedTx.txId
             );
+            if (isConfirmed) {
+              return {
+                ...unconfirmedTx,
+                confirmed: true,
+              };
+            }
             return {
               ...unconfirmedTx,
-              confirmed: isConfirmed,
+              confirmed: false,
             };
           }
         );
-        await Persist.upsertTransactions(confirmedTxs);
-      }
-    }
-  }
-
-  async getUTXOs() {
-    const { existingDerivedKeys } = await Persist.getDerivedKeys();
-    if (existingDerivedKeys.length > 0) {
-      const { derivedKeys: newDerivedKeys, diffUTXOs } = await this._getUTXOs(
-        existingDerivedKeys
-      );
-      if (diffUTXOs.length > 0) {
-        const { lastUpdated } = await Persist.getOutputsLastUpdated();
-        const newDiffUtxos = [];
-        for (let index = 0; index < diffUTXOs.length; index++) {
-          const { isPresent, _id, _rev } = await Persist.isInOutputsNew(
-            diffUTXOs[index]
+        const confirmedTxs = updatedUnconfirmedTransactions.filter(
+          (tx: { confirmed: boolean }) => tx.confirmed === true
+        );
+        if (confirmedTxs.length > 0) {
+          const confirmedOutputsPerTx = confirmedTxs.map(
+            (confirmedTx: { outputs: any }) => confirmedTx.outputs
           );
-          if (!isPresent) {
-            newDiffUtxos.push({ ...diffUTXOs[index], isSpent: false });
-          } else {
-            const diffInMinutes = differenceInMinutes(
-              new Date(),
-              Date.parse(lastUpdated)
-            );
-            if (diffInMinutes > 30) {
-              newDiffUtxos.push({
-                ...diffUTXOs[index],
-                _id,
-                _rev,
-                isSpent: false,
-              });
-            }
-          }
-        }
-        if (newDiffUtxos.length > 0) {
-          await Persist.upsertDerivedKeys(newDerivedKeys);
-          await Persist.updateOutputs(newDiffUtxos);
-        }
-      }
-    }
-  }
-
-  async _getUTXOs(
-    derivedKeys: any[],
-    prevUtxos: any[] = [],
-    prevDiffUtxos: any[] = [],
-    prevKeys: any[] = []
-  ): Promise<any> {
-    const chunkedUsedDerivedKeys = _.chunk(derivedKeys, 20);
-    const data = await Promise.all(
-      chunkedUsedDerivedKeys.map(async (chunkedUsedDerivedKey) => {
-        return await this._getUTXOsByAddresses(chunkedUsedDerivedKey);
-      })
-    );
-    const utxos = data.flat();
-    const diffUTXOs = await this._getDiffUTXOs(utxos);
-    const updatedKeys = derivedKeys.map(
-      (key: { address: string; indexText: string; isUsed: boolean }) => {
-        if (!key.isUsed) {
-          const found = utxos.some(
-            (utxo: { address: any }) => utxo.address === key.address
+          const confirmedOutputs = confirmedOutputsPerTx.flat();
+          const updatedConfirmedOutputs = confirmedOutputs.map(
+            (output: any) => ({
+              ...output,
+              confirmed: true,
+            })
           );
-          return { ...key, isUsed: found };
+          await Persist.updateOutputs(updatedConfirmedOutputs);
+          await Persist.deleteUnconfirmedTx(confirmedTxs);
         }
-        return key;
-      }
-    );
-    const newUtxos = [...prevUtxos, ...utxos];
-    const newDiffUtxos = [...prevDiffUtxos, ...diffUTXOs];
-    const newKeys = [...prevKeys, ...updatedKeys];
-    const countOfUnusedKeys = this._countOfUnusedKeys(newKeys);
-    if (countOfUnusedKeys < 20) {
-      const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
-      const lastKeyIndex = derivedKeys[derivedKeys.length - 1].indexText
-        .split('/')
-        .pop();
-      const { derivedKeys: nextDerivedKeys } = await this._generateDerivedKeys(
-        bip32ExtendedKey,
-        Number(lastKeyIndex) + 1,
-        20 - countOfUnusedKeys,
-        false
-      );
-      return await this._getUTXOs(
-        nextDerivedKeys,
-        newUtxos,
-        newDiffUtxos,
-        newKeys
-      );
-    } else {
-      return {
-        utxos: newUtxos,
-        diffUTXOs: newDiffUtxos,
-        derivedKeys: newKeys,
-      };
-    }
-  }
-
-  async _getUTXOsByAddresses(
-    keys: any[],
-    prevUtxos: any[] = [],
-    nextCursor?: number
-  ): Promise<any> {
-    const addresses = this._getAddressesFromKeys(keys);
-    const data: {
-      utxos: any[];
-      nextCursor: number;
-    } = await addressAPI.getUTXOsByAddresses(addresses, 100, nextCursor);
-    const { lastFetched } = await Persist.getOutputsLastFetched();
-    if (lastFetched) {
-      const diffUTXOs = await this._getDiffUTXOs(data.utxos);
-      if (diffUTXOs.length === data.utxos.length) {
-        const utxos = [...prevUtxos, ...diffUTXOs];
-        if (data.nextCursor) {
-          return await this._getUTXOsByAddresses(keys, utxos, data.nextCursor);
-        } else {
-          return utxos;
-        }
-      } else {
-        return diffUTXOs;
-      }
-    } else {
-      const utxos = [...prevUtxos, ...data.utxos];
-      if (data.nextCursor) {
-        return await this._getUTXOsByAddresses(keys, utxos, data.nextCursor);
-      } else {
-        return utxos;
       }
     }
   }
 
-  async _getDiffUTXOs(utxos: any[]) {
-    const newUTXOs: any[] = [];
-    for (let index = 0; index < utxos.length; index++) {
-      if (!(await Persist.isInUTXOs(utxos[index]))) {
-        newUTXOs.push(utxos[index]);
-      } else {
-        return newUTXOs;
-      }
-    }
-    return newUTXOs;
-  }
+  // async getUTXOs() {
+  //   const { existingDerivedKeys } = await Persist.getDerivedKeys();
+  //   if (existingDerivedKeys.length > 0) {
+  //     const { derivedKeys: newDerivedKeys, diffUTXOs } = await this._getUTXOs(
+  //       existingDerivedKeys
+  //     );
+  //     if (diffUTXOs.length > 0) {
+  //       const { lastUpdated } = await Persist.getOutputsLastUpdated();
+  //       const newDiffUtxos = [];
+  //       for (let index = 0; index < diffUTXOs.length; index++) {
+  //         const { isPresent, _id, _rev } = await Persist.isInOutputsNew(
+  //           diffUTXOs[index]
+  //         );
+  //         if (!isPresent) {
+  //           newDiffUtxos.push({ ...diffUTXOs[index], isSpent: false });
+  //         } else {
+  //           const diffInMinutes = differenceInMinutes(
+  //             new Date(),
+  //             Date.parse(lastUpdated)
+  //           );
+  //           if (diffInMinutes > 30) {
+  //             newDiffUtxos.push({
+  //               ...diffUTXOs[index],
+  //               _id,
+  //               _rev,
+  //               isSpent: false,
+  //             });
+  //           }
+  //         }
+  //       }
+  //       if (newDiffUtxos.length > 0) {
+  //         await Persist.upsertDerivedKeys(newDerivedKeys);
+  //         await Persist.updateOutputs(newDiffUtxos);
+  //       }
+  //     }
+  //   }
+  // }
+
+  // async _getUTXOs(
+  //   derivedKeys: any[],
+  //   prevUtxos: any[] = [],
+  //   prevDiffUtxos: any[] = [],
+  //   prevKeys: any[] = []
+  // ): Promise<any> {
+  //   const chunkedUsedDerivedKeys = _.chunk(derivedKeys, 20);
+  //   const data = await Promise.all(
+  //     chunkedUsedDerivedKeys.map(async (chunkedUsedDerivedKey) => {
+  //       return await this._getUTXOsByAddresses(chunkedUsedDerivedKey);
+  //     })
+  //   );
+  //   const utxos = data.flat();
+  //   const diffUTXOs = await this._getDiffUTXOs(utxos);
+  //   const updatedKeys = derivedKeys.map(
+  //     (key: { address: string; indexText: string; isUsed: boolean }) => {
+  //       if (!key.isUsed) {
+  //         const found = utxos.some(
+  //           (utxo: { address: any }) => utxo.address === key.address
+  //         );
+  //         return { ...key, isUsed: found };
+  //       }
+  //       return key;
+  //     }
+  //   );
+  //   const newUtxos = [...prevUtxos, ...utxos];
+  //   const newDiffUtxos = [...prevDiffUtxos, ...diffUTXOs];
+  //   const newKeys = [...prevKeys, ...updatedKeys];
+  //   const countOfUnusedKeys = this._countOfUnusedKeys(newKeys);
+  //   if (countOfUnusedKeys < 20) {
+  //     const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
+  //     const lastKeyIndex = derivedKeys[derivedKeys.length - 1].indexText
+  //       .split('/')
+  //       .pop();
+  //     const { derivedKeys: nextDerivedKeys } = await this._generateDerivedKeys(
+  //       bip32ExtendedKey,
+  //       Number(lastKeyIndex) + 1,
+  //       20 - countOfUnusedKeys,
+  //       false
+  //     );
+  //     return await this._getUTXOs(
+  //       nextDerivedKeys,
+  //       newUtxos,
+  //       newDiffUtxos,
+  //       newKeys
+  //     );
+  //   } else {
+  //     return {
+  //       utxos: newUtxos,
+  //       diffUTXOs: newDiffUtxos,
+  //       derivedKeys: newKeys,
+  //     };
+  //   }
+  // }
+
+  // async _getUTXOsByAddresses(
+  //   keys: any[],
+  //   prevUtxos: any[] = [],
+  //   nextCursor?: number
+  // ): Promise<any> {
+  //   const addresses = this._getAddressesFromKeys(keys);
+  //   const data: {
+  //     utxos: any[];
+  //     nextCursor: number;
+  //   } = await addressAPI.getUTXOsByAddresses(addresses, 100, nextCursor);
+  //   const { lastFetched } = await Persist.getOutputsLastFetched();
+  //   if (lastFetched) {
+  //     const diffUTXOs = await this._getDiffUTXOs(data.utxos);
+  //     if (diffUTXOs.length === data.utxos.length) {
+  //       const utxos = [...prevUtxos, ...diffUTXOs];
+  //       if (data.nextCursor) {
+  //         return await this._getUTXOsByAddresses(keys, utxos, data.nextCursor);
+  //       } else {
+  //         return utxos;
+  //       }
+  //     } else {
+  //       return diffUTXOs;
+  //     }
+  //   } else {
+  //     const utxos = [...prevUtxos, ...data.utxos];
+  //     if (data.nextCursor) {
+  //       return await this._getUTXOsByAddresses(keys, utxos, data.nextCursor);
+  //     } else {
+  //       return utxos;
+  //     }
+  //   }
+  // }
+
+  // async _getDiffUTXOs(utxos: any[]) {
+  //   const newUTXOs: any[] = [];
+  //   for (let index = 0; index < utxos.length; index++) {
+  //     if (!(await Persist.isInUTXOs(utxos[index]))) {
+  //       newUTXOs.push(utxos[index]);
+  //     } else {
+  //       return newUTXOs;
+  //     }
+  //   }
+  //   return newUTXOs;
+  // }
 
   async _getChangeAddress() {
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
@@ -734,14 +755,15 @@ class Wallet {
           confirmed: false,
         }));
         await Persist.updateOutputs(spentUtxos);
+        await Persist.upsertUnconfirmedTransactions([
+          {
+            txId: transaction.getId(),
+            confirmed: false,
+            outputs: spentUtxos,
+            createdAt: new Date(),
+          },
+        ]);
       }
-      const spentOutputs = merged.map((element) => ({
-        outputTxHash: element.outputTxHash,
-        outputIndex: element.outputIndex,
-      }));
-      await Persist.upsertUnconfirmedTransactions([
-        { txId: transaction.getId(), confirmed: false, outputs: spentOutputs },
-      ]);
     } catch (error) {
       throw error;
     }
