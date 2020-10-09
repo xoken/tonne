@@ -59,6 +59,13 @@ class ExplorerTransaction extends React.Component {
         return <div>Newly minted coins</div>;
       }
     }
+    function checkforinvalidaddress(txaddress) {
+      if (txaddress) {
+        return <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>;
+      } else {
+        return <div>Newly minted coins</div>;
+      }
+    }
     this.summarysect1.push(
       <>
         <Grid>
@@ -107,20 +114,20 @@ class ExplorerTransaction extends React.Component {
               <div id='txindex'>{this.rjdecoded.tx.txIndex}</div>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row>
+          <Grid.Row columns={2}>
             <Grid.Column>
               <b>Size</b>
             </Grid.Column>
             <Grid.Column>
-              <div id='size'>{this.rjdecoded.tx.size}</div>
+              <div>{this.rjdecoded.tx.size}</div>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row>
+          <Grid.Row columns={2}>
             <Grid.Column>
               <b>Fees</b>
             </Grid.Column>
             <Grid.Column>
-              <div id='fees'>{this.rjdecoded.tx.fees}</div>
+              <div>{this.rjdecoded.tx.fees}</div>
             </Grid.Column>
           </Grid.Row>
         </Grid>
@@ -137,7 +144,9 @@ class ExplorerTransaction extends React.Component {
             <Grid.Column>
               <b>nodeValue : </b>
             </Grid.Column>
-            <Grid.Column>{this.rjdecoded.tx.merkleBranch[i].nodeValue}</Grid.Column>
+            <Grid.Column className='tdwordbreak'>
+              {this.rjdecoded.tx.merkleBranch[i].nodeValue}
+            </Grid.Column>
             <Grid.Column>
               <b>isLeftNode : </b>
             </Grid.Column>
@@ -168,24 +177,22 @@ class ExplorerTransaction extends React.Component {
       this.inputaddress.push(
         <Grid>
           <Grid.Row columns={2}>
-            <Grid.Column>({j + 1}). </Grid.Column>
-            <Grid.Column>
+            <Grid.Column width={2}>({j + 1}). </Grid.Column>
+            <Grid.Column width={14}>
               <Grid>
                 <Grid.Row columns={2}>
                   <Grid.Column>
                     <b>Address</b>
                   </Grid.Column>
-                  <Grid.Column>
-                    <Link to={'/explorer/address/' + this.rjdecoded.tx.tx.txInps[j].address}>
-                      {this.rjdecoded.tx.tx.txInps[j].address}
-                    </Link>
+                  <Grid.Column className='tdwordbreak'>
+                    {checkforinvalidaddress(this.rjdecoded.tx.tx.txInps[j].address)}
                   </Grid.Column>
                 </Grid.Row>
                 <Grid.Row columns={2}>
                   <Grid.Column>
                     <b>outpointTxID</b>
                   </Grid.Column>
-                  <Grid.Column>
+                  <Grid.Column className='tdwordbreak'>
                     {checkforinvalidtxid(this.rjdecoded.tx.tx.txInps[j].outpointTxID)}
                   </Grid.Column>
                 </Grid.Row>
@@ -217,14 +224,14 @@ class ExplorerTransaction extends React.Component {
       this.tempoutputstring.push(
         <Grid>
           <Grid.Row columns={2}>
-            <Grid.Column>({z + 1}).</Grid.Column>
-            <Grid.Column>
+            <Grid.Column width={2}>({z + 1}).</Grid.Column>
+            <Grid.Column width={14}>
               <Grid>
                 <Grid.Row columns={2}>
                   <Grid.Column>
                     <b>address</b>
                   </Grid.Column>
-                  <Grid.Column>
+                  <Grid.Column className='tdwordbreak'>
                     <Link to={'/explorer/address/' + this.rjdecoded.tx.tx.txOuts[z].address}>
                       {this.rjdecoded.tx.tx.txOuts[z].address}
                     </Link>
@@ -234,7 +241,9 @@ class ExplorerTransaction extends React.Component {
                   <Grid.Column>
                     <b>lockingScript</b>
                   </Grid.Column>
-                  <Grid.Column>{this.rjdecoded.tx.tx.txOuts[z].lockingScript}</Grid.Column>
+                  <Grid.Column className='tdwordbreak'>
+                    {this.rjdecoded.tx.tx.txOuts[z].lockingScript}
+                  </Grid.Column>
                 </Grid.Row>
                 <Grid.Row columns={2}>
                   <Grid.Column>
@@ -257,14 +266,14 @@ class ExplorerTransaction extends React.Component {
         this.tempoutputstring.push(
           <Grid>
             <Grid.Row columns={2}>
-              <Grid.Column></Grid.Column>
-              <Grid.Column>
+              <Grid.Column width={2}></Grid.Column>
+              <Grid.Column width={14}>
                 <Grid>
                   <Grid.Row columns={2}>
                     <Grid.Column>
                       <b>spendingBlockHash</b>
                     </Grid.Column>
-                    <Grid.Column>
+                    <Grid.Column className='tdwordbreak'>
                       <Link
                         to={
                           '/explorer/blockhash/' +
@@ -294,7 +303,7 @@ class ExplorerTransaction extends React.Component {
                     <Grid.Column>
                       <b>spendingTxId</b>
                     </Grid.Column>
-                    <Grid.Column>
+                    <Grid.Column className='tdwordbreak'>
                       <Link
                         to={
                           '/explorer/transaction/' +
@@ -325,8 +334,8 @@ class ExplorerTransaction extends React.Component {
           this.tempoutputstring.push(
             <Grid>
               <Grid.Row columns={2}>
-                <Grid.Column></Grid.Column>
-                <Grid.Column>
+                <Grid.Column width={2}></Grid.Column>
+                <Grid.Column width={14}>
                   <Grid>
                     <Grid.Row columns={1}>
                       <Grid.Column>
@@ -358,7 +367,7 @@ class ExplorerTransaction extends React.Component {
                       <Grid.Column>
                         <b>outputAddress</b>
                       </Grid.Column>
-                      <Grid.Column>
+                      <Grid.Column className='tdwordbreak'>
                         <Link
                           to={
                             '/explorer/address/' +
@@ -399,11 +408,13 @@ class ExplorerTransaction extends React.Component {
         <div className='opacitywhileload'>
           <Segment.Group>
             <Segment>
-              <h4>Transaction</h4>
-              <div id='txid'>{this.txid}</div>
+              <h2>Transaction</h2>
+              <div id='txid'>
+                <h3>{this.txid}</h3>
+              </div>
             </Segment>
             <Segment>
-              <h4>Summary</h4>
+              <h2>Summary</h2>
             </Segment>
             <Segment>
               <Grid columns={2} divided>
@@ -417,7 +428,7 @@ class ExplorerTransaction extends React.Component {
               <Grid columns={1}>
                 <Grid.Row>
                   <Grid.Column className='cen'>
-                    <h4>MerkleBranch</h4>
+                    <h2>MerkleBranch</h2>
                   </Grid.Column>
                 </Grid.Row>
               </Grid>

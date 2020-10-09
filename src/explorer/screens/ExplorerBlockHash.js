@@ -153,7 +153,7 @@ class ExplorerBlockHeight extends React.Component {
               </Link>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row>
+          <Grid.Row columns={2}>
             <Grid.Column>
               <b>Block Bits</b>
             </Grid.Column>
@@ -161,7 +161,7 @@ class ExplorerBlockHeight extends React.Component {
               <div id='blockbits'>{this.rjdecoded.block.header.blockBits}</div>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row>
+          <Grid.Row columns={2}>
             <Grid.Column>
               <b>Size</b>
             </Grid.Column>
@@ -169,7 +169,7 @@ class ExplorerBlockHeight extends React.Component {
               <div id='size'>{this.rjdecoded.block.size}</div>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row>
+          <Grid.Row columns={2}>
             <Grid.Column>
               <b>Timestamp (UTC)</b>
             </Grid.Column>
@@ -180,7 +180,7 @@ class ExplorerBlockHeight extends React.Component {
               </div>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row>
+          <Grid.Row columns={2}>
             <Grid.Column>
               <b>Merkle Root</b>
             </Grid.Column>
@@ -188,7 +188,7 @@ class ExplorerBlockHeight extends React.Component {
               <div id='merkleroot'>{this.rjdecoded.block.header.merkleRoot}</div>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row>
+          <Grid.Row columns={2}>
             <Grid.Column>
               <b>coinbaseMessage</b>
             </Grid.Column>
@@ -196,7 +196,7 @@ class ExplorerBlockHeight extends React.Component {
               <div id='coinbasemessage'>{this.rjdecoded.block.coinbaseMessage}</div>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row>
+          <Grid.Row columns={2}>
             <Grid.Column>
               <b>guessedMiner</b>
             </Grid.Column>
@@ -577,13 +577,13 @@ class ExplorerBlockHeight extends React.Component {
         <div className='opacitywhileload'>
           <Segment.Group>
             <Segment>
-              <h4>Block</h4>
-              <h5 id='blocktitle'># {this.blocktitle}</h5>
+              <h2>Block</h2>
+              <h3 id='blocktitle'># {this.blocktitle}</h3>
               <div id='blockhash'>Block - {this.blockhash}</div>
               <hr />
             </Segment>
             <Segment>
-              <h4>Summary</h4>
+              <h2>Summary</h2>
             </Segment>
             <Segment>
               <Segment.Group horizontal>
@@ -597,7 +597,7 @@ class ExplorerBlockHeight extends React.Component {
                   </Grid>
                   <Grid columns={1}>
                     <Grid.Row>
-                      <Grid.Column className='cen'>{this.txsection}</Grid.Column>
+                      <Grid.Column>{this.txsection}</Grid.Column>
                     </Grid.Row>
 
                     <Grid.Row>

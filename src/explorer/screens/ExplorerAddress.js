@@ -59,7 +59,7 @@ class ExplorerAddress extends React.Component {
         <>
           <Grid>
             <Grid.Row columns={1}>
-              <Grid.Column>
+              <Grid.Column className='txslnum'>
                 #({i + 1}) -
                 <Link to={'/explorer/transaction/' + this.addressCache[i].outputTxHash}>
                   {this.addressCache[i].outputTxHash}
@@ -70,30 +70,30 @@ class ExplorerAddress extends React.Component {
             <Grid.Row columns={1}>
               <Grid.Column>
                 <Grid>
-                  <Grid.Row columns={4}>
+                  <Grid.Row columns={4} divided className='cen'>
                     <Grid.Column>
-                      <b>Transaction Index:</b>
+                      <b>Transaction Index: </b>
                       {this.addressCache[i].txIndex}
                     </Grid.Column>
                     <Grid.Column>
-                      <b>Value:</b>
+                      <b>Value: </b>
                       {this.addressCache[i].value}
                     </Grid.Column>
                     <Grid.Column>
-                      <b>Output Index:</b>
+                      <b>Output Index: </b>
                       {this.addressCache[i].outputIndex}
                     </Grid.Column>
                     <Grid.Column>
-                      <b>Block Height:</b>
+                      <b>Block Height: </b>
                       <Link
                         to={'/explorer/blockheight/' + this.addressCache[i].blockHeight + '/""'}>
                         {this.addressCache[i].blockHeight}
                       </Link>
                     </Grid.Column>
                   </Grid.Row>
-                  <Grid.Row columns={1}>
+                  <Grid.Row columns={1} className='cen'>
                     <Grid.Column>
-                      <b>Block Hash:</b>
+                      <b>Block Hash: </b>
                       <Link to={'/explorer/blockhash/' + this.addressCache[i].blockHash + '/""'}>
                         {this.addressCache[i].blockHash}
                       </Link>
@@ -112,24 +112,22 @@ class ExplorerAddress extends React.Component {
               <Grid.Row columns={1}>
                 <Grid.Column>
                   <Grid>
-                    <Grid.Row columns={1}>
+                    <Grid.Row columns={1} className='cen'>
                       <Grid.Column>
-                        <p>
-                          <b>spendData</b>
-                        </p>
+                        <h3>spendData</h3>
                       </Grid.Column>
                     </Grid.Row>
-                    <Grid.Row columns={3}>
+                    <Grid.Row columns={3} className='cen' divided>
                       <Grid.Column>
-                        <b>Spending Output Index:</b>
+                        <b>Spending Output Index: </b>
                         {this.addressCache[i].spendInfo.spendData[b].spendingOutputIndex}
                       </Grid.Column>
                       <Grid.Column>
-                        <b>Value:</b>
+                        <b>Value: </b>
                         {this.addressCache[i].spendInfo.spendData[b].value}
                       </Grid.Column>
                       <Grid.Column>
-                        <b>Output Address:</b>{' '}
+                        <b>Output Address: </b>
                         <Link
                           to={
                             '/explorer/address/' +
@@ -153,22 +151,20 @@ class ExplorerAddress extends React.Component {
             <Grid.Row columns={1}>
               <Grid.Column>
                 <Grid>
-                  <Grid.Row columns={1}>
+                  <Grid.Row columns={1} className='cen'>
                     <Grid.Column>
-                      <p>
-                        <b>prevOutpoint</b>
-                      </p>
+                      <h3>prevOutpoint</h3>
                     </Grid.Column>
                   </Grid.Row>
-                  <Grid.Row columns={1}>
+                  <Grid.Row columns={1} className='cen'>
                     <Grid.Column>
-                      <b>opTxHash:</b>
+                      <b>opTxHash: </b>
                       {checkforinvalidtxid(this.addressCache[i].prevOutpoint[a][0].opTxHash)}
                     </Grid.Column>
                   </Grid.Row>
-                  <Grid.Row columns={3}>
+                  <Grid.Row columns={3} className='cen' divided>
                     <Grid.Column>
-                      <b>opIndex:</b>
+                      <b>opIndex: </b>
                       {this.addressCache[i].prevOutpoint[a][0].opIndex}
                     </Grid.Column>
                     <Grid.Column>{this.addressCache[i].prevOutpoint[a][1]}</Grid.Column>
@@ -395,16 +391,18 @@ class ExplorerAddress extends React.Component {
         <div className='opacitywhileload'>
           <Segment.Group>
             <Segment>
-              <h4>Address</h4>
-              <div id='address'>{this.address}</div>
+              <h2>Address</h2>
+              <div id='address'>
+                <h3>{this.address}</h3>
+              </div>
             </Segment>
             <Segment>
               <table id='addressummary'></table>
             </Segment>
             <Segment>
-              <h5>
+              <h2>
                 <div id='nooftransactions'></div>Transactions
-              </h5>
+              </h2>
             </Segment>
             <Segment>{this.txlist}</Segment>
             <Segment>
