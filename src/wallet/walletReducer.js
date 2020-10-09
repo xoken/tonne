@@ -61,8 +61,9 @@ export default createReducer(
       ...state,
       isLoading: false,
       balance: 0,
-      nextOutputsCursor: null,
-      outputs: [],
+      transactions: [],
+      nextTransactionCursor: null,
+      addressInfo: null,
     }),
   },
   INITIAL_STATE
