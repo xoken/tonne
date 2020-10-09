@@ -30,11 +30,11 @@ class ReceiveTransaction extends React.Component {
       const { unusedAddress } = addressInfo;
       return (
         <>
-          <h3 class='ui header'>Unused address</h3>
-          <div class='ui icon message'>
-            <i class='copy outline link icon' onClick={this.onCopy}></i>
-            <div class='content'>
-              <div class='header'>{unusedAddress}</div>
+          <h3 className='ui header'>Unused address</h3>
+          <div className='ui icon message'>
+            <i className='copy outline link icon' onClick={this.onCopy}></i>
+            <div className='content'>
+              <div className='header'>{unusedAddress}</div>
             </div>
           </div>
         </>
@@ -50,25 +50,41 @@ class ReceiveTransaction extends React.Component {
       if (usedAddressInfo.length > 0) {
         return (
           <>
-            <h3 class='ui header'>Used address</h3>
+            <h3 className='ui header'>Used address</h3>
             <Table celled>
               <Table.Header>
                 <Table.Row>
                   <Table.HeaderCell>Address</Table.HeaderCell>
-                  <Table.HeaderCell>Current Balance</Table.HeaderCell>
+                  <Table.HeaderCell>Balance</Table.HeaderCell>
                   <Table.HeaderCell>Last Transaction By</Table.HeaderCell>
                 </Table.Row>
               </Table.Header>
               <Table.Body>
-                {usedAddressInfo.map(({ address, currentBalance, lastTransaction }) => (
-                  <Table.Row>
-                    <Table.Cell className='used-address'>{address}</Table.Cell>
-                    <Table.Cell>
-                      {currentBalance !== null ? satoshiToBSV(Number(currentBalance)) + ' BSV' : ''}
-                    </Table.Cell>
-                    <Table.Cell>{lastTransaction}</Table.Cell>
-                  </Table.Row>
-                ))}
+                {usedAddressInfo.map(
+                  ({ address, incoming, outgoing, currentBalance, lastTransaction }, index) => (
+                    <Table.Row key={index.toString()}>
+                      <Table.Cell className='used-address'>{address}</Table.Cell>
+                      <Table.Cell>
+                        <div>
+                          {incoming !== null
+                            ? `Total Incoming: ${satoshiToBSV(Number(incoming))} BSV`
+                            : ''}
+                        </div>
+                        <div>
+                          {outgoing !== null
+                            ? `Total Outgoing: ${satoshiToBSV(Number(outgoing))} BSV`
+                            : ''}
+                        </div>
+                        <div>
+                          {currentBalance !== null
+                            ? `Current Balance: ${satoshiToBSV(Number(currentBalance))} BSV`
+                            : ''}
+                        </div>
+                      </Table.Cell>
+                      <Table.Cell>{lastTransaction}</Table.Cell>
+                    </Table.Row>
+                  )
+                )}
               </Table.Body>
             </Table>
           </>

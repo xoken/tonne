@@ -163,7 +163,14 @@ class SendTransaction extends React.Component {
     return (
       <div className='container'>
         <form>
-          <div className='form-group row'>
+          <div
+            className='form-group row'
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              marginRight: '-15px',
+              marginLeft: '-15px',
+            }}>
             <label htmlFor='receiverAddress' className='col-sm-3 col-form-label'>
               Pay to
             </label>
@@ -178,8 +185,15 @@ class SendTransaction extends React.Component {
               />
             </div>
           </div>
-          <div className='form-group row'>
-            <label htmlFor='amount' className='col-sm-3 col-form-label'>
+          <div
+            className='form-group row'
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              marginRight: '-15px',
+              marginLeft: '-15px',
+            }}>
+            <label htmlFor='amount' className='col-sm-4 col-form-label'>
               Amount
             </label>
             <div className='col-sm-6'>
@@ -200,8 +214,15 @@ class SendTransaction extends React.Component {
               />
             </div>
           </div>
-          <div className='form-group row'>
-            <label htmlFor='transactionFee' className='col-sm-3 col-form-label'>
+          <div
+            className='form-group row'
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              marginRight: '-15px',
+              marginLeft: '-15px',
+            }}>
+            <label htmlFor='transactionFee' className='col-sm-4 col-form-label'>
               Network Fee (Satoshis/byte)
             </label>
             <div className='col-sm-6'>
@@ -224,7 +245,14 @@ class SendTransaction extends React.Component {
               />
             </div>
           </div>
-          <div className='form-group row'>
+          <div
+            className='form-group row'
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              marginRight: '-15px',
+              marginLeft: '-15px',
+            }}>
             <div className='col-sm-12'>{this.renderMessage()}</div>
           </div>
           <button type='button' className='btn btn-primary' onClick={this.onSend}>

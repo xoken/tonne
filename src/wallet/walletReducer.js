@@ -4,9 +4,9 @@ import * as authActions from '../auth/authActions';
 
 const INITIAL_STATE = {
   isLoading: false,
+  transactions: [],
+  nextTransactionCursor: null,
   balance: 0,
-  nextOutputsCursor: null,
-  outputs: [],
   addressInfo: null,
 };
 
@@ -25,32 +25,24 @@ export default createReducer(
       ...state,
       isLoading: false,
     }),
-    [actions.getOutputsRequest]: state => ({
+    [actions.getTransactionsRequest]: state => ({
       ...state,
       isLoading: true,
     }),
-    [actions.getOutputsSuccess]: (state, { outputs, nextOutputsCursor }) => ({
+    [actions.getTransactionsSuccess]: (state, { transactions, nextTransactionCursor }) => ({
       ...state,
-      outputs: [...state.outputs, ...outputs],
-      nextOutputsCursor:
-        nextOutputsCursor !== undefined ? nextOutputsCursor : state.nextOutputsCursor,
+      transactions: [...state.transactions, ...transactions],
+      nextTransactionCursor:
+        nextTransactionCursor !== undefined ? nextTransactionCursor : state.nextTransactionCursor,
       isLoading: false,
     }),
-    [actions.getOutputsFailure]: state => ({
+    [actions.getTransactionsFailure]: state => ({
       ...state,
       isLoading: false,
     }),
     [actions.getTransactionRequest]: state => ({
       ...state,
       isLoading: true,
-    }),
-    [actions.getTransactionSuccess]: state => ({
-      ...state,
-      isLoading: false,
-    }),
-    [actions.getTransactionFailure]: state => ({
-      ...state,
-      isLoading: false,
     }),
     [actions.getAddressInfoRequest]: state => ({
       ...state,

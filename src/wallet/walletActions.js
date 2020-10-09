@@ -1,6 +1,20 @@
 import { createAction } from 'redux-act';
 import WalletService from './walletService';
 
+export const getTransactionsRequest = createAction('GET_TRANSACTIONS_REQUEST');
+export const getTransactionsSuccess = createAction('GET_TRANSACTIONS_SUCCESS');
+export const getTransactionsFailure = createAction('GET_TRANSACTIONS_FAILURE');
+
+export const updateUnconfirmedTransactionsRequest = createAction(
+  'UPDATE_UNCONFIRMED_TRANSACTIONS_REQUEST'
+);
+export const updateUnconfirmedTransactionsSuccess = createAction(
+  'UPDATE_UNCONFIRMED_TRANSACTIONS_SUCCESS'
+);
+export const updateUnconfirmedTransactionsFailure = createAction(
+  'UPDATE_UNCONFIRMED_TRANSACTIONS_FAILURE'
+);
+
 export const getOutputsRequest = createAction('GET_OUTPUTS_REQUEST');
 export const getOutputsSuccess = createAction('GET_OUTPUTS_SUCCESS');
 export const getOutputsFailure = createAction('GET_OUTPUTS_FAILURE');
@@ -28,6 +42,52 @@ export const createSendTransactionFailure = createAction('CREATE_SEND_TRANSACTIO
 export const getAddressInfoRequest = createAction('GET_ADDRESS_INFO_REQUEST');
 export const getAddressInfoSuccess = createAction('GET_ADDRESS_INFO_SUCCESS');
 export const getAddressInfoFailure = createAction('GET_ADDRESS_INFO_FAILURE');
+
+export const getTransactions = options => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(getTransactionsRequest());
+  try {
+    const {
+      wallet: { nextTransactionCursor: startkey },
+    } = getState();
+    if (startkey) {
+      options.startkey = startkey;
+    }
+    if (options.diff) {
+      const { transactions } = await serviceInjector(WalletService).getTransactions(options);
+      if (transactions.length > 0) {
+        const { balance } = await serviceInjector(WalletService).getBalance();
+        dispatch(getTransactionsSuccess({ transactions }));
+        dispatch(getBalanceSuccess({ balance }));
+      } else {
+        dispatch(getTransactionsSuccess({ transactions }));
+      }
+    } else {
+      const { transactions, nextTransactionCursor } = await serviceInjector(
+        WalletService
+      ).getTransactions(options);
+      dispatch(getBalance());
+      dispatch(getTransactionsSuccess({ transactions, nextTransactionCursor }));
+    }
+  } catch (error) {
+    dispatch(getTransactionsFailure());
+    throw error;
+  }
+};
+
+export const updateUnconfirmedTransactions = () => async (
+  dispatch,
+  getState,
+  { serviceInjector }
+) => {
+  dispatch(updateUnconfirmedTransactionsRequest());
+  try {
+    await serviceInjector(WalletService).updateUnconfirmedTransactions();
+    dispatch(updateUnconfirmedTransactionsSuccess());
+  } catch (error) {
+    dispatch(updateUnconfirmedTransactionsFailure());
+    throw error;
+  }
+};
 
 export const getOutputs = options => async (dispatch, getState, { serviceInjector }) => {
   dispatch(getOutputsRequest());
@@ -98,12 +158,13 @@ export const getTransactionFee = (receiverAddress, amountInSatoshi, feeRate) => 
 };
 
 export const getTransaction = txid => async (dispatch, getState, { serviceInjector }) => {
-  dispatch(getTransactionRequest());
+  // dispatch(getTransactionRequest());
   try {
-    const { txoutputs } = await serviceInjector(WalletService).getTransaction(txid);
-    dispatch(getTransactionSuccess({ txoutputs }));
+    const { tx } = await serviceInjector(WalletService).getTransaction(txid);
+    // dispatch(getTransactionSuccess());
+    return tx;
   } catch (error) {
-    dispatch(getTransactionFailure());
+    // dispatch(getTransactionFailure());
     throw error;
   }
 };

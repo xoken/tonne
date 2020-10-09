@@ -7,5 +7,7 @@ console.tron = Reactotron;
 Reactotron.clear();
 
 export default DebugConfig.useReactotron
-  ? Reactotron.configure({ name: 'Nipkow' }).use(reactotronRedux()).connect()
+  ? Reactotron.configure({ name: 'Nipkow', host: '127.0.0.1', port: 9000 })
+      .use(reactotronRedux())
+      .connect()
   : null;

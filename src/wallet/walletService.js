@@ -5,6 +5,14 @@ class WalletService {
     this.store = store;
   }
 
+  async getTransactions(options) {
+    return await wallet.getTransactions(options);
+  }
+
+  async updateUnconfirmedTransactions(options) {
+    return await wallet.updateUnconfirmedTransactions();
+  }
+
   async getOutputs(options) {
     return await wallet.getOutputs(options);
   }

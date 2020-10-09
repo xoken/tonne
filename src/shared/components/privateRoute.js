@@ -4,8 +4,7 @@ import { useSelector } from 'react-redux';
 import * as authSelectors from '../../auth/authSelectors';
 
 export default function PrivateRoute({ children, ...rest }) {
-  // const isAuthenticated = useSelector(state => authSelectors.isAuthenticated(state));
-  const isAuthenticated = true;
+  const isAuthenticated = useSelector(state => authSelectors.isAuthenticated(state));
   const { path } = useRouteMatch();
   return (
     <Route
@@ -17,7 +16,7 @@ export default function PrivateRoute({ children, ...rest }) {
           return (
             <Redirect
               to={{
-                pathname: `${path}/login`,
+                pathname: `${path}`,
                 state: { from: location },
               }}
             />

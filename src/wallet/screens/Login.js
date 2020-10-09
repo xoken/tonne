@@ -24,7 +24,7 @@ class Login extends React.Component {
       const profileId = queryParams.get('profile');
       try {
         await dispatch(authActions.login(profileId, password));
-        this.props.history.push('/wallet');
+        this.props.history.push('/wallet/dashboard');
       } catch (error) {
         this.setState({ error });
       }
@@ -35,14 +35,13 @@ class Login extends React.Component {
     const { password, error } = this.state;
     return (
       <div className='row'>
-        <div className='col-md-12 centerall'>
+        <div className='col-md-12'>
           <center>
             <form onSubmit={this.handleContinue}>
               <div className='form-group'>
                 <label>
                   Your wallet is encrypted with a password. Please enter your password to unlock it.
                 </label>
-                <label>Password</label>
                 <input
                   type='password'
                   className='form-control passinputwidth'

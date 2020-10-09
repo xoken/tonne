@@ -1,6 +1,5 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import { Modal, Grid, Message } from 'semantic-ui-react';
 import * as authActions from '../../auth/authActions';
 
@@ -9,9 +8,10 @@ class RenameProfile extends React.Component {
     super(props);
     this.state = {
       newname: '',
-      updateError: false
+      updateError: false,
     };
   }
+
   onRenameAccount = async () => {
     const { dispatch } = this.props;
     const { newname } = this.state;
@@ -27,6 +27,7 @@ class RenameProfile extends React.Component {
       this.setState({ updateError: false });
     }
   };
+
   printMessage = () => {
     const { updateError } = this.state;
     if (updateError) {
