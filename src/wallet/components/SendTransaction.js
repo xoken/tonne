@@ -16,13 +16,18 @@ class SendTransaction extends React.Component {
       isError: false,
       message: '',
       sliderValue: 1,
-      maxSliderValue: Math.floor(Math.log(1000000000) / Math.log(1.05))
+      maxSliderValue: Math.floor(Math.log(1000000000) / Math.log(1.05)),
     };
   }
 
   async componentDidMount() {
+    document.getElementById('feerate').max = this.state.maxSliderValue;
     const { dispatch } = this.props;
     await dispatch(walletActions.getUTXOs());
+  }
+
+  componentDidUpdate() {
+    document.getElementById('feerate').max = this.state.maxSliderValue;
   }
 
   onAmountChange = async event => {
@@ -37,13 +42,13 @@ class SendTransaction extends React.Component {
         this.setState({
           isError: false,
           message: '',
-          transactionFee: 50000000
+          transactionFee: 50000000,
         });
       } else {
         this.setState({
           isError: false,
           message: '',
-          transactionFee
+          transactionFee,
         });
       }
     } catch (error) {
@@ -99,7 +104,7 @@ class SendTransaction extends React.Component {
     if (tempFeeRate <= 5) {
       this.setState({
         feeRate: 5,
-        sliderValue: feeRate
+        sliderValue: feeRate,
       });
     }
     // else if (tempFeeRate >= 1000000000) {
@@ -111,7 +116,7 @@ class SendTransaction extends React.Component {
     else {
       this.setState({
         feeRate: Math.floor(Math.pow(1.05, feeRate)),
-        sliderValue: feeRate
+        sliderValue: feeRate,
       });
     }
     if (Number(amountInSatoshi) > 0) {
@@ -130,7 +135,7 @@ class SendTransaction extends React.Component {
             message: '',
             transactionFee: 50000000,
             //  sliderDisabled: true,
-            maxSliderValue: feeRate
+            maxSliderValue: feeRate,
             //sliderValue: feeRate
           });
         } else {
@@ -138,7 +143,7 @@ class SendTransaction extends React.Component {
             isError: false,
             message: '',
             //  sliderDisabled: false,
-            transactionFee
+            transactionFee,
           });
         }
       } catch (error) {
@@ -148,18 +153,12 @@ class SendTransaction extends React.Component {
       this.setState({
         isError: false,
         message: '',
-        transactionFee: 0
+        transactionFee: 0,
       });
     }
   };
-  componentDidMount() {
-    document.getElementById('feerate').max = this.state.maxSliderValue;
-  }
-  componentDidUpdate() {
-    document.getElementById('feerate').max = this.state.maxSliderValue;
-  }
+
   render() {
-    const { dispatch } = this.props;
     const { receiverAddress, amountInSatoshi, transactionFee, feeRate, sliderValue } = this.state;
     return (
       <div className='container'>
@@ -241,13 +240,13 @@ class SendTransaction extends React.Component {
 }
 
 SendTransaction.propTypes = {
-  dispatch: PropTypes.func.isRequired
+  dispatch: PropTypes.func.isRequired,
 };
 
 SendTransaction.defaultProps = {};
 
 const mapStateToProps = state => ({
-  isLoading: walletSelectors.isLoading(state)
+  isLoading: walletSelectors.isLoading(state),
 });
 
 export default connect(mapStateToProps)(SendTransaction);
