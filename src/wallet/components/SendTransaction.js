@@ -193,7 +193,7 @@ class SendTransaction extends React.Component {
               marginRight: '-15px',
               marginLeft: '-15px',
             }}>
-            <label htmlFor='amount' className='col-sm-4 col-form-label'>
+            <label htmlFor='amount' className='col-sm-3 col-form-label'>
               Amount
             </label>
             <div className='col-sm-6'>
@@ -222,7 +222,7 @@ class SendTransaction extends React.Component {
               marginRight: '-15px',
               marginLeft: '-15px',
             }}>
-            <label htmlFor='transactionFee' className='col-sm-4 col-form-label'>
+            <label htmlFor='transactionFee' className='col-sm-3 col-form-label'>
               Network Fee (Satoshis/byte)
             </label>
             <div className='col-sm-6'>
