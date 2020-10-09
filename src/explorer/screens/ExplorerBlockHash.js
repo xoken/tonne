@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { Segment, Grid } from 'semantic-ui-react';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 
 class ExplorerBlockHeight extends React.Component {
@@ -44,6 +45,30 @@ class ExplorerBlockHeight extends React.Component {
   backheight;
 
   initBlockHash = async () => {
+    this.currentblockhash = '';
+    this.numberoftransactions = 0;
+    this.batches = 1;
+    this.currentbatchnum = 1;
+    this.numberofpages = 0;
+    this.pagearray.length = 0;
+    this.pagearrlength = 5;
+    this.selected = 1;
+    this.txcache.length = 0;
+    this.numofdisplayedpages = 0;
+    this.serverpagenumber = 1;
+    this.txfinished = 0;
+    this.fixedarrlength = 5;
+    this.txnumber = 0;
+    this.transactionsperpage = 10;
+    this.summarysect1.length = 0;
+    this.summarysect2.length = 0;
+    this.pagescontainer.length = 0;
+    this.txsection.length = 0;
+    this.blocktitle = '';
+    this.title = '';
+    this.blockhash = '';
+    this.backheight = '';
+
     this.rjdecoded = await ExplorerHttpsReq.httpsreq(
       'getBlockByBlockHash',
       this.props.match.params.blockhash
@@ -65,117 +90,121 @@ class ExplorerBlockHeight extends React.Component {
     this.date = new Date(this.rjdecoded.block.header.blockTimestamp * 1000);
     this.summarysect1.push(
       <>
-        <tr>
-          <td>
-            <b>Previous Block</b>
-          </td>
-          <td>
-            <Link
-              id='previousblock'
-              to={'/explorer/blockhash/' + this.rjdecoded.block.header.prevBlock + '/""'}>
-              {this.rjdecoded.block.header.prevBlock}
-            </Link>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <b>Block Version</b>
-          </td>
-          <td>
-            <div id='blockversion'>{this.rjdecoded.block.header.blockVersion}</div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <b>txCount</b>
-          </td>
-          <td>
-            <div id='txcount'>{this.rjdecoded.block.txCount}</div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <b>Nonce</b>
-          </td>
-          <td>
-            <div id='bhnonce'>{this.rjdecoded.block.header.nonce}</div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <b>coinbaseTx</b>
-          </td>
-          <td>
-            <div id='coinbasetx'>{this.rjdecoded.block.coinbaseTx}</div>
-          </td>
-        </tr>
+        <Grid>
+          <Grid.Row columns={2}>
+            <Grid.Column>
+              <b>Previous Block</b>
+            </Grid.Column>
+            <Grid.Column>
+              <Link
+                to={'/explorer/blockhash/' + this.rjdecoded.block.header.prevBlock + '/""'}
+                id='previousblock'>
+                {this.rjdecoded.block.header.prevBlock}
+              </Link>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column>
+              <b>Block Version</b>
+            </Grid.Column>
+            <Grid.Column>
+              <div id='blockversion'>{this.rjdecoded.block.header.blockVersion}</div>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column>
+              <b>txCount</b>
+            </Grid.Column>
+            <Grid.Column>
+              <div id='txcount'>{this.rjdecoded.block.txCount}</div>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column>
+              <b>Nonce</b>
+            </Grid.Column>
+            <Grid.Column>
+              <div id='bhnonce'>{this.rjdecoded.block.header.nonce}</div>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column>
+              <b>coinbaseTx</b>
+            </Grid.Column>
+            <Grid.Column>
+              <div id='coinbasetx'>{this.rjdecoded.block.coinbaseTx}</div>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
       </>
     );
     this.summarysect2.push(
       <>
-        <tr>
-          <td>
-            <b>Next Block</b>
-          </td>
-          <td>
-            <Link
-              id='nextblock'
-              to={'/explorer/blockhash/' + this.rjdecoded.block.nextBlockHash + '/""'}>
-              {this.rjdecoded.block.nextBlockHash}
-            </Link>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <b>Block Bits</b>
-          </td>
-          <td>
-            <div id='blockbits'>{this.rjdecoded.block.header.blockBits}</div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <b>Size</b>
-          </td>
-          <td>
-            <div id='size'>{this.rjdecoded.block.size}</div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <b>Timestamp (UTC)</b>
-          </td>
-          <td>
-            <div id='timestamp'>
-              {this.date.getDate()}/{this.date.getMonth() + 1}/{this.date.getFullYear()}-
-              {this.date.getHours()}:{this.date.getMinutes()}:{this.date.getSeconds()}
-            </div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <b>Merkle Root</b>
-          </td>
-          <td>
-            <div id='merkleroot'>{this.rjdecoded.block.header.merkleRoot}</div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <b>coinbaseMessage</b>
-          </td>
-          <td>
-            <div id='coinbasemessage'>{this.rjdecoded.block.coinbaseMessage}</div>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <b>guessedMiner</b>
-          </td>
-          <td>
-            <div id='guessedminer'>{this.rjdecoded.block.guessedMiner}</div>
-          </td>
-        </tr>
+        <Grid>
+          <Grid.Row columns={2}>
+            <Grid.Column>
+              <b>Next Block</b>
+            </Grid.Column>
+            <Grid.Column>
+              <Link
+                to={'/explorer/blockhash/' + this.rjdecoded.block.nextBlockHash + '/""'}
+                id='nextblock'>
+                {this.rjdecoded.block.nextBlockHash}
+              </Link>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column>
+              <b>Block Bits</b>
+            </Grid.Column>
+            <Grid.Column>
+              <div id='blockbits'>{this.rjdecoded.block.header.blockBits}</div>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column>
+              <b>Size</b>
+            </Grid.Column>
+            <Grid.Column>
+              <div id='size'>{this.rjdecoded.block.size}</div>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column>
+              <b>Timestamp (UTC)</b>
+            </Grid.Column>
+            <Grid.Column>
+              <div id='timestamp'>
+                {this.date.getDate()}/{this.date.getMonth() + 1}/{this.date.getFullYear()}-
+                {this.date.getHours()}:{this.date.getMinutes()}:{this.date.getSeconds()}
+              </div>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column>
+              <b>Merkle Root</b>
+            </Grid.Column>
+            <Grid.Column>
+              <div id='merkleroot'>{this.rjdecoded.block.header.merkleRoot}</div>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column>
+              <b>coinbaseMessage</b>
+            </Grid.Column>
+            <Grid.Column>
+              <div id='coinbasemessage'>{this.rjdecoded.block.coinbaseMessage}</div>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column>
+              <b>guessedMiner</b>
+            </Grid.Column>
+            <Grid.Column>
+              <div id='guessedminer'>{this.rjdecoded.block.guessedMiner}</div>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
       </>
     );
 
@@ -451,13 +480,22 @@ class ExplorerBlockHeight extends React.Component {
     var printbreaker = 1;
     this.txnumber = (this.selected - 1) * this.transactionsperpage;
     for (var k = this.txnumber; k < this.numberoftransactions; k++) {
+      if (!this.txcache[k]) {
+        break;
+      }
       this.txsection.push(
-        <tr className='txrows'>
-          <td>
-            ({this.txnumber + printbreaker})-
-            <Link to={'/explorer/transaction/' + this.txcache[k]}>{this.txcache[k]}</Link>
-          </td>
-        </tr>
+        <Segment.Group>
+          <Segment>
+            <Grid columns={1}>
+              <Grid.Row>
+                <Grid.Column>
+                  ({this.txnumber + printbreaker})-
+                  <Link to={'/explorer/transaction/' + this.txcache[k]}>{this.txcache[k]}</Link>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+          </Segment>
+        </Segment.Group>
       );
       if (printbreaker === this.transactionsperpage) {
         break;
@@ -480,22 +518,27 @@ class ExplorerBlockHeight extends React.Component {
       if (this.numberofpages <= this.pagearrlength) {
         this.numofdisplayedpages = this.numberofpages;
         this.pagearrlength = this.numberofpages;
+        for (var i = 0; i < this.pagearrlength; i++) {
+          this.pagearray[i] = i + 1;
+        }
       } else {
         this.numofdisplayedpages = this.pagearrlength;
+        for (var j = 0; j < this.pagearrlength; j++) {
+          this.pagearray[j] = j + 1;
+        }
       }
-      for (var i = 0; i < this.pagearrlength; i++) {
-        this.pagearray[i] = i + 1;
-      }
+
       this.batches = Math.ceil(this.numberofpages / this.fixedarrlength);
       this.txcaching();
-      this.transactionprinting();
       this.printpagination();
+      this.transactionprinting();
     }
   };
 
   txcaching = () => {
     if (Object.keys(this.rjdecoded.txids).length > 0) {
       var tempindex;
+      console.log(this.txcache.length + 'this.txcache.length');
       if (this.txcache.length === 0) {
         tempindex = 0;
       } else {
@@ -532,59 +575,71 @@ class ExplorerBlockHeight extends React.Component {
           Back
         </Link>
         <div className='opacitywhileload'>
-          <div className='row'>
-            <div className='col-md-12 col-lg-12'>
+          <Segment.Group>
+            <Segment>
               <h4>Block</h4>
               <h5 id='blocktitle'># {this.blocktitle}</h5>
               <div id='blockhash'>Block - {this.blockhash}</div>
               <hr />
-            </div>
-          </div>
-          <div className='row'>
-            <div className='col-md-12 col-lg-12'>
+            </Segment>
+            <Segment>
               <h4>Summary</h4>
-            </div>
-          </div>
-          <div className='row'>
-            <div className='col-md-6 col-lg-6 summaryblock1'>
-              <table className='tdborderbottom'>{this.summarysect1}</table>
-            </div>
-            <div className='col-md-6 col-lg-6'>
-              <table className='tdborderbottom'>{this.summarysect2}</table>
-            </div>
-          </div>
-          <hr />
-          <div className='row'>
-            <div className='col-md-12 col-lg-12 text-center'>
-              <table id='transactionsection'>{this.txsection}</table>
-              <br />
-            </div>
-          </div>
-          <div className='row'>
-            <div className='col-md-12 col-lg-12 text-center'>
-              <nav aria-label='transactions navigation'>
-                <ul className='pagination justify-content-center' id='pagination'>
-                  {this.pagescontainer}
-                </ul>
-              </nav>
-              Enter page number
-              <form onSubmit={this.pagebutton}>
-                <input
-                  className='pagenuminput'
-                  size='5'
-                  type='text'
-                  onChange={event =>
-                    this.setState({
-                      selectnum: event.target.value
-                    })
-                  }
-                />
-                <button className='btn btn-primary' type='submit' id='pagebutton'>
-                  Go
-                </button>
-              </form>
-            </div>
-          </div>
+            </Segment>
+            <Segment>
+              <Segment.Group horizontal>
+                <Segment>
+                  <Grid columns={2} divided>
+                    <Grid.Row>
+                      <Grid.Column>{this.summarysect1}</Grid.Column>
+
+                      <Grid.Column>{this.summarysect2}</Grid.Column>
+                    </Grid.Row>
+                  </Grid>
+                  <Grid columns={1}>
+                    <Grid.Row>
+                      <Grid.Column className='cen'>{this.txsection}</Grid.Column>
+                    </Grid.Row>
+
+                    <Grid.Row>
+                      <Grid.Column className='cen'>
+                        <nav aria-label='transactions navigation'>
+                          <ul className='pagination justify-content-center' id='pagination'>
+                            {this.pagescontainer}
+                          </ul>
+                        </nav>
+                        Enter page number
+                        <form onSubmit={this.pagebutton}>
+                          <div className='ui form'>
+                            <div className='inline fields'>
+                              <div className='six wide field'></div>
+                              <div className='three wide field'>
+                                <input
+                                  className='pagenuminput'
+                                  size='5'
+                                  type='text'
+                                  onChange={event =>
+                                    this.setState({
+                                      enteredpagenumber: event.target.value
+                                    })
+                                  }
+                                />
+                              </div>
+                              <div className='one wide field'>
+                                <button className='btn btn-primary' type='submit' id='pagebutton'>
+                                  Go
+                                </button>
+                              </div>
+                              <div className='six wide field'></div>
+                            </div>
+                          </div>
+                        </form>
+                      </Grid.Column>
+                    </Grid.Row>
+                  </Grid>
+                </Segment>
+              </Segment.Group>
+            </Segment>
+          </Segment.Group>
         </div>
       </>
     );

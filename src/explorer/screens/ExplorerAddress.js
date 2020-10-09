@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { Segment, Grid } from 'semantic-ui-react';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 
 class ExplorerAddress extends React.Component {
@@ -56,131 +57,129 @@ class ExplorerAddress extends React.Component {
     for (var i = txnumber; i < this.addressCache.length; i++) {
       this.txlist.push(
         <>
-          <tr>
-            <td className='txslnum'>
-              #({i + 1}) -{' '}
-              <Link to={'/explorer/transaction/' + this.addressCache[i].outputTxHash}>
-                {this.addressCache[i].outputTxHash}
-              </Link>{' '}
-              - outputTxHash
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <table className='subtable'>
-                <tr>
-                  <td>
-                    <b>Transaction Index:</b>
-                    {this.addressCache[i].txIndex}
-                  </td>
-                  <td>
-                    <b>Value:</b>
-                    {this.addressCache[i].value}
-                  </td>
-                  <td>
-                    <b>Output Index:</b>
-                    {this.addressCache[i].outputIndex}
-                  </td>
-                  <td>
-                    <b>Block Height:</b>
-                    <Link to={'/explorer/blockheight/' + this.addressCache[i].blockHeight + '/""'}>
-                      {this.addressCache[i].blockHeight}
-                    </Link>
-                  </td>
-                </tr>
-                <tr>
-                  <td colspan='4'>
-                    <b>Block Hash:</b>{' '}
-                    <Link to={'/explorer/blockhash/' + this.addressCache[i].blockHash + '/""'}>
-                      {this.addressCache[i].blockHash}
-                    </Link>
-                  </td>
-                </tr>
-              </table>
-            </td>
-          </tr>
+          <Grid>
+            <Grid.Row columns={1}>
+              <Grid.Column>
+                #({i + 1}) -
+                <Link to={'/explorer/transaction/' + this.addressCache[i].outputTxHash}>
+                  {this.addressCache[i].outputTxHash}
+                </Link>
+                - outputTxHash
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row columns={1}>
+              <Grid.Column>
+                <Grid>
+                  <Grid.Row columns={4}>
+                    <Grid.Column>
+                      <b>Transaction Index:</b>
+                      {this.addressCache[i].txIndex}
+                    </Grid.Column>
+                    <Grid.Column>
+                      <b>Value:</b>
+                      {this.addressCache[i].value}
+                    </Grid.Column>
+                    <Grid.Column>
+                      <b>Output Index:</b>
+                      {this.addressCache[i].outputIndex}
+                    </Grid.Column>
+                    <Grid.Column>
+                      <b>Block Height:</b>
+                      <Link
+                        to={'/explorer/blockheight/' + this.addressCache[i].blockHeight + '/""'}>
+                        {this.addressCache[i].blockHeight}
+                      </Link>
+                    </Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row columns={1}>
+                    <Grid.Column>
+                      <b>Block Hash:</b>
+                      <Link to={'/explorer/blockhash/' + this.addressCache[i].blockHash + '/""'}>
+                        {this.addressCache[i].blockHash}
+                      </Link>
+                    </Grid.Column>
+                  </Grid.Row>
+                </Grid>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
         </>
       );
       if (this.addressCache[i].spendInfo != null) {
         for (var b = 0; b < Object.keys(this.addressCache[i].spendInfo.spendData).length; b++) {
           this.txlist.push(
-            <tr>
-              <td className='spendinfo0'>
-                <hr />
-                <table className='subtable'>
-                  <tr>
-                    <th>
-                      <p>
-                        <b>spendData</b>
-                      </p>
-                    </th>
-                  </tr>
-                  <tr>
-                    <td>
-                      <b>Spending Output Index:</b>
-                      {this.addressCache[i].spendInfo.spendData[b].spendingOutputIndex}
-                    </td>
-                    <td>
-                      <b>Value:</b>
-                      {this.addressCache[i].spendInfo.spendData[b].value}
-                    </td>
-                    <td>
-                      <b>Output Address:</b>{' '}
-                      <Link
-                        to={
-                          '/explorer/address/' +
-                          this.addressCache[i].spendInfo.spendData[b].outputAddress +
-                          '/""'
-                        }>
-                        {this.addressCache[i].spendInfo.spendData[b].outputAddress}
-                      </Link>
-                    </td>
-                  </tr>
-                </table>
-              </td>
-            </tr>
+            <Grid>
+              <Grid.Row columns={1}>
+                <Grid.Column>
+                  <Grid>
+                    <Grid.Row columns={1}>
+                      <Grid.Column>
+                        <p>
+                          <b>spendData</b>
+                        </p>
+                      </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row columns={3}>
+                      <Grid.Column>
+                        <b>Spending Output Index:</b>
+                        {this.addressCache[i].spendInfo.spendData[b].spendingOutputIndex}
+                      </Grid.Column>
+                      <Grid.Column>
+                        <b>Value:</b>
+                        {this.addressCache[i].spendInfo.spendData[b].value}
+                      </Grid.Column>
+                      <Grid.Column>
+                        <b>Output Address:</b>{' '}
+                        <Link
+                          to={
+                            '/explorer/address/' +
+                            this.addressCache[i].spendInfo.spendData[b].outputAddress +
+                            '/""'
+                          }>
+                          {this.addressCache[i].spendInfo.spendData[b].outputAddress}
+                        </Link>
+                      </Grid.Column>
+                    </Grid.Row>
+                  </Grid>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
           );
         }
       }
       for (var a = 0; a < Object.keys(this.addressCache[i].prevOutpoint).length; a++) {
         this.txlist.push(
-          <tr>
-            <td className='spendinfo0'>
-              <hr />
-              <table className='subtable'>
-                <tr>
-                  <th>
-                    <p>
-                      <b>prevOutpoint</b>
-                    </p>
-                  </th>
-                </tr>
-                <tr>
-                  <td colspan='3'>
-                    <b>opTxHash:</b>{' '}
-                    {checkforinvalidtxid(this.addressCache[i].prevOutpoint[a][0].opTxHash)}
-                  </td>
-                </tr>
-                <tr>
-                  <td>
-                    <b>opIndex:</b>
-                    {this.addressCache[i].prevOutpoint[a][0].opIndex}
-                  </td>
-                  <td>{this.addressCache[i].prevOutpoint[a][1]}</td>
-                  <td>{this.addressCache[i].prevOutpoint[a][2]}</td>
-                </tr>
-              </table>
-            </td>
-          </tr>
+          <Grid>
+            <Grid.Row columns={1}>
+              <Grid.Column>
+                <Grid>
+                  <Grid.Row columns={1}>
+                    <Grid.Column>
+                      <p>
+                        <b>prevOutpoint</b>
+                      </p>
+                    </Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row columns={1}>
+                    <Grid.Column>
+                      <b>opTxHash:</b>
+                      {checkforinvalidtxid(this.addressCache[i].prevOutpoint[a][0].opTxHash)}
+                    </Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row columns={3}>
+                    <Grid.Column>
+                      <b>opIndex:</b>
+                      {this.addressCache[i].prevOutpoint[a][0].opIndex}
+                    </Grid.Column>
+                    <Grid.Column>{this.addressCache[i].prevOutpoint[a][1]}</Grid.Column>
+                    <Grid.Column>{this.addressCache[i].prevOutpoint[a][2]}</Grid.Column>
+                  </Grid.Row>
+                </Grid>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
         );
       }
-
-      this.txlist.push(
-        <>
-          <br />
-          <br />
-        </>
-      );
       if (printbreaker === this.outputsperpage) {
         break;
       }
@@ -188,7 +187,7 @@ class ExplorerAddress extends React.Component {
       printbreaker += 1;
     }
     this.setState({
-      selectnum: this.selected,
+      selectnum: this.selected
     });
   };
 
@@ -328,7 +327,7 @@ class ExplorerAddress extends React.Component {
       this.printpagination();
     }
     this.setState({
-      leftright: this.currentbatchnum,
+      leftright: this.currentbatchnum
     });
   };
   rightlistener = async event => {
@@ -372,7 +371,7 @@ class ExplorerAddress extends React.Component {
       }
     }
     this.setState({
-      leftright: this.currentbatchnum,
+      leftright: this.currentbatchnum
     });
   };
 
@@ -384,51 +383,38 @@ class ExplorerAddress extends React.Component {
       this.initAddress();
     }
   }
+  onBack = () => {
+    this.props.history.goBack();
+  };
   render() {
     return (
       <>
-        {
-          //    <button onClick={this.props.history.goBack()} className='btn btn-primary'>
-          //    Back
-          //  </button>
-        }
+        <button onClick={this.onBack} className='btn btn-primary'>
+          Back
+        </button>
         <div className='opacitywhileload'>
-          <div className='row'>
-            <div className='col-md-12 col-lg-12'>
+          <Segment.Group>
+            <Segment>
               <h4>Address</h4>
-              <br />
               <div id='address'>{this.address}</div>
-              <hr />
-            </div>
-          </div>
-
-          <div className='row'>
-            <div className='col-md-12 col-lg-12 summaryblock1'>
+            </Segment>
+            <Segment>
               <table id='addressummary'></table>
-            </div>
-          </div>
-
-          <div className='row'>
-            <div className='col-md-12 col-lg-12'>
+            </Segment>
+            <Segment>
               <h5>
                 <div id='nooftransactions'></div>Transactions
               </h5>
-            </div>
-          </div>
-          <div className='row'>
-            <div className='col-md-12 col-lg-12'>
-              <table id='txlist'>{this.txlist}</table>
-            </div>
-          </div>
-          <div className='row'>
-            <div className='col-md-12 col-lg-12'>
+            </Segment>
+            <Segment>{this.txlist}</Segment>
+            <Segment>
               <nav aria-label='transactions navigation'>
                 <ul className='pagination justify-content-center' id='pagination'>
                   {this.pagescontainer}
                 </ul>
               </nav>
-            </div>
-          </div>
+            </Segment>
+          </Segment.Group>
         </div>
       </>
     );
