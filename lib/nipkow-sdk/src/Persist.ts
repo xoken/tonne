@@ -3,7 +3,6 @@ import MemoryAdapter from 'pouchdb-adapter-memory';
 import pouchdbFind from 'pouchdb-find';
 import CryptoJS from 'crypto-js';
 import AES from 'crypto-js/aes';
-import * as _ from 'lodash';
 
 PouchDB.plugin(MemoryAdapter);
 PouchDB.plugin(pouchdbFind);
@@ -251,14 +250,20 @@ export const upsertOutputs = async (outputs: any) => {
 };
 
 export const updateOutputs = async (outputs: any) => {
+  const updateDoc = [];
+  for (let index = 0; index < outputs.length; index++) {
+    const element = outputs[index];
+    const outputDoc = await db.get(element._id);
+    updateDoc.push({ ...element, _rev: outputDoc._rev });
+  }
   const { doc } = await getOutputsLastUpdated();
-  outputs.push({
+  updateDoc.push({
     _id: 'lastUpdated',
     _rev: doc._rev,
     value: new Date(),
   });
   try {
-    const results = await db.bulkDocs(outputs);
+    const results = await db.bulkDocs(updateDoc);
     results.forEach((result: { error: any }) => {
       if (result.error) {
         throw new Error('Error in updating utxos');
@@ -281,7 +286,7 @@ export const isInOutputs = async (output: {
     selector: {
       outputTxHash: { $eq: output.outputTxHash },
       outputIndex: { $eq: output.outputIndex },
-      spendInfo: { $eq: output.spendInfo },
+      // spendInfo: { $eq: output.spendInfo },
     },
   });
   if (outputDoc.docs.length > 0) return true;
@@ -370,6 +375,18 @@ export const upsertUnconfirmedTransactions = async (transactions: any) => {
           ? transaction._id
           : `unconfirmedTransaction-${String(txId).padStart(20, '0')}`,
         ...transaction,
+      };
+    });
+    await db.bulkDocs(docs);
+  }
+};
+
+export const deleteUnconfirmedTx = async (transactions: any) => {
+  if (transactions.length > 0) {
+    const docs = transactions.map((transaction: any, index: number) => {
+      return {
+        ...transaction,
+        _deleted: true,
       };
     });
     await db.bulkDocs(docs);
