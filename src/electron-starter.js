@@ -5,8 +5,8 @@ var widthHeight;
 function createWindow() {
   // Create the browser window.
   let win = new BrowserWindow({
-    width: Math.ceil(widthHeight.width * 0.7),
-    height: Math.ceil(widthHeight.height * 0.7),
+    // width: Math.ceil(widthHeight.width * 0.7),
+    // height: Math.ceil(widthHeight.height * 0.7),
     show: false,
     //frame: false,
     webPreferences: {
@@ -14,18 +14,17 @@ function createWindow() {
       webSecurity: false,
     },
   });
-  // win.maximize();
+  win.maximize();
   win.show();
   // and load the index.html of the app.
   // win.loadFile('src/index.html');
   const url = 'http://localhost:3000';
   // const url = 'http://localhost:3000/#/wallet/send';
-  //const url = `file://${path.join(__dirname, '/../build/index.html')}`;
-  // console.log(url);
+  // const url = `file://${path.join(__dirname, '/../build/index.html')}`;
   win.loadURL(url);
   //win.webContents.send('win', win);
   // Open the DevTools.
-  // win.webContents.openDevTools();
+  win.webContents.openDevTools();
 }
 
 // This method will be called when Electron has finished

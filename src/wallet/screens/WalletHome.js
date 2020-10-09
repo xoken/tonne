@@ -1,16 +1,8 @@
 import React from 'react';
-import { Link, Route, Switch, withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { Redirect } from 'react-router-dom';
 import { Divider, Grid, GridColumn, Header, List, Loader, Segment } from 'semantic-ui-react';
-import ExistingWallet from './ExistingWallet';
-import Login from './Login';
-import NewWallet from './NewWallet';
-import NoMatch from '../../shared/components/noMatch';
-import PrivateRoute from '../../shared/components/privateRoute';
-import PublicRoute from '../../shared/components/publicRoute';
-import SendTransaction from '../components/SendTransaction';
-import WalletDashboard from './WalletDashboard';
-import WalletPassword from './WalletPassword';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
 
@@ -25,7 +17,7 @@ class WalletHome extends React.Component {
     this.props.history.push(`/wallet/login?profile=${profile}`);
   };
 
-  renderExistingProfile() {
+  renderContent() {
     const { profiles } = this.props;
     return (
       <Grid verticalAlign='middle' style={{ height: '100%' }}>
@@ -53,7 +45,7 @@ class WalletHome extends React.Component {
                 </Grid.Column>
               )}
               <Grid.Column>
-                <Grid.Row style={styles.row}>
+                <Grid.Row>
                   <Grid.Column>
                     <Header>I already have a seed phrase</Header>
                     <p>Import your existing wallet using a 12 word seed phrase</p>
@@ -63,7 +55,7 @@ class WalletHome extends React.Component {
                   </Grid.Column>
                 </Grid.Row>
                 <Divider horizontal>Or</Divider>
-                <Grid.Row style={styles.row}>
+                <Grid.Row>
                   <Grid.Column>
                     <Header>Yes, let's get set up!</Header>
                     <p>This will create a new wallet and seed phrase</p>
@@ -81,59 +73,17 @@ class WalletHome extends React.Component {
     );
   }
 
-  renderContent() {
+  render() {
     const { isLoading, profile } = this.props;
     if (isLoading) {
-      return (
-        <Loader active size='massive'>
-          Loading
-        </Loader>
-      );
+      return <Loader active size='massive' />;
     } else if (profile) {
-      return <WalletDashboard />;
-    } else {
-      return <>{this.renderExistingProfile()}</>;
+      return <Redirect to='/wallet/dashboard' />;
     }
-  }
-
-  render() {
-    const { path } = this.props.match;
-    return (
-      <Switch>
-        <PublicRoute path={`${path}/existing`}>
-          <ExistingWallet />
-        </PublicRoute>{' '}
-        <PublicRoute path={`${path}/new`}>
-          <NewWallet />
-        </PublicRoute>
-        <PublicRoute path={`${path}/login`}>
-          <Login />
-        </PublicRoute>
-        <PublicRoute path={`${path}/password`}>
-          <WalletPassword />
-        </PublicRoute>
-        <PrivateRoute path={`${path}/send`}>
-          <SendTransaction />
-        </PrivateRoute>
-        <PrivateRoute exact path={path}>
-          {this.renderContent()}
-        </PrivateRoute>
-        <Route path='*'>
-          <NoMatch />
-        </Route>
-      </Switch>
-    );
+    return <>{this.renderContent()}</>;
   }
 }
 
-const styles = {
-  row: {
-    display: 'block',
-    flexWrap: 'nowrap',
-    marginRight: '-15',
-    marginLeft: '-15',
-  },
-};
 const mapStateToProps = state => ({
   isLoading: authSelectors.isLoading(state),
   profile: authSelectors.getProfile(state),

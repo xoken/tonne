@@ -15,13 +15,8 @@ class SendTransaction extends React.Component {
       feeRate: 5,
       isError: false,
       message: '',
-      sliderValue: 1
+      sliderValue: 1,
     };
-  }
-
-  async componentDidMount() {
-    const { dispatch } = this.props;
-    await dispatch(walletActions.getUTXOs());
   }
 
   onAmountChange = async event => {
@@ -29,14 +24,13 @@ class SendTransaction extends React.Component {
     const { receiverAddress, feeRate } = this.state;
     this.setState({ amountInSatoshi: event.target.value });
     try {
-      debugger;
       const transactionFee = await dispatch(
         walletActions.getTransactionFee(receiverAddress, event.target.value, Number(feeRate))
       );
       this.setState({
         isError: false,
         message: '',
-        transactionFee
+        transactionFee,
       });
     } catch (error) {
       this.setState({ isError: true, message: error.message });
@@ -90,12 +84,12 @@ class SendTransaction extends React.Component {
     if (tempFeeRate <= 5) {
       this.setState({
         feeRate: 5,
-        sliderValue: 1
+        sliderValue: 1,
       });
     } else {
       this.setState({
         feeRate: Math.floor(Math.pow(1.03, event.target.value)),
-        sliderValue: event.target.value
+        sliderValue: event.target.value,
       });
     }
     if (Number(amountInSatoshi) > 0) {
@@ -107,7 +101,6 @@ class SendTransaction extends React.Component {
             Number(event.target.value)
           )
         );
-        console.log(transactionFee);
         this.setState({ isError: false, message: '', transactionFee });
       } catch (error) {
         this.setState({ isError: true, message: error.message });
@@ -120,7 +113,14 @@ class SendTransaction extends React.Component {
     return (
       <div className='container'>
         <form>
-          <div className='form-group row'>
+          <div
+            className='form-group row'
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              marginRight: '-15px',
+              marginLeft: '-15px',
+            }}>
             <label htmlFor='receiverAddress' className='col-sm-4 col-form-label'>
               Pay to
             </label>
@@ -135,7 +135,14 @@ class SendTransaction extends React.Component {
               />
             </div>
           </div>
-          <div className='form-group row'>
+          <div
+            className='form-group row'
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              marginRight: '-15px',
+              marginLeft: '-15px',
+            }}>
             <label htmlFor='amount' className='col-sm-4 col-form-label'>
               Amount
             </label>
@@ -157,7 +164,14 @@ class SendTransaction extends React.Component {
               />
             </div>
           </div>
-          <div className='form-group row'>
+          <div
+            className='form-group row'
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              marginRight: '-15px',
+              marginLeft: '-15px',
+            }}>
             <label htmlFor='transactionFee' className='col-sm-4 col-form-label'>
               Network Fee (Satoshis/byte)
             </label>
@@ -181,7 +195,14 @@ class SendTransaction extends React.Component {
               />
             </div>
           </div>
-          <div className='form-group row'>
+          <div
+            className='form-group row'
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              marginRight: '-15px',
+              marginLeft: '-15px',
+            }}>
             <div className='col-sm-12'>{this.renderMessage()}</div>
           </div>
           <button type='button' className='btn btn-primary' onClick={this.onSend}>
@@ -197,13 +218,13 @@ class SendTransaction extends React.Component {
 }
 
 SendTransaction.propTypes = {
-  dispatch: PropTypes.func.isRequired
+  dispatch: PropTypes.func.isRequired,
 };
 
 SendTransaction.defaultProps = {};
 
 const mapStateToProps = state => ({
-  isLoading: walletSelectors.isLoading(state)
+  isLoading: walletSelectors.isLoading(state),
 });
 
 export default connect(mapStateToProps)(SendTransaction);

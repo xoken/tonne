@@ -182,7 +182,7 @@ class ExistingWallet extends React.Component {
           </div>
         </div>
         <div className='row'>
-          <div className='col-md-12 centerall'>
+          <div className='col-md-12'>
             <br />
             <br />
 

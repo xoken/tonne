@@ -3,12 +3,13 @@ import MemoryAdapter from 'pouchdb-adapter-memory';
 import pouchdbFind from 'pouchdb-find';
 import CryptoJS from 'crypto-js';
 import AES from 'crypto-js/aes';
+import * as _ from 'lodash';
 
 PouchDB.plugin(MemoryAdapter);
 PouchDB.plugin(pouchdbFind);
 
 let profiles: any;
-let outputsDB: any;
+let db: any;
 let credentials: any;
 
 export const BIP32_EXTENDED_KEY = 'bip32ExtendedKey';
@@ -24,7 +25,7 @@ const set = async (db: any, key: string, value: any) => {
 };
 
 export const init = async (dbName: string) => {
-  outputsDB = new PouchDB(`${dbName}`, {
+  db = new PouchDB(`${dbName}`, {
     revs_limit: 1,
     auto_compaction: true,
   });
@@ -144,7 +145,7 @@ export const setBip32ExtendedKey = async (value: any) =>
   await set(credentials, BIP32_EXTENDED_KEY, { value });
 
 export const getDerivedKeys = async () => {
-  const response = await outputsDB.allDocs({
+  const response = await db.allDocs({
     include_docs: true,
     startkey: 'key',
     endkey: 'key\ufff0',
@@ -172,7 +173,7 @@ export const upsertDerivedKeys = async (keys: any) => {
         ...key,
       };
     });
-    await outputsDB.bulkDocs(docs);
+    await db.bulkDocs(docs);
   }
 };
 
@@ -181,7 +182,7 @@ export const getOutputs = async (options?: {
   limit?: number;
   diff?: boolean;
 }) => {
-  const response = await outputsDB.allDocs({
+  const response = await db.allDocs({
     include_docs: true,
     ...options,
     startkey: options?.startkey || 'output',
@@ -199,7 +200,7 @@ export const getOutputs = async (options?: {
 
 export const getOutputsLastFetched = async () => {
   try {
-    const doc = await outputsDB.get('lastFetched');
+    const doc = await db.get('lastFetched');
     return {
       lastFetched: doc.value,
       doc,
@@ -212,7 +213,7 @@ export const getOutputsLastFetched = async () => {
 
 export const getOutputsLastUpdated = async () => {
   try {
-    const doc = await outputsDB.get('lastUpdated');
+    const doc = await db.get('lastUpdated');
     return {
       lastUpdated: doc.value,
       doc,
@@ -245,7 +246,7 @@ export const upsertOutputs = async (outputs: any) => {
       _id: 'lastUpdated',
       value: null,
     });
-    await outputsDB.bulkDocs(docs);
+    await db.bulkDocs(docs);
   }
 };
 
@@ -257,7 +258,7 @@ export const updateOutputs = async (outputs: any) => {
     value: new Date(),
   });
   try {
-    const results = await outputsDB.bulkDocs(outputs);
+    const results = await db.bulkDocs(outputs);
     results.forEach((result: { error: any }) => {
       if (result.error) {
         throw new Error('Error in updating utxos');
@@ -271,14 +272,16 @@ export const updateOutputs = async (outputs: any) => {
 export const isInOutputs = async (output: {
   outputTxHash: string;
   outputIndex: number;
+  spendInfo: object;
 }) => {
-  await outputsDB.createIndex({
-    index: { fields: ['outputTxHash', 'outputIndex'] },
+  await db.createIndex({
+    index: { fields: ['outputTxHash', 'outputIndex', 'spendInfo'] },
   });
-  const outputDoc = await outputsDB.find({
+  const outputDoc = await db.find({
     selector: {
       outputTxHash: { $eq: output.outputTxHash },
       outputIndex: { $eq: output.outputIndex },
+      spendInfo: { $eq: output.spendInfo },
     },
   });
   if (outputDoc.docs.length > 0) return true;
@@ -289,10 +292,10 @@ export const isInOutputsNew = async (output: {
   outputTxHash: string;
   outputIndex: number;
 }) => {
-  await outputsDB.createIndex({
+  await db.createIndex({
     index: { fields: ['outputTxHash', 'outputIndex'] },
   });
-  const outputDoc = await outputsDB.find({
+  const outputDoc = await db.find({
     selector: {
       outputTxHash: { $eq: output.outputTxHash },
       outputIndex: { $eq: output.outputIndex },
@@ -307,15 +310,97 @@ export const isInOutputsNew = async (output: {
   return { isPresent: false, _id: null, _rev: null };
 };
 
+export const getTransactions = async (options?: {
+  startkey?: string;
+  limit?: number;
+  diff?: boolean;
+}) => {
+  const response = await db.allDocs({
+    include_docs: true,
+    ...options,
+    startkey: options?.startkey || 'transaction',
+    endkey: 'transaction\ufff0',
+    skip: options?.startkey ? 1 : false,
+  });
+  if (response && response.rows.length > 0) {
+    let nextTransactionCursor;
+    if (response.rows.length === options?.limit) {
+      nextTransactionCursor = response.rows[response.rows.length - 1].id;
+    } else {
+      nextTransactionCursor = null;
+    }
+    const transactions = response.rows.map((row: { doc: any }) => row.doc);
+    return { nextTransactionCursor, transactions };
+  } else {
+    return { nextTransactionCursor: null, transactions: [] };
+  }
+};
+
+export const upsertTransactions = async (transactions: any) => {
+  if (transactions.length > 0) {
+    const { transactions: existingTransactions } = await getTransactions();
+    let txId = existingTransactions.length - 1;
+    const docs = transactions.map((transaction: any, index: number) => {
+      if (!transaction._id) {
+        txId = txId + 1;
+      }
+      return {
+        _id: transaction._id
+          ? transaction._id
+          : `transaction-${String(txId).padStart(20, '0')}`,
+        ...transaction,
+      };
+    });
+    await db.bulkDocs(docs);
+  }
+};
+
+export const upsertUnconfirmedTransactions = async (transactions: any) => {
+  if (transactions.length > 0) {
+    const {
+      unconfirmedTransactions: existingUnconfirmedTransactions,
+    } = await getUnconfirmedTransactions();
+    let txId = existingUnconfirmedTransactions.length - 1;
+    const docs = transactions.map((transaction: any, index: number) => {
+      if (!transaction._id) {
+        txId = txId + 1;
+      }
+      return {
+        _id: transaction._id
+          ? transaction._id
+          : `unconfirmedTransaction-${String(txId).padStart(20, '0')}`,
+        ...transaction,
+      };
+    });
+    await db.bulkDocs(docs);
+  }
+};
+
+export const getUnconfirmedTransactions = async () => {
+  const response = await db.allDocs({
+    include_docs: true,
+    startkey: 'unconfirmedTransaction',
+    endkey: 'unconfirmedTransaction\ufff0',
+  });
+  if (response && response.rows.length > 0) {
+    const unconfirmedTransactions = response.rows.map(
+      (row: { doc: any }) => row.doc
+    );
+    return { unconfirmedTransactions };
+  } else {
+    return { unconfirmedTransactions: [] };
+  }
+};
+
 export const getUTXOs = async (options?: {
   startkey?: string;
   limit?: number;
   diff?: boolean;
 }) => {
-  await outputsDB.createIndex({
+  await db.createIndex({
     index: { fields: ['isSpent'] },
   });
-  const outputDoc = await outputsDB.find({
+  const outputDoc = await db.find({
     selector: {
       isSpent: { $eq: false },
     },
@@ -328,10 +413,10 @@ export const isInUTXOs = async (output: {
   outputTxHash: string;
   outputIndex: number;
 }) => {
-  await outputsDB.createIndex({
+  await db.createIndex({
     index: { fields: ['outputTxHash', 'outputIndex', 'isSpent'] },
   });
-  const outputDoc = await outputsDB.find({
+  const outputDoc = await db.find({
     selector: {
       outputTxHash: { $eq: output.outputTxHash },
       outputIndex: { $eq: output.outputIndex },
@@ -344,8 +429,21 @@ export const isInUTXOs = async (output: {
 
 export const destroy = async () => {
   try {
+    await db.viewCleanup();
     await credentials.destroy();
+    db = null;
+    credentials = null;
     return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const runScript = async () => {
+  try {
+    const doc = await db.get('output-00000000000000000000');
+    doc.isSpent = true;
+    await db.put(doc);
   } catch (error) {
     throw error;
   }

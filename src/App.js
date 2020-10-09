@@ -7,7 +7,7 @@ import ExplorerHome from './explorer/screens/ExplorerHome';
 import Home from './shared/components/home';
 import NoMatch from './shared/components/noMatch';
 import SettingsScreen from './settings/screens/SettingsScreen';
-import WalletHome from './wallet/screens/WalletHome';
+import WalletRoute from './wallet/screens/WalletRoute';
 import Header from './shared/components/Header';
 import Footer from './shared/components/Footer';
 import * as settingsActions from './settings/settingsActions';
@@ -37,7 +37,7 @@ class App extends React.Component {
             <Container>
               <Switch>
                 <Route path='/wallet'>
-                  <WalletHome />
+                  <WalletRoute />
                 </Route>
                 <Route path='/explorer'>
                   <ExplorerHome history={this.history} />

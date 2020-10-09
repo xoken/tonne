@@ -2,7 +2,19 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Dropdown, Icon, Modal, Segment, Accordion, Grid, Header } from 'semantic-ui-react';
+import {
+  Accordion,
+  Button,
+  Dropdown,
+  Grid,
+  Header,
+  Icon,
+  Label,
+  Loader,
+  Modal,
+  Placeholder,
+  Segment,
+} from 'semantic-ui-react';
 import { formatDistanceToNow } from 'date-fns';
 import SendTransaction from '../components/SendTransaction';
 import ReceiveTransaction from '../components/ReceiveTransaction';
@@ -10,8 +22,9 @@ import RenameProfile from '../components/RenameProfile';
 import * as authActions from '../../auth/authActions';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
-import { groupBy, satoshiToBSV } from '../../shared/utils';
+import { satoshiToBSV } from '../../shared/utils';
 import images from '../../shared/images';
+// import { wallet } from 'nipkow-sdk';
 
 class WalletDashboard extends React.Component {
   constructor(props) {
@@ -19,18 +32,18 @@ class WalletDashboard extends React.Component {
     this.state = {
       sendTransactionModal: false,
       receiveTransactionModal: false,
-      transactionDetailModal: false,
       renameProfileModal: false,
       lastRefreshed: null,
       timeSinceLastRefreshed: null,
-      activeIndex: 0,
+      activeIndex: [],
+      transactionDetails: {},
     };
   }
 
   async componentDidMount() {
     const { dispatch } = this.props;
-    await dispatch(walletActions.getOutputs({ limit: 5 }));
-    await dispatch(walletActions.getBalance());
+    await dispatch(walletActions.getTransactions({ limit: 5 }));
+    await dispatch(walletActions.updateUnconfirmedTransactions());
     this.setState({ lastRefreshed: new Date() });
     this.timerID = setInterval(
       () =>
@@ -41,16 +54,9 @@ class WalletDashboard extends React.Component {
     );
     const autoRefreshTimeInSecs = 1 * 60 * 1000;
     this.autoRefreshTimer = setInterval(() => {
-      this.onRefresh();
+      // this.onRefresh();
     }, autoRefreshTimeInSecs);
   }
-
-  toggleTransactionDetailModal = () => {
-    const { transactionDetailModal } = this.state;
-    if (transactionDetailModal) {
-    }
-    this.setState({ transactionDetailModal: !transactionDetailModal });
-  };
 
   toggleSendTransactionModal = () => {
     const { sendTransactionModal } = this.state;
@@ -69,7 +75,8 @@ class WalletDashboard extends React.Component {
 
   onRefresh = async () => {
     const { dispatch } = this.props;
-    await dispatch(walletActions.getOutputs({ diff: true }));
+    await dispatch(walletActions.getTransactions({ diff: true }));
+    await dispatch(walletActions.updateUnconfirmedTransactions());
     this.setState({
       lastRefreshed: new Date(),
       timeSinceLastRefreshed: new Date(),
@@ -78,226 +85,207 @@ class WalletDashboard extends React.Component {
 
   onNextPage = async () => {
     const { dispatch } = this.props;
-    await dispatch(walletActions.getOutputs({ limit: 5 }));
+    await dispatch(walletActions.getTransactions({ limit: 5 }));
   };
 
   renderLastRefresh() {
     const { lastRefreshed } = this.state;
     if (lastRefreshed) {
       return (
-        <div className='right floated'>
-          <p>
-            Last refreshed{`: `}
-            {formatDistanceToNow(lastRefreshed, {
-              includeSeconds: true,
-              addSuffix: true,
-            })}
-          </p>
-        </div>
+        <span className='last-refresh'>
+          Last refreshed{`: `}
+          {formatDistanceToNow(lastRefreshed, {
+            includeSeconds: true,
+            addSuffix: true,
+          })}
+        </span>
       );
     }
   }
 
-  logout = () => {
+  onLogout = () => {
     const { dispatch } = this.props;
     dispatch(authActions.logout());
   };
 
-  // renderTransaction() {
-  //   const { isLoading, outputs } = this.props;
-  //   if (!isLoading && outputs.length > 0) {
-  //     const outputsGroupedBy = groupBy(outputs, 'outputTxHash');
-  //     return Object.entries(outputsGroupedBy).map((tx, index) => {
-  //       return (
-  //         <div
-  //           key={index.toString()}
-  //           className='ui segments'
-  //           onClick={this.toggleTransactionDetailModal}>
-  //           <div className='ui grey inverted segment'>
-  //             <h4 className='ui header'>{`OutputTxHash: ${tx[0]}`}</h4>
-  //           </div>
-  //           <div className='ui segments'>
-  //             {tx[1].map((output, txIndex) => {
-  //               return (
-  //                 <div key={txIndex.toString()} className='ui basic segment'>
-  //                   <p>{`Address: ${output.address}`}</p>
-  //                   <p>{`BlockHash: ${output.blockHash}`}</p>
-  //                   <p>{`BlockHeight: ${output.blockHeight}`}</p>
-  //                   <p>{`OutputIndex: ${output.outputIndex}`}</p>
-  //                   <p>{`TxIndex: ${output.txIndex}`}</p>
-  //                   <p>{`Value: ${satoshiToBSV(output.value)} BSV`}</p>
-  //
-  //                   <div className='ui segments'>
-  //                     <div className='ui grey secondary inverted segment'>
-  //                       <h4 className='ui header'>SpendInfo</h4>
-  //                     </div>
-  //                     {output.spendInfo ? (
-  //                       <div className='ui segment'>
-  //                         <p>{`spendingBlockHash: ${output.spendInfo.spendingBlockHash}`}</p>
-  //                         <p>{`spendingBlockHeight: ${output.spendInfo.spendingBlockHeight}`}</p>
-  //                         <p>{`spendingTxId: ${output.spendInfo.spendingTxId}`}</p>
-  //                         <p>{`spendingTxIndex: ${output.spendInfo.spendingTxIndex}`}</p>
-  //                         <div className='ui segments'>
-  //                           <div className='ui grey tertiary inverted segment'>
-  //                             <h4 className='ui header'>Spend Data</h4>
-  //                           </div>
-  //                           {output.spendInfo.spendData.map((sData, sDataIndex) => {
-  //                             return (
-  //                               <div key={sDataIndex.toString()} className='ui segment'>
-  //                                 <p>{`spendingOutputIndex: ${sData.spendingOutputIndex}`}</p>
-  //                                 <p>{`value: ${sData.value}`}</p>
-  //                                 <p>{`outputAddress: ${sData.outputAddress}`}</p>
-  //                               </div>
-  //                             );
-  //                           })}
-  //                         </div>
-  //                       </div>
-  //                     ) : (
-  //                       <div className='ui segment'>
-  //                         <p>null</p>
-  //                       </div>
-  //                     )}
-  //                   </div>
-  //                   <div className='ui segments'>
-  //                     <div className='ui grey secondary inverted segment'>
-  //                       <h4 className='ui header'>PrevOutpoint</h4>
-  //                     </div>
-  //                     {output.prevOutpoint &&
-  //                       output.prevOutpoint.map((pOutpoint, pOutpointIndex) => {
-  //                         return (
-  //                           <div key={pOutpointIndex.toString()} className='ui segment'>
-  //                             <p>{`opIndex: ${pOutpoint[0].opIndex}`}</p>
-  //                             <p>{`opTxHash: ${pOutpoint[0].opTxHash}`}</p>
-  //                             <p>{pOutpoint[1]}</p>
-  //                             <p>{pOutpoint[2]}</p>
-  //                           </div>
-  //                         );
-  //                       })}
-  //                   </div>
-  //                 </div>
-  //               );
-  //             })}
-  //           </div>
-  //         </div>
-  //       );
-  //     });
-  //   }
-  //   return null;
-  // }
-
-  transactionHeadingDetails = tx => {
-    return (
-      <>
-        <Grid.Column width={2}>Satoshis:</Grid.Column>
-        <Grid.Column width={3}>{tx.value}</Grid.Column>
-        <Grid.Column width={2}>Value: </Grid.Column>
-        <Grid.Column width={3}>{satoshiToBSV(tx.value)} BSV</Grid.Column>
-      </>
-    );
-  };
-
-  handleClick = (e, titleProps) => {
-    const { index } = titleProps;
-    const { activeIndex } = this.state;
-    const newIndex = activeIndex === index ? -1 : index;
+  onTransactionTitleClick = async (e, titleProps) => {
+    const { index, txid: txId } = titleProps;
+    const { activeIndex, transactionDetails } = this.state;
+    const { dispatch } = this.props;
+    let newIndex;
+    if (activeIndex.includes(index)) {
+      newIndex = activeIndex.filter(item => item !== index);
+    } else {
+      newIndex = [...activeIndex, index];
+    }
     this.setState({ activeIndex: newIndex });
+    if (!transactionDetails[txId]) {
+      const tx = await dispatch(walletActions.getTransaction(txId));
+      this.setState({
+        transactionDetails: { ...transactionDetails, [txId]: tx },
+      });
+    }
   };
 
-  renderTransaction() {
-    const { activeIndex } = this.state;
-    const { isLoading, outputs } = this.props;
-
-    const renderAddress = outputs => {
-      if (outputs.length > 1) {
-        return `${outputs[0].address} ...`;
-      } else if (outputs.length > 0) {
-        return `${outputs[0].address}`;
-      }
-    };
-
-    if (!isLoading && outputs.length > 0) {
-      const outputsGroupedBy = groupBy(outputs, 'outputTxHash');
-      return Object.entries(outputsGroupedBy).map((tx, index) => {
-        return (
-          <Accordion key={index.toString()}>
-            <Accordion.Title index={index} onClick={this.handleClick}>
-              <Grid>
-                <Grid.Column floated='left' width={15}>
-                  {/* <Icon name='dropdown' /> */}
-                  {`${renderAddress(tx[1])} | ${tx[0]}`}
-                </Grid.Column>
-                <Grid.Column floated='right' width={1}>
-                  {/* Credit 20 BSV */}
-                </Grid.Column>
-              </Grid>
-            </Accordion.Title>
-            <Accordion.Content active={activeIndex === index}>
-              {tx[1].map((output, txIndex) => {
+  renderTransactionDetail(txId, outputs) {
+    const { transactionDetails } = this.state;
+    const transactionDetail = transactionDetails[txId];
+    if (transactionDetail) {
+      const {
+        tx: { txInps, txOuts },
+      } = transactionDetail;
+      const totalOutput = txOuts.reduce((acc, currOutput) => {
+        acc = acc + currOutput.value;
+        return acc;
+      }, 0);
+      const totalCredit = txOuts.reduce((acc, currOutput) => {
+        const isFound = outputs.find(output => output.address === currOutput.address);
+        if (isFound) {
+          acc = acc + currOutput.value;
+        }
+        return acc;
+      }, 0);
+      return (
+        <Grid divided columns='two'>
+          <Grid.Row>
+            <Grid.Column>
+              <Header as='h4'>Inputs</Header>
+              {txInps.map(input => {
                 return (
-                  <Grid divided columns='two' key={txIndex.toString()}>
-                    <Grid.Row>
-                      <Grid.Column>
-                        <Header as='h4'>Inputs</Header>
-                      </Grid.Column>
-                      <Grid.Column>
-                        <Header as='h4'>Outputs</Header>
-                        <Grid>
-                          <Grid.Column width='10'>
-                            <p>{output.address}</p>
-                          </Grid.Column>
-                          <Grid.Column width='6' textAlign='right'>
-                            <p>{`${satoshiToBSV(output.value)} BSV`}</p>
-                          </Grid.Column>
-                        </Grid>
-                        {/* {output.spendInfo ? (
-                          <div>
-                            {output.spendInfo.spendData.map((sData, sDataIndex) => {
-                              return (
-                                <div key={sDataIndex.toString()}>
-                                  <Grid divided='vertically'>
-                                    <Grid.Row columns={2}>
-                                      <Grid.Column>
-                                        <p>{`${sData.outputAddress}`}</p>
-                                      </Grid.Column>
-                                      <Grid.Column>
-                                        <p>{`${sData.value}`}</p>
-                                      </Grid.Column>
-                                    </Grid.Row>
-                                  </Grid>
-                                </div>
-                              );
-                            })}
-                          </div>
-                        ) : (
-                          <div>
-                            <Grid divided='vertically'>
-                              <Grid.Row columns={2}>
-                                <Grid.Column>
-                                  <p>Output Address: null</p>
-                                </Grid.Column>
-                                <Grid.Column>
-                                  <p>value: null</p>
-                                </Grid.Column>
-                              </Grid.Row>
-                            </Grid>
-                          </div>
-                        )} */}
-                      </Grid.Column>
-                    </Grid.Row>
+                  <Grid>
+                    <Grid.Column width='10'>
+                      <p>{input.address}</p>
+                    </Grid.Column>
+                    <Grid.Column width='6' textAlign='right'>
+                      <p>{`${satoshiToBSV(input.value)} BSV`}</p>
+                    </Grid.Column>
                   </Grid>
                 );
               })}
-            </Accordion.Content>
-          </Accordion>
-        );
-      });
+            </Grid.Column>
+            <Grid.Column>
+              <Header as='h4'>Outputs</Header>
+              {txOuts.map(output => {
+                return (
+                  <Grid>
+                    <Grid.Column width='10'>
+                      <p>{output.address}</p>
+                    </Grid.Column>
+                    <Grid.Column width='6' textAlign='right'>
+                      <p>{`${satoshiToBSV(output.value)} BSV`}</p>
+                    </Grid.Column>
+                  </Grid>
+                );
+              })}
+              <div class='ui right aligned grid'>
+                <div class='sixteen wide column'>
+                  <Label className='plain'>
+                    Total credits:
+                    <Label.Detail>{`${satoshiToBSV(totalCredit)} BSV`}</Label.Detail>
+                  </Label>
+                </div>
+              </div>
+              <div class='ui right aligned grid'>
+                <div class='sixteen wide column'>
+                  <Label className='plain'>
+                    Change/Other:
+                    <Label.Detail>{`${satoshiToBSV(totalOutput - totalCredit)} BSV`}</Label.Detail>
+                  </Label>
+                </div>
+              </div>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      );
+    }
+    return (
+      <Placeholder>
+        <Placeholder.Paragraph>
+          <Placeholder.Line />
+          <Placeholder.Line />
+          <Placeholder.Line />
+          <Placeholder.Line />
+          <Placeholder.Line />
+        </Placeholder.Paragraph>
+      </Placeholder>
+    );
+  }
+
+  renderTransaction() {
+    const { activeIndex } = this.state;
+    const { isLoading, transactions } = this.props;
+
+    const renderAddress = transaction => {
+      const { outputs } = transaction;
+      if (outputs) {
+        if (outputs.length > 1) {
+          return `${outputs[0].address} ...`;
+        } else if (outputs.length > 0) {
+          return `${outputs[0].address}`;
+        }
+      }
+    };
+
+    if (!isLoading && transactions.length > 0) {
+      return (
+        <Accordion fluid exclusive={false}>
+          {transactions.map((transaction, index) => {
+            let credit = 0;
+            let debit = 0;
+            transaction.outputs.forEach(output => {
+              if (output.spendInfo) {
+                debit = debit + output.value;
+              } else {
+                credit = credit + output.value;
+              }
+            });
+            const printCreditOrDebit = (credit, debit) => {
+              if (credit > 0 && debit > 0) {
+                return `${satoshiToBSV(credit)} BSV Credit | ${satoshiToBSV(debit)} BSV Debit`;
+              } else if (credit > 0) {
+                return `${satoshiToBSV(credit)} BSV Credit`;
+              } else if (debit > 0) {
+                return `${satoshiToBSV(debit)} BSV Debit`;
+              }
+              return '';
+            };
+            return (
+              <Segment key={index.toString()}>
+                <Accordion.Title
+                  active={activeIndex.includes(index)}
+                  index={index}
+                  txid={transaction.txId}
+                  onClick={this.onTransactionTitleClick}>
+                  <Grid>
+                    <Grid.Column floated='left' width={10}>
+                      <Icon name='dropdown' />
+                      {`${renderAddress(transaction)} | ${transaction.txId}`}
+                    </Grid.Column>
+                    <Grid.Column floated='right' width={4}>
+                      {printCreditOrDebit(credit, debit)}
+                    </Grid.Column>
+                    <Grid.Column floated='right' width={2}>
+                      {transaction.confirmations > 20
+                        ? 'Confirmed'
+                        : `${transaction.confirmations} Confirmations`}
+                    </Grid.Column>
+                  </Grid>
+                </Accordion.Title>
+                <Accordion.Content active={activeIndex.includes(index)}>
+                  {this.renderTransactionDetail(transaction.txId, transaction.outputs)}
+                </Accordion.Content>
+              </Segment>
+            );
+          })}
+        </Accordion>
+      );
     }
     return null;
   }
 
   renderPagination() {
-    const { nextOutputsCursor } = this.props;
-    if (nextOutputsCursor) {
+    const { nextTransactionCursor } = this.props;
+    if (nextTransactionCursor) {
       return (
         <Segment basic textAlign='center'>
           <Button color='yellow' onClick={this.onNextPage}>
@@ -340,31 +328,11 @@ class WalletDashboard extends React.Component {
     );
   }
 
-  renderTransactionModal() {
-    const { transactionDetailModal } = this.state;
-    return (
-      <Modal
-        open={transactionDetailModal}
-        onClose={this.toggleTransactionDetailModal}
-        onOpen={this.toggleTransactionDetailModal}>
-        <Modal.Header>Transaction</Modal.Header>
-        <Modal.Content>
-          <Modal.Description></Modal.Description>
-        </Modal.Content>
-        <Modal.Actions>
-          <Button primary onClick={this.toggleTransactionDetailModal}>
-            Ok
-          </Button>
-        </Modal.Actions>
-      </Modal>
-    );
-  }
-
   renderRenameProfileModal() {
     const { renameProfileModal } = this.state;
     return (
       <Modal open={renameProfileModal}>
-        <RenameProfile onClose={this.onRenameProfile} logout={this.logout} />
+        <RenameProfile onClose={this.onRenameProfile} onLogout={this.onLogout} />
       </Modal>
     );
   }
@@ -373,6 +341,9 @@ class WalletDashboard extends React.Component {
     const { balance, isLoading } = this.props;
     return (
       <>
+        {/* <Button color='yellow' onClick={() => wallet.runScript()}>
+          Run
+        </Button> */}
         <div className='ui center aligned segment'>
           <div className='ui basic clearing segment'>
             <Dropdown
@@ -384,12 +355,12 @@ class WalletDashboard extends React.Component {
               <Dropdown.Menu>
                 <Dropdown.Item text='Rename Profile' onClick={this.onRenameProfile} />
                 <Dropdown.Divider />
-                <Dropdown.Item text='Logout' onClick={this.logout} />
+                <Dropdown.Item text='Logout' onClick={this.onLogout} />
               </Dropdown.Menu>
             </Dropdown>
           </div>
           {isLoading ? (
-            <img alt='Loading' src={images.loading} className='loadinggif' />
+            <Loader active />
           ) : (
             <>
               <img className='ui small centered image' src={images.bsv} alt='BitcoinSV' />
@@ -412,13 +383,17 @@ class WalletDashboard extends React.Component {
             <h3>Recent Transactions</h3>
           </div>
           <div className='right floated right aligned six wide column'>
-            <Button className='right floated' icon onClick={this.onRefresh}>
-              <Icon name='refresh' />
-            </Button>
-            {this.renderLastRefresh()}
+            <div className='ui grid'>
+              <div className='column'>
+                {this.renderLastRefresh()}
+                <Button className='' icon onClick={this.onRefresh}>
+                  <Icon name='refresh' />
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
-        {this.renderTransaction()}
+        <div className='ui grid'>{this.renderTransaction()}</div>
         {this.renderPagination()}
         {this.renderSendTransactionModal()}
         {this.renderReceiveTransactionModal()}
@@ -437,18 +412,18 @@ WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
   balance: PropTypes.number.isRequired,
-  outputs: PropTypes.arrayOf(PropTypes.object),
+  transactions: PropTypes.arrayOf(PropTypes.object),
 };
 
 WalletDashboard.defaultProps = {
-  outputs: [],
+  transactions: [],
 };
 
 const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
-  outputs: walletSelectors.getOutputs(state),
-  nextOutputsCursor: state.wallet.nextOutputsCursor,
+  transactions: walletSelectors.getTransactions(state),
+  nextTransactionCursor: state.wallet.nextTransactionCursor,
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));

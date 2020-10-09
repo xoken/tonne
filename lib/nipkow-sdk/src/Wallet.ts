@@ -8,7 +8,7 @@ import {
 } from 'bitcoinjs-lib';
 import AES from 'crypto-js/aes';
 import coinSelect from 'coinselect';
-import faker, { address } from 'faker';
+import faker from 'faker';
 import * as bip38 from 'bip38';
 import * as bip39 from 'bip39';
 import * as _ from 'lodash';
@@ -18,6 +18,7 @@ import derivationPaths from './constants/derivationPaths';
 import network from './constants/network';
 import { addressAPI } from './AddressAPI';
 import { transactionAPI } from './TransactionAPI';
+import { chainAPI } from './ChainAPI';
 
 class Wallet {
   async _initWallet(bip39Mnemonic: string, password?: string) {
@@ -208,8 +209,7 @@ class Wallet {
 
   async getTransaction(txid: string) {
     try {
-      const transaction = await transactionAPI.getTransactionByTxID(txid);
-      return transaction;
+      return await transactionAPI.getTransactionByTxID(txid);
     } catch (error) {
       throw error;
     }
@@ -222,6 +222,85 @@ class Wallet {
       }
       return acc;
     }, 0);
+  }
+
+  async getTransactions(options?: {
+    startkey?: string;
+    limit?: number;
+    pageNo?: number;
+    diff?: boolean;
+  }) {
+    const { existingDerivedKeys } = await Persist.getDerivedKeys();
+    if (existingDerivedKeys.length > 0) {
+      const {
+        derivedKeys: newDerivedKeys,
+        diffOutputs,
+      } = await this._getOutputs(existingDerivedKeys);
+      const outputsGroupedByTx = _.groupBy(diffOutputs, (output) => {
+        return output.outputTxHash;
+      });
+      const diffTrasactions = Object.entries(outputsGroupedByTx).map(
+        ([key, value], index) => {
+          return {
+            txId: key,
+            outputs: value,
+          };
+        }
+      );
+      if (diffOutputs.length > 0) {
+        const txIds = diffTrasactions.map(
+          (diffTrasaction) => diffTrasaction.txId
+        );
+        const { chainInfo } = await chainAPI.getChainInfo();
+        if (chainInfo) {
+          const { chainTip } = chainInfo;
+          const { txs } = await transactionAPI.getTransactionsByTxIDs(txIds);
+          if (txs) {
+            const updatedDiffTransactions = diffTrasactions.map(
+              (diffTrasaction) => {
+                const transactionOnChain = txs.find(
+                  (tx: { txId: string }) => tx.txId === diffTrasaction.txId
+                );
+                if (transactionOnChain) {
+                  return {
+                    ...diffTrasaction,
+                    confirmed: true,
+                    confirmations: chainTip - transactionOnChain.blockHeight,
+                  };
+                }
+                return {
+                  ...diffTrasaction,
+                  confirmed: false,
+                  confirmations: 0,
+                };
+              }
+            );
+            const confirmedTxs = updatedDiffTransactions.filter(
+              (element) => element.confirmed === true
+            );
+            const unConfirmedTxs = updatedDiffTransactions.filter(
+              (element) => element.confirmed === false
+            );
+            await Persist.upsertOutputs(diffOutputs);
+            await Persist.upsertTransactions(confirmedTxs);
+            await Persist.upsertUnconfirmedTransactions(unConfirmedTxs);
+            await Persist.upsertDerivedKeys(newDerivedKeys);
+          } else {
+            throw new Error('Error in fetching transactions');
+          }
+        } else {
+          throw new Error('Error in fetching transactions');
+        }
+      } else {
+        return { transactions: [] };
+      }
+      if (options?.diff) {
+        return { transactions: diffTrasactions };
+      } else {
+        return await Persist.getTransactions(options);
+      }
+    }
+    return { transactions: [] };
   }
 
   async getOutputs(options?: {
@@ -237,7 +316,20 @@ class Wallet {
         diffOutputs,
       } = await this._getOutputs(existingDerivedKeys);
       if (diffOutputs.length > 0) {
+        const outputsGroupedByTx = _.groupBy(diffOutputs, (output) => {
+          return output.outputTxHash;
+        });
+        const diffTrasactions = Object.entries(outputsGroupedByTx).map(
+          ([key, value], index) => {
+            return {
+              txId: key,
+              confirmed: true,
+              outputs: value,
+            };
+          }
+        );
         await Persist.upsertOutputs(diffOutputs);
+        await Persist.upsertTransactions(diffTrasactions);
         await Persist.upsertDerivedKeys(newDerivedKeys);
       }
       if (options?.diff) {
@@ -257,7 +349,7 @@ class Wallet {
   ): Promise<any> {
     const chunkedUsedDerivedKeys = _.chunk(derivedKeys, 20);
     const data = await Promise.all(
-      chunkedUsedDerivedKeys.map(async chunkedUsedDerivedKey => {
+      chunkedUsedDerivedKeys.map(async (chunkedUsedDerivedKey) => {
         return await this._getOutputsByAddresses(chunkedUsedDerivedKey);
       })
     );
@@ -357,6 +449,35 @@ class Wallet {
     return newOutputs;
   }
 
+  async updateUnconfirmedTransactions() {
+    const {
+      unconfirmedTransactions,
+    } = await Persist.getUnconfirmedTransactions();
+    const unconfirmedTxIds = unconfirmedTransactions.map(
+      (unconfirmedTx: { txId: any }) => unconfirmedTx.txId
+    );
+    if (unconfirmedTxIds.length > 0) {
+      const { txs } = await transactionAPI.getTransactionsByTxIDs(
+        unconfirmedTxIds
+      );
+      // debugger;
+      if (txs.length > 0) {
+        const confirmedTxs = unconfirmedTransactions.map(
+          (unconfirmedTx: { txId: any }) => {
+            const isConfirmed = txs.find(
+              (tx: { txId: any }) => tx.txId === unconfirmedTx.txId
+            );
+            return {
+              ...unconfirmedTx,
+              confirmed: isConfirmed,
+            };
+          }
+        );
+        await Persist.upsertTransactions(confirmedTxs);
+      }
+    }
+  }
+
   async getUTXOs() {
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
     if (existingDerivedKeys.length > 0) {
@@ -388,7 +509,6 @@ class Wallet {
           }
         }
         if (newDiffUtxos.length > 0) {
-          debugger;
           await Persist.upsertDerivedKeys(newDerivedKeys);
           await Persist.updateOutputs(newDiffUtxos);
         }
@@ -404,7 +524,7 @@ class Wallet {
   ): Promise<any> {
     const chunkedUsedDerivedKeys = _.chunk(derivedKeys, 20);
     const data = await Promise.all(
-      chunkedUsedDerivedKeys.map(async chunkedUsedDerivedKey => {
+      chunkedUsedDerivedKeys.map(async (chunkedUsedDerivedKey) => {
         return await this._getUTXOsByAddresses(chunkedUsedDerivedKey);
       })
     );
@@ -513,7 +633,7 @@ class Wallet {
   async _getKeys(addresses: string[]): Promise<object[]> {
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
     const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
-    return addresses.map(address => {
+    return addresses.map((address) => {
       const derivedKey = existingDerivedKeys.find(
         (derivedKey: { address: string }) => derivedKey.address === address
       );
@@ -594,16 +714,15 @@ class Wallet {
           value: output.value,
         });
       }
-
-      const addresses = merged.map(input => input.address);
+      const addresses = merged.map((input) => input.address);
       const keys: object[] = await this._getKeys(addresses);
       keys.forEach((key: any, i) => {
         psbt.signInput(i, key);
       });
-
       psbt.validateSignaturesOfAllInputs();
       psbt.finalizeAllInputs();
-      const transactionHex = psbt.extractTransaction(true).toHex();
+      const transaction = psbt.extractTransaction(true);
+      const transactionHex = transaction.toHex();
       const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
       const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
         base64
@@ -616,6 +735,13 @@ class Wallet {
         }));
         await Persist.updateOutputs(spentUtxos);
       }
+      const spentOutputs = merged.map((element) => ({
+        outputTxHash: element.outputTxHash,
+        outputIndex: element.outputIndex,
+      }));
+      await Persist.upsertUnconfirmedTransactions([
+        { txId: transaction.getId(), confirmed: false, outputs: spentOutputs },
+      ]);
     } catch (error) {
       throw error;
     }
@@ -718,30 +844,54 @@ class Wallet {
         existingDerivedKey.isUsed === false
     );
     const { outputs } = await this.getOutputs();
-    const outputsGroupedByAddress = _.groupBy(outputs, output => {
+    const outputsGroupedByAddress = _.groupBy(outputs, (output) => {
       return output.address;
     });
     const usedAddressInfo: {
       address: string;
+      incoming: number;
+      outgoing: number;
       currentBalance: number;
       lastTransaction: any;
     }[] = [];
-    for (const [key, value] of Object.entries(outputsGroupedByAddress)) {
-      const currentBalance = value.reduce((acc: number, currOutput: any) => {
+    for (const [key, outputs] of Object.entries(outputsGroupedByAddress)) {
+      const currentBalance = outputs.reduce((acc: number, currOutput: any) => {
         if (!currOutput.isSpent) {
           acc = acc + currOutput.value;
         }
         return acc;
       }, 0);
+      let incoming = 0;
+      let outgoing = 0;
+      outputs.forEach((output) => {
+        if (output.spendInfo) {
+          outgoing = outgoing + output.value;
+        } else {
+          incoming = incoming + output.value;
+        }
+      });
       usedAddressInfo.push({
         address: key,
+        incoming,
+        outgoing,
         currentBalance,
-        lastTransaction: value[0].address,
+        lastTransaction: outputs[0].address,
       });
     }
     return {
       addressInfo: { unusedAddress: unusedDerivedKey.address, usedAddressInfo },
     };
+  }
+
+  async runScript() {
+    // Persist.runScript();
+    await Persist.upsertTransactions([
+      {
+        txId:
+          '98e4c42f69876d8e37fe5a47ee6a62f5bb48a730988b209de0cdd3e6c1b06cd4',
+        confirmed: false,
+      },
+    ]);
   }
 }
 
