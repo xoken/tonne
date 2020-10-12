@@ -21,7 +21,7 @@ class Header extends React.Component {
                 Explorer
               </NavLink>
               <NavLink to='/wallet' activeClassName='active' className='item'>
-                <Icon name='google wallet' />
+                <Icon name='bitcoin' />
                 Wallet
               </NavLink>
               <NavLink to='/settings' className='ui item'>
