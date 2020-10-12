@@ -30,11 +30,15 @@ class ReceiveTransaction extends React.Component {
       const { unusedAddress } = addressInfo;
       return (
         <>
-          <h3 className='ui header'>Unused address</h3>
-          <div className='ui icon message'>
-            <i className='copy outline link icon' onClick={this.onCopy}></i>
-            <div className='content'>
-              <div className='header'>{unusedAddress}</div>
+          <h4 className='ui horizontal divider header'>Unused address</h4>
+          <div className='ui two column centered grid'>
+            <div className='column'>
+              <div className='ui fluid action input'>
+                <input type='text' readOnly value={unusedAddress} />
+                <button className='ui yellow icon button' onClick={this.onCopy}>
+                  <i className='copy icon'></i>
+                </button>
+              </div>
             </div>
           </div>
         </>
@@ -50,8 +54,8 @@ class ReceiveTransaction extends React.Component {
       if (usedAddressInfo.length > 0) {
         return (
           <>
-            <h3 className='ui header'>Used address</h3>
-            <Table celled>
+            <h4 className='ui horizontal divider header'>Used address</h4>
+            <Table striped>
               <Table.Header>
                 <Table.Row>
                   <Table.HeaderCell>Address</Table.HeaderCell>
@@ -61,18 +65,21 @@ class ReceiveTransaction extends React.Component {
               </Table.Header>
               <Table.Body>
                 {usedAddressInfo.map(
-                  ({ address, incoming, outgoing, currentBalance, lastTransaction }, index) => (
+                  (
+                    { address, incomingBalance, outgoingBalance, currentBalance, lastTransaction },
+                    index
+                  ) => (
                     <Table.Row key={index.toString()}>
                       <Table.Cell className='used-address'>{address}</Table.Cell>
                       <Table.Cell>
                         <div>
-                          {incoming !== null
-                            ? `Total Incoming: ${satoshiToBSV(Number(incoming))} BSV`
+                          {incomingBalance !== null
+                            ? `Total Incoming: ${satoshiToBSV(Number(incomingBalance))} BSV`
                             : ''}
                         </div>
                         <div>
-                          {outgoing !== null
-                            ? `Total Outgoing: ${satoshiToBSV(Number(outgoing))} BSV`
+                          {outgoingBalance !== null
+                            ? `Total Outgoing: ${satoshiToBSV(Number(outgoingBalance))} BSV`
                             : ''}
                         </div>
                         <div>

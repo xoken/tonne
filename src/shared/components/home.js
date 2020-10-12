@@ -21,7 +21,7 @@ export default class Home extends React.Component {
               </div>
               <div className='column'>
                 <div className='ui icon header'>
-                  <Icon name='google wallet' />
+                  <Icon name='bitcoin' />
                   BSV Wallet
                 </div>
                 <p>Send and Receive Coin</p>
