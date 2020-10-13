@@ -54,7 +54,16 @@ class Footer extends React.Component {
     if (statusButton) {
       return (
         <>
-          <footer className='page-footer'>
+          <Button onClick={this.onStatusButtonToggle} className='statusbuttontext'>
+            <div>Connection status >></div>
+          </Button>
+          <footer
+            className={
+              this.state.statusButton
+                ? 'page-footer page-footer-displayed'
+                : 'page-footer page-footer-hidden'
+            }
+            style={{ backgroundColor: '#fcd04a' }}>
             <div className='ui container'>
               <div className='ui transparent label'>
                 Nexa Host: <div className='detail'>{nexaHost || 'UNKNOWN'}</div>
@@ -73,7 +82,17 @@ class Footer extends React.Component {
         </>
       );
     } else {
-      return null;
+      return (
+        <>
+          <footer className='page-footer'>
+            <div className='ui container'>
+              <Button onClick={this.onStatusButtonToggle} className='statusbuttontext'>
+                <div>Connection status >></div>
+              </Button>
+            </div>
+          </footer>
+        </>
+      );
     }
   };
 
@@ -82,16 +101,7 @@ class Footer extends React.Component {
   };
 
   render() {
-    return (
-      <>
-        <Button
-          onMouseOver={this.onStatusButtonToggle}
-          className={this.state.statusButton ? 'statusbutton statusbuttonhovered' : 'statusbutton'}>
-          <img src={images.footerArrow} style={{ display: 'block', width: 25 }} />
-        </Button>
-        {this.onStatusButtonHover()}
-      </>
-    );
+    return <>{this.onStatusButtonHover()}</>;
   }
 
   componentWillUnmount() {

@@ -53,22 +53,52 @@
 .last-refresh {
   margin-right: 15px;
 }
-.statusbutton {
+
+.statusbuttontext {
   position: absolute;
-  bottom: 20px !important;
+  bottom: 0px !important;
+  vertical-align: top;
   left: 0px;
-  padding:8px;
-  margin:0px;
-  background-color: transparent !important;
+  background-color: #fcd04a !important;
+  height: 22px;
+  padding:0px 5px 0px 5px !important;
+  z-index: 999;
   color:black !important;
 }
-.statusbuttonhovered{
-  transform: rotate(180deg);
-}
+
 .page-footer {
   text-align: center;
   height: 22px;
-  background-color: #fcd04a;
+}
+.page-footer-displayed{
+  animation-duration: 1s;
+  animation-name: statusdisplay;
+}
+.page-footer-hidden{
+  animation-duration: 1s;
+  animation-name: statushide;
+}
+@keyframes statusdisplay {
+  from {
+    left:  -20px !important;
+    opacity: 0;
+  }
+
+  to {
+    left: 0px !important;
+    opacity: 1;
+  }
+}
+@keyframes statushide {
+  from {
+    left:  0px;
+    opacity: 1;
+  }
+
+  to {
+    left: -20px;
+    opacity: 0;
+  }
 }
 .custommargin {
   margin-top: 10px !important;

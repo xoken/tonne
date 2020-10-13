@@ -28,6 +28,8 @@ class ExplorerAddress extends React.Component {
   currentbatchnum = 1;
   nextcursor = '';
   pagescontainer = [];
+  totaloutputs = 0;
+  totalinputs = 0;
 
   initAddress = async () => {
     if (this.props.match.params.address !== undefined) {
@@ -68,15 +70,62 @@ class ExplorerAddress extends React.Component {
               <Grid.Column>
                 <Grid>
                   <Grid.Row columns={1}>
-                    <Grid.Column>
+                    <Grid.Column style={{ padding: '0px' }}>
                       <Segment>
                         <Grid>
                           <Grid.Row columns={2} divided>
                             <Grid.Column>
-                              {this.prevoutpoint(this.addressCache[i].prevOutpoint)}
+                              <Grid>
+                                <Grid.Row columns={1} className='cen'>
+                                  <Grid.Column>
+                                    <h5>Inputs</h5>
+                                  </Grid.Column>
+                                </Grid.Row>
+                                <Grid.Row columns={1}>
+                                  <Grid.Column
+                                    width='16'
+                                    style={{
+                                      maxHeight: '1350px',
+                                      overflowY: 'auto',
+                                      paddingTop: '14px',
+                                      paddingBottom: '14px',
+                                    }}>
+                                    {this.prevoutpoint(this.addressCache[i].prevOutpoint)}
+                                  </Grid.Column>
+                                </Grid.Row>
+                                <Grid.Row columns={1} style={{ padding: '10px' }}>
+                                  <div>
+                                    <b>Total inputs (in Satoshis): </b>
+                                  </div>
+                                  <div>{this.totalinputs}</div>
+                                </Grid.Row>
+                              </Grid>
                             </Grid.Column>
                             <Grid.Column>
-                              {this.spendinfo(this.addressCache[i].spendInfo)}
+                              <Grid>
+                                <Grid.Row columns={1} className='cen'>
+                                  <Grid.Column>
+                                    <h5>Outputs (Spending Information)</h5>
+                                  </Grid.Column>
+                                </Grid.Row>
+                                <Grid.Row columns={1}>
+                                  <Grid.Column
+                                    style={{
+                                      maxHeight: '1350px',
+                                      overflowY: 'auto',
+                                      paddingTop: '14px',
+                                      paddingBottom: '14px',
+                                    }}>
+                                    {this.spendinfo(this.addressCache[i].spendInfo)}
+                                  </Grid.Column>
+                                </Grid.Row>
+                                <Grid.Row columns={1} style={{ padding: '10px' }}>
+                                  <div>
+                                    <b>Total outputs (in Satoshis): </b>
+                                  </div>
+                                  <div>{this.totaloutputs}</div>
+                                </Grid.Row>
+                              </Grid>
                             </Grid.Column>
                           </Grid.Row>
                         </Grid>
@@ -119,18 +168,13 @@ class ExplorerAddress extends React.Component {
       selectnum: this.selected,
     });
   };
-
+  totaloutput = outputsatoshis => {
+    this.totaloutputs += outputsatoshis;
+  };
   spendinfo = spendInfo => {
     var spendinfojsx = [];
-    spendinfojsx.push(
-      <Grid>
-        <Grid.Row columns={1} className='cen'>
-          <Grid.Column>
-            <h5>Outputs (Spending Information)</h5>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-    );
+    this.totaloutputs = 0;
+
     if (spendInfo) {
       for (var b = 0; b < Object.keys(spendInfo.spendData).length; b++) {
         spendinfojsx.push(
@@ -146,6 +190,7 @@ class ExplorerAddress extends React.Component {
                     <Grid.Column width='3'>
                       <b>Satoshis: </b>
                       {spendInfo.spendData[b].value}
+                      {this.totaloutput(spendInfo.spendData[b].value)}
                     </Grid.Column>
                     <Grid.Column className='tdwordbreak' width='11'>
                       <div>
@@ -170,22 +215,27 @@ class ExplorerAddress extends React.Component {
   };
   checkforinvalidtxid = txidpar => {
     if (txidpar !== '0000000000000000000000000000000000000000000000000000000000000000') {
-      return <Link to={'/explorer/transaction/' + txidpar + '/""'}>{txidpar}</Link>;
+      return (
+        <>
+          <div>
+            <b>Transaction Hash: </b>
+          </div>
+          <div>
+            <Link to={'/explorer/transaction/' + txidpar + '/""'}>{txidpar}</Link>
+          </div>
+        </>
+      );
     } else {
-      return <div>{txidpar}</div>;
+      return <div>Newly minted coins</div>;
     }
   };
+  totalinput = inputsatoshis => {
+    this.totalinputs += inputsatoshis;
+  };
+
   prevoutpoint = prevoutpoint => {
     var prevoutpointjsx = [];
-    prevoutpointjsx.push(
-      <Grid>
-        <Grid.Row columns={1} className='cen'>
-          <Grid.Column>
-            <h5>Inputs</h5>
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
-    );
+    this.totalinputs = 0;
     for (var a = 0; a < Object.keys(prevoutpoint).length; a++) {
       prevoutpointjsx.push(
         <Grid>
@@ -194,10 +244,7 @@ class ExplorerAddress extends React.Component {
               <Grid>
                 <Grid.Row columns={1}>
                   <Grid.Column className='tdwordbreak' width='16'>
-                    <div>
-                      <b>Transaction Hash: </b>
-                    </div>
-                    <div>{this.checkforinvalidtxid(prevoutpoint[a][0].opTxHash)}</div>
+                    {this.checkforinvalidtxid(prevoutpoint[a][0].opTxHash)}
                   </Grid.Column>
                 </Grid.Row>
                 <Grid.Row columns={2}>
@@ -206,8 +253,11 @@ class ExplorerAddress extends React.Component {
                     {prevoutpoint[a][0].opIndex}
                   </Grid.Column>
                   <Grid.Column>
-                    <div>Satoshis: </div>
+                    <div>
+                      <b>Satoshis: </b>
+                    </div>
                     <div>{prevoutpoint[a][2]}</div>
+                    {this.totalinput(prevoutpoint[a][2])}
                   </Grid.Column>
                 </Grid.Row>
               </Grid>

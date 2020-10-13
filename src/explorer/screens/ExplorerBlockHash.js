@@ -121,7 +121,7 @@ class ExplorerBlockHeight extends React.Component {
           </Grid.Row>
           <Grid.Row columns={2}>
             <Grid.Column width='4'>
-              <b>Nonce (number only used once)</b>
+              <b>Nonce</b>
             </Grid.Column>
             <Grid.Column width='12'>
               <div id='bhnonce'>{this.rjdecoded.block.header.nonce}</div>

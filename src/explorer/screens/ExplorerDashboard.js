@@ -270,7 +270,7 @@ class ExplorerDashboard extends React.Component {
       this.resultsrow.push(
         <Segment.Group horizontal className='nosegmentmargin'>
           <Segment className='cen'>
-            <Grid columns={6}>
+            <Grid columns={6} verticalAlign='middle'>
               <Grid.Row style={{ backgroundColor: tempColor }}>
                 <Grid.Column>
                   <Link to={'/explorer/blockheight/' + this.rjdecoded.blocks[i].height + '/""'}>

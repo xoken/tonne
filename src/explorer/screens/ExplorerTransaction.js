@@ -107,26 +107,26 @@ class ExplorerTransaction extends React.Component {
       <>
         <Grid>
           <Grid.Row columns={2}>
-            <Grid.Column width='3'>
+            <Grid.Column width='9'>
               <b>Transaction Index</b>
             </Grid.Column>
-            <Grid.Column width='13'>
+            <Grid.Column width='7'>
               <div id='txindex'>{this.rjdecoded.tx.txIndex}</div>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
-            <Grid.Column width='3'>
+            <Grid.Column width='9'>
               <b>Size</b>
             </Grid.Column>
-            <Grid.Column width='13'>
+            <Grid.Column width='7'>
               <div>{this.rjdecoded.tx.size}</div>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
-            <Grid.Column width='3'>
+            <Grid.Column width='9'>
               <b>Fees</b>
             </Grid.Column>
-            <Grid.Column width='13'>
+            <Grid.Column width='7'>
               <div>{this.rjdecoded.tx.fees}</div>
             </Grid.Column>
           </Grid.Row>
@@ -197,7 +197,7 @@ class ExplorerTransaction extends React.Component {
                 </Grid.Row>
                 <Grid.Row columns={2}>
                   <Grid.Column width={3}>
-                    <b>Value</b>
+                    <b>Satoshis</b>
                   </Grid.Column>
                   <Grid.Column width={13}>{this.rjdecoded.tx.tx.txInps[j].value}</Grid.Column>
                 </Grid.Row>
@@ -255,7 +255,7 @@ class ExplorerTransaction extends React.Component {
                 </Grid.Row>
                 <Grid.Row columns={2}>
                   <Grid.Column width={3}>
-                    <b>Value</b>
+                    <b>Satoshis</b>
                   </Grid.Column>
                   <Grid.Column width={13}>{this.rjdecoded.tx.tx.txOuts[z].value} </Grid.Column>
                 </Grid.Row>
@@ -374,7 +374,7 @@ class ExplorerTransaction extends React.Component {
                     </Grid.Row>
                     <Grid.Row columns={2}>
                       <Grid.Column width={3}>
-                        <b>Value</b>
+                        <b>Satoshis</b>
                       </Grid.Column>
                       <Grid.Column width={13}>
                         {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].value}
@@ -442,8 +442,8 @@ class ExplorerTransaction extends React.Component {
             <Segment>
               <Grid columns={2} divided>
                 <Grid.Row>
-                  <Grid.Column>{this.summarysect1}</Grid.Column>
-                  <Grid.Column>{this.summarysect2}</Grid.Column>
+                  <Grid.Column width='12'>{this.summarysect1}</Grid.Column>
+                  <Grid.Column width='4'>{this.summarysect2}</Grid.Column>
                 </Grid.Row>
               </Grid>
             </Segment>
