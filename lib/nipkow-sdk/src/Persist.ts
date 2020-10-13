@@ -341,7 +341,7 @@ export const getTransactions = async (options?: {
   }
 };
 
-export const upsertTransactions = async (transactions: any) => {
+export const upsertTransactions = async (transactions: any[]) => {
   if (transactions.length > 0) {
     const { transactions: existingTransactions } = await getTransactions();
     let txId = existingTransactions.length - 1;
@@ -360,7 +360,7 @@ export const upsertTransactions = async (transactions: any) => {
   }
 };
 
-export const upsertUnconfirmedTransactions = async (transactions: any) => {
+export const upsertUnconfirmedTransactions = async (transactions: any[]) => {
   if (transactions.length > 0) {
     const {
       unconfirmedTransactions: existingUnconfirmedTransactions,
