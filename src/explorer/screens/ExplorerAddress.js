@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Segment, Grid } from 'semantic-ui-react';
+import { Segment, Grid, Button } from 'semantic-ui-react';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 
 class ExplorerAddress extends React.Component {
@@ -467,9 +467,11 @@ class ExplorerAddress extends React.Component {
   render() {
     return (
       <>
-        <button onClick={this.onBack} className='btn btn-primary'>
-          Back
-        </button>
+        <Segment className='noborder'>
+          <Button onClick={this.onBack} className='explorerbuttoncolor'>
+            Back
+          </Button>
+        </Segment>
         <div className='opacitywhileload'>
           <Segment.Group>
             <Segment>

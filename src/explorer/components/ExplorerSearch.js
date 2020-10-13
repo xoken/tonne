@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Segment, Grid } from 'semantic-ui-react';
+import { Segment, Grid, Button } from 'semantic-ui-react';
 
 class ExplorerSearch extends React.Component {
   constructor(props) {
@@ -45,9 +45,9 @@ class ExplorerSearch extends React.Component {
                     />
                   </div>
                   <div className='one wide field'>
-                    <button className='btn btn-primary' type='submit'>
+                    <Button type='submit' className='explorerbuttoncolor'>
                       Search
-                    </button>
+                    </Button>
                   </div>
                   <div className='three wide field'></div>
                 </div>
