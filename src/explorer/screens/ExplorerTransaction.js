@@ -423,11 +423,13 @@ class ExplorerTransaction extends React.Component {
   render() {
     return (
       <>
-        <Link
-          className='btn btn-primary'
-          to={'/explorer/blockheight/' + this.backblockHeight + '/' + this.backtxIndex}>
-          Back
-        </Link>
+        <Segment className='noborder'>
+          <Link
+            className='ui button explorerbuttoncolor'
+            to={'/explorer/blockheight/' + this.backblockHeight + '/' + this.backtxIndex}>
+            Back
+          </Link>
+        </Segment>
         <div className='opacitywhileload'>
           <Segment.Group>
             <Segment>

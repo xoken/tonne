@@ -99,6 +99,19 @@
   background: none;
   border: none;
 }
+
+.statusbuttontext {
+  position: absolute;
+  bottom: 0px !important;
+  vertical-align: top;
+  left: 0px;
+  background-color: #fcd04a !important;
+  height: 22px;
+  padding:0px 5px 0px 5px !important;
+  z-index: 999;
+  color:black !important;
+}
+
 .page-footer {
   text-align: center;
   height: 22px;

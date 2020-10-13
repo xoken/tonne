@@ -6,6 +6,7 @@
 .subtable {
   width: 100%;
 }
+
 .txslnum {
   background-color: lightgrey;
   padding: 20px;
@@ -14,6 +15,7 @@
 .nopaddingtop{
   padding-top: 0px !important;
 }
+
 .spendinfo0 > table > tbody > tr > td {
   background-color: #f9ffc4;
   border: 1pt solid lightgrey !important;
@@ -30,6 +32,7 @@
   background-color: #efefef;
   border: 1pt solid white !important;
 }
+
 .arrows {
   position: relative;
   display: block;
@@ -41,6 +44,7 @@
   border: 1px solid #dee2e6;
   cursor: pointer;
 }
+
 #back {
   text-align: right;
 }
@@ -61,6 +65,7 @@
 #coinbasetx {
   word-break: break-all;
 }
+
 #refreshpage {
   padding: 10px;
 }
@@ -83,9 +88,11 @@
   color: white;
   text-align: center;
 }
+
 #back {
   text-align: right;
 }
+
 .pagenuminput {
   margin-left: 10px;
   margin-right: 10px;
@@ -109,6 +116,7 @@
   -ms-user-select: none;
   user-select: none;
 }
+
 .wordlist {
   text-align: center;
   background-color: rgb(235, 188, 88);
@@ -125,6 +133,8 @@
 .mnmargin {
   margin: 0px 5px 0px 5px;
 }
+.mnword {
+}
 #alphabets {
   padding: 0px 20px 0px 20px;
 }
@@ -139,6 +149,7 @@
   user-select: none;
   margin: 20px 0px 20px 0px;
 }
+
 #wordsremaining {
   float: right;
 }
@@ -146,6 +157,7 @@
   padding: 0px 20px 0px 20px;
   text-align: center;
 }
+
 .generalbtns {
   display: inline-block;
   font-weight: 400;
@@ -171,6 +183,7 @@
   animation-name: buttonslide;
   transition: background-color 0.35s ease-in-out;
 }
+
 .generalbtns:hover {
   text-decoration: none;
   background-color: grey;
@@ -182,6 +195,16 @@
   border: 1pt solid lightgrey !important;
   padding: 15px;
 }
+
+.explorerbuttoncolor{
+background-color:#007bff !important;
+color: white !important;
+}
+.noborder{
+  border:none !important;
+  box-shadow: none !important;
+  margin:0px !important;
+}
 .inputvia {
   word-break: break-all;
 }
@@ -189,15 +212,19 @@
   vertical-align: top;
   padding: 10px;
 }
+
 .tdpadd {
   padding-left: 10px;
 }
+
 .tdbordright {
   border-right: 1pt solid lightgrey !important;
 }
+
 .tdborderbottom > tbody > tr > td {
   border-bottom: 1pt solid lightgrey !important;
 }
+
 #blockhash {
   word-break: break-all;
 }
@@ -227,13 +254,26 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
 }
+tr,
+th,
+td {
+  padding: 10px;
+  text-align: center;
+}
+table {
+  width: 100%;
+  padding: 10px;
+}
+
 .tablerowbottom {
   border-bottom: 1pt solid lightgrey;
 }
+
 .latestblocks {
   border: 1px solid rgba(0, 0, 0, 0.125);
   background: #f8f8f8;
@@ -253,6 +293,7 @@
 .page-link {
   cursor: pointer !important;
 }
+
 .emptypagelink {
   position: relative;
   display: block;
@@ -264,6 +305,7 @@
   border: 1px solid #dee2e6;
   cursor: not-allowed;
 }
+
 .wordbreak {
   word-break: break-all;
 }
@@ -312,6 +354,7 @@
     top: -20px;
     opacity: 0.4;
   }
+
   to {
     top: 0px;
     opacity: 1;
