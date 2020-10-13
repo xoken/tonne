@@ -143,7 +143,11 @@ class RecentTransaction extends React.Component {
                     <Grid.Column width={1} textAlign='right'>
                       <Label className='plain'>
                         <i
-                          title={`${transaction.confirmations} Confirmations`}
+                          title={
+                            transaction.confirmations > 10
+                              ? 'More than 10 Confirmations'
+                              : `${transaction.confirmations} Confirmations`
+                          }
                           className={
                             transaction.confirmations > 10
                               ? 'green lock icon'

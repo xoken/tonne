@@ -505,6 +505,61 @@ class Wallet {
     return newOutputs;
   }
 
+  async updateconfirmations() {
+    // const {
+    //   unconfirmedTransactions,
+    // } = await Persist.getUnconfirmedTransactions();
+    // const unconfirmedTxIds = unconfirmedTransactions.map(
+    //   (unconfirmedTx: { txId: any }) => unconfirmedTx.txId
+    // );
+    // if (unconfirmedTxIds.length > 0) {
+    //   const { txs } = await transactionAPI.getTransactionsByTxIDs(
+    //     unconfirmedTxIds
+    //   );
+    //   if (txs.length > 0) {
+    //     const updatedUnconfirmedTransactions = unconfirmedTransactions.map(
+    //       (unconfirmedTx: { txId: any }) => {
+    //         const isConfirmed = txs.find(
+    //           (tx: { txId: any; blockHeight: number }) => {
+    //             if (tx.blockHeight && tx.txId === unconfirmedTx.txId) {
+    //               return true;
+    //             }
+    //             return false;
+    //           }
+    //         );
+    //         if (isConfirmed) {
+    //           return {
+    //             ...unconfirmedTx,
+    //             confirmed: true,
+    //           };
+    //         }
+    //         return {
+    //           ...unconfirmedTx,
+    //           confirmed: false,
+    //         };
+    //       }
+    //     );
+    //     const confirmedTxs = updatedUnconfirmedTransactions.filter(
+    //       (tx: { confirmed: boolean }) => tx.confirmed === true
+    //     );
+    //     if (confirmedTxs.length > 0) {
+    //       const confirmedOutputsPerTx = confirmedTxs.map(
+    //         (confirmedTx: { outputs: any }) => confirmedTx.outputs
+    //       );
+    //       const confirmedOutputs = confirmedOutputsPerTx.flat();
+    //       const updatedConfirmedOutputs = confirmedOutputs.map(
+    //         (output: any) => ({
+    //           ...output,
+    //           confirmed: true,
+    //         })
+    //       );
+    //       await Persist.updateOutputs(updatedConfirmedOutputs);
+    //       await Persist.deleteUnconfirmedTx(confirmedTxs);
+    //     }
+    //   }
+    // }
+  }
+
   async updateUnconfirmedTransactions() {
     const {
       unconfirmedTransactions,
@@ -520,7 +575,12 @@ class Wallet {
         const updatedUnconfirmedTransactions = unconfirmedTransactions.map(
           (unconfirmedTx: { txId: any }) => {
             const isConfirmed = txs.find(
-              (tx: { txId: any }) => tx.txId === unconfirmedTx.txId
+              (tx: { txId: any; blockHeight: number }) => {
+                if (tx.blockHeight && tx.txId === unconfirmedTx.txId) {
+                  return true;
+                }
+                return false;
+              }
             );
             if (isConfirmed) {
               return {
