@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Segment, Grid } from 'semantic-ui-react';
+import { Segment, Grid, Button } from 'semantic-ui-react';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 
 class ExplorerDashboard extends React.Component {
@@ -328,11 +328,14 @@ class ExplorerDashboard extends React.Component {
               <nav aria-label='transactions navigation'>
                 <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
               </nav>
-              <center>Enter page number</center>
+
               <form onSubmit={this.pagebutton}>
                 <div className='ui form'>
                   <div className='inline fields'>
-                    <div className='six wide field'></div>
+                    <div className='five wide field'></div>
+                    <div className='two wide field'>
+                      <h5>Enter page number</h5>
+                    </div>
                     <div className='three wide field'>
                       <input
                         className='pagenuminput'
@@ -346,11 +349,11 @@ class ExplorerDashboard extends React.Component {
                       />
                     </div>
                     <div className='one wide field'>
-                      <button className='btn btn-primary' type='submit'>
+                      <Button type='submit' className='explorerbuttoncolor'>
                         Go
-                      </button>
+                      </Button>
                     </div>
-                    <div className='six wide field'></div>
+                    <div className='five wide field'></div>
                   </div>
                 </div>
               </form>

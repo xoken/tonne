@@ -2,7 +2,7 @@ import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
-import { Segment, Grid } from 'semantic-ui-react';
+import { Segment, Grid, Button } from 'semantic-ui-react';
 
 class ExplorerBlockHeight extends React.Component {
   constructor(props) {
@@ -575,9 +575,11 @@ class ExplorerBlockHeight extends React.Component {
   render() {
     return (
       <>
-        <Link className='btn btn-primary' to={'/explorer/' + this.backheight}>
-          Back
-        </Link>
+        <Segment className='noborder'>
+          <Link className='ui button explorerbuttoncolor' to={'/explorer/' + this.backheight}>
+            Back
+          </Link>
+        </Segment>
         <div className='opacitywhileload'>
           <Segment.Group>
             <Segment>
@@ -609,11 +611,13 @@ class ExplorerBlockHeight extends React.Component {
                             {this.pagescontainer}
                           </ul>
                         </nav>
-                        Enter page number
                         <form onSubmit={this.pagebutton}>
                           <div className='ui form'>
                             <div className='inline fields'>
-                              <div className='six wide field'></div>
+                              <div className='five wide field'></div>
+                              <div className='two wide field'>
+                                <h5>Enter page number</h5>
+                              </div>
                               <div className='three wide field'>
                                 <input
                                   className='pagenuminput'
@@ -627,11 +631,14 @@ class ExplorerBlockHeight extends React.Component {
                                 />
                               </div>
                               <div className='one wide field'>
-                                <button className='btn btn-primary' type='submit' id='pagebutton'>
+                                <Button
+                                  className='explorerbuttoncolor'
+                                  type='submit'
+                                  id='pagebutton'>
                                   Go
-                                </button>
+                                </Button>
                               </div>
-                              <div className='six wide field'></div>
+                              <div className='five wide field'></div>
                             </div>
                           </div>
                         </form>
