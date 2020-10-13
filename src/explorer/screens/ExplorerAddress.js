@@ -58,13 +58,15 @@ class ExplorerAddress extends React.Component {
       this.txlist.push(
         <>
           <Grid>
-            <Grid.Row columns={1}>
+            <Grid.Row columns={1} className='nopaddingtop'>
               <Grid.Column className='txslnum'>
-                #({i + 1}) -
-                <Link to={'/explorer/transaction/' + this.addressCache[i].outputTxHash}>
-                  {this.addressCache[i].outputTxHash}
-                </Link>
-                - outputTxHash
+                <h4>
+                  #({i + 1})&nbsp;
+                  <Link to={'/explorer/transaction/' + this.addressCache[i].outputTxHash}>
+                    {this.addressCache[i].outputTxHash}
+                  </Link>
+                  - Output Transaction Hash
+                </h4>
               </Grid.Column>
             </Grid.Row>
             <Grid.Row columns={1}>
@@ -114,7 +116,7 @@ class ExplorerAddress extends React.Component {
                   <Grid>
                     <Grid.Row columns={1} className='cen'>
                       <Grid.Column>
-                        <h3>spendData</h3>
+                        <b>Spending Information</b>
                       </Grid.Column>
                     </Grid.Row>
                     <Grid.Row columns={3} className='cen' divided>
@@ -153,18 +155,18 @@ class ExplorerAddress extends React.Component {
                 <Grid>
                   <Grid.Row columns={1} className='cen'>
                     <Grid.Column>
-                      <h3>prevOutpoint</h3>
+                      <b>Previous Outpoint</b>
                     </Grid.Column>
                   </Grid.Row>
                   <Grid.Row columns={1} className='cen'>
                     <Grid.Column>
-                      <b>opTxHash: </b>
+                      <b>Output Transaction Hash: </b>
                       {checkforinvalidtxid(this.addressCache[i].prevOutpoint[a][0].opTxHash)}
                     </Grid.Column>
                   </Grid.Row>
                   <Grid.Row columns={3} className='cen' divided>
                     <Grid.Column>
-                      <b>opIndex: </b>
+                      <b>Output Index: </b>
                       {this.addressCache[i].prevOutpoint[a][0].opIndex}
                     </Grid.Column>
                     <Grid.Column>{this.addressCache[i].prevOutpoint[a][1]}</Grid.Column>
@@ -183,7 +185,7 @@ class ExplorerAddress extends React.Component {
       printbreaker += 1;
     }
     this.setState({
-      selectnum: this.selected
+      selectnum: this.selected,
     });
   };
 
@@ -323,7 +325,7 @@ class ExplorerAddress extends React.Component {
       this.printpagination();
     }
     this.setState({
-      leftright: this.currentbatchnum
+      leftright: this.currentbatchnum,
     });
   };
   rightlistener = async event => {
@@ -367,7 +369,7 @@ class ExplorerAddress extends React.Component {
       }
     }
     this.setState({
-      leftright: this.currentbatchnum
+      leftright: this.currentbatchnum,
     });
   };
 
@@ -391,18 +393,15 @@ class ExplorerAddress extends React.Component {
         <div className='opacitywhileload'>
           <Segment.Group>
             <Segment>
-              <h2>Address</h2>
+              <h4>Address</h4>
               <div id='address'>
-                <h3>{this.address}</h3>
+                <b>{this.address}</b>
               </div>
             </Segment>
             <Segment>
-              <table id='addressummary'></table>
-            </Segment>
-            <Segment>
-              <h2>
+              <h4>
                 <div id='nooftransactions'></div>Transactions
-              </h2>
+              </h4>
             </Segment>
             <Segment>{this.txlist}</Segment>
             <Segment>

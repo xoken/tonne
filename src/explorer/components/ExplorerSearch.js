@@ -1,6 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
+import { Segment, Grid } from 'semantic-ui-react';
 
 class ExplorerSearch extends React.Component {
   constructor(props) {
@@ -29,21 +30,21 @@ class ExplorerSearch extends React.Component {
 
   render() {
     return (
-      <div className='row'>
-        <div className='col-md-12 col-lg-12'>
-          <center>
+      <Grid>
+        <Grid.Row>
+          <Grid.Column className='cen'>
             <form onSubmit={this.onSearchClick}>
               <div className='ui form'>
                 <div className='inline fields'>
                   <div className='three wide field'></div>
-                  <div className='eight wide field'>
+                  <div className='nine wide field'>
                     <input
                       type='text'
                       placeholder='TXID / Address / BlockHeight'
                       onChange={event => this.setState({ searchterm: event.target.value })}
                     />
                   </div>
-                  <div className='two wide field'>
+                  <div className='one wide field'>
                     <button className='btn btn-primary' type='submit'>
                       Search
                     </button>
@@ -52,9 +53,9 @@ class ExplorerSearch extends React.Component {
                 </div>
               </div>
             </form>
-          </center>
-        </div>
-      </div>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     );
   }
 }

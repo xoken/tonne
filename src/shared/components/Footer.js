@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { chainAPI } from 'nipkow-sdk';
 import { Button } from 'semantic-ui-react';
+import images from '../images';
 
 class Footer extends React.Component {
   constructor(props) {
@@ -83,8 +84,10 @@ class Footer extends React.Component {
   render() {
     return (
       <>
-        <Button color='yellow' onMouseOver={this.onStatusButtonToggle} className='statusbutton'>
-          Connection status
+        <Button
+          onMouseOver={this.onStatusButtonToggle}
+          className={this.state.statusButton ? 'statusbutton statusbuttonhovered' : 'statusbutton'}>
+          <img src={images.footerArrow} style={{ display: 'block', width: 25 }} />
         </Button>
         {this.onStatusButtonHover()}
       </>

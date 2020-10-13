@@ -55,8 +55,15 @@
 }
 .statusbutton {
   position: absolute;
-  bottom: 0px;
-  right: 0px;
+  bottom: 20px !important;
+  left: 0px;
+  padding:8px;
+  margin:0px;
+  background-color: transparent !important;
+  color:black !important;
+}
+.statusbuttonhovered{
+  transform: rotate(180deg);
 }
 .page-footer {
   text-align: center;
