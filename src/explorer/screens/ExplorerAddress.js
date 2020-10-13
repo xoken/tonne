@@ -47,14 +47,9 @@ class ExplorerAddress extends React.Component {
     var printbreaker = 1;
     var txnumber = (this.selected - 1) * this.outputsperpage;
     console.log(this.selected + 'this.selected');
-    function checkforinvalidtxid(txidpar) {
-      if (txidpar !== '0000000000000000000000000000000000000000000000000000000000000000') {
-        return <Link to={'/explorer/transaction/' + txidpar + '/""'}>{txidpar}</Link>;
-      } else {
-        return <div>{txidpar}</div>;
-      }
-    }
+
     for (var i = txnumber; i < this.addressCache.length; i++) {
+      console.log(this.addressCache[i].spendInfo);
       this.txlist.push(
         <>
           <Grid>
@@ -72,29 +67,35 @@ class ExplorerAddress extends React.Component {
             <Grid.Row columns={1}>
               <Grid.Column>
                 <Grid>
-                  <Grid.Row columns={4} divided className='cen'>
+                  <Grid.Row columns={1}>
                     <Grid.Column>
-                      <b>Transaction Index: </b>
-                      {this.addressCache[i].txIndex}
+                      <Segment>
+                        <Grid>
+                          <Grid.Row columns={2} divided>
+                            <Grid.Column>
+                              {this.prevoutpoint(this.addressCache[i].prevOutpoint)}
+                            </Grid.Column>
+                            <Grid.Column>
+                              {this.spendinfo(this.addressCache[i].spendInfo)}
+                            </Grid.Column>
+                          </Grid.Row>
+                        </Grid>
+                      </Segment>
                     </Grid.Column>
-                    <Grid.Column>
-                      <b>Value: </b>
+                  </Grid.Row>
+                  <Grid.Row columns={3}>
+                    <Grid.Column width='3'>
+                      <b>Satoshis: </b>
                       {this.addressCache[i].value}
                     </Grid.Column>
-                    <Grid.Column>
-                      <b>Output Index: </b>
-                      {this.addressCache[i].outputIndex}
-                    </Grid.Column>
-                    <Grid.Column>
+                    <Grid.Column width='2'>
                       <b>Block Height: </b>
                       <Link
                         to={'/explorer/blockheight/' + this.addressCache[i].blockHeight + '/""'}>
                         {this.addressCache[i].blockHeight}
                       </Link>
                     </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row columns={1} className='cen'>
-                    <Grid.Column>
+                    <Grid.Column className='tdwordbreak' width='11'>
                       <b>Block Hash: </b>
                       <Link to={'/explorer/blockhash/' + this.addressCache[i].blockHash + '/""'}>
                         {this.addressCache[i].blockHash}
@@ -107,77 +108,7 @@ class ExplorerAddress extends React.Component {
           </Grid>
         </>
       );
-      if (this.addressCache[i].spendInfo != null) {
-        for (var b = 0; b < Object.keys(this.addressCache[i].spendInfo.spendData).length; b++) {
-          this.txlist.push(
-            <Grid>
-              <Grid.Row columns={1}>
-                <Grid.Column>
-                  <Grid>
-                    <Grid.Row columns={1} className='cen'>
-                      <Grid.Column>
-                        <b>Spending Information</b>
-                      </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row columns={3} className='cen' divided>
-                      <Grid.Column>
-                        <b>Spending Output Index: </b>
-                        {this.addressCache[i].spendInfo.spendData[b].spendingOutputIndex}
-                      </Grid.Column>
-                      <Grid.Column>
-                        <b>Value: </b>
-                        {this.addressCache[i].spendInfo.spendData[b].value}
-                      </Grid.Column>
-                      <Grid.Column>
-                        <b>Output Address: </b>
-                        <Link
-                          to={
-                            '/explorer/address/' +
-                            this.addressCache[i].spendInfo.spendData[b].outputAddress +
-                            '/""'
-                          }>
-                          {this.addressCache[i].spendInfo.spendData[b].outputAddress}
-                        </Link>
-                      </Grid.Column>
-                    </Grid.Row>
-                  </Grid>
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
-          );
-        }
-      }
-      for (var a = 0; a < Object.keys(this.addressCache[i].prevOutpoint).length; a++) {
-        this.txlist.push(
-          <Grid>
-            <Grid.Row columns={1}>
-              <Grid.Column>
-                <Grid>
-                  <Grid.Row columns={1} className='cen'>
-                    <Grid.Column>
-                      <b>Previous Outpoint</b>
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row columns={1} className='cen'>
-                    <Grid.Column>
-                      <b>Output Transaction Hash: </b>
-                      {checkforinvalidtxid(this.addressCache[i].prevOutpoint[a][0].opTxHash)}
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row columns={3} className='cen' divided>
-                    <Grid.Column>
-                      <b>Output Index: </b>
-                      {this.addressCache[i].prevOutpoint[a][0].opIndex}
-                    </Grid.Column>
-                    <Grid.Column>{this.addressCache[i].prevOutpoint[a][1]}</Grid.Column>
-                    <Grid.Column>{this.addressCache[i].prevOutpoint[a][2]}</Grid.Column>
-                  </Grid.Row>
-                </Grid>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
-        );
-      }
+
       if (printbreaker === this.outputsperpage) {
         break;
       }
@@ -187,6 +118,105 @@ class ExplorerAddress extends React.Component {
     this.setState({
       selectnum: this.selected,
     });
+  };
+
+  spendinfo = spendInfo => {
+    var spendinfojsx = [];
+    spendinfojsx.push(
+      <Grid>
+        <Grid.Row columns={1} className='cen'>
+          <Grid.Column>
+            <h5>Outputs (Spending Information)</h5>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+    );
+    if (spendInfo) {
+      for (var b = 0; b < Object.keys(spendInfo.spendData).length; b++) {
+        spendinfojsx.push(
+          <Grid>
+            <Grid.Row columns={1}>
+              <Grid.Column>
+                <Grid>
+                  <Grid.Row columns={3}>
+                    <Grid.Column width='2'>
+                      <b>Index: </b>
+                      {spendInfo.spendData[b].spendingOutputIndex}
+                    </Grid.Column>
+                    <Grid.Column width='3'>
+                      <b>Satoshis: </b>
+                      {spendInfo.spendData[b].value}
+                    </Grid.Column>
+                    <Grid.Column className='tdwordbreak' width='11'>
+                      <div>
+                        <b>Output Address: </b>
+                      </div>
+                      <div>
+                        <Link
+                          to={'/explorer/address/' + spendInfo.spendData[b].outputAddress + '/""'}>
+                          {spendInfo.spendData[b].outputAddress}
+                        </Link>
+                      </div>
+                    </Grid.Column>
+                  </Grid.Row>
+                </Grid>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        );
+      }
+      return spendinfojsx;
+    }
+  };
+  checkforinvalidtxid = txidpar => {
+    if (txidpar !== '0000000000000000000000000000000000000000000000000000000000000000') {
+      return <Link to={'/explorer/transaction/' + txidpar + '/""'}>{txidpar}</Link>;
+    } else {
+      return <div>{txidpar}</div>;
+    }
+  };
+  prevoutpoint = prevoutpoint => {
+    var prevoutpointjsx = [];
+    prevoutpointjsx.push(
+      <Grid>
+        <Grid.Row columns={1} className='cen'>
+          <Grid.Column>
+            <h5>Inputs</h5>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+    );
+    for (var a = 0; a < Object.keys(prevoutpoint).length; a++) {
+      prevoutpointjsx.push(
+        <Grid>
+          <Grid.Row columns={1}>
+            <Grid.Column>
+              <Grid>
+                <Grid.Row columns={1}>
+                  <Grid.Column className='tdwordbreak' width='16'>
+                    <div>
+                      <b>Transaction Hash: </b>
+                    </div>
+                    <div>{this.checkforinvalidtxid(prevoutpoint[a][0].opTxHash)}</div>
+                  </Grid.Column>
+                </Grid.Row>
+                <Grid.Row columns={2}>
+                  <Grid.Column>
+                    <b>Index: </b>
+                    {prevoutpoint[a][0].opIndex}
+                  </Grid.Column>
+                  <Grid.Column>
+                    <div>Satoshis: </div>
+                    <div>{prevoutpoint[a][2]}</div>
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      );
+    }
+    return prevoutpointjsx;
   };
 
   pagearrayinit = () => {
@@ -393,10 +423,10 @@ class ExplorerAddress extends React.Component {
         <div className='opacitywhileload'>
           <Segment.Group>
             <Segment>
-              <h4>Address</h4>
-              <div id='address'>
-                <b>{this.address}</b>
-              </div>
+              <h4>
+                Address &nbsp;
+                {this.address}
+              </h4>
             </Segment>
             <Segment>
               <h4>

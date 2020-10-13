@@ -183,7 +183,7 @@ class ExplorerTransaction extends React.Component {
                   <Grid.Column width={3} style={{ paddingLeft: '2px' }}>
                     <b>Address</b>
                   </Grid.Column>
-                  <Grid.Column className='tdwordbreak' width={13}>
+                  <Grid.Column className='tdwordbreak' width={13} style={{ paddingLeft: '3px' }}>
                     {checkforinvalidaddress(this.rjdecoded.tx.tx.txInps[j].address)}
                   </Grid.Column>
                 </Grid.Row>
@@ -236,7 +236,7 @@ class ExplorerTransaction extends React.Component {
                   <Grid.Column width={3} style={{ paddingLeft: '2px' }}>
                     <b>Address</b>
                   </Grid.Column>
-                  <Grid.Column className='tdwordbreak' width={13}>
+                  <Grid.Column className='tdwordbreak' width={13} style={{ paddingLeft: '3px' }}>
                     <Link to={'/explorer/address/' + this.rjdecoded.tx.tx.txOuts[z].address}>
                       {this.rjdecoded.tx.tx.txOuts[z].address}
                     </Link>
