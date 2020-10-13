@@ -110,6 +110,7 @@ class WalletDashboard extends React.Component {
             <Loader active />
           ) : (
             <>
+              {/* FIXME find correct way to do this */}
               {/* <img className='ui small centered image' src={images.bsv} /> */}
               <Icon name='btc' size='big' alt='BitcoinSV' />
               <div className='ui header'>
