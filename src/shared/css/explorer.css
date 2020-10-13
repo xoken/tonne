@@ -7,11 +7,12 @@
   width: 100%;
 }
 .txslnum {
-  background-color: #ebbc58;
+  background-color: lightgrey;
   padding: 20px;
-  color: white;
-  font-weight: bold;
-  font-size: 20px;
+}
+
+.nopaddingtop{
+  padding-top: 0px !important;
 }
 .spendinfo0 > table > tbody > tr > td {
   background-color: #f9ffc4;
@@ -315,4 +316,10 @@
     top: 0px;
     opacity: 1;
   }
+}
+
+
+.nosegmentmargin{
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
 }

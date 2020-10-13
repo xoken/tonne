@@ -66,37 +66,37 @@ class ExplorerDashboard extends React.Component {
     this.summarysection.push(
       <>
         <Grid>
-          <Grid.Row columns={4} divided>
+          <Grid.Row columns={4}>
             <Grid.Column>
-              <h3>Chainwork</h3>
+              <b>Chainwork : </b>
               {this.rjdecoded.chainInfo.chainwork}
             </Grid.Column>
             <Grid.Column>
-              <h3>Blocks Synced</h3>
+              <b>Blocks Synced : </b>
               <Link to={'/explorer/blockheight/' + this.rjdecoded.chainInfo.blocksSynced + '/""'}>
                 {this.rjdecoded.chainInfo.blocksSynced}
               </Link>
             </Grid.Column>
             <Grid.Column>
-              <h3>Chain Tip</h3>
+              <b>Chain Tip : </b>
               <Link to={'/explorer/blockheight/' + this.rjdecoded.chainInfo.chainTip + '/""'}>
                 {this.rjdecoded.chainInfo.chainTip}
               </Link>
             </Grid.Column>
             <Grid.Column>
-              <h3>Chain</h3>
+              <b>Chain : </b>
               {this.rjdecoded.chainInfo.chain}
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row columns={2} divided>
+          <Grid.Row columns={2}>
             <Grid.Column>
-              <h3>Synced Block Hash</h3>
+              <b>Synced Block Hash</b>
               <Link to={'/explorer/blockhash/' + this.rjdecoded.chainInfo.syncedBlockHash + '/""'}>
                 <div className='wordbreak'>{this.rjdecoded.chainInfo.syncedBlockHash}</div>
               </Link>
             </Grid.Column>
             <Grid.Column>
-              <h3>Chain Tip Hash</h3>
+              <b>Chain Tip Hash</b>
               <Link to={'/explorer/blockhash/' + this.rjdecoded.chainInfo.chainTipHash + '/""'}>
                 <div className='wordbreak'>{this.rjdecoded.chainInfo.chainTipHash}</div>
               </Link>
@@ -118,7 +118,7 @@ class ExplorerDashboard extends React.Component {
     this.printresults();
     if (this.state.selectnum === '') {
       this.setState({
-        selectnum: 1
+        selectnum: 1,
       });
     }
   };
@@ -229,27 +229,27 @@ class ExplorerDashboard extends React.Component {
   printresults = () => {
     this.resultsrow.length = 0;
     this.resultsrow.push(
-      <Segment.Group horizontal>
+      <Segment.Group horizontal className='nosegmentmargin'>
         <Segment className='cen'>
-          <Grid columns={6} divided>
+          <Grid columns={6}>
             <Grid.Row>
               <Grid.Column>
-                <h3>Height</h3>
+                <b>Height</b>
               </Grid.Column>
               <Grid.Column>
-                <h3>Timestamp (UTC)</h3>
+                <b>Timestamp (UTC)</b>
               </Grid.Column>
               <Grid.Column>
-                <h3>Age</h3>
+                <b>Age</b>
               </Grid.Column>
               <Grid.Column>
-                <h3>Block Version</h3>
+                <b>Block Version</b>
               </Grid.Column>
               <Grid.Column>
-                <h3>Transactions</h3>
+                <b>Transactions</b>
               </Grid.Column>
               <Grid.Column>
-                <h3>Size(Bytes)</h3>
+                <b>Size(Bytes)</b>
               </Grid.Column>
             </Grid.Row>
           </Grid>
@@ -257,16 +257,21 @@ class ExplorerDashboard extends React.Component {
       </Segment.Group>
     );
     this.size = Object.keys(this.rjdecoded.blocks).length;
-    var todaysdate, age;
+    var todaysdate, age, tempColor;
     for (var i = this.size - 1; i >= 0; i--) {
       this.date = new Date(this.rjdecoded.blocks[i].header.blockTimestamp * 1000);
       todaysdate = Date.now() - this.rjdecoded.blocks[i].header.blockTimestamp * 1000;
       age = new Date(todaysdate);
+      if (i % 2 === 0) {
+        tempColor = 'white';
+      } else {
+        tempColor = 'lightgrey';
+      }
       this.resultsrow.push(
-        <Segment.Group horizontal>
-          <Segment color='yellow' className='cen'>
-            <Grid columns={6} divided>
-              <Grid.Row>
+        <Segment.Group horizontal className='nosegmentmargin'>
+          <Segment className='cen'>
+            <Grid columns={6} verticalAlign='middle'>
+              <Grid.Row style={{ backgroundColor: tempColor }}>
                 <Grid.Column>
                   <Link to={'/explorer/blockheight/' + this.rjdecoded.blocks[i].height + '/""'}>
                     {this.rjdecoded.blocks[i].height}
@@ -290,12 +295,13 @@ class ExplorerDashboard extends React.Component {
       );
     }
     this.setState({
-      selectnum: this.selected
+      selectnum: this.selected,
     });
   };
 
   componentDidMount() {
     this.initDashboard();
+    var blockListArray = document.getElementsByClassName('');
   }
   render() {
     return (
@@ -308,18 +314,14 @@ class ExplorerDashboard extends React.Component {
         <div className='opacitywhileload'>
           <Segment.Group>
             <Segment>
-              <h2>Summary</h2>
+              <h4>Summary</h4>
             </Segment>
             <Segment className='cen'>{this.summarysection}</Segment>
             <Segment>
-              <h2>Latest Blocks</h2>
+              <h4>Latest Blocks</h4>
             </Segment>
             <Segment>
-              <div className='latestblocks'>
-                <table>
-                  <tbody>{this.resultsrow}</tbody>
-                </table>
-              </div>
+              <div className='latestblocks'>{this.resultsrow}</div>
               <br />
             </Segment>
             <Segment>
@@ -338,7 +340,7 @@ class ExplorerDashboard extends React.Component {
                         type='text'
                         onChange={event =>
                           this.setState({
-                            selectnum: event.target.value
+                            selectnum: event.target.value,
                           })
                         }
                       />

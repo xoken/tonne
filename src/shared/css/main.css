@@ -102,5 +102,34 @@
 .page-footer {
   text-align: center;
   height: 22px;
-  background-color: #fcd04a;
+}
+.page-footer-displayed {
+  animation-duration: 1s;
+  animation-name: statusdisplay;
+}
+.page-footer-hidden {
+  animation-duration: 1s;
+  animation-name: statushide;
+}
+@keyframes statusdisplay {
+  from {
+    left: -20px !important;
+    opacity: 0;
+  }
+
+  to {
+    left: 0px !important;
+    opacity: 1;
+  }
+}
+@keyframes statushide {
+  from {
+    left: 0px;
+    opacity: 1;
+  }
+
+  to {
+    left: -20px;
+    opacity: 0;
+  }
 }

@@ -28,6 +28,8 @@ class ExplorerAddress extends React.Component {
   currentbatchnum = 1;
   nextcursor = '';
   pagescontainer = [];
+  totaloutputs = 0;
+  totalinputs = 0;
 
   initAddress = async () => {
     if (this.props.match.params.address !== undefined) {
@@ -47,52 +49,102 @@ class ExplorerAddress extends React.Component {
     var printbreaker = 1;
     var txnumber = (this.selected - 1) * this.outputsperpage;
     console.log(this.selected + 'this.selected');
-    function checkforinvalidtxid(txidpar) {
-      if (txidpar !== '0000000000000000000000000000000000000000000000000000000000000000') {
-        return <Link to={'/explorer/transaction/' + txidpar + '/""'}>{txidpar}</Link>;
-      } else {
-        return <div>{txidpar}</div>;
-      }
-    }
+
     for (var i = txnumber; i < this.addressCache.length; i++) {
+      console.log(this.addressCache[i].spendInfo);
       this.txlist.push(
         <>
           <Grid>
-            <Grid.Row columns={1}>
+            <Grid.Row columns={1} className='nopaddingtop'>
               <Grid.Column className='txslnum'>
-                #({i + 1}) -
-                <Link to={'/explorer/transaction/' + this.addressCache[i].outputTxHash}>
-                  {this.addressCache[i].outputTxHash}
-                </Link>
-                - outputTxHash
+                <h4>
+                  #({i + 1})&nbsp;
+                  <Link to={'/explorer/transaction/' + this.addressCache[i].outputTxHash}>
+                    {this.addressCache[i].outputTxHash}
+                  </Link>
+                  - Output Transaction Hash
+                </h4>
               </Grid.Column>
             </Grid.Row>
             <Grid.Row columns={1}>
               <Grid.Column>
                 <Grid>
-                  <Grid.Row columns={4} divided className='cen'>
-                    <Grid.Column>
-                      <b>Transaction Index: </b>
-                      {this.addressCache[i].txIndex}
+                  <Grid.Row columns={1}>
+                    <Grid.Column style={{ padding: '0px' }}>
+                      <Segment>
+                        <Grid>
+                          <Grid.Row columns={2} divided>
+                            <Grid.Column>
+                              <Grid>
+                                <Grid.Row columns={1} className='cen'>
+                                  <Grid.Column>
+                                    <h5>Inputs</h5>
+                                  </Grid.Column>
+                                </Grid.Row>
+                                <Grid.Row columns={1}>
+                                  <Grid.Column
+                                    width='16'
+                                    style={{
+                                      maxHeight: '1350px',
+                                      overflowY: 'auto',
+                                      paddingTop: '14px',
+                                      paddingBottom: '14px',
+                                    }}>
+                                    {this.prevoutpoint(this.addressCache[i].prevOutpoint)}
+                                  </Grid.Column>
+                                </Grid.Row>
+                                <Grid.Row columns={1} style={{ padding: '10px' }}>
+                                  <div>
+                                    <b>Total inputs (in Satoshis): </b>
+                                  </div>
+                                  <div>{this.totalinputs}</div>
+                                </Grid.Row>
+                              </Grid>
+                            </Grid.Column>
+                            <Grid.Column>
+                              <Grid>
+                                <Grid.Row columns={1} className='cen'>
+                                  <Grid.Column>
+                                    <h5>Outputs (Spending Information)</h5>
+                                  </Grid.Column>
+                                </Grid.Row>
+                                <Grid.Row columns={1}>
+                                  <Grid.Column
+                                    style={{
+                                      maxHeight: '1350px',
+                                      overflowY: 'auto',
+                                      paddingTop: '14px',
+                                      paddingBottom: '14px',
+                                    }}>
+                                    {this.spendinfo(this.addressCache[i].spendInfo)}
+                                  </Grid.Column>
+                                </Grid.Row>
+                                <Grid.Row columns={1} style={{ padding: '10px' }}>
+                                  <div>
+                                    <b>Total outputs (in Satoshis): </b>
+                                  </div>
+                                  <div>{this.totaloutputs}</div>
+                                </Grid.Row>
+                              </Grid>
+                            </Grid.Column>
+                          </Grid.Row>
+                        </Grid>
+                      </Segment>
                     </Grid.Column>
-                    <Grid.Column>
-                      <b>Value: </b>
+                  </Grid.Row>
+                  <Grid.Row columns={3}>
+                    <Grid.Column width='3'>
+                      <b>Satoshis: </b>
                       {this.addressCache[i].value}
                     </Grid.Column>
-                    <Grid.Column>
-                      <b>Output Index: </b>
-                      {this.addressCache[i].outputIndex}
-                    </Grid.Column>
-                    <Grid.Column>
+                    <Grid.Column width='2'>
                       <b>Block Height: </b>
                       <Link
                         to={'/explorer/blockheight/' + this.addressCache[i].blockHeight + '/""'}>
                         {this.addressCache[i].blockHeight}
                       </Link>
                     </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row columns={1} className='cen'>
-                    <Grid.Column>
+                    <Grid.Column className='tdwordbreak' width='11'>
                       <b>Block Hash: </b>
                       <Link to={'/explorer/blockhash/' + this.addressCache[i].blockHash + '/""'}>
                         {this.addressCache[i].blockHash}
@@ -105,77 +157,7 @@ class ExplorerAddress extends React.Component {
           </Grid>
         </>
       );
-      if (this.addressCache[i].spendInfo != null) {
-        for (var b = 0; b < Object.keys(this.addressCache[i].spendInfo.spendData).length; b++) {
-          this.txlist.push(
-            <Grid>
-              <Grid.Row columns={1}>
-                <Grid.Column>
-                  <Grid>
-                    <Grid.Row columns={1} className='cen'>
-                      <Grid.Column>
-                        <h3>spendData</h3>
-                      </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row columns={3} className='cen' divided>
-                      <Grid.Column>
-                        <b>Spending Output Index: </b>
-                        {this.addressCache[i].spendInfo.spendData[b].spendingOutputIndex}
-                      </Grid.Column>
-                      <Grid.Column>
-                        <b>Value: </b>
-                        {this.addressCache[i].spendInfo.spendData[b].value}
-                      </Grid.Column>
-                      <Grid.Column>
-                        <b>Output Address: </b>
-                        <Link
-                          to={
-                            '/explorer/address/' +
-                            this.addressCache[i].spendInfo.spendData[b].outputAddress +
-                            '/""'
-                          }>
-                          {this.addressCache[i].spendInfo.spendData[b].outputAddress}
-                        </Link>
-                      </Grid.Column>
-                    </Grid.Row>
-                  </Grid>
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
-          );
-        }
-      }
-      for (var a = 0; a < Object.keys(this.addressCache[i].prevOutpoint).length; a++) {
-        this.txlist.push(
-          <Grid>
-            <Grid.Row columns={1}>
-              <Grid.Column>
-                <Grid>
-                  <Grid.Row columns={1} className='cen'>
-                    <Grid.Column>
-                      <h3>prevOutpoint</h3>
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row columns={1} className='cen'>
-                    <Grid.Column>
-                      <b>opTxHash: </b>
-                      {checkforinvalidtxid(this.addressCache[i].prevOutpoint[a][0].opTxHash)}
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row columns={3} className='cen' divided>
-                    <Grid.Column>
-                      <b>opIndex: </b>
-                      {this.addressCache[i].prevOutpoint[a][0].opIndex}
-                    </Grid.Column>
-                    <Grid.Column>{this.addressCache[i].prevOutpoint[a][1]}</Grid.Column>
-                    <Grid.Column>{this.addressCache[i].prevOutpoint[a][2]}</Grid.Column>
-                  </Grid.Row>
-                </Grid>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
-        );
-      }
+
       if (printbreaker === this.outputsperpage) {
         break;
       }
@@ -183,8 +165,108 @@ class ExplorerAddress extends React.Component {
       printbreaker += 1;
     }
     this.setState({
-      selectnum: this.selected
+      selectnum: this.selected,
     });
+  };
+  totaloutput = outputsatoshis => {
+    this.totaloutputs += outputsatoshis;
+  };
+  spendinfo = spendInfo => {
+    var spendinfojsx = [];
+    this.totaloutputs = 0;
+
+    if (spendInfo) {
+      for (var b = 0; b < Object.keys(spendInfo.spendData).length; b++) {
+        spendinfojsx.push(
+          <Grid>
+            <Grid.Row columns={1}>
+              <Grid.Column>
+                <Grid>
+                  <Grid.Row columns={3}>
+                    <Grid.Column width='2'>
+                      <b>Index: </b>
+                      {spendInfo.spendData[b].spendingOutputIndex}
+                    </Grid.Column>
+                    <Grid.Column width='3'>
+                      <b>Satoshis: </b>
+                      {spendInfo.spendData[b].value}
+                      {this.totaloutput(spendInfo.spendData[b].value)}
+                    </Grid.Column>
+                    <Grid.Column className='tdwordbreak' width='11'>
+                      <div>
+                        <b>Output Address: </b>
+                      </div>
+                      <div>
+                        <Link
+                          to={'/explorer/address/' + spendInfo.spendData[b].outputAddress + '/""'}>
+                          {spendInfo.spendData[b].outputAddress}
+                        </Link>
+                      </div>
+                    </Grid.Column>
+                  </Grid.Row>
+                </Grid>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        );
+      }
+      return spendinfojsx;
+    }
+  };
+  checkforinvalidtxid = txidpar => {
+    if (txidpar !== '0000000000000000000000000000000000000000000000000000000000000000') {
+      return (
+        <>
+          <div>
+            <b>Transaction Hash: </b>
+          </div>
+          <div>
+            <Link to={'/explorer/transaction/' + txidpar + '/""'}>{txidpar}</Link>
+          </div>
+        </>
+      );
+    } else {
+      return <div>Newly minted coins</div>;
+    }
+  };
+  totalinput = inputsatoshis => {
+    this.totalinputs += inputsatoshis;
+  };
+
+  prevoutpoint = prevoutpoint => {
+    var prevoutpointjsx = [];
+    this.totalinputs = 0;
+    for (var a = 0; a < Object.keys(prevoutpoint).length; a++) {
+      prevoutpointjsx.push(
+        <Grid>
+          <Grid.Row columns={1}>
+            <Grid.Column>
+              <Grid>
+                <Grid.Row columns={1}>
+                  <Grid.Column className='tdwordbreak' width='16'>
+                    {this.checkforinvalidtxid(prevoutpoint[a][0].opTxHash)}
+                  </Grid.Column>
+                </Grid.Row>
+                <Grid.Row columns={2}>
+                  <Grid.Column>
+                    <b>Index: </b>
+                    {prevoutpoint[a][0].opIndex}
+                  </Grid.Column>
+                  <Grid.Column>
+                    <div>
+                      <b>Satoshis: </b>
+                    </div>
+                    <div>{prevoutpoint[a][2]}</div>
+                    {this.totalinput(prevoutpoint[a][2])}
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      );
+    }
+    return prevoutpointjsx;
   };
 
   pagearrayinit = () => {
@@ -323,7 +405,7 @@ class ExplorerAddress extends React.Component {
       this.printpagination();
     }
     this.setState({
-      leftright: this.currentbatchnum
+      leftright: this.currentbatchnum,
     });
   };
   rightlistener = async event => {
@@ -367,7 +449,7 @@ class ExplorerAddress extends React.Component {
       }
     }
     this.setState({
-      leftright: this.currentbatchnum
+      leftright: this.currentbatchnum,
     });
   };
 
@@ -391,18 +473,15 @@ class ExplorerAddress extends React.Component {
         <div className='opacitywhileload'>
           <Segment.Group>
             <Segment>
-              <h2>Address</h2>
-              <div id='address'>
-                <h3>{this.address}</h3>
-              </div>
+              <h4>
+                Address &nbsp;
+                {this.address}
+              </h4>
             </Segment>
             <Segment>
-              <table id='addressummary'></table>
-            </Segment>
-            <Segment>
-              <h2>
+              <h4>
                 <div id='nooftransactions'></div>Transactions
-              </h2>
+              </h4>
             </Segment>
             <Segment>{this.txlist}</Segment>
             <Segment>

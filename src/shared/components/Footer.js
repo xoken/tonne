@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { chainAPI } from 'nipkow-sdk';
 import { Button } from 'semantic-ui-react';
+import images from '../images';
 
 class Footer extends React.Component {
   constructor(props) {
@@ -53,7 +54,16 @@ class Footer extends React.Component {
     if (statusButton) {
       return (
         <>
-          <footer className='page-footer'>
+          <Button onClick={this.onStatusButtonToggle} className='statusbuttontext'>
+            <div>Connection status >></div>
+          </Button>
+          <footer
+            className={
+              this.state.statusButton
+                ? 'page-footer page-footer-displayed'
+                : 'page-footer page-footer-hidden'
+            }
+            style={{ backgroundColor: '#fcd04a' }}>
             <div className='ui container'>
               <div className='ui transparent label'>
                 Nexa Host: <div className='detail'>{nexaHost || 'UNKNOWN'}</div>
@@ -72,7 +82,17 @@ class Footer extends React.Component {
         </>
       );
     } else {
-      return null;
+      return (
+        <>
+          <footer className='page-footer'>
+            <div className='ui container'>
+              <Button onClick={this.onStatusButtonToggle} className='statusbuttontext'>
+                <div>Connection status >></div>
+              </Button>
+            </div>
+          </footer>
+        </>
+      );
     }
   };
 
@@ -81,14 +101,7 @@ class Footer extends React.Component {
   };
 
   render() {
-    return (
-      <>
-        <Button color='yellow' onMouseOver={this.onStatusButtonToggle} className='statusbutton'>
-          Connection status
-        </Button>
-        {this.onStatusButtonHover()}
-      </>
-    );
+    return <>{this.onStatusButtonHover()}</>;
   }
 
   componentWillUnmount() {
