@@ -9,15 +9,21 @@
   color: green;
   font-weight: bold;
 }
-.main {
-  height: calc(100vh - 89px);
-  overflow-x: auto;
+.custommargin {
+  margin-top: 10px !important;
+  margin-bottom: 10px !important;
 }
-.main > .container {
-  height: 100%;
+.statusbutton {
+  position: absolute;
+  bottom: 0px;
+  right: 0px;
 }
-.used-address {
-  color: rgba(40, 40, 40, 0.3);
+.statusbarclosed {
+  visibility: hidden;
+  transition: all 0.35s ease-in-out;
+}
+.statusbaropen {
+  visibility: visible;
 }
 .row {
   display: block;
@@ -36,6 +42,31 @@
   overflow: unset;
   outline: unset;
 }
+.warning {
+  color: #794b02;
+}
+.main {
+  height: calc(100vh - 89px);
+  overflow-x: auto;
+}
+.main > .container {
+  height: 100%;
+}
+.recent-transactions .title,
+.recent-transactions .header,
+.recent-transactions .label,
+.recent-transactions p {
+  font-family: 'Source Code Pro', monospace !important;
+}
+.ui.accordion .title .dropdown.icon {
+  vertical-align: middle;
+}
+.transaction .title .credit {
+  color: #28a745 !important;
+}
+.transaction .title .debit {
+  color: #dc3545 !important;
+}
 .ui.transparent.label,
 .ui.transparent.labels .label {
   background-color: transparent;
@@ -50,37 +81,39 @@
   box-shadow: none;
   padding: 0px;
 }
+.ui.plain.label > .icon {
+  margin: 0;
+}
 .last-refresh {
   margin-right: 15px;
 }
-
-.statusbuttontext {
-  position: absolute;
-  bottom: 0px !important;
-  vertical-align: top;
-  left: 0px;
-  background-color: #fcd04a !important;
-  height: 22px;
-  padding:0px 5px 0px 5px !important;
-  z-index: 999;
-  color:black !important;
+.ui.receive-modal.modal > .header {
+  border: none;
 }
-
+.ui.receive-modal.modal > .close {
+  top: 1.0535rem;
+  right: 1rem;
+  color: rgba(0, 0, 0, 0.87);
+}
+.ui.receive-modal.modal > .actions {
+  background: none;
+  border: none;
+}
 .page-footer {
   text-align: center;
   height: 22px;
 }
-.page-footer-displayed{
+.page-footer-displayed {
   animation-duration: 1s;
   animation-name: statusdisplay;
 }
-.page-footer-hidden{
+.page-footer-hidden {
   animation-duration: 1s;
   animation-name: statushide;
 }
 @keyframes statusdisplay {
   from {
-    left:  -20px !important;
+    left: -20px !important;
     opacity: 0;
   }
 
@@ -91,7 +124,7 @@
 }
 @keyframes statushide {
   from {
-    left:  0px;
+    left: 0px;
     opacity: 1;
   }
 
@@ -99,15 +132,4 @@
     left: -20px;
     opacity: 0;
   }
-}
-.custommargin {
-  margin-top: 10px !important;
-  margin-bottom: 10px !important;
-}
-.statusbarclosed {
-  visibility: hidden;
-  transition: all 0.35s ease-in-out;
-}
-.statusbaropen {
-  visibility: visible;
 }

@@ -30,6 +30,7 @@ class WalletHome extends React.Component {
                   <List selection verticalAlign='middle'>
                     {profiles.map((profile, index) => {
                       const { name } = profile;
+                      /* FIX ME - Use only semantic css*/
                       return (
                         <List.Item
                           key={index}

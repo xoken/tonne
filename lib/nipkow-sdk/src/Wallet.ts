@@ -236,55 +236,112 @@ class Wallet {
         derivedKeys: newDerivedKeys,
         diffOutputs,
       } = await this._getOutputs(existingDerivedKeys);
-      const outputsGroupedByTx = _.groupBy(diffOutputs, (output) => {
-        return output.outputTxHash;
-      });
-      const diffTrasactions = Object.entries(outputsGroupedByTx).map(
-        ([key, value], index) => {
-          return {
-            txId: key,
-            outputs: value,
-          };
-        }
-      );
       if (diffOutputs.length > 0) {
-        const txIds = diffTrasactions.map(
-          (diffTrasaction) => diffTrasaction.txId
+        const spentOutputs = diffOutputs.filter(
+          (output: { spendInfo: any }) => {
+            if (output.spendInfo) return true;
+            return false;
+          }
         );
+        const outgoingTxIds: string[] = Array.from(
+          new Set(
+            spentOutputs.map(
+              (output: { spendInfo: { spendingTxId: any } }) =>
+                output.spendInfo.spendingTxId
+            )
+          )
+        );
+        const incomingTxIds: string[] = Array.from(
+          new Set(
+            diffOutputs.map(
+              (output: { outputTxHash: any }) => output.outputTxHash
+            )
+          )
+        );
+        const txIds: string[] = Array.from(
+          new Set([...incomingTxIds, ...outgoingTxIds])
+        );
+        const { txs } = await transactionAPI.getTransactionsByTxIDs(txIds);
         const { chainInfo } = await chainAPI.getChainInfo();
         if (chainInfo) {
           const { chainTip } = chainInfo;
-          const { txs } = await transactionAPI.getTransactionsByTxIDs(txIds);
-          if (txs) {
-            const updatedDiffTransactions = diffTrasactions.map(
-              (diffTrasaction) => {
-                const transactionOnChain = txs.find(
-                  (tx: { txId: string }) => tx.txId === diffTrasaction.txId
+          if (txs.length > 0) {
+            const sortedTx = txs.sort(
+              (tx1: { blockHeight: number }, tx2: { blockHeight: number }) => {
+                return tx2.blockHeight - tx1.blockHeight;
+              }
+            );
+            const transactions = sortedTx.map(
+              (transaction: { txId?: any; tx?: any; blockHeight?: any }) => {
+                const {
+                  tx: { txInps, txOuts },
+                  blockHeight,
+                } = transaction;
+                const newTxInps = txInps.map(
+                  (input: {
+                    address: string;
+                    txInputIndex: number;
+                    value: number;
+                  }) => {
+                    const isMineAddress = newDerivedKeys.find(
+                      (derivedKey: { address: any }) =>
+                        derivedKey.address === input.address
+                    );
+                    return {
+                      address: input.address,
+                      txInputIndex: input.txInputIndex,
+                      value: input.value,
+                      isMine: isMineAddress ? true : false,
+                    };
+                  }
                 );
-                if (transactionOnChain) {
-                  return {
-                    ...diffTrasaction,
-                    confirmed: true,
-                    confirmations: chainTip - transactionOnChain.blockHeight,
-                  };
-                }
+                const newTxOuts = txOuts.map(
+                  (output: {
+                    address: string;
+                    outputIndex: number;
+                    value: number;
+                  }) => {
+                    const isMineAddress = newDerivedKeys.find(
+                      (derivedKey: { address: any }) =>
+                        derivedKey.address === output.address
+                    );
+                    return {
+                      address: output.address,
+                      outputIndex: output.outputIndex,
+                      value: output.value,
+                      isMine: isMineAddress ? true : false,
+                    };
+                  }
+                );
+                const newTransaction = {
+                  txId: transaction.txId,
+                  inputs: newTxInps,
+                  outputs: newTxOuts,
+                };
                 return {
-                  ...diffTrasaction,
-                  confirmed: false,
-                  confirmations: 0,
+                  ...newTransaction,
+                  confirmations: blockHeight ? chainTip - blockHeight : null,
                 };
               }
             );
-            const confirmedTxs = updatedDiffTransactions.filter(
-              (element) => element.confirmed === true
-            );
-            const unConfirmedTxs = updatedDiffTransactions.filter(
-              (element) => element.confirmed === false
-            );
+            let confirmedTxs: any[] = [];
+            let unConfirmedTxs: any[] = [];
+            transactions.forEach((transaction: { confirmations: number }) => {
+              if (transaction.confirmations >= 0) {
+                confirmedTxs.push(transaction);
+              } else {
+                unConfirmedTxs.push(transaction);
+              }
+            });
             await Persist.upsertOutputs(diffOutputs);
             await Persist.upsertTransactions(confirmedTxs);
             await Persist.upsertUnconfirmedTransactions(unConfirmedTxs);
             await Persist.upsertDerivedKeys(newDerivedKeys);
+            if (options?.diff) {
+              return { transactions };
+            } else {
+              return await Persist.getTransactions(options);
+            }
           } else {
             throw new Error('Error in fetching transactions');
           }
@@ -292,54 +349,53 @@ class Wallet {
           throw new Error('Error in fetching transactions');
         }
       } else {
-        return { transactions: [] };
-      }
-      if (options?.diff) {
-        return { transactions: diffTrasactions };
-      } else {
-        return await Persist.getTransactions(options);
+        if (options?.diff) {
+          return { transactions: [] };
+        } else {
+          return await Persist.getTransactions(options);
+        }
       }
     }
     return { transactions: [] };
   }
 
-  async getOutputs(options?: {
-    startkey?: string;
-    limit?: number;
-    pageNo?: number;
-    diff?: boolean;
-  }) {
-    const { existingDerivedKeys } = await Persist.getDerivedKeys();
-    if (existingDerivedKeys.length > 0) {
-      const {
-        derivedKeys: newDerivedKeys,
-        diffOutputs,
-      } = await this._getOutputs(existingDerivedKeys);
-      if (diffOutputs.length > 0) {
-        const outputsGroupedByTx = _.groupBy(diffOutputs, (output) => {
-          return output.outputTxHash;
-        });
-        const diffTrasactions = Object.entries(outputsGroupedByTx).map(
-          ([key, value], index) => {
-            return {
-              txId: key,
-              confirmed: true,
-              outputs: value,
-            };
-          }
-        );
-        await Persist.upsertOutputs(diffOutputs);
-        await Persist.upsertTransactions(diffTrasactions);
-        await Persist.upsertDerivedKeys(newDerivedKeys);
-      }
-      if (options?.diff) {
-        return { outputs: diffOutputs };
-      } else {
-        return await Persist.getOutputs(options);
-      }
-    }
-    return { outputs: [] };
-  }
+  // async getOutputs(options?: {
+  //   startkey?: string;
+  //   limit?: number;
+  //   pageNo?: number;
+  //   diff?: boolean;
+  // }) {
+  //   const { existingDerivedKeys } = await Persist.getDerivedKeys();
+  //   if (existingDerivedKeys.length > 0) {
+  //     const {
+  //       derivedKeys: newDerivedKeys,
+  //       diffOutputs,
+  //     } = await this._getOutputs(existingDerivedKeys);
+  //     if (diffOutputs.length > 0) {
+  //       const outputsGroupedByTx = _.groupBy(diffOutputs, (output) => {
+  //         return output.outputTxHash;
+  //       });
+  //       const diffTrasactions = Object.entries(outputsGroupedByTx).map(
+  //         ([key, value], index) => {
+  //           return {
+  //             txId: key,
+  //             confirmed: true,
+  //             outputs: value,
+  //           };
+  //         }
+  //       );
+  //       await Persist.upsertOutputs(diffOutputs);
+  //       await Persist.upsertTransactions(diffTrasactions);
+  //       await Persist.upsertDerivedKeys(newDerivedKeys);
+  //     }
+  //     if (options?.diff) {
+  //       return { outputs: diffOutputs };
+  //     } else {
+  //       return await Persist.getOutputs(options);
+  //     }
+  //   }
+  //   return { outputs: [] };
+  // }
 
   async _getOutputs(
     derivedKeys: any[],
@@ -800,6 +856,70 @@ class Wallet {
     }
   }
 
+  async getBalance() {
+    const { outputs } = await Persist.getOutputs();
+    const balance = outputs.reduce((acc: number, currOutput: any) => {
+      if (!currOutput.isSpent) {
+        acc = acc + currOutput.value;
+      }
+      return acc;
+    }, 0);
+    return { balance };
+  }
+
+  generateMnemonic(
+    strength?: number,
+    rng?: (size: number) => Buffer,
+    wordlist?: string[]
+  ): string {
+    return bip39.generateMnemonic(strength, rng, wordlist);
+  }
+
+  async getAddressInfo() {
+    const { existingDerivedKeys } = await Persist.getDerivedKeys();
+    const unusedDerivedKey = existingDerivedKeys.find(
+      (existingDerivedKey: { isUsed: any }) =>
+        existingDerivedKey.isUsed === false
+    );
+    const { outputs } = await Persist.getOutputs();
+    const outputsGroupedByAddress = _.groupBy(outputs, (output) => {
+      return output.address;
+    });
+    const usedAddressInfo: {
+      address: string;
+      incomingBalance: number;
+      outgoingBalance: number;
+      currentBalance: number;
+      lastTransaction: any;
+    }[] = [];
+    for (const [address, outputs] of Object.entries(outputsGroupedByAddress)) {
+      const currentBalance = outputs.reduce((acc: number, currOutput: any) => {
+        if (!currOutput.spendInfo) {
+          acc = acc + currOutput.value;
+        }
+        return acc;
+      }, 0);
+      let incomingBalance = 0;
+      let outgoingBalance = 0;
+      outputs.forEach((output) => {
+        if (output.spendInfo) {
+          outgoingBalance = outgoingBalance + output.value;
+        }
+        incomingBalance = incomingBalance + output.value;
+      });
+      usedAddressInfo.push({
+        address,
+        incomingBalance,
+        outgoingBalance,
+        currentBalance,
+        lastTransaction: outputs[0].address,
+      });
+    }
+    return {
+      addressInfo: { unusedAddress: unusedDerivedKey.address, usedAddressInfo },
+    };
+  }
+
   async login(profileId: string, password: string) {
     try {
       const bip39Mnemonic = await Persist.login(profileId, password);
@@ -836,73 +956,8 @@ class Wallet {
     return { profiles: await Persist.getProfiles() };
   }
 
-  async getBalance() {
-    const { outputs } = await Persist.getOutputs();
-    const balance = outputs.reduce((acc: number, currOutput: any) => {
-      if (!currOutput.isSpent) {
-        acc = acc + currOutput.value;
-      }
-      return acc;
-    }, 0);
-    return { balance };
-  }
-
-  generateMnemonic(
-    strength?: number,
-    rng?: (size: number) => Buffer,
-    wordlist?: string[]
-  ): string {
-    return bip39.generateMnemonic(strength, rng, wordlist);
-  }
-
-  logout() {
-    return Persist.destroy();
-  }
-
-  async getAddressInfo() {
-    const { existingDerivedKeys } = await Persist.getDerivedKeys();
-    const unusedDerivedKey = existingDerivedKeys.find(
-      (existingDerivedKey: { isUsed: any }) =>
-        existingDerivedKey.isUsed === false
-    );
-    const { outputs } = await this.getOutputs();
-    const outputsGroupedByAddress = _.groupBy(outputs, (output) => {
-      return output.address;
-    });
-    const usedAddressInfo: {
-      address: string;
-      incoming: number;
-      outgoing: number;
-      currentBalance: number;
-      lastTransaction: any;
-    }[] = [];
-    for (const [key, outputs] of Object.entries(outputsGroupedByAddress)) {
-      const currentBalance = outputs.reduce((acc: number, currOutput: any) => {
-        if (!currOutput.isSpent) {
-          acc = acc + currOutput.value;
-        }
-        return acc;
-      }, 0);
-      let incoming = 0;
-      let outgoing = 0;
-      outputs.forEach((output) => {
-        if (output.spendInfo) {
-          outgoing = outgoing + output.value;
-        } else {
-          incoming = incoming + output.value;
-        }
-      });
-      usedAddressInfo.push({
-        address: key,
-        incoming,
-        outgoing,
-        currentBalance,
-        lastTransaction: outputs[0].address,
-      });
-    }
-    return {
-      addressInfo: { unusedAddress: unusedDerivedKey.address, usedAddressInfo },
-    };
+  async logout() {
+    return await Persist.destroy();
   }
 
   async runScript() {
