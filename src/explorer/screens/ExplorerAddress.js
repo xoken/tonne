@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Segment, Grid, Button } from 'semantic-ui-react';
+import { Segment, Grid, Button, Loader } from 'semantic-ui-react';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 
 class ExplorerAddress extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { selectnum: '', leftright: '' };
+    this.state = { selectnum: '', leftright: '', isLoading: true };
     this.addlistener = this.addlistener.bind(this);
     this.leftlistener = this.leftlistener.bind(this);
     this.rightlistener = this.rightlistener.bind(this);
@@ -61,7 +61,7 @@ class ExplorerAddress extends React.Component {
       this.txlist.push(
         <>
           <Grid>
-            <Grid.Row columns={1} className='nopaddingtop'>
+            <Grid.Row columns={1} className='nopadding'>
               <Grid.Column className='txslnum'>
                 <h4>
                   #({i + 1})&nbsp;
@@ -71,7 +71,7 @@ class ExplorerAddress extends React.Component {
                 </h4>
               </Grid.Column>
             </Grid.Row>
-            <Grid.Row columns={1}>
+            <Grid.Row columns={1} className='nopaddingtop'>
               <Grid.Column>
                 <Grid>
                   <Grid.Row columns={1}>
@@ -158,12 +158,20 @@ class ExplorerAddress extends React.Component {
       printbreaker += 1;
     }
     this.setState({
+      isLoading: false,
       selectnum: this.selected,
     });
   };
 
   outputs = output => {
     var outputsjsx = [];
+    function checkforemptyaddress(txaddress) {
+      if (txaddress) {
+        return <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>;
+      } else {
+        return <div>n/a</div>;
+      }
+    }
     var outps = Object.keys(output.tx.txOuts).length;
     if (outps && outps > 0) {
       for (var b = 0; b < outps; b++) {
@@ -178,9 +186,7 @@ class ExplorerAddress extends React.Component {
                       <b>Address</b>
                     </Grid.Column>
                     <Grid.Column className='tdwordbreak' width={13}>
-                      <Link to={'/explorer/address/' + output.tx.txOuts[b].address}>
-                        {output.tx.txOuts[b].address}
-                      </Link>
+                      {checkforemptyaddress(output.tx.txOuts[b].address)}
                     </Grid.Column>
                   </Grid.Row>
                   <Grid.Row columns={2}>
@@ -391,6 +397,7 @@ class ExplorerAddress extends React.Component {
         </li>
       );
     }
+    this.setState({ isLoading: false });
   };
 
   addlistener = event => {
@@ -506,7 +513,7 @@ class ExplorerAddress extends React.Component {
                 <div id='nooftransactions'></div>Transactions
               </h4>
             </Segment>
-            <Segment>{this.txlist}</Segment>
+            <Segment>{this.state.isLoading ? <Loader active /> : this.txlist}</Segment>
             <Segment>
               <nav aria-label='transactions navigation'>
                 <ul className='pagination justify-content-center' id='pagination'>

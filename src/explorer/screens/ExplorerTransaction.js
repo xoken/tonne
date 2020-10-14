@@ -65,6 +65,13 @@ class ExplorerTransaction extends React.Component {
         return <div>Newly minted coins</div>;
       }
     }
+    function checkforemptyaddress(txaddress) {
+      if (txaddress) {
+        return <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>;
+      } else {
+        return <div>n/a</div>;
+      }
+    }
     this.summarysect1.push(
       <>
         <Grid>
@@ -233,9 +240,7 @@ class ExplorerTransaction extends React.Component {
                     <b>Address</b>
                   </Grid.Column>
                   <Grid.Column className='tdwordbreak' width={13}>
-                    <Link to={'/explorer/address/' + this.rjdecoded.tx.tx.txOuts[z].address}>
-                      {this.rjdecoded.tx.tx.txOuts[z].address}
-                    </Link>
+                    {checkforemptyaddress(this.rjdecoded.tx.tx.txOuts[z].address)}
                   </Grid.Column>
                 </Grid.Row>
                 <Grid.Row columns={2}>
