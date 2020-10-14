@@ -3,7 +3,6 @@ import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Segment, Grid, Button } from 'semantic-ui-react';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
-import { transactionAPI } from 'nipkow-sdk';
 
 class ExplorerAddress extends React.Component {
   constructor(props) {
