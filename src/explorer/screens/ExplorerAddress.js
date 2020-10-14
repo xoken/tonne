@@ -20,6 +20,7 @@ class ExplorerAddress extends React.Component {
   txlist = [];
   addressCache = [];
   txCache = [];
+  arrayoftxs = [];
   cachecounter = 0;
   outputsperpage = 20;
   pagearray = [];
@@ -40,6 +41,13 @@ class ExplorerAddress extends React.Component {
     if (this.rjdecoded === undefined) {
       this.props.history.push(`/explorer/404`);
     } else {
+      this.arrayoftxs.length = 0;
+      var temparray = [];
+      for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
+        temparray[v] = this.rjdecoded.outputs[v].outputTxHash;
+      }
+      this.arrayoftxs = Array.of(temparray);
+      this.rjdecodedtx = await ExplorerHttpsReq.httpsreq('getTransactionsByTxIDs', this.arrayoftxs);
       this.pagearrayinit();
     }
   };
@@ -88,9 +96,7 @@ class ExplorerAddress extends React.Component {
                                       paddingTop: '14px',
                                       paddingBottom: '14px',
                                     }}>
-                                    {
-                                      //this.inputs(this.txCache[i])
-                                    }
+                                    {this.inputs(this.txCache[i])}
                                   </Grid.Column>
                                 </Grid.Row>
                               </Grid>
@@ -110,9 +116,7 @@ class ExplorerAddress extends React.Component {
                                       paddingTop: '14px',
                                       paddingBottom: '14px',
                                     }}>
-                                    {
-                                      //this.outputs(this.txCache[i])
-                                    }
+                                    {this.outputs(this.txCache[i])}
                                   </Grid.Column>
                                 </Grid.Row>
                               </Grid>
@@ -161,7 +165,7 @@ class ExplorerAddress extends React.Component {
 
   outputs = output => {
     var outputsjsx = [];
-    var outps = Object.keys(output.tx.tx.txOuts).length;
+    var outps = Object.keys(output.tx.txOuts).length;
     if (outps && outps > 0) {
       for (var b = 0; b < outps; b++) {
         outputsjsx.push(
@@ -175,8 +179,8 @@ class ExplorerAddress extends React.Component {
                       <b>Address</b>
                     </Grid.Column>
                     <Grid.Column className='tdwordbreak' width={13}>
-                      <Link to={'/explorer/address/' + output.tx.tx.txOuts[b].address}>
-                        {output.tx.tx.txOuts[b].address}
+                      <Link to={'/explorer/address/' + output.tx.txOuts[b].address}>
+                        {output.tx.txOuts[b].address}
                       </Link>
                     </Grid.Column>
                   </Grid.Row>
@@ -184,7 +188,7 @@ class ExplorerAddress extends React.Component {
                     <Grid.Column width={3}>
                       <b>Satoshis</b>
                     </Grid.Column>
-                    <Grid.Column width={13}>{output.tx.tx.txOuts[b].value}</Grid.Column>
+                    <Grid.Column width={13}>{output.tx.txOuts[b].value}</Grid.Column>
                   </Grid.Row>
                 </Grid>
               </Grid.Column>
@@ -209,7 +213,7 @@ class ExplorerAddress extends React.Component {
 
   inputs = input => {
     var inputsjsx = [];
-    var inps = Object.keys(input.tx.tx.txInps).length,
+    var inps = Object.keys(input.tx.txInps).length,
       a = 0;
     function checkforinvalidaddress(txaddress) {
       if (txaddress) {
@@ -230,20 +234,20 @@ class ExplorerAddress extends React.Component {
                     <b>Address</b>
                   </Grid.Column>
                   <Grid.Column className='tdwordbreak' width={13}>
-                    {checkforinvalidaddress(input.tx.tx.txInps[a].address)}
+                    {checkforinvalidaddress(input.tx.txInps[a].address)}
                   </Grid.Column>
                 </Grid.Row>
                 <Grid.Row columns={2}>
                   <Grid.Column width={3}>
                     <b>Satoshis</b>
                   </Grid.Column>
-                  <Grid.Column width={13}>{input.tx.tx.txInps[a].value}</Grid.Column>
+                  <Grid.Column width={13}>{input.tx.txInps[a].value}</Grid.Column>
                 </Grid.Row>
                 <Grid.Row columns={2}>
                   <Grid.Column width={3}>
                     <b>Outpoint Index</b>
                   </Grid.Column>
-                  <Grid.Column width={13}>{input.tx.tx.txInps[a].outpointIndex}</Grid.Column>
+                  <Grid.Column width={13}>{input.tx.txInps[a].outpointIndex}</Grid.Column>
                 </Grid.Row>
               </Grid>
             </Grid.Column>
@@ -294,25 +298,18 @@ class ExplorerAddress extends React.Component {
     }
   };
 
-  fetchTXs = async () => {
-    console.log(this.txlist + 'this.txlist');
-    const { txs } = await transactionAPI.getTransactionsByTxIDs(this.txlist);
-    console.log(txs);
-    //this.rjdecodedtx = await ExplorerHttpsReq.httpsreq('getTransactionsByTxIDs', this.txlist);
-  };
-
-  caching = async () => {
+  caching = () => {
     if (Object.keys(this.rjdecoded.outputs).length > 0) {
-      this.txlist.length = 0;
+      this.arrayoftxs.length = 0;
+      var temparray = [];
       for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
-        this.txlist[v] = this.rjdecoded.outputs[v].outputTxHash;
+        temparray[v] = this.rjdecoded.outputs[v].outputTxHash;
       }
-      this.fetchTXs();
-      //console.log(this.rjdecodedtx + 'rjdecodedtx');
+      this.arrayoftxs = Array.of(temparray);
 
       for (var i = 0; i < Object.keys(this.rjdecoded.outputs).length; i++) {
         this.addressCache[this.cachecounter] = this.rjdecoded.outputs[i];
-        //this.txCache[this.cachecounter] = this.rjdecodedtx[i];
+        this.txCache[this.cachecounter] = this.rjdecodedtx.txs[i];
         this.cachecounter += 1;
       }
       this.nextcursor = this.rjdecoded.nextCursor;
@@ -320,8 +317,8 @@ class ExplorerAddress extends React.Component {
       this.nextcursor = null;
     }
     console.log(this.addressCache.length + 'addressCache.length');
-    console.log(this.txlist.length + 'this.txlist.length');
-    console.log(this.txCache + 'this.txCache.length');
+    console.log(this.arrayoftxs.length + 'this.arrayoftxs.length');
+    console.log(this.txCache.length + 'this.txCache.length');
   };
 
   adddataupdatepagearray = () => {
@@ -439,6 +436,17 @@ class ExplorerAddress extends React.Component {
           'getOutputsByAddress',
           100,
           this.nextcursor
+        );
+
+        this.arrayoftxs.length = 0;
+        var temparray = [];
+        for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
+          temparray[v] = this.rjdecoded.outputs[v].outputTxHash;
+        }
+        this.arrayoftxs = Array.of(temparray);
+        this.rjdecodedtx = await ExplorerHttpsReq.httpsreq(
+          'getTransactionsByTxIDs',
+          this.arrayoftxs
         );
         this.adddataupdatepagearray();
       } else {
