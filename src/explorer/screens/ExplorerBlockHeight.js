@@ -33,7 +33,7 @@ class ExplorerBlockHeight extends React.Component {
   txfinished = 0;
   fixedarrlength = 5;
   txnumber;
-  transactionsperpage = 10;
+  transactionsperpage = 20;
   summarysect1 = [];
   summarysect2 = [];
   pagescontainer = [];
@@ -59,7 +59,7 @@ class ExplorerBlockHeight extends React.Component {
     this.txfinished = 0;
     this.fixedarrlength = 5;
     this.txnumber = 0;
-    this.transactionsperpage = 10;
+    this.transactionsperpage = 20;
     this.summarysect1.length = 0;
     this.summarysect2.length = 0;
     this.pagescontainer.length = 0;
@@ -486,7 +486,7 @@ class ExplorerBlockHeight extends React.Component {
       if (k % 2 === 0) {
         tempColor = 'white';
       } else {
-        tempColor = 'lightgrey';
+        tempColor = '#eeeded';
       }
       this.txsection.push(
         <Segment.Group className='nosegmentmargin'>
@@ -583,8 +583,15 @@ class ExplorerBlockHeight extends React.Component {
         <div className='opacitywhileload'>
           <Segment.Group>
             <Segment>
-              <h4>Block # {this.blocktitle}</h4>
-              <div>{this.blockhash}</div>
+              <h4>
+                Block #
+                <Link to={'/explorer/blockheight/' + this.blocktitle + '/""'}>
+                  {this.blocktitle}
+                </Link>
+              </h4>
+              <div>
+                <Link to={'/explorer/blockhash/' + this.blockhash + '/""'}>{this.blockhash}</Link>
+              </div>
             </Segment>
             <Segment>
               <h4>Summary</h4>

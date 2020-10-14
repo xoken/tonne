@@ -55,7 +55,7 @@ class Footer extends React.Component {
       return (
         <>
           <Button onClick={this.onStatusButtonToggle} className='statusbuttontext'>
-            <div>Connection status >></div>
+            <div>Connection status &lt;&lt;</div>
           </Button>
           <footer
             className={
@@ -87,7 +87,7 @@ class Footer extends React.Component {
           <footer className='page-footer'>
             <div className='ui container'>
               <Button onClick={this.onStatusButtonToggle} className='statusbuttontext'>
-                <div>Connection status >></div>
+                <div>Connection status &gt;&gt;</div>
               </Button>
             </div>
           </footer>

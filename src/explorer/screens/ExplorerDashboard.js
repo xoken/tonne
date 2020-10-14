@@ -44,7 +44,7 @@ class ExplorerDashboard extends React.Component {
     if (this.blockhei !== '') {
       //this.selected = (this.numberofpages - Math.ceil(this.blockhei/10));
       this.selected =
-        this.numberofpages - Math.ceil((this.blockhei - (this.syncedblocksheight % 10)) / 10);
+        this.numberofpages - Math.ceil((this.blockhei - (this.syncedblocksheight % 20)) / 20);
       if (this.selected === 0) {
         this.selected = 1;
       }
@@ -60,7 +60,7 @@ class ExplorerDashboard extends React.Component {
   summary = () => {
     this.syncedblocksheight = this.rjdecoded.chainInfo.blocksSynced;
     console.log('summary' + this.syncedblocksheight);
-    this.numberofpages = Math.ceil(this.syncedblocksheight / 10);
+    this.numberofpages = Math.ceil(this.syncedblocksheight / 20);
     this.pagearray = [1, 2, 3, 4, 5, 6, 7, '-', this.numberofpages];
     console.log('summary' + this.pagearray);
     this.summarysection.push(
@@ -145,8 +145,8 @@ class ExplorerDashboard extends React.Component {
 
   updateheightlist = () => {
     this.heightlist.length = 0;
-    var tempheight = this.syncedblocksheight - (this.selected - 1) * 10;
-    for (var c = 0; c < 10; c++) {
+    var tempheight = this.syncedblocksheight - (this.selected - 1) * 20;
+    for (var c = 0; c < 20; c++) {
       this.heightlist[c] = tempheight;
       tempheight -= 1;
     }
@@ -265,7 +265,7 @@ class ExplorerDashboard extends React.Component {
       if (i % 2 === 0) {
         tempColor = 'white';
       } else {
-        tempColor = 'lightgrey';
+        tempColor = '#eeeded';
       }
       this.resultsrow.push(
         <Segment.Group horizontal className='nosegmentmargin'>
