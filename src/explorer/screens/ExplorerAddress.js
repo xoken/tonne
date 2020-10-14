@@ -3,6 +3,7 @@ import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Segment, Grid, Button } from 'semantic-ui-react';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
+import { transactionAPI } from 'nipkow-sdk';
 
 class ExplorerAddress extends React.Component {
   constructor(props) {
@@ -18,6 +19,7 @@ class ExplorerAddress extends React.Component {
   address;
   txlist = [];
   addressCache = [];
+  txCache = [];
   cachecounter = 0;
   outputsperpage = 20;
   pagearray = [];
@@ -44,17 +46,11 @@ class ExplorerAddress extends React.Component {
 
   printresults = async () => {
     this.txlist.length = 0;
-    console.log(this.addressCache);
     var printbreaker = 1;
     var txnumber = (this.selected - 1) * this.outputsperpage;
     console.log(this.selected + 'this.selected');
 
     for (var i = txnumber; i < this.addressCache.length; i++) {
-      this.rjdecodedtx = await ExplorerHttpsReq.httpsreq(
-        'getTransactionByTxID',
-        this.addressCache[i].outputTxHash
-      );
-      console.log(this.addressCache[i].spendInfo);
       this.txlist.push(
         <>
           <Grid>
@@ -92,7 +88,9 @@ class ExplorerAddress extends React.Component {
                                       paddingTop: '14px',
                                       paddingBottom: '14px',
                                     }}>
-                                    {this.inputs()}
+                                    {
+                                      //this.inputs(this.txCache[i])
+                                    }
                                   </Grid.Column>
                                 </Grid.Row>
                               </Grid>
@@ -112,7 +110,9 @@ class ExplorerAddress extends React.Component {
                                       paddingTop: '14px',
                                       paddingBottom: '14px',
                                     }}>
-                                    {this.outputs()}
+                                    {
+                                      //this.outputs(this.txCache[i])
+                                    }
                                   </Grid.Column>
                                 </Grid.Row>
                               </Grid>
@@ -159,9 +159,9 @@ class ExplorerAddress extends React.Component {
     });
   };
 
-  outputs = () => {
+  outputs = output => {
     var outputsjsx = [];
-    var outps = Object.keys(this.rjdecodedtx.tx.tx.txOuts).length;
+    var outps = Object.keys(output.tx.tx.txOuts).length;
     if (outps && outps > 0) {
       for (var b = 0; b < outps; b++) {
         outputsjsx.push(
@@ -175,8 +175,8 @@ class ExplorerAddress extends React.Component {
                       <b>Address</b>
                     </Grid.Column>
                     <Grid.Column className='tdwordbreak' width={13}>
-                      <Link to={'/explorer/address/' + this.rjdecodedtx.tx.tx.txOuts[b].address}>
-                        {this.rjdecodedtx.tx.tx.txOuts[b].address}
+                      <Link to={'/explorer/address/' + output.tx.tx.txOuts[b].address}>
+                        {output.tx.tx.txOuts[b].address}
                       </Link>
                     </Grid.Column>
                   </Grid.Row>
@@ -184,7 +184,7 @@ class ExplorerAddress extends React.Component {
                     <Grid.Column width={3}>
                       <b>Satoshis</b>
                     </Grid.Column>
-                    <Grid.Column width={13}>{this.rjdecodedtx.tx.tx.txOuts[b].value}</Grid.Column>
+                    <Grid.Column width={13}>{output.tx.tx.txOuts[b].value}</Grid.Column>
                   </Grid.Row>
                 </Grid>
               </Grid.Column>
@@ -207,9 +207,9 @@ class ExplorerAddress extends React.Component {
     }
   };
 
-  inputs = () => {
+  inputs = input => {
     var inputsjsx = [];
-    var inps = Object.keys(this.rjdecodedtx.tx.tx.txInps).length,
+    var inps = Object.keys(input.tx.tx.txInps).length,
       a = 0;
     function checkforinvalidaddress(txaddress) {
       if (txaddress) {
@@ -230,22 +230,20 @@ class ExplorerAddress extends React.Component {
                     <b>Address</b>
                   </Grid.Column>
                   <Grid.Column className='tdwordbreak' width={13}>
-                    {checkforinvalidaddress(this.rjdecodedtx.tx.tx.txInps[a].address)}
+                    {checkforinvalidaddress(input.tx.tx.txInps[a].address)}
                   </Grid.Column>
                 </Grid.Row>
                 <Grid.Row columns={2}>
                   <Grid.Column width={3}>
                     <b>Satoshis</b>
                   </Grid.Column>
-                  <Grid.Column width={13}>{this.rjdecodedtx.tx.tx.txInps[a].value}</Grid.Column>
+                  <Grid.Column width={13}>{input.tx.tx.txInps[a].value}</Grid.Column>
                 </Grid.Row>
                 <Grid.Row columns={2}>
                   <Grid.Column width={3}>
                     <b>Outpoint Index</b>
                   </Grid.Column>
-                  <Grid.Column width={13}>
-                    {this.rjdecodedtx.tx.tx.txInps[a].outpointIndex}
-                  </Grid.Column>
+                  <Grid.Column width={13}>{input.tx.tx.txInps[a].outpointIndex}</Grid.Column>
                 </Grid.Row>
               </Grid>
             </Grid.Column>
@@ -269,6 +267,7 @@ class ExplorerAddress extends React.Component {
 
   pagearrayinit = () => {
     this.addressCache.length = 0;
+    this.txCache.length = 0;
     this.cachecounter = 0;
     this.caching();
     console.log(this.addressCache.length + 'this.addressCache.length');
@@ -295,10 +294,25 @@ class ExplorerAddress extends React.Component {
     }
   };
 
-  caching = () => {
+  fetchTXs = async () => {
+    console.log(this.txlist + 'this.txlist');
+    const { txs } = await transactionAPI.getTransactionsByTxIDs(this.txlist);
+    console.log(txs);
+    //this.rjdecodedtx = await ExplorerHttpsReq.httpsreq('getTransactionsByTxIDs', this.txlist);
+  };
+
+  caching = async () => {
     if (Object.keys(this.rjdecoded.outputs).length > 0) {
+      this.txlist.length = 0;
+      for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
+        this.txlist[v] = this.rjdecoded.outputs[v].outputTxHash;
+      }
+      this.fetchTXs();
+      //console.log(this.rjdecodedtx + 'rjdecodedtx');
+
       for (var i = 0; i < Object.keys(this.rjdecoded.outputs).length; i++) {
         this.addressCache[this.cachecounter] = this.rjdecoded.outputs[i];
+        //this.txCache[this.cachecounter] = this.rjdecodedtx[i];
         this.cachecounter += 1;
       }
       this.nextcursor = this.rjdecoded.nextCursor;
@@ -306,6 +320,8 @@ class ExplorerAddress extends React.Component {
       this.nextcursor = null;
     }
     console.log(this.addressCache.length + 'addressCache.length');
+    console.log(this.txlist.length + 'this.txlist.length');
+    console.log(this.txCache + 'this.txCache.length');
   };
 
   adddataupdatepagearray = () => {

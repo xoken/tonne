@@ -74,6 +74,16 @@ export default class ExplorerHttpsReq {
             console.log(err);
           });
         break;
+      case 'getTransactionsByTxIDs':
+        tobeReturned = transactionAPI
+          .getTransactionsByTxIDs(reqparameter[1])
+          .then(data => {
+            return data;
+          })
+          .catch(err => {
+            console.log(err);
+          });
+        break;
       default:
         console.log('typo in request');
     }
