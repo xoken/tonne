@@ -90,6 +90,7 @@ class RecentTransaction extends React.Component {
             const { inputs: txInps, outputs: txOuts } = transaction;
 
             let totalInput = 0;
+            let totalOutput = 0;
             let credit = 0;
             let debit = 0;
             let outgoing = 0;
@@ -102,6 +103,7 @@ class RecentTransaction extends React.Component {
             });
 
             txOuts.forEach(output => {
+              totalOutput = totalOutput + output.value;
               if (output.isMine) {
                 credit = credit + output.value;
               } else {
@@ -169,7 +171,11 @@ class RecentTransaction extends React.Component {
                                 <p>{input.address}</p>
                               </Grid.Column>
                               <Grid.Column width='6' textAlign='right'>
-                                <p>{`${satoshiToBSV(input.value)} BSV`}</p>
+                                <p>
+                                  <span className={input.isMine && 'debit'}>
+                                    {`${satoshiToBSV(input.value)} BSV`}
+                                  </span>
+                                </p>
                               </Grid.Column>
                             </Grid>
                           );
@@ -184,7 +190,11 @@ class RecentTransaction extends React.Component {
                                 <p>{output.address}</p>
                               </Grid.Column>
                               <Grid.Column width='6' textAlign='right'>
-                                <p>{`${satoshiToBSV(output.value)} BSV`}</p>
+                                <p>
+                                  <span className={output.isMine && 'credit'}>
+                                    {`${satoshiToBSV(output.value)} BSV`}
+                                  </span>
+                                </p>
                               </Grid.Column>
                             </Grid>
                           );
@@ -204,11 +214,9 @@ class RecentTransaction extends React.Component {
                         <div className='ui right aligned grid'>
                           <div className='column'>
                             <Label className='plain'>
-                              Change/Other:
+                              Fee:
                               <Label.Detail>
-                                {debit > 0
-                                  ? `${satoshiToBSV(totalInput - outgoing)} BSV`
-                                  : `${satoshiToBSV(totalInput - credit)} BSV`}
+                                {`${satoshiToBSV(totalInput - totalOutput)} BSV`}
                               </Label.Detail>
                             </Label>
                           </div>
