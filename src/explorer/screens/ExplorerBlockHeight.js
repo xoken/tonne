@@ -254,7 +254,11 @@ class ExplorerBlockHeight extends React.Component {
 
   pagebutton = async event => {
     event.preventDefault();
-    if (this.state.enteredpagenumber !== '' && this.state.enteredpagenumber <= this.numberofpages) {
+    if (
+      this.state.enteredpagenumber !== '' &&
+      this.state.enteredpagenumber <= this.numberofpages &&
+      /^\d+$/.test(this.state.enteredpagenumber)
+    ) {
       this.setState({
         selectnum: this.state.enteredpagenumber,
       });
@@ -632,7 +636,7 @@ class ExplorerBlockHeight extends React.Component {
                                   type='text'
                                   onChange={event =>
                                     this.setState({
-                                      enteredpagenumber: event.target.value,
+                                      enteredpagenumber: event.target.value.replace(/\s/g, ''),
                                     })
                                   }
                                 />

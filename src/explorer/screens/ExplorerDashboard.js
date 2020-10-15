@@ -128,7 +128,8 @@ class ExplorerDashboard extends React.Component {
     if (
       this.state.selectnum !== '' &&
       this.state.selectnum <= this.numberofpages &&
-      this.state.selectnum > 0
+      this.state.selectnum > 0 &&
+      /^\d+$/.test(this.state.selectnum)
     ) {
       this.selected = this.state.selectnum;
       this.updateheightlist();
@@ -343,7 +344,7 @@ class ExplorerDashboard extends React.Component {
                         type='text'
                         onChange={event =>
                           this.setState({
-                            selectnum: event.target.value,
+                            selectnum: event.target.value.replace(/\s/g, ''),
                           })
                         }
                       />

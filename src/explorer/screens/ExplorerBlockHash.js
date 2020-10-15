@@ -260,7 +260,8 @@ class ExplorerBlockHeight extends React.Component {
     if (
       this.state.selectnum !== '' &&
       this.state.selectnum <= this.numberofpages &&
-      this.state.selectnum > 0
+      this.state.selectnum > 0 &&
+      /^\d+$/.test(this.state.enteredpagenumber)
     ) {
       this.selected = this.state.selectnum;
       this.currentbatchnum = Math.ceil(this.selected / this.fixedarrlength);
@@ -634,7 +635,7 @@ class ExplorerBlockHeight extends React.Component {
                                   type='text'
                                   onChange={event =>
                                     this.setState({
-                                      enteredpagenumber: event.target.value,
+                                      enteredpagenumber: event.target.value.replace(/\s/g, ''),
                                     })
                                   }
                                 />
