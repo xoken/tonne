@@ -1,22 +1,25 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Segment, Grid, Button } from 'semantic-ui-react';
+import { Segment, Grid, Button, Loader } from 'semantic-ui-react';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 
 class ExplorerAddress extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { selectnum: '', leftright: '' };
+    this.state = { selectnum: '', leftright: '', isLoading: true };
     this.addlistener = this.addlistener.bind(this);
     this.leftlistener = this.leftlistener.bind(this);
     this.rightlistener = this.rightlistener.bind(this);
   }
   rjdecoded;
+  rjdecodedtx;
   result;
   address;
   txlist = [];
   addressCache = [];
+  txCache = [];
+  arrayoftxs = [];
   cachecounter = 0;
   outputsperpage = 20;
   pagearray = [];
@@ -28,8 +31,6 @@ class ExplorerAddress extends React.Component {
   currentbatchnum = 1;
   nextcursor = '';
   pagescontainer = [];
-  totaloutputs = 0;
-  totalinputs = 0;
 
   initAddress = async () => {
     if (this.props.match.params.address !== undefined) {
@@ -39,34 +40,38 @@ class ExplorerAddress extends React.Component {
     if (this.rjdecoded === undefined) {
       this.props.history.push(`/explorer/404`);
     } else {
+      this.arrayoftxs.length = 0;
+      var temparray = [];
+      for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
+        temparray[v] = this.rjdecoded.outputs[v].outputTxHash;
+      }
+      this.arrayoftxs = Array.of(temparray);
+      this.rjdecodedtx = await ExplorerHttpsReq.httpsreq('getTransactionsByTxIDs', this.arrayoftxs);
       this.pagearrayinit();
     }
   };
 
-  printresults = () => {
+  printresults = async () => {
     this.txlist.length = 0;
-    console.log(this.addressCache);
     var printbreaker = 1;
     var txnumber = (this.selected - 1) * this.outputsperpage;
     console.log(this.selected + 'this.selected');
 
     for (var i = txnumber; i < this.addressCache.length; i++) {
-      console.log(this.addressCache[i].spendInfo);
       this.txlist.push(
         <>
           <Grid>
-            <Grid.Row columns={1} className='nopaddingtop'>
+            <Grid.Row columns={1} className='nopadding'>
               <Grid.Column className='txslnum'>
                 <h4>
                   #({i + 1})&nbsp;
                   <Link to={'/explorer/transaction/' + this.addressCache[i].outputTxHash}>
                     {this.addressCache[i].outputTxHash}
                   </Link>
-                  - Output Transaction Hash
                 </h4>
               </Grid.Column>
             </Grid.Row>
-            <Grid.Row columns={1}>
+            <Grid.Row columns={1} className='nopaddingtop'>
               <Grid.Column>
                 <Grid>
                   <Grid.Row columns={1}>
@@ -90,14 +95,8 @@ class ExplorerAddress extends React.Component {
                                       paddingTop: '14px',
                                       paddingBottom: '14px',
                                     }}>
-                                    {this.prevoutpoint(this.addressCache[i].prevOutpoint)}
+                                    {this.inputs(this.txCache[i])}
                                   </Grid.Column>
-                                </Grid.Row>
-                                <Grid.Row columns={1} style={{ padding: '10px' }}>
-                                  <div>
-                                    <b>Total inputs (in Satoshis): </b>
-                                  </div>
-                                  <div>{this.totalinputs}</div>
                                 </Grid.Row>
                               </Grid>
                             </Grid.Column>
@@ -105,7 +104,7 @@ class ExplorerAddress extends React.Component {
                               <Grid>
                                 <Grid.Row columns={1} className='cen'>
                                   <Grid.Column>
-                                    <h5>Outputs (Spending Information)</h5>
+                                    <h5>Outputs</h5>
                                   </Grid.Column>
                                 </Grid.Row>
                                 <Grid.Row columns={1}>
@@ -116,14 +115,8 @@ class ExplorerAddress extends React.Component {
                                       paddingTop: '14px',
                                       paddingBottom: '14px',
                                     }}>
-                                    {this.spendinfo(this.addressCache[i].spendInfo)}
+                                    {this.outputs(this.txCache[i])}
                                   </Grid.Column>
-                                </Grid.Row>
-                                <Grid.Row columns={1} style={{ padding: '10px' }}>
-                                  <div>
-                                    <b>Total outputs (in Satoshis): </b>
-                                  </div>
-                                  <div>{this.totaloutputs}</div>
                                 </Grid.Row>
                               </Grid>
                             </Grid.Column>
@@ -165,112 +158,125 @@ class ExplorerAddress extends React.Component {
       printbreaker += 1;
     }
     this.setState({
+      isLoading: false,
       selectnum: this.selected,
     });
   };
-  totaloutput = outputsatoshis => {
-    this.totaloutputs += outputsatoshis;
-  };
-  spendinfo = spendInfo => {
-    var spendinfojsx = [];
-    this.totaloutputs = 0;
 
-    if (spendInfo) {
-      for (var b = 0; b < Object.keys(spendInfo.spendData).length; b++) {
-        spendinfojsx.push(
+  outputs = output => {
+    var outputsjsx = [];
+    function checkforemptyaddress(txaddress) {
+      if (txaddress) {
+        return <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>;
+      } else {
+        return <div>n/a</div>;
+      }
+    }
+    var outps = Object.keys(output.tx.txOuts).length;
+    if (outps && outps > 0) {
+      for (var b = 0; b < outps; b++) {
+        outputsjsx.push(
           <Grid>
-            <Grid.Row columns={1}>
-              <Grid.Column>
+            <Grid.Row columns={2}>
+              <Grid.Column width={1}>({b + 1}).</Grid.Column>
+              <Grid.Column width={15}>
                 <Grid>
-                  <Grid.Row columns={3}>
-                    <Grid.Column width='2'>
-                      <b>Index: </b>
-                      {spendInfo.spendData[b].spendingOutputIndex}
+                  <Grid.Row columns={2}>
+                    <Grid.Column width={3}>
+                      <b>Address</b>
                     </Grid.Column>
-                    <Grid.Column width='3'>
-                      <b>Satoshis: </b>
-                      {spendInfo.spendData[b].value}
-                      {this.totaloutput(spendInfo.spendData[b].value)}
+                    <Grid.Column className='tdwordbreak' width={13}>
+                      {checkforemptyaddress(output.tx.txOuts[b].address)}
                     </Grid.Column>
-                    <Grid.Column className='tdwordbreak' width='11'>
-                      <div>
-                        <b>Output Address: </b>
-                      </div>
-                      <div>
-                        <Link
-                          to={'/explorer/address/' + spendInfo.spendData[b].outputAddress + '/""'}>
-                          {spendInfo.spendData[b].outputAddress}
-                        </Link>
-                      </div>
+                  </Grid.Row>
+                  <Grid.Row columns={2}>
+                    <Grid.Column width={3}>
+                      <b>Satoshis</b>
                     </Grid.Column>
+                    <Grid.Column width={13}>{output.tx.txOuts[b].value}</Grid.Column>
                   </Grid.Row>
                 </Grid>
               </Grid.Column>
             </Grid.Row>
           </Grid>
         );
+        if (b < outps - 1) {
+          outputsjsx.push(
+            <Grid>
+              <Grid.Row columns={1}>
+                <Grid.Column width={16}>
+                  <div className='horizontaldivider'></div>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+          );
+        }
       }
-      return spendinfojsx;
+      return outputsjsx;
     }
-  };
-  checkforinvalidtxid = txidpar => {
-    if (txidpar !== '0000000000000000000000000000000000000000000000000000000000000000') {
-      return (
-        <>
-          <div>
-            <b>Transaction Hash: </b>
-          </div>
-          <div>
-            <Link to={'/explorer/transaction/' + txidpar + '/""'}>{txidpar}</Link>
-          </div>
-        </>
-      );
-    } else {
-      return <div>Newly minted coins</div>;
-    }
-  };
-  totalinput = inputsatoshis => {
-    this.totalinputs += inputsatoshis;
   };
 
-  prevoutpoint = prevoutpoint => {
-    var prevoutpointjsx = [];
-    this.totalinputs = 0;
-    for (var a = 0; a < Object.keys(prevoutpoint).length; a++) {
-      prevoutpointjsx.push(
+  inputs = input => {
+    var inputsjsx = [];
+    var inps = Object.keys(input.tx.txInps).length,
+      a = 0;
+    function checkforinvalidaddress(txaddress) {
+      if (txaddress) {
+        return <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>;
+      } else {
+        return <div>Newly minted coins</div>;
+      }
+    }
+    for (a = 0; a < inps; a++) {
+      inputsjsx.push(
         <Grid>
-          <Grid.Row columns={1}>
-            <Grid.Column>
+          <Grid.Row columns={2}>
+            <Grid.Column width={1}>({a + 1}). </Grid.Column>
+            <Grid.Column width={15}>
               <Grid>
-                <Grid.Row columns={1}>
-                  <Grid.Column className='tdwordbreak' width='16'>
-                    {this.checkforinvalidtxid(prevoutpoint[a][0].opTxHash)}
+                <Grid.Row columns={2}>
+                  <Grid.Column width={3}>
+                    <b>Address</b>
+                  </Grid.Column>
+                  <Grid.Column className='tdwordbreak' width={13}>
+                    {checkforinvalidaddress(input.tx.txInps[a].address)}
                   </Grid.Column>
                 </Grid.Row>
                 <Grid.Row columns={2}>
-                  <Grid.Column>
-                    <b>Index: </b>
-                    {prevoutpoint[a][0].opIndex}
+                  <Grid.Column width={3}>
+                    <b>Satoshis</b>
                   </Grid.Column>
-                  <Grid.Column>
-                    <div>
-                      <b>Satoshis: </b>
-                    </div>
-                    <div>{prevoutpoint[a][2]}</div>
-                    {this.totalinput(prevoutpoint[a][2])}
+                  <Grid.Column width={13}>{input.tx.txInps[a].value}</Grid.Column>
+                </Grid.Row>
+                <Grid.Row columns={2}>
+                  <Grid.Column width={3}>
+                    <b>Outpoint Index</b>
                   </Grid.Column>
+                  <Grid.Column width={13}>{input.tx.txInps[a].outpointIndex}</Grid.Column>
                 </Grid.Row>
               </Grid>
             </Grid.Column>
           </Grid.Row>
         </Grid>
       );
+      if (a < inps - 1) {
+        inputsjsx.push(
+          <Grid>
+            <Grid.Row columns={1}>
+              <Grid.Column width={16}>
+                <div className='horizontaldivider'></div>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        );
+      }
     }
-    return prevoutpointjsx;
+    return inputsjsx;
   };
 
   pagearrayinit = () => {
     this.addressCache.length = 0;
+    this.txCache.length = 0;
     this.cachecounter = 0;
     this.caching();
     console.log(this.addressCache.length + 'this.addressCache.length');
@@ -299,8 +305,16 @@ class ExplorerAddress extends React.Component {
 
   caching = () => {
     if (Object.keys(this.rjdecoded.outputs).length > 0) {
+      this.arrayoftxs.length = 0;
+      var temparray = [];
+      for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
+        temparray[v] = this.rjdecoded.outputs[v].outputTxHash;
+      }
+      this.arrayoftxs = Array.of(temparray);
+
       for (var i = 0; i < Object.keys(this.rjdecoded.outputs).length; i++) {
         this.addressCache[this.cachecounter] = this.rjdecoded.outputs[i];
+        this.txCache[this.cachecounter] = this.rjdecodedtx.txs[i];
         this.cachecounter += 1;
       }
       this.nextcursor = this.rjdecoded.nextCursor;
@@ -308,6 +322,8 @@ class ExplorerAddress extends React.Component {
       this.nextcursor = null;
     }
     console.log(this.addressCache.length + 'addressCache.length');
+    console.log(this.arrayoftxs.length + 'this.arrayoftxs.length');
+    console.log(this.txCache.length + 'this.txCache.length');
   };
 
   adddataupdatepagearray = () => {
@@ -381,6 +397,7 @@ class ExplorerAddress extends React.Component {
         </li>
       );
     }
+    this.setState({ isLoading: false });
   };
 
   addlistener = event => {
@@ -425,6 +442,17 @@ class ExplorerAddress extends React.Component {
           'getOutputsByAddress',
           100,
           this.nextcursor
+        );
+
+        this.arrayoftxs.length = 0;
+        var temparray = [];
+        for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
+          temparray[v] = this.rjdecoded.outputs[v].outputTxHash;
+        }
+        this.arrayoftxs = Array.of(temparray);
+        this.rjdecodedtx = await ExplorerHttpsReq.httpsreq(
+          'getTransactionsByTxIDs',
+          this.arrayoftxs
         );
         this.adddataupdatepagearray();
       } else {
@@ -477,7 +505,7 @@ class ExplorerAddress extends React.Component {
             <Segment>
               <h4>
                 Address &nbsp;
-                {this.address}
+                <Link to={'/explorer/address/' + this.address}>{this.address}</Link>
               </h4>
             </Segment>
             <Segment>
@@ -485,7 +513,7 @@ class ExplorerAddress extends React.Component {
                 <div id='nooftransactions'></div>Transactions
               </h4>
             </Segment>
-            <Segment>{this.txlist}</Segment>
+            <Segment>{this.state.isLoading ? <Loader active /> : this.txlist}</Segment>
             <Segment>
               <nav aria-label='transactions navigation'>
                 <ul className='pagination justify-content-center' id='pagination'>
