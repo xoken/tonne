@@ -16,11 +16,11 @@ class ExplorerSearch extends React.Component {
       } else if (this.state.searchterm.length >= 26 && this.state.searchterm.length <= 35) {
         this.props.history.push(`/explorer/address/${this.state.searchterm}`);
       } else if (this.state.searchterm.length === 64) {
-        //if (this.state.searchterm.substring(0, 3) === '000') {
-        //  this.props.history.push(`/explorer/blockhash/${this.state.searchterm}/""`);
-        //} else {
-        this.props.history.push(`/explorer/transaction/${this.state.searchterm}`);
-        //  }
+        if (this.state.searchterm.substring(0, 4) === '0000') {
+          this.props.history.push(`/explorer/blockhash/${this.state.searchterm}/""`);
+        } else {
+          this.props.history.push(`/explorer/transaction/${this.state.searchterm}`);
+        }
       } else {
         console.log(this.props.history + 'this.props.history');
         this.props.history.push(`/explorer/404`);
@@ -40,8 +40,10 @@ class ExplorerSearch extends React.Component {
                   <div className='nine wide field'>
                     <input
                       type='text'
-                      placeholder='TXID / Address / BlockHeight'
-                      onChange={event => this.setState({ searchterm: event.target.value })}
+                      placeholder='TXID / Address / BlockHeight / BlockHash'
+                      onChange={event =>
+                        this.setState({ searchterm: event.target.value.replace(/\s/g, '') })
+                      }
                     />
                   </div>
                   <div className='one wide field'>

@@ -65,6 +65,13 @@ class ExplorerTransaction extends React.Component {
         return <div>Newly minted coins</div>;
       }
     }
+    function checkforemptyaddress(txaddress) {
+      if (txaddress) {
+        return <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>;
+      } else {
+        return <div>n/a</div>;
+      }
+    }
     this.summarysect1.push(
       <>
         <Grid>
@@ -73,8 +80,11 @@ class ExplorerTransaction extends React.Component {
               <b>Block</b>
             </Grid.Column>
             <Grid.Column width='13'>
-              <div id='blocktitle'>(# {this.rjdecoded.tx.blockHeight} )</div>
-
+              (#
+              <Link to={'/explorer/blockheight/' + this.rjdecoded.tx.blockHeight + '/""'}>
+                {this.rjdecoded.tx.blockHeight}
+              </Link>
+              )
               <div id='blockhash'>
                 Block Hash:
                 <br />
@@ -177,13 +187,11 @@ class ExplorerTransaction extends React.Component {
             <Grid.Column width={1}>({j + 1}). </Grid.Column>
             <Grid.Column width={15}>
               <Grid>
-                <Grid.Row
-                  columns={2}
-                  style={{ backgroundColor: 'lightgrey', paddingLeft: '5px', marginLeft: '9px' }}>
-                  <Grid.Column width={3} style={{ paddingLeft: '2px' }}>
+                <Grid.Row columns={2}>
+                  <Grid.Column width={3}>
                     <b>Address</b>
                   </Grid.Column>
-                  <Grid.Column className='tdwordbreak' width={13} style={{ paddingLeft: '3px' }}>
+                  <Grid.Column className='tdwordbreak' width={13}>
                     {checkforinvalidaddress(this.rjdecoded.tx.tx.txInps[j].address)}
                   </Grid.Column>
                 </Grid.Row>
@@ -203,14 +211,6 @@ class ExplorerTransaction extends React.Component {
                 </Grid.Row>
                 <Grid.Row columns={2}>
                   <Grid.Column width={3}>
-                    <b>Transaction Input Index</b>
-                  </Grid.Column>
-                  <Grid.Column width={13}>
-                    {this.rjdecoded.tx.tx.txInps[j].txInputIndex}
-                  </Grid.Column>
-                </Grid.Row>
-                <Grid.Row columns={2}>
-                  <Grid.Column width={3}>
                     <b>Outpoint Index</b>
                   </Grid.Column>
                   <Grid.Column width={13}>
@@ -218,6 +218,11 @@ class ExplorerTransaction extends React.Component {
                   </Grid.Column>
                 </Grid.Row>
               </Grid>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={1}>
+            <Grid.Column width={16}>
+              <div className='horizontaldivider'></div>
             </Grid.Column>
           </Grid.Row>
         </Grid>
@@ -230,16 +235,12 @@ class ExplorerTransaction extends React.Component {
             <Grid.Column width={1}>({z + 1}).</Grid.Column>
             <Grid.Column width={15}>
               <Grid>
-                <Grid.Row
-                  columns={2}
-                  style={{ backgroundColor: 'lightgrey', paddingLeft: '5px', marginLeft: '9px' }}>
-                  <Grid.Column width={3} style={{ paddingLeft: '2px' }}>
+                <Grid.Row columns={2}>
+                  <Grid.Column width={3}>
                     <b>Address</b>
                   </Grid.Column>
-                  <Grid.Column className='tdwordbreak' width={13} style={{ paddingLeft: '3px' }}>
-                    <Link to={'/explorer/address/' + this.rjdecoded.tx.tx.txOuts[z].address}>
-                      {this.rjdecoded.tx.tx.txOuts[z].address}
-                    </Link>
+                  <Grid.Column className='tdwordbreak' width={13}>
+                    {checkforemptyaddress(this.rjdecoded.tx.tx.txOuts[z].address)}
                   </Grid.Column>
                 </Grid.Row>
                 <Grid.Row columns={2}>
@@ -259,12 +260,6 @@ class ExplorerTransaction extends React.Component {
                   </Grid.Column>
                   <Grid.Column width={13}>{this.rjdecoded.tx.tx.txOuts[z].value} </Grid.Column>
                 </Grid.Row>
-                <Grid.Row columns={2}>
-                  <Grid.Column width={3}>
-                    <b>Output Index</b>
-                  </Grid.Column>
-                  <Grid.Column width={13}>{this.rjdecoded.tx.tx.txOuts[z].outputIndex}</Grid.Column>
-                </Grid.Row>
               </Grid>
             </Grid.Column>
           </Grid.Row>
@@ -273,6 +268,15 @@ class ExplorerTransaction extends React.Component {
       if (this.rjdecoded.tx.tx.txOuts[z].txSpendInfo != null) {
         this.tempoutputstring.push(
           <Grid>
+            <Grid.Row columns={2}>
+              <Grid.Column width='1'></Grid.Column>
+              <Grid.Column width='15'>
+                <div className='thinnerhorizontaldivider'></div>
+                <b>
+                  <h5>Spending Information</h5>
+                </b>
+              </Grid.Column>
+            </Grid.Row>
             <Grid.Row columns={2}>
               <Grid.Column width={1}></Grid.Column>
               <Grid.Column width={15}>
@@ -332,81 +336,23 @@ class ExplorerTransaction extends React.Component {
                 </Grid>
               </Grid.Column>
             </Grid.Row>
+            <Grid.Row columns={1}>
+              <Grid.Column width={16}>
+                <div className='horizontaldivider'></div>
+              </Grid.Column>
+            </Grid.Row>
           </Grid>
         );
-        this.tempoutputstring.push(
-          <>
-            <Grid>
-              <Grid.Row columns={2}>
-                <Grid.Column width='1'></Grid.Column>
-                <Grid.Column
-                  width='15'
-                  style={{ backgroundColor: 'lightgrey', paddingTop: '5px', paddingBottom: '5px' }}>
-                  <b>
-                    <h5>Spending Information</h5>
-                  </b>
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
-          </>
-        );
-        for (
-          var b = 0;
-          b < Object.keys(this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData).length;
-          b++
-        ) {
-          this.tempoutputstring.push(
-            <Grid>
-              <Grid.Row columns={2}>
-                <Grid.Column width={1}></Grid.Column>
-                <Grid.Column width={15}>
-                  <Grid>
-                    <Grid.Row columns={2}>
-                      <Grid.Column width={3}>
-                        <b>Spending Output Index</b>
-                      </Grid.Column>
-                      <Grid.Column width={13}>
-                        {
-                          this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b]
-                            .spendingOutputIndex
-                        }
-                      </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row columns={2}>
-                      <Grid.Column width={3}>
-                        <b>Satoshis</b>
-                      </Grid.Column>
-                      <Grid.Column width={13}>
-                        {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].value}
-                      </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row columns={2}>
-                      <Grid.Column width={3}>
-                        <b>Output Address</b>
-                      </Grid.Column>
-                      <Grid.Column className='tdwordbreak' width={13}>
-                        <Link
-                          to={
-                            '/explorer/address/' +
-                            this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].outputAddress
-                          }>
-                          {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendData[b].outputAddress}
-                        </Link>
-                      </Grid.Column>
-                    </Grid.Row>
-                    <Grid.Row style={{ padding: '0px' }}>
-                      <Grid.Column width={16}>
-                        <hr style={{ margin: '0px' }} />
-                      </Grid.Column>
-                    </Grid.Row>
-                  </Grid>
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
-          );
-        }
       } else {
-        //  this.tempoutputstring.push(<><br><br></td></tr></>);
+        this.tempoutputstring.push(
+          <Grid>
+            <Grid.Row columns={1}>
+              <Grid.Column width={16}>
+                <div className='horizontaldivider'></div>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        );
       }
     }
     this.setState({ loaded: true });
@@ -435,7 +381,7 @@ class ExplorerTransaction extends React.Component {
             <Segment>
               <h4>
                 Transaction &nbsp;
-                {this.txid}
+                <Link to={'/explorer/transaction/' + this.txid}>{this.txid}</Link>
               </h4>
             </Segment>
             <Segment>

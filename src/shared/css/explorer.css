@@ -15,7 +15,20 @@
 .nopaddingtop{
   padding-top: 0px !important;
 }
-
+.horizontaldivider{
+  border-top: 2px solid lightgrey;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.thinnerhorizontaldivider{
+  border-top: 1px solid lightgrey;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+.nopadding{
+  padding-top:0px !important;
+  padding-bottom:0px !important;
+}
 .spendinfo0 > table > tbody > tr > td {
   background-color: #f9ffc4;
   border: 1pt solid lightgrey !important;
