@@ -52,10 +52,16 @@
 .main > .container {
   height: 100%;
 }
-.recent-transactions .title,
-.recent-transactions .header,
-.recent-transactions .label,
-.recent-transactions p {
+.profile .text {
+  width: 14px;
+  height: 14px;
+  text-align: center;
+}
+.header .content .sub.header {
+  min-height: 32px;
+}
+.code,
+.monospace {
   font-family: 'Inconsolata', monospace !important;
 }
 .ui.accordion .title .dropdown.icon {

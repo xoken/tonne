@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Modal, Grid, Message } from 'semantic-ui-react';
+import { Button, Grid, Message, Modal } from 'semantic-ui-react';
 import * as authActions from '../../auth/authActions';
 
 class RenameProfile extends React.Component {
@@ -53,23 +53,22 @@ class RenameProfile extends React.Component {
                     <label>
                       Change Current Account's Name : {localStorage.getItem('currentprofile')}
                     </label>
-                    <div className='ui left icon input'>
+                    <div className='ui input'>
                       <input
                         type='text'
-                        placeholder='New Name'
+                        placeholder='New profile name'
                         value={newname}
                         onChange={event => this.setState({ newname: event.target.value })}
                       />
-                      <i className='user icon'></i>
                     </div>
                   </div>
                   <center>
-                    <div className='ui blue submit button' onClick={this.onRenameAccount}>
+                    <Button color='yellow' onClick={this.onRenameAccount}>
                       Rename
-                    </div>
-                    <div className='ui blue submit button' onClick={this.props.onClose}>
+                    </Button>
+                    <Button color='yellow' onClick={this.props.onClose}>
                       Cancel
-                    </div>
+                    </Button>
                   </center>
                   <Grid.Column textAlign='center' width={16}>
                     {this.printMessage}

@@ -40,6 +40,10 @@ class WalletService {
   async getAddressInfo() {
     return await wallet.getAddressInfo();
   }
+
+  async getUnusedAddresses() {
+    return await wallet.getUnusedAddresses();
+  }
 }
 
 export default WalletService;

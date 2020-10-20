@@ -44,6 +44,10 @@ export const getAddressInfoRequest = createAction('GET_ADDRESS_INFO_REQUEST');
 export const getAddressInfoSuccess = createAction('GET_ADDRESS_INFO_SUCCESS');
 export const getAddressInfoFailure = createAction('GET_ADDRESS_INFO_FAILURE');
 
+export const getUnusedAddressesRequest = createAction('GET_UNUSED_ADDRESS_REQUEST');
+export const getUnusedAddressesSuccess = createAction('GET_UNUSED_ADDRESS_SUCCESS');
+export const getUnusedAddressesFailure = createAction('GET_UNUSED_ADDRESS_FAILURE');
+
 export const getTransactions = options => async (dispatch, getState, { serviceInjector }) => {
   dispatch(getTransactionsRequest());
   try {
@@ -198,6 +202,19 @@ export const getAddressInfo = () => async (dispatch, getState, { serviceInjector
     dispatch(getAddressInfoSuccess({ addressInfo }));
   } catch (error) {
     dispatch(getAddressInfoFailure());
+    throw error;
+  }
+};
+
+export const getUnusedAddresses = options => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(getUnusedAddressesRequest());
+  try {
+      const { unusedAddresses } = await serviceInjector(
+        WalletService
+      ).getUnusedAddresses(options);
+      dispatch(getUnusedAddressesSuccess({ unusedAddresses }));
+  } catch (error) {
+    dispatch(getUnusedAddressesFailure());
     throw error;
   }
 };

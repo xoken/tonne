@@ -980,6 +980,17 @@ class Wallet {
     };
   }
 
+  async getUnusedAddresses() {
+    const { existingDerivedKeys } = await Persist.getDerivedKeys();
+    const unusedDerivedKeys = existingDerivedKeys.filter(
+      (existingDerivedKey: { isUsed: any }) =>
+        existingDerivedKey.isUsed === false
+    ).map(({indexText, address}: {indexText: string, address: string}) => ({ indexText, address }));
+    return {
+      unusedAddresses: unusedDerivedKeys
+    };
+  }
+
   async login(profileId: string, password: string) {
     try {
       const bip39Mnemonic = await Persist.login(profileId, password);

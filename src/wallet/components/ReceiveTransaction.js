@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { satoshiToBSV } from '../../shared/utils';
-import { Table } from 'semantic-ui-react';
+import { Divider, Icon, Label, Table } from 'semantic-ui-react';
 import * as walletSelectors from '../walletSelectors';
 import * as walletActions from '../walletActions';
 
@@ -15,6 +15,7 @@ class ReceiveTransaction extends React.Component {
   async componentDidMount() {
     const { dispatch } = this.props;
     await dispatch(walletActions.getAddressInfo());
+    await dispatch(walletActions.getUnusedAddresses());
   }
 
   onCopy = () => {
@@ -30,15 +31,22 @@ class ReceiveTransaction extends React.Component {
       const { unusedAddress } = addressInfo;
       return (
         <>
-          <h4 className='ui horizontal divider header'>Unused address</h4>
-          <div className='ui two column centered grid'>
+          <h4 className='ui header'>Unused address</h4>
+          <Divider />
+          <div className='ui two column grid'>
             <div className='column'>
               <div className='ui fluid action input'>
-                <input type='text' readOnly value={unusedAddress} />
+                <input type='text' className='monospace' readOnly value={unusedAddress} />
                 <button className='ui yellow icon button' onClick={this.onCopy}>
                   <i className='copy icon'></i>
                 </button>
               </div>
+            </div>
+            <div className='column middle aligned'>
+              <Label>
+                <Icon name='green check' />
+                Copied!
+              </Label>
             </div>
           </div>
         </>
@@ -69,8 +77,8 @@ class ReceiveTransaction extends React.Component {
                     index
                   ) => (
                     <Table.Row key={index.toString()}>
-                      <Table.Cell>{address}</Table.Cell>
-                      <Table.Cell>
+                      <Table.Cell className='monospace'>{address}</Table.Cell>
+                      <Table.Cell className='monospace'>
                         <div>
                           {incomingBalance !== null
                             ? `Total Incoming: ${satoshiToBSV(Number(incomingBalance))} BSV`
@@ -87,7 +95,7 @@ class ReceiveTransaction extends React.Component {
                             : ''}
                         </div>
                       </Table.Cell>
-                      <Table.Cell>{lastTransaction}</Table.Cell>
+                      <Table.Cell className='monospace'>{lastTransaction}</Table.Cell>
                     </Table.Row>
                   )
                 )}
@@ -119,6 +127,7 @@ ReceiveTransaction.defaultProps = {};
 const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   addressInfo: state.wallet.addressInfo,
+  unusedAddress: state.wallet.unusedAddress
 });
 
 export default connect(mapStateToProps)(ReceiveTransaction);

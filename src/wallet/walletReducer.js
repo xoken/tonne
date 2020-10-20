@@ -6,8 +6,9 @@ const INITIAL_STATE = {
   isLoading: false,
   transactions: [],
   nextTransactionCursor: null,
-  balance: 0,
+  balance: null,
   addressInfo: null,
+  unusedAddresses: null,
 };
 
 export default createReducer(
@@ -63,6 +64,10 @@ export default createReducer(
     [actions.getAddressInfoFailure]: state => ({
       ...state,
       isLoading: true,
+    }),
+    [actions.getUnusedAddressesSuccess]: (state, { unusedAddresses }) => ({
+      ...state,
+      unusedAddresses,
     }),
     [authActions.logoutSuccess]: state => ({
       ...state,
