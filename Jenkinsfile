@@ -11,14 +11,14 @@ pipeline {
       }
     }
 
-    stage('Clean') {
-      steps {
-        dir(path: 'nipkow') {
-          sh 'rm -r lib/nipkow-sdk/node_modules'
-          sh 'rm -r node_modules'
-        }
-      }
-    }
+    // stage('Clean') {
+    //   steps {
+    //     dir(path: 'nipkow') {
+    //       sh 'rm -r lib/nipkow-sdk/node_modules'
+    //       sh 'rm -r node_modules'
+    //     }
+    //   }
+    // }
 
     stage('Build') {
       steps {
