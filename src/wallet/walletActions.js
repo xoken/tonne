@@ -40,13 +40,13 @@ export const createSendTransactionRequest = createAction('CREATE_SEND_TRANSACTIO
 export const createSendTransactionSuccess = createAction('CREATE_SEND_TRANSACTION_SUCCESS');
 export const createSendTransactionFailure = createAction('CREATE_SEND_TRANSACTION_FAILURE');
 
-export const getAddressInfoRequest = createAction('GET_ADDRESS_INFO_REQUEST');
-export const getAddressInfoSuccess = createAction('GET_ADDRESS_INFO_SUCCESS');
-export const getAddressInfoFailure = createAction('GET_ADDRESS_INFO_FAILURE');
+export const getUsedDerivedKeysRequest = createAction('GET_USED_DERIVED_KEYS_REQUEST');
+export const getUsedDerivedKeysSuccess = createAction('GET_USED_DERIVED_KEYS_SUCCESS');
+export const getUsedDerivedKeysFailure = createAction('GET_USED_DERIVED_KEYS_FAILURE');
 
-export const getUnusedAddressesRequest = createAction('GET_UNUSED_ADDRESS_REQUEST');
-export const getUnusedAddressesSuccess = createAction('GET_UNUSED_ADDRESS_SUCCESS');
-export const getUnusedAddressesFailure = createAction('GET_UNUSED_ADDRESS_FAILURE');
+export const getUnusedDerivedKeysRequest = createAction('GET_UNUSED_DERIVED_KEYS_REQUEST');
+export const getUnusedDerivedKeysSuccess = createAction('GET_UNUSED_DERIVED_KEYS_SUCCESS');
+export const getUnusedDerivedKeysFailure = createAction('GET_UNUSED_DERIVED_KEYS_FAILURE');
 
 export const getTransactions = options => async (dispatch, getState, { serviceInjector }) => {
   dispatch(getTransactionsRequest());
@@ -195,26 +195,32 @@ export const createSendTransaction = (receiverAddress, amountInSatoshi, satoshis
   }
 };
 
-export const getAddressInfo = () => async (dispatch, getState, { serviceInjector }) => {
-  dispatch(getAddressInfoRequest());
+export const getUsedDerivedKeys = () => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(getUsedDerivedKeysRequest());
   try {
-    const { addressInfo } = await serviceInjector(WalletService).getAddressInfo();
-    dispatch(getAddressInfoSuccess({ addressInfo }));
+    const { usedDerivedKeys } = await serviceInjector(WalletService).getUsedDerivedKeys();
+    dispatch(getUsedDerivedKeysSuccess({ usedDerivedKeys }));
   } catch (error) {
-    dispatch(getAddressInfoFailure());
+    dispatch(getUsedDerivedKeysFailure());
     throw error;
   }
 };
 
-export const getUnusedAddresses = options => async (dispatch, getState, { serviceInjector }) => {
-  dispatch(getUnusedAddressesRequest());
+export const getUnusedDerivedKeys = () => async (dispatch, getState, { serviceInjector }) => {
+  const {
+    wallet: { unusedDerivedKeys },
+  } = getState();
+  const currentUnusedKeyIndex = unusedDerivedKeys
+    ? unusedDerivedKeys[unusedDerivedKeys.length - 1].indexText
+    : null;
+  dispatch(getUnusedDerivedKeysRequest());
   try {
-      const { unusedAddresses } = await serviceInjector(
-        WalletService
-      ).getUnusedAddresses(options);
-      dispatch(getUnusedAddressesSuccess({ unusedAddresses }));
+    const { unusedDerivedKeys } = await serviceInjector(WalletService).getUnusedDerivedKeys({
+      currentUnusedKeyIndex,
+    });
+    dispatch(getUnusedDerivedKeysSuccess({ unusedDerivedKeys }));
   } catch (error) {
-    dispatch(getUnusedAddressesFailure());
+    dispatch(getUnusedDerivedKeysFailure());
     throw error;
   }
 };

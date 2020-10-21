@@ -37,12 +37,12 @@ class WalletService {
     return await wallet.createSendTransaction(receiverAddress, amountInSatoshi, satoshisPerByte);
   }
 
-  async getAddressInfo() {
-    return await wallet.getAddressInfo();
+  async getUsedDerivedKeys() {
+    return await wallet.getUsedDerivedKeys();
   }
 
-  async getUnusedAddresses() {
-    return await wallet.getUnusedAddresses();
+  async getUnusedDerivedKeys(options) {
+    return await wallet.getUnusedDerivedKeys(options);
   }
 }
 

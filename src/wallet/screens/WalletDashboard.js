@@ -88,7 +88,7 @@ class WalletDashboard extends React.Component {
       <>
         <div className='ui center aligned segment'>
           <div className='ui grid'>
-            <div class='column'>
+            <div className='column'>
               <Dropdown
                 button
                 className='circular icon top left right floated profile'
@@ -106,7 +106,7 @@ class WalletDashboard extends React.Component {
           </div>
           <div className='ui center aligned icon header'>
             <Icon name='btc' size='big' alt='BitcoinSV' />
-            <div class='content'>
+            <div className='content'>
               Your Current Balance is
               <div className='sub header'>
                 {balance ? `${satoshiToBSV(balance)} BSV` : <Loader inline active />}
@@ -134,10 +134,12 @@ class WalletDashboard extends React.Component {
 WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
   profile: PropTypes.string.isRequired,
-  balance: PropTypes.number.isRequired,
+  balance: PropTypes.number,
 };
 
-WalletDashboard.defaultProps = {};
+WalletDashboard.defaultProps = {
+  balance: null,
+};
 
 const mapStateToProps = state => ({
   profile: state.auth.profile,
