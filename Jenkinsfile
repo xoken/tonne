@@ -6,7 +6,7 @@ pipeline {
       steps {
         sh 'mkdir -p nipkow'
         dir(path: 'nipkow') {
-          git(url: 'https://github.com/xoken/nipkow/', branch: 'master')
+          git( credentialsId: 'github', url: 'https://github.com/xoken/nipkow' , branch: 'master')
         }
       }
     }
