@@ -9,9 +9,7 @@ import RenameProfile from '../components/RenameProfile';
 import * as authActions from '../../auth/authActions';
 import * as walletSelectors from '../walletSelectors';
 import { satoshiToBSV } from '../../shared/utils';
-import images from '../../shared/images';
 import RecentTransaction from '../components/RecentTransaction';
-// import { wallet } from 'nipkow-sdk';
 
 class WalletDashboard extends React.Component {
   constructor(props) {
@@ -85,47 +83,44 @@ class WalletDashboard extends React.Component {
   }
 
   render() {
-    const { balance, isLoading } = this.props;
+    const { profile, balance } = this.props;
     return (
       <>
-        {/* <Button color='yellow' onClick={() => wallet.runScript()}>
-          Run
-        </Button> */}
         <div className='ui center aligned segment'>
-          <div className='ui basic clearing segment'>
-            <Dropdown
-              button
-              className='circular icon top left right floated'
-              icon='setting'
-              additionPosition='top'
-              pointing>
-              <Dropdown.Menu>
-                <Dropdown.Item text='Rename Profile' onClick={this.onRenameProfile} />
-                <Dropdown.Divider />
-                <Dropdown.Item text='Logout' onClick={this.onLogout} />
-              </Dropdown.Menu>
-            </Dropdown>
+          <div className='ui grid'>
+            <div className='column'>
+              <Dropdown
+                button
+                className='circular icon top left right floated profile'
+                icon={null}
+                text={profile ? profile.charAt(0) : ''}
+                additionPosition='top'
+                pointing>
+                <Dropdown.Menu>
+                  <Dropdown.Item text='Rename Profile' onClick={this.onRenameProfile} />
+                  <Dropdown.Divider />
+                  <Dropdown.Item text='Logout' onClick={this.onLogout} />
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
           </div>
-          {isLoading ? (
-            <Loader active />
-          ) : (
-            <>
-              {/* FIXME find correct way to do this */}
-              {/* <img className='ui small centered image' src={images.bsv} /> */}
-              <Icon name='btc' size='big' alt='BitcoinSV' />
-              <div className='ui header'>
-                Your Current Balance is
-                <br />
-                {satoshiToBSV(balance)} BSV
+          <div className='ui center aligned icon header'>
+            <Icon name='btc' size='big' alt='BitcoinSV' />
+            <div className='content'>
+              Your Current Balance is
+              <div className='sub header'>
+                {balance ? `${satoshiToBSV(balance)} BSV` : <Loader inline active />}
               </div>
-              <Button color='yellow' onClick={this.toggleSendTransactionModal}>
-                Send
-              </Button>
-              <Button color='yellow' onClick={this.toggleReceiveTransactionModal}>
-                Receive
-              </Button>
-            </>
-          )}
+            </div>
+          </div>
+          <div className='inline'>
+            <Button color='yellow' onClick={this.toggleSendTransactionModal}>
+              Send
+            </Button>
+            <Button color='yellow' onClick={this.toggleReceiveTransactionModal}>
+              Receive
+            </Button>
+          </div>
         </div>
         <RecentTransaction />
         {this.renderSendTransactionModal()}
@@ -138,14 +133,16 @@ class WalletDashboard extends React.Component {
 
 WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired,
-  balance: PropTypes.number.isRequired,
+  profile: PropTypes.string.isRequired,
+  balance: PropTypes.number,
 };
 
-WalletDashboard.defaultProps = {};
+WalletDashboard.defaultProps = {
+  balance: null,
+};
 
 const mapStateToProps = state => ({
-  isLoading: walletSelectors.isLoading(state),
+  profile: state.auth.profile,
   balance: walletSelectors.getBalance(state),
 });
 

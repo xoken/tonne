@@ -405,7 +405,7 @@ class Wallet {
   ): Promise<any> {
     const chunkedUsedDerivedKeys = _.chunk(derivedKeys, 20);
     const data = await Promise.all(
-      chunkedUsedDerivedKeys.map(async (chunkedUsedDerivedKey) => {
+      chunkedUsedDerivedKeys.map(async chunkedUsedDerivedKey => {
         return await this._getOutputsByAddresses(chunkedUsedDerivedKey);
       })
     );
@@ -505,6 +505,61 @@ class Wallet {
     return newOutputs;
   }
 
+  async updateconfirmations() {
+    // const {
+    //   unconfirmedTransactions,
+    // } = await Persist.getUnconfirmedTransactions();
+    // const unconfirmedTxIds = unconfirmedTransactions.map(
+    //   (unconfirmedTx: { txId: any }) => unconfirmedTx.txId
+    // );
+    // if (unconfirmedTxIds.length > 0) {
+    //   const { txs } = await transactionAPI.getTransactionsByTxIDs(
+    //     unconfirmedTxIds
+    //   );
+    //   if (txs.length > 0) {
+    //     const updatedUnconfirmedTransactions = unconfirmedTransactions.map(
+    //       (unconfirmedTx: { txId: any }) => {
+    //         const isConfirmed = txs.find(
+    //           (tx: { txId: any; blockHeight: number }) => {
+    //             if (tx.blockHeight && tx.txId === unconfirmedTx.txId) {
+    //               return true;
+    //             }
+    //             return false;
+    //           }
+    //         );
+    //         if (isConfirmed) {
+    //           return {
+    //             ...unconfirmedTx,
+    //             confirmed: true,
+    //           };
+    //         }
+    //         return {
+    //           ...unconfirmedTx,
+    //           confirmed: false,
+    //         };
+    //       }
+    //     );
+    //     const confirmedTxs = updatedUnconfirmedTransactions.filter(
+    //       (tx: { confirmed: boolean }) => tx.confirmed === true
+    //     );
+    //     if (confirmedTxs.length > 0) {
+    //       const confirmedOutputsPerTx = confirmedTxs.map(
+    //         (confirmedTx: { outputs: any }) => confirmedTx.outputs
+    //       );
+    //       const confirmedOutputs = confirmedOutputsPerTx.flat();
+    //       const updatedConfirmedOutputs = confirmedOutputs.map(
+    //         (output: any) => ({
+    //           ...output,
+    //           confirmed: true,
+    //         })
+    //       );
+    //       await Persist.updateOutputs(updatedConfirmedOutputs);
+    //       await Persist.deleteUnconfirmedTx(confirmedTxs);
+    //     }
+    //   }
+    // }
+  }
+
   async updateUnconfirmedTransactions() {
     const {
       unconfirmedTransactions,
@@ -520,7 +575,12 @@ class Wallet {
         const updatedUnconfirmedTransactions = unconfirmedTransactions.map(
           (unconfirmedTx: { txId: any }) => {
             const isConfirmed = txs.find(
-              (tx: { txId: any }) => tx.txId === unconfirmedTx.txId
+              (tx: { txId: any; blockHeight: number }) => {
+                if (tx.blockHeight && tx.txId === unconfirmedTx.txId) {
+                  return true;
+                }
+                return false;
+              }
             );
             if (isConfirmed) {
               return {
@@ -710,7 +770,7 @@ class Wallet {
   async _getKeys(addresses: string[]): Promise<object[]> {
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
     const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
-    return addresses.map((address) => {
+    return addresses.map(address => {
       const derivedKey = existingDerivedKeys.find(
         (derivedKey: { address: string }) => derivedKey.address === address
       );
@@ -791,7 +851,7 @@ class Wallet {
           value: output.value,
         });
       }
-      const addresses = merged.map((input) => input.address);
+      const addresses = merged.map(input => input.address);
       const keys: object[] = await this._getKeys(addresses);
       keys.forEach((key: any, i) => {
         psbt.signInput(i, key);
@@ -875,17 +935,12 @@ class Wallet {
     return bip39.generateMnemonic(strength, rng, wordlist);
   }
 
-  async getAddressInfo() {
-    const { existingDerivedKeys } = await Persist.getDerivedKeys();
-    const unusedDerivedKey = existingDerivedKeys.find(
-      (existingDerivedKey: { isUsed: any }) =>
-        existingDerivedKey.isUsed === false
-    );
+  async getUsedDerivedKeys() {
     const { outputs } = await Persist.getOutputs();
-    const outputsGroupedByAddress = _.groupBy(outputs, (output) => {
+    const outputsGroupedByAddress = _.groupBy(outputs, output => {
       return output.address;
     });
-    const usedAddressInfo: {
+    const usedDerivedKeys: {
       address: string;
       incomingBalance: number;
       outgoingBalance: number;
@@ -901,13 +956,13 @@ class Wallet {
       }, 0);
       let incomingBalance = 0;
       let outgoingBalance = 0;
-      outputs.forEach((output) => {
+      outputs.forEach(output => {
         if (output.spendInfo) {
           outgoingBalance = outgoingBalance + output.value;
         }
         incomingBalance = incomingBalance + output.value;
       });
-      usedAddressInfo.push({
+      usedDerivedKeys.push({
         address,
         incomingBalance,
         outgoingBalance,
@@ -916,7 +971,38 @@ class Wallet {
       });
     }
     return {
-      addressInfo: { unusedAddress: unusedDerivedKey.address, usedAddressInfo },
+      usedDerivedKeys,
+    };
+  }
+
+  async getUnusedDerivedKeys({
+    currentUnusedKeyIndex,
+  }: {
+    currentUnusedKeyIndex: string;
+  }) {
+    const { existingDerivedKeys } = await Persist.getDerivedKeys();
+    const unusedDerivedKeys = existingDerivedKeys
+      .filter(
+        (existingDerivedKey: { isUsed: any }) =>
+          existingDerivedKey.isUsed === false
+      )
+      .map(
+        ({ indexText, address }: { indexText: string; address: string }) => ({
+          indexText,
+          address,
+        })
+      );
+    if (currentUnusedKeyIndex) {
+      const nextUnusedDerivedKeys = unusedDerivedKeys.filter(
+        (existingDerivedKey: { indexText: string }) =>
+          existingDerivedKey.indexText !== currentUnusedKeyIndex
+      );
+      return {
+        unusedDerivedKeys: [nextUnusedDerivedKeys.find(Boolean)],
+      };
+    }
+    return {
+      unusedDerivedKeys: [unusedDerivedKeys.find(Boolean)],
     };
   }
 

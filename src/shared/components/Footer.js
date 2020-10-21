@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { chainAPI } from 'nipkow-sdk';
 import { Button } from 'semantic-ui-react';
-import images from '../images';
 
 class Footer extends React.Component {
   constructor(props) {

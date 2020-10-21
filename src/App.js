@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { createBrowserHistory } from 'history';
 import { HashRouter, Route, Switch } from 'react-router-dom';
-import { Button, Container } from 'semantic-ui-react';
+import { Container } from 'semantic-ui-react';
 import ExplorerHome from './explorer/screens/ExplorerHome';
 import Home from './shared/components/home';
 import NoMatch from './shared/components/noMatch';
@@ -54,9 +54,6 @@ class App extends React.Component {
               </Switch>
             </Container>
           </main>
-          {/* <div className='row'>
-            <Button onClick={this.onBack}>Back</Button>
-          </div> */}
           <Footer />
         </HashRouter>
       </>
