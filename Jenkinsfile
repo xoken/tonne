@@ -11,15 +11,6 @@ pipeline {
       }
     }
 
-    // stage('Clean') {
-    //   steps {
-    //     dir(path: 'nipkow') {
-    //       sh 'rm -r lib/nipkow-sdk/node_modules'
-    //       sh 'rm -r node_modules'
-    //     }
-    //   }
-    // }
-
     stage('Build') {
       steps {
         dir(path: 'nipkow') {
@@ -32,16 +23,12 @@ pipeline {
     stage('Release') {
       steps {
         script {
-          // if ((env.BRANCH_NAME).startsWith("release")) {
             echo '****** Starting Linux Build ******'
             dir(path: 'nipkow') {
                     sh 'npm run build'
                     sh 'npx electron-packager .'
                     sh 'zip nipkow-linux-x64'
                   }
-          // } else { 
-            // echo 'skipping Docker release packaging..'
-          // }
         }
       }
     }
