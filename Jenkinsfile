@@ -15,7 +15,6 @@ pipeline {
       steps {
         dir(path: 'nipkow') {
           sh 'cd lib/nipkow-sdk && npm install'
-          sh 'npm install'
         }
         dir(path: 'nipkow') {
           sh 'npm install'
