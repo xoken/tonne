@@ -17,15 +17,13 @@ export const changeConfig = (nexaHost, nexaPort, userName, password) => async (
   dispatch(changeConfigRequest());
   try {
     if (nexaHost && nexaPort && userName && password) {
-      const { sessionKey, callsRemaining } = await serviceInjector(SettingsService).changeConfig(
+      const { sessionKey } = await serviceInjector(SettingsService).changeConfig(
         nexaHost,
         nexaPort,
         userName,
         password
       );
-      dispatch(
-        changeConfigSuccess({ nexaHost, nexaPort, userName, password, sessionKey, callsRemaining })
-      );
+      dispatch(changeConfigSuccess({ nexaHost, nexaPort, userName, password, sessionKey }));
     } else {
       throw new Error('Incorrect settings');
     }
@@ -58,14 +56,9 @@ export const testConfig = (nexaHost, nexaPort, userName, password) => async (
 export const setDefaultConfig = () => async (dispatch, getState, { serviceInjector }) => {
   dispatch(setDefaultConfigRequest());
   try {
-    const {
-      nexaHost,
-      nexaPort,
-      userName,
-      password,
-      sessionKey,
-      callsRemaining,
-    } = await serviceInjector(SettingsService).setDefaultConfig();
+    const { nexaHost, nexaPort, userName, password, sessionKey } = await serviceInjector(
+      SettingsService
+    ).setDefaultConfig();
     dispatch(
       setDefaultConfigSuccess({
         nexaHost,
@@ -73,7 +66,6 @@ export const setDefaultConfig = () => async (dispatch, getState, { serviceInject
         userName,
         password,
         sessionKey,
-        callsRemaining,
       })
     );
   } catch (error) {

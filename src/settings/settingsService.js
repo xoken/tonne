@@ -12,11 +12,13 @@ class SettingsService {
   async setConfig(nexaHost, nexaPort, userName, password) {
     httpClient.init(nexaHost, nexaPort);
     const {
-      auth: { sessionKey, callsRemaining },
+      auth: { sessionKey },
     } = await authAPI.login(userName, password);
     if (sessionKey) {
+      localStorage.setItem('userName', userName);
+      localStorage.setItem('password', password);
       localStorage.setItem('sessionKey', sessionKey);
-      return { sessionKey, callsRemaining };
+      return { sessionKey };
     } else {
       throw new Error('Incorrect settings');
     }
@@ -39,13 +41,8 @@ class SettingsService {
     const nexaPort = 9091;
     const userName = 'ExplorerUser';
     const password = 'MjYxNjM5NjQyMjU0NzMxMjQyNw';
-    const { sessionKey, callsRemaining } = await this.setConfig(
-      nexaHost,
-      nexaPort,
-      userName,
-      password
-    );
-    return { nexaHost, nexaPort, userName, password, sessionKey, callsRemaining };
+    const { sessionKey } = await this.setConfig(nexaHost, nexaPort, userName, password);
+    return { nexaHost, nexaPort, userName, password, sessionKey };
   }
 
   initHttp(nexaHost, nexaPort) {

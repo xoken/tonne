@@ -6,35 +6,23 @@ const INITIAL_STATE = {
   nexaPort: null,
   userName: '',
   password: '',
-  sessionKey: '',
-  callsRemaining: '',
 };
 
 export default createReducer(
   {
-    [actions.changeConfigSuccess]: (
-      state,
-      { nexaHost, nexaPort, userName, password, sessionKey, callsRemaining }
-    ) => ({
+    [actions.changeConfigSuccess]: (state, { nexaHost, nexaPort, userName, password }) => ({
       ...state,
       nexaHost,
       nexaPort,
       userName,
       password,
-      sessionKey,
-      callsRemaining,
     }),
-    [actions.setDefaultConfigSuccess]: (
-      state,
-      { nexaHost, nexaPort, userName, password, sessionKey, callsRemaining }
-    ) => ({
+    [actions.setDefaultConfigSuccess]: (state, { nexaHost, nexaPort, userName, password }) => ({
       ...state,
       nexaHost,
       nexaPort,
       userName,
       password,
-      sessionKey,
-      callsRemaining,
     }),
   },
   INITIAL_STATE
