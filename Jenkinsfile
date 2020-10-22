@@ -6,16 +6,7 @@ pipeline {
       steps {
         sh 'mkdir -p nipkow'
         dir(path: 'nipkow') {
-          git(url: 'https://github.com/xoken/nipkow/', branch: 'master')
-        }
-      }
-    }
-
-    stage('Clean') {
-      steps {
-        dir(path: 'nipkow') {
-          sh 'rm -r lib/nipkow-sdk/node_modules'
-          sh 'rm -r node_modules'
+          git( credentialsId: 'github', url: 'https://github.com/xoken/nipkow' , branch: 'master')
         }
       }
     }
@@ -24,6 +15,8 @@ pipeline {
       steps {
         dir(path: 'nipkow') {
           sh 'cd lib/nipkow-sdk && npm install'
+        }
+        dir(path: 'nipkow') {
           sh 'npm install'
         }
       }
@@ -32,16 +25,13 @@ pipeline {
     stage('Release') {
       steps {
         script {
-          // if ((env.BRANCH_NAME).startsWith("release")) {
             echo '****** Starting Linux Build ******'
             dir(path: 'nipkow') {
                     sh 'npm run build'
                     sh 'npx electron-packager .'
-                    sh 'zip nipkow-linux-x64'
+                    sh 'zip -r nipkow-"$(basename $(git symbolic-ref HEAD))"-linux-x64.zip nipkow-linux-x64/'
                   }
-          // } else { 
-            // echo 'skipping Docker release packaging..'
-          // }
+                  archiveArtifacts(artifacts: 'nipkow/nipkow-*.zip', followSymlinks: true)
         }
       }
     }
