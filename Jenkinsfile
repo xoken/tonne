@@ -29,8 +29,9 @@ pipeline {
             dir(path: 'nipkow') {
                     sh 'npm run build'
                     sh 'npx electron-packager .'
-                    sh 'zip nipkow-linux-x64'
+                    sh 'zip -r nipkow-"$(basename $(git symbolic-ref HEAD))"-linux-x64.zip nipkow-linux-x64/'
                   }
+                  archiveArtifacts(artifacts: 'nipkow/nipkow-*.zip', followSymlinks: true)
         }
       }
     }
