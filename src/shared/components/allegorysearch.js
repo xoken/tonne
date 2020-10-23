@@ -12,11 +12,6 @@ class AllegorySearch extends React.Component {
     super(props);
     this.state = { fullResponse: '' };
   }
-  jsonrequest =
-    "{id: 17,jsonrpc: '2.0',method: 'PS_ALLEGORY_TX',params: {sessionKey: " +
-    localStorage.getItem('sessionKey') +
-    ",methodParams: {paymentInputs: inputsD,name: (name, False),outputOwner: 'mzLLg4LGQVNAAPgq9wxAcQtzBQ8Uk8eeB6',outputChange: 'mzLLg4LGQVNAAPgq9wxAcQtzBQ8Uk8eeB6'}}}";
-
   options = {
     secureProtocol: 'TLSv1_1_method',
   };
@@ -25,10 +20,24 @@ class AllegorySearch extends React.Component {
   sock;
   date;
   responseflag;
+  name = '';
   inputTxId = '';
   inputTxIndex = 0;
   inputAmount = 0;
   inputsD = [({ opTxHash: inputTxId, opIndex: parseInt(inputTxIndex) }, parseInt(inputAmount))];
+  jsonrequest =
+    "{id: 17,jsonrpc: '2.0',method: 'PS_ALLEGORY_TX',params: {sessionKey: " +
+    localStorage.getItem('sessionKey') +
+    ',methodParams: {paymentInputs: ' +
+    this.inputsD +
+    ',name: ' +
+    (name, False) +
+    ",outputOwner: 'mzLLg4LGQVNAAPgq9wxAcQtzBQ8Uk8eeB6',outputChange: 'mzLLg4LGQVNAAPgq9wxAcQtzBQ8Uk8eeB6'}}}";
+
+  jsonrequest1 =
+    "{'id': 14, 'jsonrpc' : '2.0',  'method': 'RELAY_TX', 'params': {'sessionKey': " +
+    localStorage.getItem('sessionKey') +
+    ", 'methodParams': {'rawTx' : b64FsaTx}}}";
 
   tlssocket = () => {
     this.sock = tls.connect(9090, 'sb2.xoken.org', options, () => {
@@ -109,16 +118,16 @@ class AllegorySearch extends React.Component {
   makerequest = (socket, jrequest) => {
     try {
       socket.write(jrequest, () => {
-        let chunk1,
-          chunkflag = 0;
+        let chunk1;
+        //  chunkflag = 0;
         chunk1 = socket.read();
         while (chunk1 == null || typeof chunk1.length == 'undefined') {
           chunk1 += socket.read();
           console.log(chunk1 + '-' + chunk1.length);
-          if (chunkflag == 10000) {
-            break;
-          }
-          chunkflag += 1;
+          // if (chunkflag == 10000) {
+          //   break;
+          // }
+          // chunkflag += 1;
         }
       });
       console.log(jrequest);
