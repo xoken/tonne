@@ -237,7 +237,7 @@ class ExplorerBlockHeight extends React.Component {
         'getTXIDByHash',
         this.currentblockhash,
         this.currentbatchnum,
-        50
+        100
       );
       this.enterednumcaching();
     } else {
@@ -246,7 +246,7 @@ class ExplorerBlockHeight extends React.Component {
         'getTXIDByHash',
         this.currentblockhash,
         this.currentbatchnum,
-        50
+        100
       );
       this.paginationinitialisation();
     }
@@ -289,7 +289,7 @@ class ExplorerBlockHeight extends React.Component {
           'getTXIDByHash',
           this.currentblockhash,
           this.currentbatchnum,
-          50
+          100
         );
         this.enterednumcaching();
       }
@@ -313,7 +313,7 @@ class ExplorerBlockHeight extends React.Component {
             'getTXIDByHash',
             this.currentblockhash,
             this.currentbatchnum,
-            50
+            100
           );
           this.updateleftpaginationarray();
         } else {
@@ -341,7 +341,7 @@ class ExplorerBlockHeight extends React.Component {
           'getTXIDByHash',
           this.currentblockhash,
           this.currentbatchnum,
-          50
+          100
         );
         this.updatepaginationarray();
       } else {
