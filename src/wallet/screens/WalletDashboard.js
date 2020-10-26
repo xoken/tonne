@@ -6,6 +6,7 @@ import { Button, Dropdown, Icon, Loader, Modal } from 'semantic-ui-react';
 import SendTransaction from '../components/SendTransaction';
 import ReceiveTransaction from '../components/ReceiveTransaction';
 import RenameProfile from '../components/RenameProfile';
+import BuyAllpayName from '../components/BuyAllpayName';
 import * as authActions from '../../auth/authActions';
 import * as walletSelectors from '../walletSelectors';
 import { satoshiToBSV } from '../../shared/utils';
@@ -18,6 +19,7 @@ class WalletDashboard extends React.Component {
       sendTransactionModal: false,
       receiveTransactionModal: false,
       renameProfileModal: false,
+      buyAllpayNameModal: false,
     };
   }
 
@@ -34,6 +36,11 @@ class WalletDashboard extends React.Component {
   onRenameProfile = () => {
     const { renameProfileModal } = this.state;
     this.setState({ renameProfileModal: !renameProfileModal });
+  };
+
+  onBuyAllpayName = () => {
+    const { buyAllpayNameModal } = this.state;
+    this.setState({ buyAllpayNameModal: !buyAllpayNameModal });
   };
 
   onLogout = () => {
@@ -82,6 +89,15 @@ class WalletDashboard extends React.Component {
     );
   }
 
+  renderBuyAllpayNameModal() {
+    const { buyAllpayNameModal } = this.state;
+    return (
+      <Modal open={buyAllpayNameModal}>
+        <BuyAllpayName onClose={this.buyAllpayNameModal} />
+      </Modal>
+    );
+  }
+
   render() {
     const { profile, balance } = this.props;
     return (
@@ -92,11 +108,26 @@ class WalletDashboard extends React.Component {
               <Dropdown
                 button
                 className='circular icon top left right floated profile'
+                icon='bell outline icon'
+                additionPosition='top'
+                pointing>
+                <Dropdown.Menu>
+                  <Dropdown.Item text='' />
+                  <Dropdown.Divider />
+                </Dropdown.Menu>
+              </Dropdown>
+            </div>
+            <div className='column'>
+              <Dropdown
+                button
+                className='circular icon top left right floated profile'
                 icon={null}
                 text={profile ? profile.charAt(0) : ''}
                 additionPosition='top'
                 pointing>
                 <Dropdown.Menu>
+                  <Dropdown.Item text='Buy Allpay Name' onClick={this.onBuyAllpayName} />
+                  <Dropdown.Divider />
                   <Dropdown.Item text='Rename Profile' onClick={this.onRenameProfile} />
                   <Dropdown.Divider />
                   <Dropdown.Item text='Logout' onClick={this.onLogout} />
@@ -126,6 +157,7 @@ class WalletDashboard extends React.Component {
         {this.renderSendTransactionModal()}
         {this.renderReceiveTransactionModal()}
         {this.renderRenameProfileModal()}
+        {this.renderBuyAllpayNameModal()}
       </>
     );
   }
