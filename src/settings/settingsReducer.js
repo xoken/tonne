@@ -7,14 +7,13 @@ const INITIAL_STATE = {
   userName: '',
   password: '',
   sessionKey: '',
-  callsRemaining: '',
 };
 
 export default createReducer(
   {
     [actions.changeConfigSuccess]: (
       state,
-      { nexaHost, nexaPort, userName, password, sessionKey, callsRemaining }
+      { nexaHost, nexaPort, userName, password, sessionKey }
     ) => ({
       ...state,
       nexaHost,
@@ -22,11 +21,10 @@ export default createReducer(
       userName,
       password,
       sessionKey,
-      callsRemaining,
     }),
     [actions.setDefaultConfigSuccess]: (
       state,
-      { nexaHost, nexaPort, userName, password, sessionKey, callsRemaining }
+      { nexaHost, nexaPort, userName, password, sessionKey }
     ) => ({
       ...state,
       nexaHost,
@@ -34,7 +32,6 @@ export default createReducer(
       userName,
       password,
       sessionKey,
-      callsRemaining,
     }),
   },
   INITIAL_STATE

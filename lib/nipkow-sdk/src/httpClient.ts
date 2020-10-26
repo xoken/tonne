@@ -1,5 +1,6 @@
 import https from 'https';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
+import { authAPI } from './AuthAPI';
 
 let httpReq: AxiosInstance;
 
@@ -22,6 +23,33 @@ export const init = (host: string, port: number) => {
     error => {
       console.log(error);
       return Promise.reject(error);
+    }
+  );
+  httpReq.interceptors.response.use(
+    response => {
+      return response;
+    },
+    async error => {
+      if (error.response.status !== 403) {
+        return new Promise((resolve, reject) => {
+          reject(error);
+        });
+      }
+      try {
+        const userName: string = localStorage.getItem('userName')!;
+        const password: string = localStorage.getItem('password')!;
+        const {
+          auth: { sessionKey, callsRemaining },
+        } = await authAPI.login(userName, password);
+        if (sessionKey) {
+          localStorage.setItem('sessionKey', sessionKey);
+          Promise.resolve();
+        } else {
+          throw new Error('Invalid sessionKey');
+        }
+      } catch (error) {
+        return Promise.reject(error);
+      }
     }
   );
 };

@@ -81,15 +81,16 @@ class RecentTransaction extends React.Component {
 
   renderTransaction() {
     const { activeIndex } = this.state;
-    const { isLoading, transactions } = this.props;
+    const { transactions } = this.props;
 
-    if (!isLoading && transactions.length > 0) {
+    if (transactions.length > 0) {
       return (
         <Accordion fluid exclusive={false}>
           {transactions.map((transaction, index) => {
             const { inputs: txInps, outputs: txOuts } = transaction;
 
             let totalInput = 0;
+            let totalOutput = 0;
             let credit = 0;
             let debit = 0;
             let outgoing = 0;
@@ -102,6 +103,7 @@ class RecentTransaction extends React.Component {
             });
 
             txOuts.forEach(output => {
+              totalOutput = totalOutput + output.value;
               if (output.isMine) {
                 credit = credit + output.value;
               } else {
@@ -113,15 +115,15 @@ class RecentTransaction extends React.Component {
               if (credit > 0 && debit > 0) {
                 return (
                   <>
-                    <span className='debit'>{`-${satoshiToBSV(debit)} BSV`}</span>
-                    <span>{` / `}</span>
-                    <span className='credit'>{`+${satoshiToBSV(credit)} BSV`}</span>
+                    <span className='monospace debit'>{`-${satoshiToBSV(debit)} BSV`}</span>
+                    <span className='monospace'>{` / `}</span>
+                    <span className='monospace credit'>{`+${satoshiToBSV(credit)} BSV`}</span>
                   </>
                 );
               } else if (credit > 0) {
-                return <span className='credit'>{`+${satoshiToBSV(credit)} BSV`}</span>;
+                return <span className='monospace credit'>{`+${satoshiToBSV(credit)} BSV`}</span>;
               } else if (debit > 0) {
-                return <span className='debit'>{`-${satoshiToBSV(debit)} BSV`}</span>;
+                return <span className='monospace debit'>{`-${satoshiToBSV(debit)} BSV`}</span>;
               }
               return '';
             };
@@ -135,7 +137,7 @@ class RecentTransaction extends React.Component {
                   <Grid>
                     <Grid.Column width={10}>
                       <Icon name='dropdown' />
-                      <span>{transaction.txId}</span>
+                      <span className='monospace'>{transaction.txId}</span>
                     </Grid.Column>
                     <Grid.Column width={5} textAlign='right'>
                       {renderCreditOrDebit(credit, debit)}
@@ -143,7 +145,11 @@ class RecentTransaction extends React.Component {
                     <Grid.Column width={1} textAlign='right'>
                       <Label className='plain'>
                         <i
-                          title={`${transaction.confirmations} Confirmations`}
+                          title={
+                            transaction.confirmations > 10
+                              ? 'More than 10 Confirmations'
+                              : `${transaction.confirmations} Confirmations`
+                          }
                           className={
                             transaction.confirmations > 10
                               ? 'green lock icon'
@@ -157,37 +163,49 @@ class RecentTransaction extends React.Component {
                   <Grid divided columns='two'>
                     <Grid.Row>
                       <Grid.Column>
-                        <Header as='h6'>Inputs</Header>
+                        <Header as='h6' className='monospace'>
+                          Inputs
+                        </Header>
                         {txInps.map(input => {
                           return (
                             <Grid key={input.txInputIndex}>
                               <Grid.Column width='10'>
-                                <p>{input.address}</p>
+                                <p className='monospace'>{input.address}</p>
                               </Grid.Column>
                               <Grid.Column width='6' textAlign='right'>
-                                <p>{`${satoshiToBSV(input.value)} BSV`}</p>
+                                <p className='monospace'>
+                                  <span className={input.isMine ? 'debit' : ''}>
+                                    {`${satoshiToBSV(input.value)} BSV`}
+                                  </span>
+                                </p>
                               </Grid.Column>
                             </Grid>
                           );
                         })}
                       </Grid.Column>
                       <Grid.Column>
-                        <Header as='h6'>Outputs</Header>
+                        <Header as='h6' className='monospace'>
+                          Outputs
+                        </Header>
                         {txOuts.map(output => {
                           return (
                             <Grid key={output.outputIndex}>
                               <Grid.Column width='10'>
-                                <p>{output.address}</p>
+                                <p className='monospace'>{output.address}</p>
                               </Grid.Column>
                               <Grid.Column width='6' textAlign='right'>
-                                <p>{`${satoshiToBSV(output.value)} BSV`}</p>
+                                <p className='monospace'>
+                                  <span className={output.isMine ? 'credit' : ''}>
+                                    {`${satoshiToBSV(output.value)} BSV`}
+                                  </span>
+                                </p>
                               </Grid.Column>
                             </Grid>
                           );
                         })}
                         <div className='ui right aligned grid'>
                           <div className='column'>
-                            <Label className='plain'>
+                            <Label className='monospace plain'>
                               {debit > 0 ? 'Total debit:' : 'Total credit:'}
                               <Label.Detail>
                                 {debit > 0
@@ -199,12 +217,10 @@ class RecentTransaction extends React.Component {
                         </div>
                         <div className='ui right aligned grid'>
                           <div className='column'>
-                            <Label className='plain'>
-                              Change/Other:
+                            <Label className='monospace plain'>
+                              Fee:
                               <Label.Detail>
-                                {debit > 0
-                                  ? `${satoshiToBSV(totalInput - outgoing)} BSV`
-                                  : `${satoshiToBSV(totalInput - credit)} BSV`}
+                                {`${satoshiToBSV(totalInput - totalOutput)} BSV`}
                               </Label.Detail>
                             </Label>
                           </div>
@@ -237,22 +253,17 @@ class RecentTransaction extends React.Component {
   }
 
   render() {
-    // const { isLoading } = this.props;
     return (
       <>
         <div className='ui grid'>
-          <div className='left floated six wide column'>
+          <div className='left floated six wide middle aligned column'>
             <h3>Recent Transactions</h3>
           </div>
           <div className='right floated right aligned six wide column'>
-            <div className='ui grid'>
-              <div className='column'>
-                {this.renderLastRefresh()}
-                <Button className='' icon onClick={this.onRefresh}>
-                  <Icon name='refresh' />
-                </Button>
-              </div>
-            </div>
+            {this.renderLastRefresh()}
+            <Button style={{ marginRight: '0px' }} basic circular icon onClick={this.onRefresh}>
+              <Icon name='refresh' />
+            </Button>
           </div>
         </div>
         <div className='ui grid recent-transactions'>{this.renderTransaction()}</div>
@@ -269,7 +280,6 @@ class RecentTransaction extends React.Component {
 
 RecentTransaction.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired,
   transactions: PropTypes.arrayOf(PropTypes.object),
 };
 
@@ -278,7 +288,6 @@ RecentTransaction.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  isLoading: walletSelectors.isLoading(state),
   transactions: walletSelectors.getTransactions(state),
   nextTransactionCursor: state.wallet.nextTransactionCursor,
 });
