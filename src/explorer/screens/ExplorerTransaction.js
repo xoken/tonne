@@ -51,20 +51,37 @@ class ExplorerTransaction extends React.Component {
     this.summarysect2.length = 0;
     this.backblockHeight = this.rjdecoded.tx.blockHeight;
     this.backtxIndex = this.rjdecoded.tx.txIndex;
-    function checkforinvalidtxid(txidpar) {
+    function checkforinvalidtxid(txaddress, txidpar, outpointindex) {
       if (txidpar !== '0000000000000000000000000000000000000000000000000000000000000000') {
-        return <Link to={'/explorer/transaction/' + txidpar}>{txidpar}</Link>;
+        return (
+          <>
+            <Grid.Row columns={2}>
+              <Grid.Column width={3}>
+                <b>Address</b>
+              </Grid.Column>
+              <Grid.Column className='tdwordbreak' width={13}>
+                {checkforemptyaddress(txaddress)}
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row columns={2}>
+              <Grid.Column width={3}>
+                <b>Outpoint TxID / Index</b>
+              </Grid.Column>
+              <Grid.Column className='tdwordbreak' width={13}>
+                <Link to={'/explorer/transaction/' + txidpar}>{txidpar}</Link> / {outpointindex}
+              </Grid.Column>
+            </Grid.Row>
+          </>
+        );
       } else {
-        return <div>Newly minted coins</div>;
+        return (
+          <Grid.Row>
+            <Grid.Column width={16}>Newly minted coins</Grid.Column>
+          </Grid.Row>
+        );
       }
     }
-    function checkforinvalidaddress(txaddress) {
-      if (txaddress) {
-        return <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>;
-      } else {
-        return <div>Newly minted coins</div>;
-      }
-    }
+
     function checkforemptyaddress(txaddress) {
       if (txaddress) {
         return <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>;
@@ -187,35 +204,16 @@ class ExplorerTransaction extends React.Component {
             <Grid.Column width={1}>({j + 1}). </Grid.Column>
             <Grid.Column width={15}>
               <Grid>
-                <Grid.Row columns={2}>
-                  <Grid.Column width={3}>
-                    <b>Address</b>
-                  </Grid.Column>
-                  <Grid.Column className='tdwordbreak' width={13}>
-                    {checkforinvalidaddress(this.rjdecoded.tx.tx.txInps[j].address)}
-                  </Grid.Column>
-                </Grid.Row>
-                <Grid.Row columns={2}>
-                  <Grid.Column width={3}>
-                    <b>Outpoint Transaction ID</b>
-                  </Grid.Column>
-                  <Grid.Column className='tdwordbreak' width={13}>
-                    {checkforinvalidtxid(this.rjdecoded.tx.tx.txInps[j].outpointTxID)}
-                  </Grid.Column>
-                </Grid.Row>
+                {checkforinvalidtxid(
+                  this.rjdecoded.tx.tx.txInps[j].address,
+                  this.rjdecoded.tx.tx.txInps[j].outpointTxID,
+                  this.rjdecoded.tx.tx.txInps[j].outpointIndex
+                )}
                 <Grid.Row columns={2}>
                   <Grid.Column width={3}>
                     <b>Satoshis</b>
                   </Grid.Column>
                   <Grid.Column width={13}>{this.rjdecoded.tx.tx.txInps[j].value}</Grid.Column>
-                </Grid.Row>
-                <Grid.Row columns={2}>
-                  <Grid.Column width={3}>
-                    <b>Outpoint Index</b>
-                  </Grid.Column>
-                  <Grid.Column width={13}>
-                    {this.rjdecoded.tx.tx.txInps[j].outpointIndex}
-                  </Grid.Column>
                 </Grid.Row>
               </Grid>
             </Grid.Column>
@@ -313,7 +311,7 @@ class ExplorerTransaction extends React.Component {
                   </Grid.Row>
                   <Grid.Row columns={2}>
                     <Grid.Column width={3}>
-                      <b>Spending Transaction ID</b>
+                      <b>Spending TxID / Index</b>
                     </Grid.Column>
                     <Grid.Column className='tdwordbreak' width={13}>
                       <Link
@@ -322,15 +320,8 @@ class ExplorerTransaction extends React.Component {
                           this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxId
                         }>
                         {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxId}
-                      </Link>
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row columns={2}>
-                    <Grid.Column width={3}>
-                      <b>Spending Transaction Index</b>
-                    </Grid.Column>
-                    <Grid.Column width={13}>
-                      {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxIndex}
+                      </Link>{' '}
+                      / {this.rjdecoded.tx.tx.txOuts[z].txSpendInfo.spendingTxIndex}
                     </Grid.Column>
                   </Grid.Row>
                 </Grid>
