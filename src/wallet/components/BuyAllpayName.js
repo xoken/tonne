@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { Button, Form, Modal } from 'semantic-ui-react';
+import { Button, Modal, Grid, Checkbox, Input } from 'semantic-ui-react';
 import * as authActions from '../../auth/authActions';
 
 class BuyAllpayName extends React.Component {
@@ -14,16 +14,40 @@ class BuyAllpayName extends React.Component {
   }
 
   onSearch = () => {
-    this.setState({ searchResultsSuggestions: true });
+    if (this.state.searchedName) {
+      this.setState({ searchResultsSuggestions: true });
+    } else {
+      this.setState({ searchResultsSuggestions: false });
+    }
   };
 
   searchResultsSuggestionsArea = () => {
-    const { namespace, searchedName } = this.state;
+    const { namespace, searchedName, searchResultsSuggestions } = this.state;
     function isnamespace() {
-      if (namespace) {
-        return <Checkbox label='Add reseller Rights' defaultChecked />;
+      if (namespace && searchedName) {
+        return (
+          <>
+            <Grid.Column width={8}>
+              <b>{searchedName}</b> is available
+            </Grid.Column>
+            <Grid.Column width={8}>
+              <Button>Buy</Button>
+              <Checkbox label='Add reseller Rights' defaultChecked />
+            </Grid.Column>
+          </>
+        );
       } else {
-        return <Checkbox label='Add reseller Rights' />;
+        return (
+          <>
+            <Grid.Column width={8}>
+              <b>xyz-{searchedName}</b> is available
+            </Grid.Column>
+            <Grid.Column width={8}>
+              <Button>Buy</Button>
+              <Checkbox label='Add reseller Rights' />
+            </Grid.Column>
+          </>
+        );
       }
     }
     if (searchResultsSuggestions) {
@@ -32,50 +56,46 @@ class BuyAllpayName extends React.Component {
           <Grid.Row columns={1}>
             <Grid.Column width={16}>
               <Grid>
-                <Grid.Row columns={1}>
-                  <Grid.Column width={8}>{searchedName} is available</Grid.Column>
-                  <Grid.Column width={8}>
-                    <Button>Buy</Button>
-                    {isnamespace()}
-                  </Grid.Column>
-                </Grid.Row>
+                <Grid.Row columns={1}>{isnamespace()}</Grid.Row>
               </Grid>
             </Grid.Column>
           </Grid.Row>
         </>
       );
-    } else {
-      <></>;
     }
+  };
+  onNamespaceCheckClick = () => {
+    this.setState({ namespace: !this.state.namespace });
   };
 
   render() {
     return (
       <>
-        <Modal.Header>Buy Allpay name</Modal.Header>
+        <Modal.Header>
+          Buy Allpay name<i className='close icon' onClick={this.props.onClose}></i>
+        </Modal.Header>
         <Modal.Content>
           <Modal.Description>
-            <Grid>
-              <Grid.Row columns={1}>
-                <Grid.Column width={16}>
-                  <Form>
-                    <Form.Group>
-                      <Form.Field
-                        label='Name to be purchased'
-                        placeholder='Enter a name you want to purchase'
-                      />
-                      <Form.Field
-                        control={Button}
-                        content='Search'
-                        label='Search'
-                        onClick={this.onSearch}
-                      />
-                      <Checkbox label='Namespace' onChange={this.setState({ namespace: true })} />
-                    </Form.Group>
-                  </Form>
+            <Grid centered>
+              <Grid.Row columns={3} centered>
+                <Grid.Column width={3} centered></Grid.Column>
+                <Grid.Column width={10} centered>
+                  <Input
+                    fluid
+                    type='text'
+                    placeholder='Enter a name you want to purchase'
+                    action
+                    onChange={event => this.setState({ searchedName: event.target.value })}>
+                    <input />
+                    <Button color='yellow' onClick={this.onSearch}>
+                      Search
+                    </Button>
+                  </Input>
+                  <Checkbox label='Namespace' onClick={this.onNamespaceCheckClick} />
                 </Grid.Column>
+                <Grid.Column width={3} centered></Grid.Column>
               </Grid.Row>
-              {this.searchResultsSuggestionsArea}
+              {this.searchResultsSuggestionsArea()}
             </Grid>
           </Modal.Description>
         </Modal.Content>

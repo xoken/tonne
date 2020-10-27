@@ -93,7 +93,7 @@ class WalletDashboard extends React.Component {
     const { buyAllpayNameModal } = this.state;
     return (
       <Modal open={buyAllpayNameModal}>
-        <BuyAllpayName onClose={this.buyAllpayNameModal} />
+        <BuyAllpayName onClose={this.onBuyAllpayName} />
       </Modal>
     );
   }
