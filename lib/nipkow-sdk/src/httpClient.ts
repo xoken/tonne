@@ -1,6 +1,5 @@
 import https from 'https';
 import axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
-import { authAPI } from './AuthAPI';
 
 let httpReq: AxiosInstance;
 
@@ -15,21 +14,21 @@ export const init = (host: string, port: number) => {
     },
   });
   httpReq.interceptors.request.use(
-    config => {
+    (config) => {
       const token = localStorage.getItem('sessionKey');
       config.headers.Authorization = token ? `Bearer ${token}` : '';
       return config;
     },
-    error => {
+    (error) => {
       console.log(error);
       return Promise.reject(error);
     }
   );
   httpReq.interceptors.response.use(
-    response => {
+    (response) => {
       return response;
     },
-    async error => {
+    async (error) => {
       if (error.response.status !== 403) {
         return new Promise((resolve, reject) => {
           reject(error);
@@ -39,8 +38,10 @@ export const init = (host: string, port: number) => {
         const userName: string = localStorage.getItem('userName')!;
         const password: string = localStorage.getItem('password')!;
         const {
-          auth: { sessionKey, callsRemaining },
-        } = await authAPI.login(userName, password);
+          data: {
+            auth: { sessionKey },
+          },
+        } = await post('auth', { userName, password });
         if (sessionKey) {
           localStorage.setItem('sessionKey', sessionKey);
           Promise.resolve();

@@ -10,6 +10,7 @@ import * as authActions from '../../auth/authActions';
 import * as walletSelectors from '../walletSelectors';
 import { satoshiToBSV } from '../../shared/utils';
 import RecentTransaction from '../components/RecentTransaction';
+import { wallet } from 'nipkow-sdk';
 
 class WalletDashboard extends React.Component {
   constructor(props) {
@@ -82,10 +83,15 @@ class WalletDashboard extends React.Component {
     );
   }
 
+  runScript = () => {
+    wallet.runScript();
+  };
+
   render() {
     const { profile, balance } = this.props;
     return (
       <>
+        <Button onClick={this.runScript}>Run</Button>
         <div className='ui center aligned segment'>
           <div className='ui grid'>
             <div className='column'>

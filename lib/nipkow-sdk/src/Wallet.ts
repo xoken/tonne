@@ -19,6 +19,7 @@ import network from './constants/network';
 import { addressAPI } from './AddressAPI';
 import { transactionAPI } from './TransactionAPI';
 import { chainAPI } from './ChainAPI';
+import { allPay } from './Allpay';
 
 class Wallet {
   async _initWallet(bip39Mnemonic: string, password?: string) {
@@ -170,6 +171,11 @@ class Wallet {
     // if (useHardenedAddresses) {
     //   indexText = indexText + "'";
     // }
+    // if (index === 0) {
+    //   return {
+    //     privkey: 'cTP23waCMwbWfDoH53PGJNpbyiyMk2g2djhuXff5XhPNuewqdKNY',
+    //   };
+    // }
     return { privkey };
   }
 
@@ -183,6 +189,16 @@ class Wallet {
   ) {
     const derivedKeys = [];
     for (let i = indexStart; i < indexStart + count; i++) {
+      // if (i === 0) {
+      //   const derivedKey = { address: '', indexText: 'm/44/1/0/0/0' };
+      //   derivedKey.address = 'mkTJA5GAsJQp7UmAgh43AVAVM4BvjWbG7z';
+      // derivedKey.privkey =
+      // 'cTP23waCMwbWfDoH53PGJNpbyiyMk2g2djhuXff5XhPNuewqdKNY';
+      // derivedKey.address = 'mmKu1EzwGmicQA5XwpFVDBegwNjf7h55MP';
+      // derivedKey.privkey =
+      //   'cSn2zVDF4c7w63rH1Cc2uXsMr6UzFAwasTRmm4CpQet1ofuVKzRj';
+      //   derivedKeys.push({ ...derivedKey, isUsed: false });
+      // } else {
       const derivedKey = this._generateDerivedAddress(
         bip32ExtendedKey,
         i,
@@ -190,15 +206,8 @@ class Wallet {
         bip38password,
         useHardenedAddresses
       );
-      // if (i === 0) {
-      // derivedKey.address = 'mkTJA5GAsJQp7UmAgh43AVAVM4BvjWbG7z';
-      // derivedKey.privkey =
-      // 'cTP23waCMwbWfDoH53PGJNpbyiyMk2g2djhuXff5XhPNuewqdKNY';
-      // derivedKey.address = 'mmKu1EzwGmicQA5XwpFVDBegwNjf7h55MP';
-      // derivedKey.privkey =
-      //   'cSn2zVDF4c7w63rH1Cc2uXsMr6UzFAwasTRmm4CpQet1ofuVKzRj';
-      // }
       derivedKeys.push({ ...derivedKey, isUsed: false });
+      // }
     }
     return { derivedKeys };
   }
@@ -261,7 +270,8 @@ class Wallet {
         const txIds: string[] = Array.from(
           new Set([...incomingTxIds, ...outgoingTxIds])
         );
-        const { txs } = await transactionAPI.getTransactionsByTxIDs(txIds);
+        const { txs } = await this._getTransactions(txIds);
+        // const { txs } = await transactionAPI.getTransactionsByTxIDs(txIds);
         const { chainInfo } = await chainAPI.getChainInfo();
         if (chainInfo) {
           const { chainTip } = chainInfo;
@@ -271,7 +281,12 @@ class Wallet {
                 return tx2.blockHeight - tx1.blockHeight;
               }
             );
-            const transactions = sortedTx.map(
+            const transactions: {
+              txId: any;
+              inputs: any;
+              outputs: any;
+              confirmations?: number;
+            }[] = sortedTx.map(
               (transaction: { txId?: any; tx?: any; blockHeight?: any }) => {
                 const {
                   tx: { txInps, txOuts },
@@ -320,14 +335,16 @@ class Wallet {
                 };
                 return {
                   ...newTransaction,
-                  confirmations: blockHeight ? chainTip - blockHeight : null,
+                  confirmations: blockHeight
+                    ? chainTip - blockHeight
+                    : undefined,
                 };
               }
             );
             let confirmedTxs: any[] = [];
             let unConfirmedTxs: any[] = [];
-            transactions.forEach((transaction: { confirmations: number }) => {
-              if (transaction.confirmations >= 0) {
+            transactions.forEach((transaction) => {
+              if (transaction.confirmations! >= 0) {
                 confirmedTxs.push(transaction);
               } else {
                 unConfirmedTxs.push(transaction);
@@ -357,6 +374,17 @@ class Wallet {
       }
     }
     return { transactions: [] };
+  }
+
+  async _getTransactions(txIds: string[]) {
+    const chunkedTxIds = _.chunk(txIds, 20);
+    const data = await Promise.all(
+      chunkedTxIds.map(async (chunkedTxId) => {
+        return await transactionAPI.getTransactionsByTxIDs(chunkedTxId);
+      })
+    );
+    const transactions = data.map((element) => element.txs).flat();
+    return { txs: transactions };
   }
 
   // async getOutputs(options?: {
@@ -405,7 +433,7 @@ class Wallet {
   ): Promise<any> {
     const chunkedUsedDerivedKeys = _.chunk(derivedKeys, 20);
     const data = await Promise.all(
-      chunkedUsedDerivedKeys.map(async chunkedUsedDerivedKey => {
+      chunkedUsedDerivedKeys.map(async (chunkedUsedDerivedKey) => {
         return await this._getOutputsByAddresses(chunkedUsedDerivedKey);
       })
     );
@@ -770,7 +798,7 @@ class Wallet {
   async _getKeys(addresses: string[]): Promise<object[]> {
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
     const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
-    return addresses.map(address => {
+    return addresses.map((address) => {
       const derivedKey = existingDerivedKeys.find(
         (derivedKey: { address: string }) => derivedKey.address === address
       );
@@ -851,7 +879,7 @@ class Wallet {
           value: output.value,
         });
       }
-      const addresses = merged.map(input => input.address);
+      const addresses = merged.map((input) => input.address);
       const keys: object[] = await this._getKeys(addresses);
       keys.forEach((key: any, i) => {
         psbt.signInput(i, key);
@@ -907,7 +935,7 @@ class Wallet {
       const targets = [
         { address: receiverAddress, value: Number(amountInSatoshi) },
       ];
-      let { inputs, outputs, fee } = coinSelect(utxos, targets, feeRate);
+      let { fee } = coinSelect(utxos, targets, feeRate);
       // if (!inputs) throw new Error('Not sufficient funds');
       // if (!outputs) throw new Error('No Receiver specified');
       return fee;
@@ -937,7 +965,7 @@ class Wallet {
 
   async getUsedDerivedKeys() {
     const { outputs } = await Persist.getOutputs();
-    const outputsGroupedByAddress = _.groupBy(outputs, output => {
+    const outputsGroupedByAddress = _.groupBy(outputs, (output) => {
       return output.address;
     });
     const usedDerivedKeys: {
@@ -956,7 +984,7 @@ class Wallet {
       }, 0);
       let incomingBalance = 0;
       let outgoingBalance = 0;
-      outputs.forEach(output => {
+      outputs.forEach((output) => {
         if (output.spendInfo) {
           outgoingBalance = outgoingBalance + output.value;
         }
@@ -975,11 +1003,9 @@ class Wallet {
     };
   }
 
-  async getUnusedDerivedKeys({
-    currentUnusedKeyIndex,
-  }: {
-    currentUnusedKeyIndex: string;
-  }) {
+  async getUnusedDerivedKeys(options?: {
+    currentUnusedKeyIndex?: string;
+  }): Promise<{ unusedDerivedKeys: any[] }> {
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
     const unusedDerivedKeys = existingDerivedKeys
       .filter(
@@ -992,11 +1018,14 @@ class Wallet {
           address,
         })
       );
-    if (currentUnusedKeyIndex) {
+    if (options?.currentUnusedKeyIndex) {
+      const currentUnusedKeyIndex = options.currentUnusedKeyIndex;
+      debugger;
       const nextUnusedDerivedKeys = unusedDerivedKeys.filter(
         (existingDerivedKey: { indexText: string }) =>
           existingDerivedKey.indexText !== currentUnusedKeyIndex
       );
+      debugger;
       return {
         unusedDerivedKeys: [nextUnusedDerivedKeys.find(Boolean)],
       };
@@ -1047,14 +1076,21 @@ class Wallet {
   }
 
   async runScript() {
+    // const keys: object[] = await this._getKeys([
+    //   'mk4z9XdCQ9uUks1AZgUf8R28kVmESp623P',
+    // ]);
+    // console.log(keys);
+    // mk4z9XdCQ9uUks1AZgUf8R28kVmESp623P;
+    allPay.getPartiallySignTx('sh', 5000, true);
+    // debugger;
     // Persist.runScript();
-    await Persist.upsertTransactions([
-      {
-        txId:
-          '98e4c42f69876d8e37fe5a47ee6a62f5bb48a730988b209de0cdd3e6c1b06cd4',
-        confirmed: false,
-      },
-    ]);
+    // await Persist.upsertTransactions([
+    //   {
+    //     txId:
+    //       '98e4c42f69876d8e37fe5a47ee6a62f5bb48a730988b209de0cdd3e6c1b06cd4',
+    //     confirmed: false,
+    //   },
+    // ]);
   }
 }
 
