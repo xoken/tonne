@@ -1020,12 +1020,10 @@ class Wallet {
       );
     if (options?.currentUnusedKeyIndex) {
       const currentUnusedKeyIndex = options.currentUnusedKeyIndex;
-      debugger;
       const nextUnusedDerivedKeys = unusedDerivedKeys.filter(
         (existingDerivedKey: { indexText: string }) =>
           existingDerivedKey.indexText !== currentUnusedKeyIndex
       );
-      debugger;
       return {
         unusedDerivedKeys: [nextUnusedDerivedKeys.find(Boolean)],
       };

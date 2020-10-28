@@ -114,19 +114,6 @@ class WalletDashboard extends React.Component {
               <Dropdown
                 button
                 className='circular icon top left right floated profile'
-                icon='bell outline icon'
-                additionPosition='top'
-                pointing>
-                <Dropdown.Menu>
-                  <Dropdown.Item text='' />
-                  <Dropdown.Divider />
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-            <div className='column'>
-              <Dropdown
-                button
-                className='circular icon top left right floated profile'
                 icon={null}
                 text={profile ? profile.charAt(0) : ''}
                 additionPosition='top'
@@ -137,6 +124,16 @@ class WalletDashboard extends React.Component {
                   <Dropdown.Item text='Rename Profile' onClick={this.onRenameProfile} />
                   <Dropdown.Divider />
                   <Dropdown.Item text='Logout' onClick={this.onLogout} />
+                </Dropdown.Menu>
+              </Dropdown>
+              <Dropdown
+                button
+                className='circular icon top left right floated profile'
+                icon='bell outline'
+                additionPosition='top'
+                pointing>
+                <Dropdown.Menu>
+                  <Dropdown.Item text='' />
                 </Dropdown.Menu>
               </Dropdown>
             </div>

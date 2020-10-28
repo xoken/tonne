@@ -36,14 +36,13 @@ class Allpay {
       const outputChange = wallet.getUnusedDerivedKeys({
         currentUnusedKeyIndex,
       });
-      debugger;
-      //   const { data } = await post('partialsign', {
-      //     paymentInputs,
-      //     name: [nameCodePoints, isProducer ? true : false],
-      //     outputOwner,
-      //     outputChange,
-      //   });
-      //   return data;
+      const { data } = await post('partialsign', {
+        paymentInputs,
+        name: [nameCodePoints, isProducer ? true : false],
+        outputOwner,
+        outputChange,
+      });
+      return data;
     } catch (error) {
       console.log(error);
       debugger;
