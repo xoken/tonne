@@ -51,7 +51,6 @@ class NewWallet extends React.Component {
     this.mnorig.length = 0;
     this.mndupl.length = 0;
     if (this.props.bip39Mnemonic) {
-      console.log(this.props.bip39Mnemonic);
       var mnwordarray = this.props.bip39Mnemonic.split(' ');
       for (var k = 0; k < mnwordarray.length; k++) {
         if (mnwordarray[k][0] !== undefined) {

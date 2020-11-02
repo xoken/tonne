@@ -20,7 +20,6 @@ export const init = (host: string, port: number) => {
       return config;
     },
     (error) => {
-      console.log(error);
       return Promise.reject(error);
     }
   );

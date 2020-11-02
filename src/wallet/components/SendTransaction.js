@@ -159,7 +159,6 @@ class SendTransaction extends React.Component {
               Math.floor(Math.pow(1.05, Number(sliderVal)))
             )
           );
-          console.log(transactionFee);
           if (Number(transactionFee) >= 50000000) {
             this.setState({
               isError: false,

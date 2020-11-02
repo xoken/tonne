@@ -16,7 +16,7 @@ class TransactionAPI {
         params: {
           id: txIDs,
         },
-        paramsSerializer: params =>
+        paramsSerializer: (params) =>
           Qs.stringify(params, { arrayFormat: 'repeat' }),
       });
       return data;
@@ -40,7 +40,7 @@ class TransactionAPI {
         params: {
           id: txIDs,
         },
-        paramsSerializer: params =>
+        paramsSerializer: (params) =>
           Qs.stringify(params, { arrayFormat: 'repeat' }),
       });
       return data;

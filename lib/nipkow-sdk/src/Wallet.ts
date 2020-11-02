@@ -19,7 +19,6 @@ import network from './constants/network';
 import { addressAPI } from './AddressAPI';
 import { transactionAPI } from './TransactionAPI';
 import { chainAPI } from './ChainAPI';
-import { allPay } from './Allpay';
 
 class Wallet {
   async _initWallet(bip39Mnemonic: string, password?: string) {
@@ -889,25 +888,25 @@ class Wallet {
       const transaction = psbt.extractTransaction(true);
       const transactionHex = transaction.toHex();
       const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
-      const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
-        base64
-      );
-      if (txBroadcast) {
-        const spentUtxos = inputs.map((input: any) => ({
-          ...input,
-          isSpent: true,
-          confirmed: false,
-        }));
-        await Persist.updateOutputs(spentUtxos);
-        await Persist.upsertUnconfirmedTransactions([
-          {
-            txId: transaction.getId(),
-            confirmed: false,
-            outputs: spentUtxos,
-            createdAt: new Date(),
-          },
-        ]);
-      }
+      // const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
+      //   base64
+      // );
+      // if (txBroadcast) {
+      //   const spentUtxos = inputs.map((input: any) => ({
+      //     ...input,
+      //     isSpent: true,
+      //     confirmed: false,
+      //   }));
+      //   await Persist.updateOutputs(spentUtxos);
+      //   await Persist.upsertUnconfirmedTransactions([
+      //     {
+      //       txId: transaction.getId(),
+      //       confirmed: false,
+      //       outputs: spentUtxos,
+      //       createdAt: new Date(),
+      //     },
+      //   ]);
+      // }
     } catch (error) {
       throw error;
     }
@@ -1077,10 +1076,7 @@ class Wallet {
     // const keys: object[] = await this._getKeys([
     //   'mk4z9XdCQ9uUks1AZgUf8R28kVmESp623P',
     // ]);
-    // console.log(keys);
     // mk4z9XdCQ9uUks1AZgUf8R28kVmESp623P;
-    allPay.getPartiallySignTx('sh', 5000, true);
-    // debugger;
     // Persist.runScript();
     // await Persist.upsertTransactions([
     //   {

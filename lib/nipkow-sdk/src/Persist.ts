@@ -1,4 +1,4 @@
-import PouchDB from 'pouchdb';
+import PouchDB from 'pouchdb-browser';
 import MemoryAdapter from 'pouchdb-adapter-memory';
 import pouchdbFind from 'pouchdb-find';
 import CryptoJS from 'crypto-js';

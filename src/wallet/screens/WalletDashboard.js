@@ -1,12 +1,11 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { Link, withRouter } from 'react-router-dom';
 import { Button, Dropdown, Icon, Loader, Modal } from 'semantic-ui-react';
 import SendTransaction from '../components/SendTransaction';
 import ReceiveTransaction from '../components/ReceiveTransaction';
 import RenameProfile from '../components/RenameProfile';
-import BuyAllpayName from '../components/BuyAllpayName';
 import * as authActions from '../../auth/authActions';
 import * as walletSelectors from '../walletSelectors';
 import { satoshiToBSV } from '../../shared/utils';
@@ -20,7 +19,6 @@ class WalletDashboard extends React.Component {
       sendTransactionModal: false,
       receiveTransactionModal: false,
       renameProfileModal: false,
-      buyAllpayNameModal: false,
     };
   }
 
@@ -37,11 +35,6 @@ class WalletDashboard extends React.Component {
   onRenameProfile = () => {
     const { renameProfileModal } = this.state;
     this.setState({ renameProfileModal: !renameProfileModal });
-  };
-
-  onBuyAllpayName = () => {
-    const { buyAllpayNameModal } = this.state;
-    this.setState({ buyAllpayNameModal: !buyAllpayNameModal });
   };
 
   onLogout = () => {
@@ -90,21 +83,13 @@ class WalletDashboard extends React.Component {
     );
   }
 
-  renderBuyAllpayNameModal() {
-    const { buyAllpayNameModal } = this.state;
-    return (
-      <Modal open={buyAllpayNameModal}>
-        <BuyAllpayName onClose={this.onBuyAllpayName} />
-      </Modal>
-    );
-  }
-
   runScript = () => {
     wallet.runScript();
   };
 
   render() {
     const { profile, balance } = this.props;
+    const { path } = this.props.match;
     return (
       <>
         <Button onClick={this.runScript}>Run</Button>
@@ -119,7 +104,9 @@ class WalletDashboard extends React.Component {
                 additionPosition='top'
                 pointing>
                 <Dropdown.Menu>
-                  <Dropdown.Item text='Buy Allpay Name' onClick={this.onBuyAllpayName} />
+                  <Dropdown.Item>
+                    <Link to={`${path}/buy`}>Buy Allpay Name</Link>
+                  </Dropdown.Item>
                   <Dropdown.Divider />
                   <Dropdown.Item text='Rename Profile' onClick={this.onRenameProfile} />
                   <Dropdown.Divider />
@@ -160,7 +147,6 @@ class WalletDashboard extends React.Component {
         {this.renderSendTransactionModal()}
         {this.renderReceiveTransactionModal()}
         {this.renderRenameProfileModal()}
-        {this.renderBuyAllpayNameModal()}
       </>
     );
   }
