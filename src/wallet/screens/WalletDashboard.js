@@ -89,7 +89,6 @@ class WalletDashboard extends React.Component {
 
   render() {
     const { profile, balance } = this.props;
-    const { path } = this.props.match;
     return (
       <>
         <Button onClick={this.runScript}>Run</Button>
@@ -105,7 +104,7 @@ class WalletDashboard extends React.Component {
                 pointing>
                 <Dropdown.Menu>
                   <Dropdown.Item>
-                    <Link to={`${path}/buy`}>Buy Allpay Name</Link>
+                    <Link to={`/wallet/buy`}>Buy Allpay Name</Link>
                   </Dropdown.Item>
                   <Dropdown.Divider />
                   <Dropdown.Item text='Rename Profile' onClick={this.onRenameProfile} />

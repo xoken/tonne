@@ -36,9 +36,9 @@ class WalletRoute extends React.Component {
         <PrivateRoute path={`${path}/send`}>
           <SendTransaction />
         </PrivateRoute>
-        <PrivateRoute path={`${path}/buy`}>
+        <PublicRoute path={`${path}/buy`}>
           <BuyName />
-        </PrivateRoute>
+        </PublicRoute>
         <PublicRoute exact path={path}>
           <WalletHome />
         </PublicRoute>
