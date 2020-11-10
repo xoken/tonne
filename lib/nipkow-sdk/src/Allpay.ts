@@ -7,20 +7,20 @@ import { transactionAPI } from './TransactionAPI';
 import Config from './Config.json';
 
 class Allpay {
-  async getPartiallySignTx(
-    name: string,
-    priceInSatoshi: number,
-    isProducer: boolean
-  ) {
+  async getPartiallySignTx(data: {
+    name: string;
+    priceInSatoshi: number;
+    isProducer: boolean;
+  }) {
     try {
       const feeRate = 5;
       const { utxos } = await Persist.getUTXOs();
-      const targets = [{ value: Number(priceInSatoshi) }];
+      const targets = [{ value: Number(data.priceInSatoshi) }];
       let { inputs, outputs } = coinSelect(utxos, targets, feeRate);
       if (!inputs || !outputs) throw new Error('Empty inputs or outputs');
       const nameCodePoints = [];
-      for (let i = 0; i < name.length; i++) {
-        nameCodePoints.push(name.codePointAt(i));
+      for (let i = 0; i < data.name.length; i++) {
+        nameCodePoints.push(data.name.codePointAt(i));
       }
       const paymentInputs = inputs.map((input: any) => {
         return [
@@ -53,7 +53,7 @@ class Allpay {
           data: { psaTx },
         } = await post('partialsign', {
           paymentInputs,
-          name: [nameCodePoints, isProducer ? true : false],
+          name: [nameCodePoints, data.isProducer ? true : false],
           outputOwner,
           outputChange,
         });
@@ -67,11 +67,11 @@ class Allpay {
   }
 
   async decodeTransaction() {
-    const transactionHex: string = await this.getPartiallySignTx(
-      'sh',
-      5000,
-      true
-    );
+    const transactionHex: string = await this.getPartiallySignTx({
+      name: 'sh',
+      priceInSatoshi: 5000,
+      isProducer: true,
+    });
     const transaction = JSON.parse(
       Buffer.from(transactionHex, 'base64').toString()
     );
@@ -88,14 +88,17 @@ class Allpay {
         allegoryDataBuffer.byteOffset,
         allegoryDataBuffer.byteOffset + allegoryDataBuffer.byteLength
       );
-      const allegoryData = CBOR.decode(allegoryDataArrayBuffer);
-      const nameArray = allegoryData[2];
+      const allegoryData = getAllegoryType(
+        CBOR.decode(allegoryDataArrayBuffer)
+      );
+      const nameArray = allegoryData?.getName();
       console.log(nameArray);
-      if (allegoryData[3].length === 4) {
-        const extensions = allegoryData[3][3];
-        console.log(extensions);
-      } else {
-      }
+      // const action:
+      //   | ProducerAction
+      //   | OwnerAction
+      //   | undefined = allegoryData?.getAction();
+      // // const extensions = action.extensions;
+      // console.log(extensions);
       if (resellerInput !== Config.allegoryRootNode) {
         const {
           tx: {
