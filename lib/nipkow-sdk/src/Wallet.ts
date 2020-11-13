@@ -19,7 +19,8 @@ import network from './constants/network';
 import { addressAPI } from './AddressAPI';
 import { transactionAPI } from './TransactionAPI';
 import { chainAPI } from './ChainAPI';
-import { allPay } from './Allpay';
+// import { allPay } from './Allpay';
+import axios from 'axios';
 
 class Wallet {
   async _initWallet(bip39Mnemonic: string, password?: string) {
@@ -343,7 +344,7 @@ class Wallet {
             );
             let confirmedTxs: any[] = [];
             let unConfirmedTxs: any[] = [];
-            transactions.forEach((transaction) => {
+            transactions.forEach(transaction => {
               if (transaction.confirmations! >= 0) {
                 confirmedTxs.push(transaction);
               } else {
@@ -379,11 +380,11 @@ class Wallet {
   async _getTransactions(txIds: string[]) {
     const chunkedTxIds = _.chunk(txIds, 20);
     const data = await Promise.all(
-      chunkedTxIds.map(async (chunkedTxId) => {
+      chunkedTxIds.map(async chunkedTxId => {
         return await transactionAPI.getTransactionsByTxIDs(chunkedTxId);
       })
     );
-    const transactions = data.map((element) => element.txs).flat();
+    const transactions = data.map(element => element.txs).flat();
     return { txs: transactions };
   }
 
@@ -433,7 +434,7 @@ class Wallet {
   ): Promise<any> {
     const chunkedUsedDerivedKeys = _.chunk(derivedKeys, 20);
     const data = await Promise.all(
-      chunkedUsedDerivedKeys.map(async (chunkedUsedDerivedKey) => {
+      chunkedUsedDerivedKeys.map(async chunkedUsedDerivedKey => {
         return await this._getOutputsByAddresses(chunkedUsedDerivedKey);
       })
     );
@@ -798,7 +799,7 @@ class Wallet {
   async _getKeys(addresses: string[]): Promise<object[]> {
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
     const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
-    return addresses.map((address) => {
+    return addresses.map(address => {
       const derivedKey = existingDerivedKeys.find(
         (derivedKey: { address: string }) => derivedKey.address === address
       );
@@ -879,7 +880,7 @@ class Wallet {
           value: output.value,
         });
       }
-      const addresses = merged.map((input) => input.address);
+      const addresses = merged.map(input => input.address);
       const keys: object[] = await this._getKeys(addresses);
       keys.forEach((key: any, i) => {
         psbt.signInput(i, key);
@@ -965,7 +966,7 @@ class Wallet {
 
   async getUsedDerivedKeys() {
     const { outputs } = await Persist.getOutputs();
-    const outputsGroupedByAddress = _.groupBy(outputs, (output) => {
+    const outputsGroupedByAddress = _.groupBy(outputs, output => {
       return output.address;
     });
     const usedDerivedKeys: {
@@ -984,7 +985,7 @@ class Wallet {
       }, 0);
       let incomingBalance = 0;
       let outgoingBalance = 0;
-      outputs.forEach((output) => {
+      outputs.forEach(output => {
         if (output.spendInfo) {
           outgoingBalance = outgoingBalance + output.value;
         }
@@ -1074,21 +1075,219 @@ class Wallet {
   }
 
   async runScript() {
-    // const keys: object[] = await this._getKeys([
-    //   'mk4z9XdCQ9uUks1AZgUf8R28kVmESp623P',
-    // ]);
-    // console.log(keys);
-    // mk4z9XdCQ9uUks1AZgUf8R28kVmESp623P;
-    allPay.getPartiallySignTx('sh', 5000, true);
-    // debugger;
-    // Persist.runScript();
-    // await Persist.upsertTransactions([
-    //   {
-    //     txId:
-    //       '98e4c42f69876d8e37fe5a47ee6a62f5bb48a730988b209de0cdd3e6c1b06cd4',
-    //     confirmed: false,
-    //   },
-    // ]);
+    try {
+      const token = localStorage.getItem('sessionKey');
+      const response = await axios.post(
+        'https://127.0.0.1:9099',
+        {
+          jsonrpc: '2.0',
+          method: 'CHAIN_INFO',
+          params: {
+            sessionKey: token,
+          },
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Access-Control-Allow-Origin': '*',
+          },
+        }
+      );
+      debugger;
+      console.log(response);
+    } catch (error) {
+      console.error(error);
+    }
+    // try {
+    //   const { utxos } = await Persist.getUTXOs();
+    //   const targets = [
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
+    //   ];
+    //   const feeRate = 5;
+    //   let { inputs, outputs } = coinSelect(utxos, targets, feeRate);
+    //   if (!inputs || !outputs) throw new Error('Empty inputs or outputs');
+    //   const txIds = inputs.map(
+    //     (input: { outputTxHash: any }) => input.outputTxHash
+    //   );
+    //   debugger;
+    //   const rawTxsResponse = await transactionAPI.getRawTransactionsByTxIDs(
+    //     txIds
+    //   );
+    //   debugger;
+    //   const inputsWithRawTxs = rawTxsResponse.rawTxs.map((rawTx: any) => {
+    //     const hex = Buffer.from(rawTx.txSerialized, 'base64').toString('hex');
+    //     return { ...rawTx, hex };
+    //   });
+    //   debugger;
+    //   let merged = [];
+    //   for (let i = 0; i < inputs.length; i++) {
+    //     merged.push({
+    //       ...inputs[i],
+    //       ...inputsWithRawTxs.find(
+    //         (element: { txId: any }) => element.txId === inputs[i].outputTxHash
+    //       ),
+    //     });
+    //   }
+    //   const psbt = new Psbt({
+    //     network: network.BITCOIN_SV_REGTEST,
+    //     forkCoin: 'bch',
+    //   });
+    //   psbt.setVersion(1);
+    //   merged.forEach(
+    //     (input: { outputTxHash: any; outputIndex: any; hex: any }) => {
+    //       psbt.addInput({
+    //         hash: input.outputTxHash,
+    //         index: input.outputIndex,
+    //         nonWitnessUtxo: Buffer.from(input.hex, 'hex'),
+    //       });
+    //     }
+    //   );
+    //   for (let index = 0; index < outputs.length; index++) {
+    //     const output = outputs[index];
+    //     if (!output.address) {
+    //       output.address = await this._getChangeAddress();
+    //     }
+    //     psbt.addOutput({
+    //       address: output.address,
+    //       value: output.value,
+    //     });
+    //   }
+    //   const addresses = merged.map(input => input.address);
+    //   const keys: object[] = await this._getKeys([
+    //     'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs',
+    //   ]);
+    //   debugger;
+    //   console.log(keys);
+    //   keys.forEach((key: any, i) => {
+    //     psbt.signInput(i, key);
+    //   });
+    //   psbt.validateSignaturesOfAllInputs();
+    //   psbt.finalizeAllInputs();
+    //   const transaction = psbt.extractTransaction(true);
+    //   const transactionHex = transaction.toHex();
+    //   const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
+    //   const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
+    //     base64
+    //   );
+    //   if (txBroadcast) {
+    //     console.log('success');
+    //     const spentUtxos = inputs.map((input: any) => ({
+    //       ...input,
+    //       isSpent: true,
+    //       confirmed: false,
+    //     }));
+    //     await Persist.updateOutputs(spentUtxos);
+    //     await Persist.upsertUnconfirmedTransactions([
+    //       {
+    //         txId: transaction.getId(),
+    //         confirmed: false,
+    //         outputs: spentUtxos,
+    //         createdAt: new Date(),
+    //       },
+    //     ]);
+    //   }
+    // } catch (error) {
+    //   throw error;
+    // }
   }
 }
 
