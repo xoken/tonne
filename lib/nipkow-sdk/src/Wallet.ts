@@ -19,8 +19,11 @@ import network from './constants/network';
 import { addressAPI } from './AddressAPI';
 import { transactionAPI } from './TransactionAPI';
 import { chainAPI } from './ChainAPI';
+<<<<<<< HEAD
 // import { allPay } from './Allpay';
 import axios from 'axios';
+=======
+>>>>>>> 215e882695ad05a52710c973f1e1a645a98bd71c
 
 class Wallet {
   async _initWallet(bip39Mnemonic: string, password?: string) {
@@ -890,25 +893,25 @@ class Wallet {
       const transaction = psbt.extractTransaction(true);
       const transactionHex = transaction.toHex();
       const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
-      const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
-        base64
-      );
-      if (txBroadcast) {
-        const spentUtxos = inputs.map((input: any) => ({
-          ...input,
-          isSpent: true,
-          confirmed: false,
-        }));
-        await Persist.updateOutputs(spentUtxos);
-        await Persist.upsertUnconfirmedTransactions([
-          {
-            txId: transaction.getId(),
-            confirmed: false,
-            outputs: spentUtxos,
-            createdAt: new Date(),
-          },
-        ]);
-      }
+      // const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
+      //   base64
+      // );
+      // if (txBroadcast) {
+      //   const spentUtxos = inputs.map((input: any) => ({
+      //     ...input,
+      //     isSpent: true,
+      //     confirmed: false,
+      //   }));
+      //   await Persist.updateOutputs(spentUtxos);
+      //   await Persist.upsertUnconfirmedTransactions([
+      //     {
+      //       txId: transaction.getId(),
+      //       confirmed: false,
+      //       outputs: spentUtxos,
+      //       createdAt: new Date(),
+      //     },
+      //   ]);
+      // }
     } catch (error) {
       throw error;
     }
@@ -1288,6 +1291,18 @@ class Wallet {
     // } catch (error) {
     //   throw error;
     // }
+    // const keys: object[] = await this._getKeys([
+    //   'mk4z9XdCQ9uUks1AZgUf8R28kVmESp623P',
+    // ]);
+    // mk4z9XdCQ9uUks1AZgUf8R28kVmESp623P;
+    // Persist.runScript();
+    // await Persist.upsertTransactions([
+    //   {
+    //     txId:
+    //       '98e4c42f69876d8e37fe5a47ee6a62f5bb48a730988b209de0cdd3e6c1b06cd4',
+    //     confirmed: false,
+    //   },
+    // ]);
   }
 }
 

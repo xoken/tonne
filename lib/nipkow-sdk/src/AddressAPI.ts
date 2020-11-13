@@ -29,7 +29,7 @@ class AddressAPI {
           pagesize,
           cursor,
         },
-        paramsSerializer: params =>
+        paramsSerializer: (params) =>
           Qs.stringify(params, { arrayFormat: 'repeat' }),
       });
       return data;
@@ -65,7 +65,7 @@ class AddressAPI {
           pagesize,
           cursor,
         },
-        paramsSerializer: params =>
+        paramsSerializer: (params) =>
           Qs.stringify(params, { arrayFormat: 'repeat' }),
       });
       return data;

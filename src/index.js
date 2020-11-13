@@ -6,7 +6,6 @@ import * as serviceWorker from './serviceWorker';
 import configureStore from './shared/store/configureStore';
 import { PersistGate } from 'redux-persist/integration/react';
 import './shared/css/explorer.css';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import 'semantic-ui-css/semantic.min.css';
 import './shared/css/main.css';
 

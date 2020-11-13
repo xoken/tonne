@@ -5,13 +5,11 @@ import { persistStore, persistReducer } from 'redux-persist';
 import ReduxPersistConfig from '../configs/reduxPersistConfig';
 import thunkMiddleware from 'redux-thunk';
 import rootReducer from './reducers';
-import customMiddleware from './middleware';
 
 const { storeConfig, active: shouldPersistStore } = ReduxPersistConfig;
 
 export default preloadedState => {
   const middlewares = [
-    ...customMiddleware,
     thunkMiddleware.withExtraArgument({
       serviceInjector: Service => new Service(store),
     }),
