@@ -19,11 +19,7 @@ import network from './constants/network';
 import { addressAPI } from './AddressAPI';
 import { transactionAPI } from './TransactionAPI';
 import { chainAPI } from './ChainAPI';
-<<<<<<< HEAD
-// import { allPay } from './Allpay';
-import axios from 'axios';
-=======
->>>>>>> 215e882695ad05a52710c973f1e1a645a98bd71c
+// import axios from 'axios';
 
 class Wallet {
   async _initWallet(bip39Mnemonic: string, password?: string) {
@@ -347,7 +343,7 @@ class Wallet {
             );
             let confirmedTxs: any[] = [];
             let unConfirmedTxs: any[] = [];
-            transactions.forEach(transaction => {
+            transactions.forEach((transaction) => {
               if (transaction.confirmations! >= 0) {
                 confirmedTxs.push(transaction);
               } else {
@@ -383,11 +379,11 @@ class Wallet {
   async _getTransactions(txIds: string[]) {
     const chunkedTxIds = _.chunk(txIds, 20);
     const data = await Promise.all(
-      chunkedTxIds.map(async chunkedTxId => {
+      chunkedTxIds.map(async (chunkedTxId) => {
         return await transactionAPI.getTransactionsByTxIDs(chunkedTxId);
       })
     );
-    const transactions = data.map(element => element.txs).flat();
+    const transactions = data.map((element) => element.txs).flat();
     return { txs: transactions };
   }
 
@@ -437,7 +433,7 @@ class Wallet {
   ): Promise<any> {
     const chunkedUsedDerivedKeys = _.chunk(derivedKeys, 20);
     const data = await Promise.all(
-      chunkedUsedDerivedKeys.map(async chunkedUsedDerivedKey => {
+      chunkedUsedDerivedKeys.map(async (chunkedUsedDerivedKey) => {
         return await this._getOutputsByAddresses(chunkedUsedDerivedKey);
       })
     );
@@ -802,7 +798,7 @@ class Wallet {
   async _getKeys(addresses: string[]): Promise<object[]> {
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
     const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
-    return addresses.map(address => {
+    return addresses.map((address) => {
       const derivedKey = existingDerivedKeys.find(
         (derivedKey: { address: string }) => derivedKey.address === address
       );
@@ -883,7 +879,7 @@ class Wallet {
           value: output.value,
         });
       }
-      const addresses = merged.map(input => input.address);
+      const addresses = merged.map((input) => input.address);
       const keys: object[] = await this._getKeys(addresses);
       keys.forEach((key: any, i) => {
         psbt.signInput(i, key);
@@ -969,7 +965,7 @@ class Wallet {
 
   async getUsedDerivedKeys() {
     const { outputs } = await Persist.getOutputs();
-    const outputsGroupedByAddress = _.groupBy(outputs, output => {
+    const outputsGroupedByAddress = _.groupBy(outputs, (output) => {
       return output.address;
     });
     const usedDerivedKeys: {
@@ -988,7 +984,7 @@ class Wallet {
       }, 0);
       let incomingBalance = 0;
       let outgoingBalance = 0;
-      outputs.forEach(output => {
+      outputs.forEach((output) => {
         if (output.spendInfo) {
           outgoingBalance = outgoingBalance + output.value;
         }
@@ -1078,29 +1074,6 @@ class Wallet {
   }
 
   async runScript() {
-    try {
-      const token = localStorage.getItem('sessionKey');
-      const response = await axios.post(
-        'https://127.0.0.1:9099',
-        {
-          jsonrpc: '2.0',
-          method: 'CHAIN_INFO',
-          params: {
-            sessionKey: token,
-          },
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Access-Control-Allow-Origin': '*',
-          },
-        }
-      );
-      debugger;
-      console.log(response);
-    } catch (error) {
-      console.error(error);
-    }
     // try {
     //   const { utxos } = await Persist.getUTXOs();
     //   const targets = [

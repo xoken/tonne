@@ -27,7 +27,7 @@ class BuyName extends React.Component {
   onBuy = (resellerHost, name, priceInSatoshi, isProducer) => () => {
     const { dispatch } = this.props;
     try {
-      dispatch(allpayActions.buyName(resellerHost, name, priceInSatoshi, isProducer));
+      dispatch(allpayActions.buyName({ resellerHost, name, priceInSatoshi, isProducer }));
     } catch (error) {}
   };
 

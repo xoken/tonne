@@ -20,6 +20,7 @@ export const init = (host: string, port: number) => {
       return config;
     },
     (error) => {
+      console.log(error);
       return Promise.reject(error);
     }
   );
@@ -28,27 +29,28 @@ export const init = (host: string, port: number) => {
       return response;
     },
     async (error) => {
-      if (error.response.status !== 403) {
+      if (error && error.response && error.response.status === 403) {
+        try {
+          const userName: string = localStorage.getItem('userName')!;
+          const password: string = localStorage.getItem('password')!;
+          const {
+            data: {
+              auth: { sessionKey },
+            },
+          } = await post('auth', { userName, password });
+          if (sessionKey) {
+            localStorage.setItem('sessionKey', sessionKey);
+            Promise.resolve();
+          } else {
+            throw new Error('Invalid sessionKey');
+          }
+        } catch (error) {
+          return Promise.reject(error);
+        }
+      } else {
         return new Promise((resolve, reject) => {
           reject(error);
         });
-      }
-      try {
-        const userName: string = localStorage.getItem('userName')!;
-        const password: string = localStorage.getItem('password')!;
-        const {
-          data: {
-            auth: { sessionKey },
-          },
-        } = await post('auth', { userName, password });
-        if (sessionKey) {
-          localStorage.setItem('sessionKey', sessionKey);
-          Promise.resolve();
-        } else {
-          throw new Error('Invalid sessionKey');
-        }
-      } catch (error) {
-        return Promise.reject(error);
       }
     }
   );

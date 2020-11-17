@@ -7,7 +7,7 @@ import { transactionAPI } from './TransactionAPI';
 import Config from './Config.json';
 
 class Allpay {
-  async getPartiallySignTx(data: {
+  async buyName(data: {
     name: string;
     priceInSatoshi: number;
     isProducer: boolean;
@@ -67,7 +67,7 @@ class Allpay {
   }
 
   async decodeTransaction() {
-    const transactionHex: string = await this.getPartiallySignTx({
+    const transactionHex: string = await this.buyName({
       name: 'sh',
       priceInSatoshi: 5000,
       isProducer: true,
@@ -127,6 +127,14 @@ class Allpay {
         }
       } catch (error) {}
     }
+  }
+
+  async registerName(data: { proxyHost: string; port: number }) {
+    // const request =
+    //   '{"id": 0, "jsonrpc": "2.0", "method": "CHAIN_INFO", "params": { "sessionKey": "710ef660fce6373909d8292e09da0829094f7417506ed39d70c30ad9017f34c9" }}';
+    // proxyProvider.init(data.proxyHost, data.port, request, (response: any) => {
+    //   console.log(response);
+    // });
   }
 }
 

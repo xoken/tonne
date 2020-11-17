@@ -3,7 +3,6 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "//": "remove date-fns dep",
     "date-fns": "^2.16.1",
     "nipkow-sdk": "file:lib/nipkow-sdk",
     "react": "^16.13.1",

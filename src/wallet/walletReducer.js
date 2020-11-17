@@ -37,6 +37,10 @@ export default createReducer(
         nextTransactionCursor !== undefined ? nextTransactionCursor : state.nextTransactionCursor,
       isLoading: false,
     }),
+    [actions.getTransactionsFailure]: state => ({
+      ...state,
+      isLoading: false,
+    }),
     [actions.getDiffTransactionsSuccess]: (state, { transactions, nextTransactionCursor }) => ({
       ...state,
       transactions: [...transactions, ...state.transactions],

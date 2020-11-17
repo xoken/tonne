@@ -10,7 +10,11 @@ class AllpayService {
   }
 
   async buyName(data) {
-    return await allPay.getPartiallySignTx(data);
+    return await allPay.buyName(data);
+  }
+
+  async registerName(data) {
+    return await allPay.registerName(data);
   }
 }
 

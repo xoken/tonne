@@ -104,7 +104,10 @@ class WalletDashboard extends React.Component {
                 pointing>
                 <Dropdown.Menu>
                   <Dropdown.Item>
-                    <Link to={`/wallet/buy`}>Buy Allpay Name</Link>
+                    <Link to={`/wallet/allpay/buy`}>Buy Allpay Name</Link>
+                  </Dropdown.Item>
+                  <Dropdown.Item>
+                    <Link to={`/wallet/allpay/register`}>Register with Proxy</Link>
                   </Dropdown.Item>
                   <Dropdown.Divider />
                   <Dropdown.Item text='Rename Profile' onClick={this.onRenameProfile} />
