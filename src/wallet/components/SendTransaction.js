@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Button, Grid, Input } from 'semantic-ui-react';
 import { satoshiToBSV } from '../../shared/utils';
 import * as walletSelectors from '../walletSelectors';
 import * as walletActions from '../walletActions';
@@ -12,6 +13,7 @@ class SendTransaction extends React.Component {
       receiverAddress: '',
       amountInSatoshi: '',
       transactionFee: '',
+      receiverAllpayNameOrAddress: '',
       feeRate: 5,
       isError: false,
       message: '',
@@ -31,6 +33,19 @@ class SendTransaction extends React.Component {
     document.getElementById('feerate').max = this.state.maxSliderValue;
     document.getElementById('feerate').disabled = this.state.sliderDisabled;
   }
+
+  onPaytoNameAddressChange = event => {
+    const receiverAllpayNameOrAddress = event.target.value;
+    var receiverAddress = '';
+    if (
+      receiverAllpayNameOrAddress.length === 36 &&
+      (receiverAllpayNameOrAddress.substring(0, 1) === 'm' ||
+        receiverAllpayNameOrAddress.substring(0, 1) === 'n')
+    ) {
+      receiverAddress = receiverAllpayNameOrAddress;
+      this.setState({ receiverAddress: receiverAllpayNameOrAddress });
+    }
+  };
 
   onAmountChange = async event => {
     const { dispatch } = this.props;
@@ -114,11 +129,7 @@ class SendTransaction extends React.Component {
       if (Number(amountInSatoshi) > 0) {
         try {
           const transactionFee = await dispatch(
-            walletActions.getTransactionFee(
-              receiverAddress,
-              amountInSatoshi,
-              Math.floor(Math.pow(5, Number(sliderVal)))
-            )
+            walletActions.getTransactionFee(receiverAddress, amountInSatoshi, 5)
           );
           this.setState({
             isError: false,
@@ -192,108 +203,108 @@ class SendTransaction extends React.Component {
   render() {
     const { receiverAddress, amountInSatoshi, transactionFee, feeRate, sliderValue } = this.state;
     return (
-      <div className='container'>
-        <form>
-          <div
-            className='form-group row'
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              marginRight: '-15px',
-              marginLeft: '-15px',
-            }}>
-            <label htmlFor='receiverAddress' className='col-sm-3 col-form-label'>
-              Pay to
-            </label>
-            <div className='col-sm-6'>
-              <input
-                type='text'
-                className='form-control'
-                id='receiverAddress'
-                value={receiverAddress}
-                placeholder='xxxxxxxxxxxxxxxxxxxxxxxxx'
-                onChange={event => this.setState({ receiverAddress: event.target.value })}
-              />
-            </div>
-          </div>
-          <div
-            className='form-group row'
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              marginRight: '-15px',
-              marginLeft: '-15px',
-            }}>
-            <label htmlFor='amount' className='col-sm-3 col-form-label'>
-              Amount
-            </label>
-            <div className='col-sm-6'>
-              <input
-                type='text'
-                className='form-control'
-                id='amount'
-                value={amountInSatoshi}
-                onChange={this.onAmountChange}
-              />
-            </div>
-            <div className='col-sm-3'>
-              <input
-                type='text'
-                readOnly
-                className='form-control-plaintext'
-                value={satoshiToBSV(Number(amountInSatoshi)) + ' BSV'}
-              />
-            </div>
-          </div>
-          <div
-            className='form-group row'
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              marginRight: '-15px',
-              marginLeft: '-15px',
-            }}>
-            <label htmlFor='transactionFee' className='col-sm-3 col-form-label'>
-              Network Fee (Satoshis/byte)
-            </label>
-            <div className='col-sm-6'>
-              <input
-                id='feerate'
-                type='range'
-                min='1'
-                step='1'
-                value={sliderValue}
-                onChange={this.onexponentialSliderChange}
-                style={{ width: '100%' }}
-              />
-            </div>
-            <div className='col-sm-3'>
-              <input
-                type='text'
-                readOnly
-                className='form-control-plaintext'
-                value={`${satoshiToBSV(Number(transactionFee))} BSV (${feeRate} satoshis/byte)`}
-              />
-            </div>
-          </div>
-          <div
-            className='form-group row'
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              marginRight: '-15px',
-              marginLeft: '-15px',
-            }}>
-            <div className='col-sm-12'>{this.renderMessage()}</div>
-          </div>
-          <button type='button' className='btn btn-primary' onClick={this.onSend}>
-            Send
-          </button>
-          <button type='button' className='btn btn-primary' onClick={this.onClose}>
-            Close
-          </button>
-        </form>
-      </div>
+      <Grid>
+        <Grid.Row>
+          <Grid.Column width={4} verticalAlign='middle'>
+            Pay to
+          </Grid.Column>
+          <Grid.Column width={6}>
+            <Input
+              fluid
+              placeholder='allpay name / address'
+              onChange={this.onPaytoNameAddressChange}
+            />
+          </Grid.Column>
+          <Grid.Column width={6}>
+            <Input
+              fluid
+              type='text'
+              readOnly
+              id='receiverAddress'
+              value={receiverAddress}
+              placeholder='xxxxxxxxxxxxxxxxxxxxxxxxx'
+            />
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column width={4} verticalAlign='middle'>
+            Amount
+          </Grid.Column>
+          <Grid.Column width={6}>
+            <Input
+              fluid
+              type='text'
+              className='form-control'
+              id='amount'
+              disabled={receiverAddress === '' ? true : false}
+              value={amountInSatoshi}
+              onChange={this.onAmountChange}
+            />
+          </Grid.Column>
+          <Grid.Column width={6}>
+            <Input
+              fluid
+              type='text'
+              readOnly
+              className='form-control-plaintext'
+              value={satoshiToBSV(Number(amountInSatoshi)) + ' BSV'}
+            />
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column width={4} verticalAlign='middle'>
+            Network Fee (Satoshis/byte)
+          </Grid.Column>
+          <Grid.Column width={6} verticalAlign='middle'>
+            <input
+              id='feerate'
+              type='range'
+              min='1'
+              step='1'
+              value={sliderValue}
+              onChange={this.onexponentialSliderChange}
+              style={{ width: '100%' }}
+            />
+          </Grid.Column>
+          <Grid.Column width={6}>
+            <Input
+              fluid
+              type='text'
+              readOnly
+              className='form-control-plaintext'
+              value={`${satoshiToBSV(Number(transactionFee))} BSV (${feeRate} satoshis/byte)`}
+            />
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column width={16}>
+            {this.renderMessage()}
+            {receiverAddress === '' ? (
+              <div className='ui negative message'>
+                <p>Enter correct Address or Allpay Name</p>
+              </div>
+            ) : (
+              <></>
+            )}{' '}
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row centered>
+          <center>
+            <Grid.Column>
+              <Button
+                color='yellow'
+                onClick={this.onSend}
+                disabled={receiverAddress === '' ? true : false}>
+                Send
+              </Button>
+
+              <Button color='yellow' onClick={this.onClose}>
+                Close
+              </Button>
+            </Grid.Column>
+          </center>
+        </Grid.Row>
+      </Grid>
     );
   }
 }

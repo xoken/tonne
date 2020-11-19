@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
-import { Button } from 'semantic-ui-react';
+import { Button, Input, Grid } from 'semantic-ui-react';
 
 class WalletPassword extends React.Component {
   constructor(props) {
@@ -62,38 +62,52 @@ class WalletPassword extends React.Component {
         <div className='col-md-12'>
           <center>
             <h5>Choose a password to encrypt your wallet keys.</h5>
-            <h6 className='generalheadingscolor'>
+            <h5 className='generalheadingscolor'>
               Include alphabets, numbers and special characters in your password.
-            </h6>
-            <form onSubmit={this.handleNext}>
-              <div className='form-group'>
-                <label>Password</label>
-                <input
-                  type='password'
-                  id='password'
-                  className='form-control passinputwidth'
-                  placeholder='Password'
-                  value={password}
-                  onChange={event => this.setState({ password: event.target.value })}
-                />
-              </div>
-              <div className='form-group'>
-                <label>Confirm Password</label>
-                <input
-                  type='password'
-                  id='confirmPassword'
-                  className='form-control passinputwidth'
-                  placeholder='Confirm Password'
-                  value={confirmPassword}
-                  onChange={event => this.setState({ confirmPassword: event.target.value })}
-                />
-              </div>
-              <br />
+            </h5>
+          </center>
+          <form onSubmit={this.handleNext}>
+            <Grid centered>
+              <Grid.Row>
+                <Grid.Column width={2} verticalAlign='middle'>
+                  <label>Password</label>
+                </Grid.Column>
+                <Grid.Column width={10}>
+                  <Input
+                    fluid
+                    type='password'
+                    id='password'
+                    className='form-control'
+                    placeholder='Password'
+                    value={password}
+                    onChange={event => this.setState({ password: event.target.value })}
+                  />
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row>
+                <Grid.Column width={2} verticalAlign='middle'>
+                  <label>Confirm Password</label>
+                </Grid.Column>
+                <Grid.Column width={10}>
+                  <Input
+                    fluid
+                    type='password'
+                    id='confirmPassword'
+                    className='form-control'
+                    placeholder='Confirm Password'
+                    value={confirmPassword}
+                    onChange={event => this.setState({ confirmPassword: event.target.value })}
+                  />
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+            <br />
+            <center>
               {this.renderPasswordMatchStatus()}
               <br />
               {this.renderPasswordStrength()}
-            </form>
-          </center>
+            </center>
+          </form>
         </div>
       </div>
     );

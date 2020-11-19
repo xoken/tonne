@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
-import { Button } from 'semantic-ui-react';
+import { Button, Input } from 'semantic-ui-react';
 
 class Login extends React.Component {
   constructor(props) {
@@ -42,7 +42,7 @@ class Login extends React.Component {
                 <label>
                   Your wallet is encrypted with a password. Please enter your password to unlock it.
                 </label>
-                <input
+                <Input
                   type='password'
                   className='form-control passinputwidth'
                   id='password'
