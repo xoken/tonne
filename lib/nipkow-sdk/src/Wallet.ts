@@ -9,7 +9,6 @@ import {
 import AES from 'crypto-js/aes';
 import coinSelect from 'coinselect';
 import faker from 'faker';
-import * as bip38 from 'bip38';
 import * as bip39 from 'bip39';
 import * as _ from 'lodash';
 // import { differenceInMinutes } from 'date-fns';
@@ -19,7 +18,7 @@ import network from './constants/network';
 import { addressAPI } from './AddressAPI';
 import { transactionAPI } from './TransactionAPI';
 import { chainAPI } from './ChainAPI';
-// import axios from 'axios';
+// import { allPay } from './allPay';
 
 class Wallet {
   async _initWallet(bip39Mnemonic: string, password?: string) {
@@ -1094,9 +1093,9 @@ class Wallet {
   }
 
   async runScript() {
-    const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
-    console.log(this.getBIP32ExtendedPrivKey(bip32ExtendedKey));
-    console.log(this.getBIP32ExtendedPubKey(bip32ExtendedKey));
+    // const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
+    // console.log(this.getBIP32ExtendedPrivKey(bip32ExtendedKey));
+    // console.log(this.getBIP32ExtendedPubKey(bip32ExtendedKey));
     // try {
     //   const { utxos } = await Persist.getUTXOs();
     //   const targets = [

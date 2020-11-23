@@ -231,6 +231,46 @@ class Allpay {
     }
   }
 
+  async _registerName() {
+    const name = [116];
+    const xpubKey =
+      'tpubDFUpVvBTaPL1PhgZoXFkc1k3DW3SEfATw2ZihVUSuvrs2iDbmijUHw4Z4tGsahBfZYebeeNEivZJ2zdkRWCgCCFgGNf22fKQnhYMx5xG1pU';
+    const returnAddress = 'mw2XLviUgKv1v4Xt1yG3R6gNAV252u19Re';
+    const addressCount = 10;
+    const nutxo = {
+      opTxHash:
+        '2f2c8d54715b6ea570145e00dd9ed218ec8604f688ca2b7ca9001994811c3397',
+      opIndex: 1,
+      value: 100000000,
+    };
+    const psaTx = await this.registerName({
+      proxyHost: '127.0.0.1',
+      port: 9099,
+      name,
+      xpubKey,
+      returnAddress,
+      addressCount,
+      nutxo,
+    });
+    console.log(psaTx);
+  }
+
+  async _createTransaction() {
+    const recipient = 't';
+    const changeAddress = 'mtPPGa2nXXqdwmXQekWiyr7Jpmbb37NCS1';
+    const amount = 100000000;
+    const { utxos } = await Persist.getUTXOs();
+    const psaTx = await this.createTransaction({
+      proxyHost: '127.0.0.1',
+      port: 9099,
+      recipient,
+      amount,
+      changeAddress,
+      utxos,
+    });
+    console.log(psaTx);
+  }
+
   async registerName(data: {
     proxyHost: string;
     port: number;
