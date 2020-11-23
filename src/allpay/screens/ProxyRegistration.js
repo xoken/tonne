@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Button, Header } from 'semantic-ui-react';
-import * as allpayActions from './allpayActions';
+import * as allpayActions from '../allpayActions';
 
 class ProxyRegistration extends React.Component {
   constructor(props) {
@@ -22,9 +22,9 @@ class ProxyRegistration extends React.Component {
 
   renderProxyProviders() {
     const proxyProviders = [
-      { name: 'Proxy Provider 1', host: '127.0.0.1', port: 9091 },
-      { name: 'Proxy Provider 2', host: '127.0.0.1', port: 9091 },
-      { name: 'Proxy Provider 3', host: '127.0.0.1', port: 9091 },
+      { name: 'Proxy Provider 1', host: '127.0.0.1', port: 9090 },
+      { name: 'Proxy Provider 2', host: '127.0.0.1', port: 9090 },
+      { name: 'Proxy Provider 3', host: '127.0.0.1', port: 9090 },
     ];
     return proxyProviders.map(({ name, host, port }, index) => {
       return (

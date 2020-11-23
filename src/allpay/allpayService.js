@@ -6,7 +6,7 @@ class AllpayService {
   }
 
   async getOutpointForName(name) {
-    return await allPay.getOutpointByName(name);
+    return await allPay.getOutpointForName(name);
   }
 
   async buyName(data) {

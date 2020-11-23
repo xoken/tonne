@@ -76,12 +76,7 @@ export default createReducer(
         : unusedDerivedKeys,
     }),
     [authActions.logoutSuccess]: state => ({
-      ...state,
-      isLoading: false,
-      balance: 0,
-      transactions: [],
-      nextTransactionCursor: null,
-      addressInfo: null,
+      ...INITIAL_STATE,
     }),
   },
   INITIAL_STATE

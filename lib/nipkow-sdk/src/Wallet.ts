@@ -47,8 +47,8 @@ class Wallet {
       const { derivedKeys: newDerivedKeys } = await this._generateDerivedKeys(
         bip32ExtendedKey,
         Number(lastKeyIndex) + 1,
-        20 - countOfUnusedKeys,
-        false
+        50 - countOfUnusedKeys,
+        true
       );
       await Persist.upsertDerivedKeys(newDerivedKeys);
     }
@@ -86,6 +86,26 @@ class Wallet {
     }
     return extendedKey.toBase58();
   }
+
+  getBIP32ExtendedPrivKey = (bip32ExtendedKey: string) => {
+    const bip32Interface = bip32.fromBase58(
+      bip32ExtendedKey,
+      network.BITCOIN_SV_REGTEST
+    );
+    let xprvkeyB58 = 'NA';
+    if (!bip32Interface.isNeutered()) {
+      xprvkeyB58 = bip32Interface.toBase58();
+    }
+    return xprvkeyB58;
+  };
+
+  getBIP32ExtendedPubKey = (bip32ExtendedKey: string) => {
+    const bip32Interface = bip32.fromBase58(
+      bip32ExtendedKey,
+      network.BITCOIN_SV_REGTEST
+    );
+    return bip32Interface.neutered().toBase58();
+  };
 
   _generateDerivedAddress(
     bip32ExtendedKey: string,
@@ -161,9 +181,9 @@ class Wallet {
     let privkey = '';
     if (hasPrivkey) {
       privkey = keyPair.toWIF();
-      if (useBip38) {
-        privkey = bip38.encrypt(keyPair.privateKey!, false, bip38password);
-      }
+      // if (useBip38) {
+      //   privkey = bip38.encrypt(keyPair.privateKey!, false, bip38password);
+      // }
     }
     // const pubkey = keyPair.publicKey.toString('hex');
     // let indexText =
@@ -463,7 +483,7 @@ class Wallet {
         bip32ExtendedKey,
         Number(lastKeyIndex) + 1,
         20 - countOfUnusedKeys,
-        false
+        true
       );
       return await this._getOutputs(
         nextDerivedKeys,
@@ -806,7 +826,7 @@ class Wallet {
       const { privkey } = this._getPrivKey(
         bip32ExtendedKey,
         Number(KeyIndex),
-        false
+        true
       );
       return ECPair.fromWIF(privkey, networks.regtest);
       /*
@@ -889,25 +909,25 @@ class Wallet {
       const transaction = psbt.extractTransaction(true);
       const transactionHex = transaction.toHex();
       const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
-      // const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
-      //   base64
-      // );
-      // if (txBroadcast) {
-      //   const spentUtxos = inputs.map((input: any) => ({
-      //     ...input,
-      //     isSpent: true,
-      //     confirmed: false,
-      //   }));
-      //   await Persist.updateOutputs(spentUtxos);
-      //   await Persist.upsertUnconfirmedTransactions([
-      //     {
-      //       txId: transaction.getId(),
-      //       confirmed: false,
-      //       outputs: spentUtxos,
-      //       createdAt: new Date(),
-      //     },
-      //   ]);
-      // }
+      const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
+        base64
+      );
+      if (txBroadcast) {
+        const spentUtxos = inputs.map((input: any) => ({
+          ...input,
+          isSpent: true,
+          confirmed: false,
+        }));
+        await Persist.updateOutputs(spentUtxos);
+        await Persist.upsertUnconfirmedTransactions([
+          {
+            txId: transaction.getId(),
+            confirmed: false,
+            outputs: spentUtxos,
+            createdAt: new Date(),
+          },
+        ]);
+      }
     } catch (error) {
       throw error;
     }
@@ -1074,6 +1094,9 @@ class Wallet {
   }
 
   async runScript() {
+    const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
+    console.log(this.getBIP32ExtendedPrivKey(bip32ExtendedKey));
+    console.log(this.getBIP32ExtendedPubKey(bip32ExtendedKey));
     // try {
     //   const { utxos } = await Persist.getUTXOs();
     //   const targets = [
@@ -1264,9 +1287,10 @@ class Wallet {
     // } catch (error) {
     //   throw error;
     // }
-    // const keys: object[] = await this._getKeys([
-    //   'mk4z9XdCQ9uUks1AZgUf8R28kVmESp623P',
-    // ]);
+    // const keys = await this._getKeys(['mk4z9XdCQ9uUks1AZgUf8R28kVmESp623P']);
+    // const a = keys[0];
+    // debugger;
+    // console.log(a);
     // mk4z9XdCQ9uUks1AZgUf8R28kVmESp623P;
     // Persist.runScript();
     // await Persist.upsertTransactions([

@@ -109,9 +109,7 @@ class WalletDashboard extends React.Component {
                   <Dropdown.Item>
                     <Link to={`/wallet/allpay/register`}>Register with Proxy</Link>
                   </Dropdown.Item>
-                  <Dropdown.Divider />
                   <Dropdown.Item text='Rename Profile' onClick={this.onRenameProfile} />
-                  <Dropdown.Divider />
                   <Dropdown.Item text='Logout' onClick={this.onLogout} />
                 </Dropdown.Menu>
               </Dropdown>
