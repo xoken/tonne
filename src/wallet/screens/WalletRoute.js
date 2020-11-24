@@ -11,7 +11,9 @@ import SendTransaction from '../components/SendTransaction';
 import WalletPassword from './WalletPassword';
 import WalletHome from './WalletHome';
 import WalletDashboard from './WalletDashboard';
-import BuyName from '../../allpay/BuyName';
+import BuyName from '../../allpay/screens/BuyName';
+import ProxyRegistration from '../../allpay/screens/ProxyRegistration';
+import RenderTransaction from '../../allpay/screens/RenderTransaction';
 
 class WalletRoute extends React.Component {
   render() {
@@ -36,8 +38,14 @@ class WalletRoute extends React.Component {
         <PrivateRoute path={`${path}/send`}>
           <SendTransaction />
         </PrivateRoute>
-        <PublicRoute path={`${path}/buy`}>
+        <PublicRoute path={`${path}/allpay/buy`}>
           <BuyName />
+        </PublicRoute>
+        <PublicRoute path={`${path}/allpay/register`}>
+          <ProxyRegistration />
+        </PublicRoute>
+        <PublicRoute path={`${path}/allpay/render/transaction`}>
+          <RenderTransaction />
         </PublicRoute>
         <PublicRoute exact path={path}>
           <WalletHome />

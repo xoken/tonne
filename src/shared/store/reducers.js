@@ -3,6 +3,7 @@ import { combineReducers } from 'redux';
 // import storage from 'redux-persist/lib/storage';
 import auth from '../../auth/authReducer';
 import wallet from '../../wallet';
+import allpay from '../../allpay';
 import settings from '../../settings';
 
 // const walletPersistConfig = {
@@ -14,6 +15,7 @@ import settings from '../../settings';
 const appReducer = combineReducers({
   auth,
   wallet: wallet.reducer,
+  allpay: allpay.reducer,
   settings: settings.reducer,
 });
 

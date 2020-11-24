@@ -37,6 +37,10 @@ export default createReducer(
         nextTransactionCursor !== undefined ? nextTransactionCursor : state.nextTransactionCursor,
       isLoading: false,
     }),
+    [actions.getTransactionsFailure]: state => ({
+      ...state,
+      isLoading: false,
+    }),
     [actions.getDiffTransactionsSuccess]: (state, { transactions, nextTransactionCursor }) => ({
       ...state,
       transactions: [...transactions, ...state.transactions],
@@ -72,12 +76,7 @@ export default createReducer(
         : unusedDerivedKeys,
     }),
     [authActions.logoutSuccess]: state => ({
-      ...state,
-      isLoading: false,
-      balance: 0,
-      transactions: [],
-      nextTransactionCursor: null,
-      addressInfo: null,
+      ...INITIAL_STATE,
     }),
   },
   INITIAL_STATE

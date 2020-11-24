@@ -1,4 +1,6 @@
 const { app, BrowserWindow } = require('electron');
+
+// const proxyProvider = require('./ProxyProvider');
 // const path = require('path');
 
 // var widthHeight;

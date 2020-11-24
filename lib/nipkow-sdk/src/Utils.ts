@@ -1,8 +1,7 @@
-// import { Network, bip32, BIP32Interface } from 'bitcoinjs-lib';
-// import derivationPaths from './constants/derivationPaths';
-// import * as bip39 from 'bip39';
+import { bip32, Network, BIP32Interface } from 'bitcoinjs-lib';
+import derivationPaths from './constants/derivationPaths';
+import * as bip39 from 'bip39';
 
-/*
 class Utils {
   mnemonicToSeed = async (
     bip39Mnemonic: string,
@@ -30,19 +29,7 @@ class Utils {
     return bip32ExtendedKey.toBase58();
   };
 
-  getAccountExtendedPubKey = (bip32ExtendedKey: BIP32Interface) => {
-    return bip32ExtendedKey.neutered().toBase58();
-  };
-
-  getBIP32ExtendedPrivKey = (bip32ExtendedKey: BIP32Interface) => {
-    let xprvkeyB58 = 'NA';
-    if (!bip32ExtendedKey.isNeutered()) {
-      xprvkeyB58 = bip32ExtendedKey.toBase58();
-    }
-    return xprvkeyB58;
-  };
-
-  getBIP32ExtendedPubKey = (bip32ExtendedKey: BIP32Interface) => {
+  getAccountExtendedPubKey = (bip32ExtendedKey: any) => {
     return bip32ExtendedKey.neutered().toBase58();
   };
 
@@ -54,17 +41,16 @@ class Utils {
     path += account + "'/";
     return path;
   };
+
+  isEqualOutput = (
+    utxo1: { outputTxHash: any; outputIndex: any },
+    utxo2: { outputTxHash: any; outputIndex: any }
+  ) => {
+    return (
+      utxo1.outputTxHash === utxo2.outputTxHash &&
+      utxo1.outputIndex === utxo2.outputIndex
+    );
+  };
 }
 
 export default new Utils();
-*/
-
-export const isEqualOutput = (
-  utxo1: { outputTxHash: any; outputIndex: any },
-  utxo2: { outputTxHash: any; outputIndex: any }
-) => {
-  return (
-    utxo1.outputTxHash === utxo2.outputTxHash &&
-    utxo1.outputIndex === utxo2.outputIndex
-  );
-};

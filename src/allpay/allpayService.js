@@ -6,11 +6,15 @@ class AllpayService {
   }
 
   async getOutpointForName(name) {
-    return await allPay.getOutpointByName(name);
+    return await allPay.getOutpointForName(name);
   }
 
   async buyName(data) {
-    return await allPay.getPartiallySignTx(data);
+    return await allPay.buyName(data);
+  }
+
+  async registerName(data) {
+    return await allPay.registerName(data);
   }
 }
 
