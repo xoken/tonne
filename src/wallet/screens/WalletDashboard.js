@@ -88,7 +88,7 @@ class WalletDashboard extends React.Component {
   };
 
   render() {
-    const { profile, balance } = this.props;
+    const { isLoading, profile, balance } = this.props;
     return (
       <>
         <Button onClick={this.runScript}>Run</Button>
@@ -130,7 +130,7 @@ class WalletDashboard extends React.Component {
             <div className='content'>
               Your Current Balance is
               <div className='sub header'>
-                {balance ? `${satoshiToBSV(balance)} BSV` : <Loader inline active />}
+                {isLoading ? <Loader inline active /> : `${satoshiToBSV(balance)} BSV`}
               </div>
             </div>
           </div>
@@ -164,6 +164,7 @@ WalletDashboard.defaultProps = {
 
 const mapStateToProps = state => ({
   profile: state.auth.profile,
+  isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
 });
 

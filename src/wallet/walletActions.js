@@ -70,7 +70,7 @@ export const getTransactions = options => async (dispatch, getState, { serviceIn
       const { transactions, nextTransactionCursor } = await serviceInjector(
         WalletService
       ).getTransactions(options);
-      dispatch(getBalance());
+      await dispatch(getBalance());
       dispatch(getTransactionsSuccess({ transactions, nextTransactionCursor }));
     }
   } catch (error) {

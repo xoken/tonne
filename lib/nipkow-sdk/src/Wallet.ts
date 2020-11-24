@@ -46,7 +46,7 @@ class Wallet {
       const { derivedKeys: newDerivedKeys } = await this._generateDerivedKeys(
         bip32ExtendedKey,
         Number(lastKeyIndex) + 1,
-        50 - countOfUnusedKeys,
+        20 - countOfUnusedKeys,
         true
       );
       await Persist.upsertDerivedKeys(newDerivedKeys);
@@ -212,11 +212,11 @@ class Wallet {
       //   const derivedKey = { address: '', indexText: 'm/44/1/0/0/0' };
       //   derivedKey.address = 'mkTJA5GAsJQp7UmAgh43AVAVM4BvjWbG7z';
       // derivedKey.privkey =
-      // 'cTP23waCMwbWfDoH53PGJNpbyiyMk2g2djhuXff5XhPNuewqdKNY';
+      //   'cTP23waCMwbWfDoH53PGJNpbyiyMk2g2djhuXff5XhPNuewqdKNY';
       // derivedKey.address = 'mmKu1EzwGmicQA5XwpFVDBegwNjf7h55MP';
       // derivedKey.privkey =
       //   'cSn2zVDF4c7w63rH1Cc2uXsMr6UzFAwasTRmm4CpQet1ofuVKzRj';
-      //   derivedKeys.push({ ...derivedKey, isUsed: false });
+      // derivedKeys.push({ ...derivedKey, isUsed: false });
       // } else {
       const derivedKey = this._generateDerivedAddress(
         bip32ExtendedKey,

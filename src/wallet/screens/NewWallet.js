@@ -47,6 +47,7 @@ class NewWallet extends React.Component {
   };
 
   render() {
+    console.log(this.props.bip39Mnemonic);
     this.morigfull = '';
     this.mnorig.length = 0;
     this.mndupl.length = 0;

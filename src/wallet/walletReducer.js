@@ -6,7 +6,7 @@ const INITIAL_STATE = {
   isLoading: false,
   transactions: [],
   nextTransactionCursor: null,
-  balance: null,
+  balance: 0,
   usedDerivedKeys: null,
   unusedDerivedKeys: null,
 };
