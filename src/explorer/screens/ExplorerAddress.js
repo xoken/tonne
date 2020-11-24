@@ -222,9 +222,38 @@ class ExplorerAddress extends React.Component {
       a = 0;
     function checkforinvalidaddress(txaddress) {
       if (txaddress) {
-        return <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>;
+        return (
+          <>
+            <Grid.Column width={3}>
+              <b>Address</b>
+            </Grid.Column>
+            <Grid.Column className='tdwordbreak' width={13}>
+              <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>{' '}
+            </Grid.Column>
+          </>
+        );
       } else {
-        return <div>Newly minted coins</div>;
+        return (
+          <>
+            <Grid.Column width={16}>Newly minted coins</Grid.Column>
+          </>
+        );
+      }
+    }
+    function checkforinvalidoutpointindex(outpointindex) {
+      if (outpointindex >= 0) {
+        return (
+          <>
+            <Grid.Row columns={2}>
+              <Grid.Column width={3}>
+                <b>Outpoint Index</b>
+              </Grid.Column>
+              <Grid.Column width={13}>{outpointindex}</Grid.Column>
+            </Grid.Row>
+          </>
+        );
+      } else {
+        return <></>;
       }
     }
     for (a = 0; a < inps; a++) {
@@ -235,12 +264,7 @@ class ExplorerAddress extends React.Component {
             <Grid.Column width={15}>
               <Grid>
                 <Grid.Row columns={2}>
-                  <Grid.Column width={3}>
-                    <b>Address</b>
-                  </Grid.Column>
-                  <Grid.Column className='tdwordbreak' width={13}>
-                    {checkforinvalidaddress(input.tx.txInps[a].address)}
-                  </Grid.Column>
+                  {checkforinvalidaddress(input.tx.txInps[a].address)}
                 </Grid.Row>
                 <Grid.Row columns={2}>
                   <Grid.Column width={3}>
@@ -248,12 +272,7 @@ class ExplorerAddress extends React.Component {
                   </Grid.Column>
                   <Grid.Column width={13}>{input.tx.txInps[a].value}</Grid.Column>
                 </Grid.Row>
-                <Grid.Row columns={2}>
-                  <Grid.Column width={3}>
-                    <b>Outpoint Index</b>
-                  </Grid.Column>
-                  <Grid.Column width={13}>{input.tx.txInps[a].outpointIndex}</Grid.Column>
-                </Grid.Row>
+                {checkforinvalidoutpointindex(input.tx.txInps[a].outpointIndex)}
               </Grid>
             </Grid.Column>
           </Grid.Row>
