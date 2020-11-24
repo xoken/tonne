@@ -21,7 +21,7 @@ function createWindow() {
   // and load the index.html of the app.
   // win.loadFile('src/index.html');
   const url = 'http://localhost:3000';
-  const url = `file://${path.join(__dirname, '/../build/index.html')}`;
+  // const url = `file://${path.join(__dirname, '/../build/index.html')}`;
   win.loadURL(url);
   //win.webContents.send('win', win);
   // Open the DevTools.
