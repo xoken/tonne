@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Grid, Header, Label, Segment } from 'semantic-ui-react';
+import { Grid, Header, Label, Segment, Button } from 'semantic-ui-react';
 import { getCodePoint, satoshiToBSV } from '../../shared/utils';
 import * as allpayActions from '../allpayActions';
 
@@ -144,6 +144,13 @@ class RenderTransaction extends React.Component {
                     </Label>
                   </div>
                 </div>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+          <Grid>
+            <Grid.Row>
+              <Grid.Column textAlign='right'>
+                <Button color='yellow'>Sign and Relay</Button>
               </Grid.Column>
             </Grid.Row>
           </Grid>
