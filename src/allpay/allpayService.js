@@ -16,6 +16,10 @@ class AllpayService {
   async registerName(data) {
     return await allPay.registerName(data);
   }
+
+  async relayTransaction(transactionHex) {
+    return await allPay.relayTransaction(transactionHex);
+  }
 }
 
 export default AllpayService;

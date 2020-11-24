@@ -8,7 +8,6 @@ import proxyProvider from './ProxyProvider';
 import Config from './Config.json';
 import network from './constants/network';
 import { Psbt, payments } from 'bitcoinjs-lib';
-import { Signer } from 'crypto';
 
 class Allpay {
   async buyName(data: {
@@ -76,6 +75,7 @@ class Allpay {
   }
 
   async decodeTransaction(psaTx: string, inputs: any[]) {
+    console.log(psaTx);
     const partiallySignTransaction = JSON.parse(
       Buffer.from(psaTx, 'base64').toString()
     );
@@ -172,6 +172,8 @@ class Allpay {
             const keys: any[] = await wallet._getKeys([i.address]);
             if (keys.length > 0) {
               const key: any = keys[0];
+              console.log(key.privateKey.toString('hex'));
+              console.log(i.value);
               psbt.signInput(index, key);
             }
           } else {
@@ -200,6 +202,34 @@ class Allpay {
     // );
     // await this.verifyRootTx(transaction);
     // const data = [0, 1, [115, 104], [1, [0, 0], [0, [0, 1], [[0, 'XokenP2P', 'someuri_1']]], [[0, 'AllPay', 'Public', [0, 'XokenP2P', 'someuri_2'], [0, 'addrCommit', 'utxoCommit', 'signature', 876543]]]]]
+  }
+
+  async relayTransaction(transactionHex: string) {
+    try {
+      const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
+      const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
+        base64
+      );
+      // if (txBroadcast) {
+      //   const spentUtxos = inputs.map((input: any) => ({
+      //     ...input,
+      //     isSpent: true,
+      //     confirmed: false,
+      //   }));
+      //   await Persist.updateOutputs(spentUtxos);
+      //   await Persist.upsertUnconfirmedTransactions([
+      //     {
+      //       txId: transaction.getId(),
+      //       confirmed: false,
+      //       outputs: spentUtxos,
+      //       createdAt: new Date(),
+      //     },
+      //   ]);
+      // }
+      return txBroadcast;
+    } catch (error) {
+      throw error;
+    }
   }
 
   async verifyRootTx(transaction: any) {

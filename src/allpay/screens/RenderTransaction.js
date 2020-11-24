@@ -14,59 +14,59 @@ class RenderTransaction extends React.Component {
 
   renderTransaction() {
     const { transaction } = this.props;
-    if (transaction && false) {
-      const { inputs: txInps, outputs: txOuts } = transaction;
+    if (transaction) {
+      const { ins: txInps, outs: txOuts } = transaction;
 
-      let totalInput = 0;
-      let totalOutput = 0;
-      let credit = 0;
-      let debit = 0;
-      let outgoing = 0;
+      // let totalInput = 0;
+      // let totalOutput = 0;
+      // let credit = 0;
+      // let debit = 0;
+      // let outgoing = 0;
 
-      txInps.forEach(input => {
-        totalInput = totalInput + input.value;
-        if (input.isMine) {
-          debit = debit + input.value;
-        }
-      });
+      // txInps.forEach(input => {
+      //   totalInput = totalInput + input.value;
+      //   if (input.isMine) {
+      //     debit = debit + input.value;
+      //   }
+      // });
 
-      txOuts.forEach(output => {
-        totalOutput = totalOutput + output.value;
-        if (output.isMine) {
-          credit = credit + output.value;
-        } else {
-          outgoing = outgoing + output.value;
-        }
-      });
+      // txOuts.forEach(output => {
+      //   totalOutput = totalOutput + output.value;
+      //   if (output.isMine) {
+      //     credit = credit + output.value;
+      //   } else {
+      //     outgoing = outgoing + output.value;
+      //   }
+      // });
 
-      const renderCreditOrDebit = (credit, debit) => {
-        if (credit > 0 && debit > 0) {
-          return (
-            <>
-              <span className='monospace debit'>{`-${satoshiToBSV(debit)} BSV`}</span>
-              <span className='monospace'>{` / `}</span>
-              <span className='monospace credit'>{`+${satoshiToBSV(credit)} BSV`}</span>
-            </>
-          );
-        } else if (credit > 0) {
-          return <span className='monospace credit'>{`+${satoshiToBSV(credit)} BSV`}</span>;
-        } else if (debit > 0) {
-          return <span className='monospace debit'>{`-${satoshiToBSV(debit)} BSV`}</span>;
-        }
-        return '';
-      };
+      // const renderCreditOrDebit = (credit, debit) => {
+      //   if (credit > 0 && debit > 0) {
+      //     return (
+      //       <>
+      //         <span className='monospace debit'>{`-${satoshiToBSV(debit)} BSV`}</span>
+      //         <span className='monospace'>{` / `}</span>
+      //         <span className='monospace credit'>{`+${satoshiToBSV(credit)} BSV`}</span>
+      //       </>
+      //     );
+      //   } else if (credit > 0) {
+      //     return <span className='monospace credit'>{`+${satoshiToBSV(credit)} BSV`}</span>;
+      //   } else if (debit > 0) {
+      //     return <span className='monospace debit'>{`-${satoshiToBSV(debit)} BSV`}</span>;
+      //   }
+      //   return '';
+      // };
 
       return (
         <Segment className='transaction'>
           <Grid>
             <Grid.Column width={10}>
-              <span className='monospace'>{transaction.txId}</span>
+              <span className='monospace'>{transaction.getId()}</span>
             </Grid.Column>
             <Grid.Column width={5} textAlign='right'>
-              {renderCreditOrDebit(credit, debit)}
+              {/* {renderCreditOrDebit(credit, debit)} */}
             </Grid.Column>
             <Grid.Column width={1} textAlign='right'>
-              <Label className='plain'>
+              {/* <Label className='plain'>
                 <i
                   title={
                     transaction.confirmations > 10
@@ -78,7 +78,7 @@ class RenderTransaction extends React.Component {
                       ? 'green lock icon'
                       : 'warning unlock alternate icon'
                   }></i>
-              </Label>
+              </Label> */}
             </Grid.Column>
           </Grid>
           <Grid divided columns='two'>
@@ -87,17 +87,15 @@ class RenderTransaction extends React.Component {
                 <Header as='h6' className='monospace'>
                   Inputs
                 </Header>
-                {txInps.map(input => {
+                {txInps.map((input, index) => {
                   return (
-                    <Grid key={input.txInputIndex}>
+                    <Grid key={String(index)}>
                       <Grid.Column width='10'>
                         <p className='monospace'>{input.address}</p>
                       </Grid.Column>
                       <Grid.Column width='6' textAlign='right'>
                         <p className='monospace'>
-                          <span className={input.isMine ? 'debit' : ''}>
-                            {`${satoshiToBSV(input.value)} BSV`}
-                          </span>
+                          <span>{input.value && `${satoshiToBSV(input.value)} BSV`}</span>
                         </p>
                       </Grid.Column>
                     </Grid>
@@ -108,17 +106,15 @@ class RenderTransaction extends React.Component {
                 <Header as='h6' className='monospace'>
                   Outputs
                 </Header>
-                {txOuts.map(output => {
+                {txOuts.map((output, index) => {
                   return (
-                    <Grid key={output.outputIndex}>
+                    <Grid key={String(index)}>
                       <Grid.Column width='10'>
                         <p className='monospace'>{output.address}</p>
                       </Grid.Column>
                       <Grid.Column width='6' textAlign='right'>
                         <p className='monospace'>
-                          <span className={output.isMine ? 'credit' : ''}>
-                            {`${satoshiToBSV(output.value)} BSV`}
-                          </span>
+                          <span>{`${satoshiToBSV(output.value)} BSV`}</span>
                         </p>
                       </Grid.Column>
                     </Grid>
@@ -126,22 +122,22 @@ class RenderTransaction extends React.Component {
                 })}
                 <div className='ui right aligned grid'>
                   <div className='column'>
-                    <Label className='monospace plain'>
+                    {/* <Label className='monospace plain'>
                       {debit > 0 ? 'Total debit:' : 'Total credit:'}
                       <Label.Detail>
                         {debit > 0
                           ? `${satoshiToBSV(outgoing)} BSV`
                           : `${satoshiToBSV(credit)} BSV`}
                       </Label.Detail>
-                    </Label>
+                    </Label> */}
                   </div>
                 </div>
                 <div className='ui right aligned grid'>
                   <div className='column'>
-                    <Label className='monospace plain'>
+                    {/* <Label className='monospace plain'>
                       Fee:
                       <Label.Detail>{`${satoshiToBSV(totalInput - totalOutput)} BSV`}</Label.Detail>
-                    </Label>
+                    </Label> */}
                   </div>
                 </div>
               </Grid.Column>
@@ -150,7 +146,9 @@ class RenderTransaction extends React.Component {
           <Grid>
             <Grid.Row>
               <Grid.Column textAlign='right'>
-                <Button color='yellow'>Sign and Relay</Button>
+                <Button color='yellow' onClick={this.onRelay}>
+                  Relay
+                </Button>
               </Grid.Column>
             </Grid.Row>
           </Grid>
@@ -159,6 +157,19 @@ class RenderTransaction extends React.Component {
     }
     return null;
   }
+
+  onRelay = async () => {
+    const { transaction } = this.props;
+    if (transaction) {
+      try {
+        const { dispatch } = this.props;
+        await dispatch(allpayActions.relayTransaction(transaction.toHex()));
+        this.props.history.push('/wallet/dashboard');
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  };
 
   render() {
     return (

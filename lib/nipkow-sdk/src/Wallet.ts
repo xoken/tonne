@@ -1150,12 +1150,12 @@ class Wallet {
     ];
     const { utxos } = await Persist.getUTXOs();
     const feeRate = 5;
-    // await this._createSendTransaction(utxos, targets, feeRate);
-    const keys: object[] = await this._getKeys([
-      'mhNBrhhy3ZB2bmsarXUy8YLycvnmUxUCpp',
-    ]);
-    debugger;
-    console.log(keys);
+    await this._createSendTransaction(utxos, targets, feeRate);
+    // const keys: object[] = await this._getKeys([
+    //   'mhNBrhhy3ZB2bmsarXUy8YLycvnmUxUCpp',
+    // ]);
+    // debugger;
+    // console.log(keys);
     // Persist.runScript();
   }
 }

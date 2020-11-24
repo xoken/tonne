@@ -13,6 +13,10 @@ export const registerNameRequest = createAction('REGISTER_NAME_REQUEST');
 export const registerNameSuccess = createAction('REGISTER_NAME_SUCCESS');
 export const registerNameFailure = createAction('REGISTER_NAME_FAILURE');
 
+export const relayTransactionRequest = createAction('RELAY_TRANSACTION_REQUEST');
+export const relayTransactionSuccess = createAction('RELAY_TRANSACTION_SUCCESS');
+export const relayTransactionFailure = createAction('RELAY_TRANSACTION_FAILURE');
+
 export const getOutpointForName = name => async (dispatch, getState, { serviceInjector }) => {
   dispatch(getOutpointForNameRequest());
   try {
@@ -45,6 +49,22 @@ export const registerName = data => async (dispatch, getState, { serviceInjector
     return response;
   } catch (error) {
     dispatch(registerNameFailure());
+    throw error;
+  }
+};
+
+export const relayTransaction = transactionHex => async (
+  dispatch,
+  getState,
+  { serviceInjector }
+) => {
+  dispatch(relayTransactionRequest());
+  try {
+    const response = await serviceInjector(AllpayService).relayTransaction(transactionHex);
+    dispatch(relayTransactionSuccess());
+    return response;
+  } catch (error) {
+    dispatch(relayTransactionFailure());
     throw error;
   }
 };
