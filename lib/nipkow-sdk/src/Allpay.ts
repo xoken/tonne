@@ -8,6 +8,7 @@ import proxyProvider from './ProxyProvider';
 import Config from './Config.json';
 import network from './constants/network';
 import { Psbt, payments } from 'bitcoinjs-lib';
+import { Signer } from 'crypto';
 
 class Allpay {
   async buyName(data: {
@@ -65,7 +66,7 @@ class Allpay {
             baseURL: `https://${host}:${port}/v1`,
           }
         );
-        return await this.decodeTransaction(psaTx);
+        return await this.decodeTransaction(psaTx, inputs);
       } else {
         throw new Error('Error configuring input params');
       }
@@ -74,7 +75,7 @@ class Allpay {
     }
   }
 
-  async decodeTransaction(psaTx: string) {
+  async decodeTransaction(psaTx: string, inputs: any[]) {
     const partiallySignTransaction = JSON.parse(
       Buffer.from(psaTx, 'base64').toString()
     );
@@ -124,14 +125,8 @@ class Allpay {
       partiallySignTransaction.outs.forEach(
         (output: { script: any; value: any }, index: number) => {
           if (index === 0) {
-            debugger;
             const embed = payments.embed({
-              data: [
-                Buffer.from(
-                  '416c6c65676f72792f416c6c50617946840001808500820000830082000181830068586f6b656e50325069736f6d657572695f31809f8300830082000281830068586f6b656e50325069736f6d657572695f331874ff',
-                  'hex'
-                ),
-              ],
+              data: [Buffer.from(output.script, 'hex')],
               network: network.BITCOIN_SV_REGTEST,
             });
             psbt.addOutput({
@@ -150,13 +145,45 @@ class Allpay {
           }
         }
       );
-      // psbt.validateSignaturesOfAllInputs();
-      // psbt.finalizeAllInputs();
-      // const transaction = psbt.extractTransaction(true);
-      // return transaction;
-      return '';
+      for (
+        let index = 0;
+        index < partiallySignTransaction.ins.length;
+        index++
+      ) {
+        const input = partiallySignTransaction.ins[index];
+        if (input.script) {
+          const p2pkh = payments.p2pkh({
+            input: Buffer.from(input.script, 'hex'),
+            network: network.BITCOIN_SV_REGTEST,
+          });
+          psbt.updateInput(index, {
+            partialSig: [
+              {
+                pubkey: p2pkh.pubkey!,
+                signature: p2pkh.signature!,
+              },
+            ],
+          });
+        } else {
+          const i = inputs.find(
+            (inputArg) => inputArg.outputTxHash === input.outpoint.hash
+          );
+          if (i) {
+            const keys: any[] = await wallet._getKeys([i.address]);
+            if (keys.length > 0) {
+              const key: any = keys[0];
+              psbt.signInput(index, key);
+            }
+          } else {
+            throw new Error('Error in getting input signature');
+          }
+        }
+      }
+      psbt.validateSignaturesOfAllInputs();
+      psbt.finalizeAllInputs();
+      const transaction = psbt.extractTransaction(true);
+      return transaction;
     } catch (error) {
-      debugger;
       console.log(error);
       throw error;
     }

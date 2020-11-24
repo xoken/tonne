@@ -36,15 +36,14 @@ class SendTransaction extends React.Component {
 
   onPaytoNameAddressChange = event => {
     const receiverAllpayNameOrAddress = event.target.value;
-    var receiverAddress = '';
-    if (
-      receiverAllpayNameOrAddress.length === 36 &&
-      (receiverAllpayNameOrAddress.substring(0, 1) === 'm' ||
-        receiverAllpayNameOrAddress.substring(0, 1) === 'n')
-    ) {
-      receiverAddress = receiverAllpayNameOrAddress;
-      this.setState({ receiverAddress: receiverAllpayNameOrAddress });
-    }
+    // if (
+    //   receiverAllpayNameOrAddress.length === 36 &&
+    //   (receiverAllpayNameOrAddress.substring(0, 1) === 'm' ||
+    //     receiverAllpayNameOrAddress.substring(0, 1) === 'n')
+    // ) {
+    this.setState({ receiverAddress: receiverAllpayNameOrAddress });
+    // } else {
+    // }
   };
 
   onAmountChange = async event => {
@@ -211,19 +210,15 @@ class SendTransaction extends React.Component {
           <Grid.Column width={6}>
             <Input
               fluid
+              type='text'
               placeholder='allpay name / address'
+              value={receiverAddress}
               onChange={this.onPaytoNameAddressChange}
             />
           </Grid.Column>
           <Grid.Column width={6}>
-            <Input
-              fluid
-              type='text'
-              readOnly
-              id='receiverAddress'
-              value={receiverAddress}
-              placeholder='xxxxxxxxxxxxxxxxxxxxxxxxx'
-            />
+            {/* <Input fluid readOnly id='receiverAddress' placeholder='xxxxxxxxxxxxxxxxxxxxxxxxx' /> */}
+            {/* <p>{receiverAddress}</p> */}
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
@@ -233,22 +228,18 @@ class SendTransaction extends React.Component {
           <Grid.Column width={6}>
             <Input
               fluid
-              type='text'
+              type='number'
               className='form-control'
               id='amount'
-              disabled={receiverAddress === '' ? true : false}
+              // disabled={receiverAddress === '' ? true : false}
               value={amountInSatoshi}
               onChange={this.onAmountChange}
             />
           </Grid.Column>
           <Grid.Column width={6}>
-            <Input
-              fluid
-              type='text'
-              readOnly
-              className='form-control-plaintext'
-              value={satoshiToBSV(Number(amountInSatoshi)) + ' BSV'}
-            />
+            <p className='form-control-plaintext'>
+              {satoshiToBSV(Number(amountInSatoshi)) + ' BSV'}
+            </p>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
@@ -267,25 +258,19 @@ class SendTransaction extends React.Component {
             />
           </Grid.Column>
           <Grid.Column width={6}>
-            <Input
-              fluid
-              type='text'
-              readOnly
-              className='form-control-plaintext'
-              value={`${satoshiToBSV(Number(transactionFee))} BSV (${feeRate} satoshis/byte)`}
-            />
+            <p>{`${satoshiToBSV(Number(transactionFee))} BSV (${feeRate} satoshis/byte)`}</p>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
           <Grid.Column width={16}>
             {this.renderMessage()}
-            {receiverAddress === '' ? (
+            {/* {receiverAddress === '' ? (
               <div className='ui negative message'>
                 <p>Enter correct Address or Allpay Name</p>
               </div>
             ) : (
               <></>
-            )}{' '}
+            )}{' '} */}
           </Grid.Column>
         </Grid.Row>
         <Grid.Row centered>

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Checkbox } from 'semantic-ui-react';
-import { satoshiToBSV, codePointToName, getCodePoint } from '../../shared/utils';
+import { codePointToName, getCodePoint } from '../../shared/utils';
 
 export default class BuyName extends React.Component {
   constructor(props) {
@@ -31,9 +31,9 @@ export default class BuyName extends React.Component {
                   <div className='seven wide middle aligned column'>
                     <div className='ui grid'>
                       <div className='six wide column middle aligned'>
-                        <div className='ui plain label'>{`${satoshiToBSV(
+                        {/* <div className='ui plain label'>{`${satoshiToBSV(
                           priceInSatoshi
-                        )} BSV`}</div>
+                        )} BSV`}</div> */}
                       </div>
                       <div className='ten wide column'>
                         <div className='ui form'>

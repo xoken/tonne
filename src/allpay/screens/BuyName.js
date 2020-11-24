@@ -39,7 +39,9 @@ class BuyName extends React.Component {
     try {
       await dispatch(allpayActions.buyName(data));
       this.props.history.push('/wallet/allpay/render/transaction');
-    } catch (error) {}
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   onNamespaceCheckClick = () => {};

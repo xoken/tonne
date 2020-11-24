@@ -1096,209 +1096,67 @@ class Wallet {
     // const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
     // console.log(this.getBIP32ExtendedPrivKey(bip32ExtendedKey));
     // console.log(this.getBIP32ExtendedPubKey(bip32ExtendedKey));
-    // try {
-    //   const { utxos } = await Persist.getUTXOs();
-    //   const targets = [
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //     { address: 'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs', value: 500 },
-    //   ];
-    //   const feeRate = 5;
-    //   let { inputs, outputs } = coinSelect(utxos, targets, feeRate);
-    //   if (!inputs || !outputs) throw new Error('Empty inputs or outputs');
-    //   const txIds = inputs.map(
-    //     (input: { outputTxHash: any }) => input.outputTxHash
-    //   );
-    //   debugger;
-    //   const rawTxsResponse = await transactionAPI.getRawTransactionsByTxIDs(
-    //     txIds
-    //   );
-    //   debugger;
-    //   const inputsWithRawTxs = rawTxsResponse.rawTxs.map((rawTx: any) => {
-    //     const hex = Buffer.from(rawTx.txSerialized, 'base64').toString('hex');
-    //     return { ...rawTx, hex };
-    //   });
-    //   debugger;
-    //   let merged = [];
-    //   for (let i = 0; i < inputs.length; i++) {
-    //     merged.push({
-    //       ...inputs[i],
-    //       ...inputsWithRawTxs.find(
-    //         (element: { txId: any }) => element.txId === inputs[i].outputTxHash
-    //       ),
-    //     });
-    //   }
-    //   const psbt = new Psbt({
-    //     network: network.BITCOIN_SV_REGTEST,
-    //     forkCoin: 'bch',
-    //   });
-    //   psbt.setVersion(1);
-    //   merged.forEach(
-    //     (input: { outputTxHash: any; outputIndex: any; hex: any }) => {
-    //       psbt.addInput({
-    //         hash: input.outputTxHash,
-    //         index: input.outputIndex,
-    //         nonWitnessUtxo: Buffer.from(input.hex, 'hex'),
-    //       });
-    //     }
-    //   );
-    //   for (let index = 0; index < outputs.length; index++) {
-    //     const output = outputs[index];
-    //     if (!output.address) {
-    //       output.address = await this._getChangeAddress();
-    //     }
-    //     psbt.addOutput({
-    //       address: output.address,
-    //       value: output.value,
-    //     });
-    //   }
-    //   const addresses = merged.map(input => input.address);
-    //   const keys: object[] = await this._getKeys([
-    //     'n4mSgZ1fUjtMd77FdSXCzr414im69M17Rs',
-    //   ]);
-    //   debugger;
-    //   console.log(keys);
-    //   keys.forEach((key: any, i) => {
-    //     psbt.signInput(i, key);
-    //   });
-    //   psbt.validateSignaturesOfAllInputs();
-    //   psbt.finalizeAllInputs();
-    //   const transaction = psbt.extractTransaction(true);
-    //   const transactionHex = transaction.toHex();
-    //   const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
-    //   const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
-    //     base64
-    //   );
-    //   if (txBroadcast) {
-    //     console.log('success');
-    //     const spentUtxos = inputs.map((input: any) => ({
-    //       ...input,
-    //       isSpent: true,
-    //       confirmed: false,
-    //     }));
-    //     await Persist.updateOutputs(spentUtxos);
-    //     await Persist.upsertUnconfirmedTransactions([
-    //       {
-    //         txId: transaction.getId(),
-    //         confirmed: false,
-    //         outputs: spentUtxos,
-    //         createdAt: new Date(),
-    //       },
-    //     ]);
-    //   }
-    // } catch (error) {
-    //   throw error;
-    // }
-    // const keys = await this._getKeys(['mk4z9XdCQ9uUks1AZgUf8R28kVmESp623P']);
-    // const a = keys[0];
-    // debugger;
-    // console.log(a);
-    // mk4z9XdCQ9uUks1AZgUf8R28kVmESp623P;
+    const targets = [
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+      { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
+    ];
+    const { utxos } = await Persist.getUTXOs();
+    const feeRate = 5;
+    // await this._createSendTransaction(utxos, targets, feeRate);
+    const keys: object[] = await this._getKeys([
+      'mhNBrhhy3ZB2bmsarXUy8YLycvnmUxUCpp',
+    ]);
+    debugger;
+    console.log(keys);
     // Persist.runScript();
-    // await Persist.upsertTransactions([
-    //   {
-    //     txId:
-    //       '98e4c42f69876d8e37fe5a47ee6a62f5bb48a730988b209de0cdd3e6c1b06cd4',
-    //     confirmed: false,
-    //   },
-    // ]);
   }
 }
 
