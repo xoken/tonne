@@ -409,6 +409,24 @@ export const getUnconfirmedTransactions = async () => {
   }
 };
 
+export const updateDerivedKeys = async (addresses: string[]) => {
+  if (addresses.length > 0) {
+    const { existingDerivedKeys } = await getDerivedKeys();
+    const matchedDerivedKeys = existingDerivedKeys.filter(
+      (key: any, index: number) => {
+        return addresses.includes(key.address);
+      }
+    );
+    const docs = matchedDerivedKeys.map((key: any, index: number) => {
+      return {
+        ...key,
+        isUsed: true,
+      };
+    });
+    await db.bulkDocs(docs);
+  }
+};
+
 export const getUTXOs = async (options?: {
   startkey?: string;
   limit?: number;
@@ -464,4 +482,48 @@ export const runScript = async () => {
   } catch (error) {
     throw error;
   }
+};
+
+export const saveNUtxo = async (name, utxos) => {
+  if (name && utxos.length > 0) {
+    const { existingDerivedKeys } = await getDerivedKeys();
+    let keyId = existingDerivedKeys.length - 1;
+    const docs = {
+      _id: key._id ? key._id : `key-${String(keyId).padStart(20, '0')}`,
+      ...key,
+    };
+
+    if (outputs.length > 0) {
+      const { outputs: existingOutputs } = await getOutputs();
+      let outputId = existingOutputs.length - 1;
+      const docs = outputs.map((output: any, index: number) => {
+        if (!output._id) {
+          outputId = outputId + 1;
+        }
+        return {
+          _id: `nutxo-${String(outputId).padStart(20, '0')}`,
+          isSpent: output.spendInfo ? true : false,
+          confirmed: true,
+          ...output,
+        };
+      });
+
+      docs.push({
+        _id: 'lastUpdated',
+        value: null,
+      });
+      await db.bulkDocs(docs);
+    }
+
+    await db.bulkDocs(docs);
+  }
+};
+
+export const getNUtxo = async (name: string) => {
+  return {
+    opTxHash:
+      '2f2c8d54715b6ea570145e00dd9ed218ec8604f688ca2b7ca9001994811c3397',
+    opIndex: 1,
+    value: 100000000,
+  };
 };

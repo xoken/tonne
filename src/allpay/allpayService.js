@@ -17,8 +17,8 @@ class AllpayService {
     return await allPay.registerName(data);
   }
 
-  async relayTransaction(transactionHex) {
-    return await allPay.relayTransaction(transactionHex);
+  async signRelayTransaction(data) {
+    return await allPay.signRelayTransaction(data);
   }
 }
 

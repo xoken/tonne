@@ -43,7 +43,7 @@ class Wallet {
           .split('/')
           .pop();
       }
-      const { derivedKeys: newDerivedKeys } = await this._generateDerivedKeys(
+      const { derivedKeys: newDerivedKeys } = await this.generateDerivedKeys(
         bip32ExtendedKey,
         Number(lastKeyIndex) + 1,
         20 - countOfUnusedKeys,
@@ -106,7 +106,7 @@ class Wallet {
     return bip32Interface.neutered().toBase58();
   };
 
-  _generateDerivedAddress(
+  _generateDerivedKeys(
     bip32ExtendedKey: string,
     index: number,
     useBip38?: boolean,
@@ -198,7 +198,7 @@ class Wallet {
     return { privkey };
   }
 
-  async _generateDerivedKeys(
+  async generateDerivedKeys(
     bip32ExtendedKey: string,
     indexStart: number,
     count: number,
@@ -218,7 +218,7 @@ class Wallet {
       //   'cSn2zVDF4c7w63rH1Cc2uXsMr6UzFAwasTRmm4CpQet1ofuVKzRj';
       // derivedKeys.push({ ...derivedKey, isUsed: false });
       // } else {
-      const derivedKey = this._generateDerivedAddress(
+      const derivedKey = this._generateDerivedKeys(
         bip32ExtendedKey,
         i,
         useBip38,
@@ -478,7 +478,7 @@ class Wallet {
       const lastKeyIndex = derivedKeys[derivedKeys.length - 1].indexText
         .split('/')
         .pop();
-      const { derivedKeys: nextDerivedKeys } = await this._generateDerivedKeys(
+      const { derivedKeys: nextDerivedKeys } = await this.generateDerivedKeys(
         bip32ExtendedKey,
         Number(lastKeyIndex) + 1,
         20 - countOfUnusedKeys,
@@ -734,7 +734,7 @@ class Wallet {
   //     const lastKeyIndex = derivedKeys[derivedKeys.length - 1].indexText
   //       .split('/')
   //       .pop();
-  //     const { derivedKeys: nextDerivedKeys } = await this._generateDerivedKeys(
+  //     const { derivedKeys: nextDerivedKeys } = await this.generateDerivedKeys(
   //       bip32ExtendedKey,
   //       Number(lastKeyIndex) + 1,
   //       20 - countOfUnusedKeys,
@@ -1023,8 +1023,9 @@ class Wallet {
   }
 
   async getUnusedDerivedKeys(options?: {
-    currentUnusedKeyIndex?: string;
-  }): Promise<{ unusedDerivedKeys: any[] }> {
+    excludeAddresses?: string[];
+    count?: number;
+  }): Promise<{ unusedDerivedAddresses: any[] }> {
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
     const unusedDerivedKeys = existingDerivedKeys
       .filter(
@@ -1033,23 +1034,42 @@ class Wallet {
       )
       .map(
         ({ indexText, address }: { indexText: string; address: string }) => ({
-          indexText,
           address,
         })
       );
-    if (options?.currentUnusedKeyIndex) {
-      const currentUnusedKeyIndex = options.currentUnusedKeyIndex;
-      const nextUnusedDerivedKeys = unusedDerivedKeys.filter(
-        (existingDerivedKey: { indexText: string }) =>
-          existingDerivedKey.indexText !== currentUnusedKeyIndex
+    if (options?.excludeAddresses) {
+      const filteredUnusedDerivedKeys = unusedDerivedKeys.filter(
+        (existingDerivedKey: { address: string }) => {
+          return !options.excludeAddresses?.includes(
+            existingDerivedKey.address
+          );
+        }
       );
+      if (options?.count) {
+        return {
+          unusedDerivedAddresses: filteredUnusedDerivedKeys.slice(
+            0,
+            options.count
+          ),
+        };
+      } else {
+        return {
+          unusedDerivedAddresses: filteredUnusedDerivedKeys.slice(0, 1),
+        };
+      }
+    }
+    if (options?.count) {
       return {
-        unusedDerivedKeys: [nextUnusedDerivedKeys.find(Boolean)],
+        unusedDerivedAddresses: unusedDerivedKeys.slice(0, options.count),
       };
     }
     return {
-      unusedDerivedKeys: [unusedDerivedKeys.find(Boolean)],
+      unusedDerivedAddresses: unusedDerivedKeys.slice(0, 1),
     };
+  }
+
+  async updateDerivedKeys(addresses: string[]) {
+    await Persist.updateDerivedKeys(addresses);
   }
 
   async login(profileId: string, password: string) {
@@ -1150,12 +1170,10 @@ class Wallet {
     ];
     const { utxos } = await Persist.getUTXOs();
     const feeRate = 5;
-    await this._createSendTransaction(utxos, targets, feeRate);
-    // const keys: object[] = await this._getKeys([
-    //   'mhNBrhhy3ZB2bmsarXUy8YLycvnmUxUCpp',
-    // ]);
-    // debugger;
-    // console.log(keys);
+    // await this._createSendTransaction(utxos, targets, feeRate);
+    const keys: object[] = await this._getKeys([
+      'mx1P1JnLw9m72j5xhSKJP6yhb8BVciaBhY',
+    ]);
     // Persist.runScript();
   }
 }

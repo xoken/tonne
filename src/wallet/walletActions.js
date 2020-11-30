@@ -208,17 +208,17 @@ export const getUsedDerivedKeys = () => async (dispatch, getState, { serviceInje
 
 export const getUnusedDerivedKeys = () => async (dispatch, getState, { serviceInjector }) => {
   const {
-    wallet: { unusedDerivedKeys },
+    wallet: { unusedDerivedAddresses },
   } = getState();
-  const currentUnusedKeyIndex = unusedDerivedKeys
-    ? unusedDerivedKeys[unusedDerivedKeys.length - 1].indexText
-    : null;
   dispatch(getUnusedDerivedKeysRequest());
+  const excludeAddresses = unusedDerivedAddresses.map(
+    unusedDerivedAddress => unusedDerivedAddress.address
+  );
   try {
-    const { unusedDerivedKeys } = await serviceInjector(WalletService).getUnusedDerivedKeys({
-      currentUnusedKeyIndex,
+    const { unusedDerivedAddresses } = await serviceInjector(WalletService).getUnusedDerivedKeys({
+      excludeAddresses,
     });
-    dispatch(getUnusedDerivedKeysSuccess({ unusedDerivedKeys }));
+    dispatch(getUnusedDerivedKeysSuccess({ unusedDerivedAddresses }));
   } catch (error) {
     dispatch(getUnusedDerivedKeysFailure());
     throw error;

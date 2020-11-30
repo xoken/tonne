@@ -45,6 +45,7 @@ class ProxyProvider {
   }
 
   _receiveResponse(data: any, onResponse: any) {
+    console.log(data);
     if (this.responseFlag === 0) {
       this.responseFlag = 1;
     } else {
@@ -56,11 +57,11 @@ class ProxyProvider {
   _sendRequest(request: any) {
     try {
       const requestBuffer = Buffer.from(request);
-      const length = requestBuffer.length;
-      const lengthBuffer = Buffer.allocUnsafe(4);
-      lengthBuffer.writeIntBE(length, 0, 4);
-      const buffer = Buffer.concat([lengthBuffer, requestBuffer]);
-      this.sock.write(buffer);
+      // const length = requestBuffer.length;
+      // const lengthBuffer = Buffer.allocUnsafe(4);
+      // lengthBuffer.writeIntBE(length, 0, 4);
+      // const buffer = Buffer.concat([lengthBuffer, requestBuffer]);
+      this.sock.write(requestBuffer);
     } catch (error) {
       console.error(error);
     }

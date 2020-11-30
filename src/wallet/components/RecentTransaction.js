@@ -165,7 +165,7 @@ class RecentTransaction extends React.Component {
                   <Grid divided columns='two'>
                     <Grid.Row>
                       <Grid.Column>
-                        <Header as='h6' className='monospace'>
+                        <Header as='h5' className='monospace'>
                           Inputs
                         </Header>
                         {txInps.map(input => {
@@ -186,7 +186,7 @@ class RecentTransaction extends React.Component {
                         })}
                       </Grid.Column>
                       <Grid.Column>
-                        <Header as='h6' className='monospace'>
+                        <Header as='h5' className='monospace'>
                           Outputs
                         </Header>
                         {txOuts.map(output => {

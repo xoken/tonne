@@ -13,9 +13,9 @@ export const registerNameRequest = createAction('REGISTER_NAME_REQUEST');
 export const registerNameSuccess = createAction('REGISTER_NAME_SUCCESS');
 export const registerNameFailure = createAction('REGISTER_NAME_FAILURE');
 
-export const relayTransactionRequest = createAction('RELAY_TRANSACTION_REQUEST');
-export const relayTransactionSuccess = createAction('RELAY_TRANSACTION_SUCCESS');
-export const relayTransactionFailure = createAction('RELAY_TRANSACTION_FAILURE');
+export const signRelayTransactionRequest = createAction('SIGN_RELAY_TRANSACTION_REQUEST');
+export const signRelayTransactionSuccess = createAction('SIGN_RELAY_TRANSACTION_SUCCESS');
+export const signRelayTransactionFailure = createAction('SIGN_RELAY_TRANSACTION_FAILURE');
 
 export const getOutpointForName = name => async (dispatch, getState, { serviceInjector }) => {
   dispatch(getOutpointForNameRequest());
@@ -32,9 +32,10 @@ export const getOutpointForName = name => async (dispatch, getState, { serviceIn
 export const buyName = data => async (dispatch, getState, { serviceInjector }) => {
   dispatch(buyNameRequest());
   try {
-    const response = await serviceInjector(AllpayService).buyName(data);
-    dispatch(buyNameSuccess({ psaTx: response }));
-    return response;
+    const { psbt, name, inputs, outputOwner, outputChange } = await serviceInjector(
+      AllpayService
+    ).buyName(data);
+    dispatch(buyNameSuccess({ psbt, name, inputs, outputOwner, outputChange }));
   } catch (error) {
     dispatch(buyNameFailure());
     throw error;
@@ -45,6 +46,7 @@ export const registerName = data => async (dispatch, getState, { serviceInjector
   dispatch(registerNameRequest());
   try {
     const response = await serviceInjector(AllpayService).registerName(data);
+    debugger;
     dispatch(registerNameSuccess());
     return response;
   } catch (error) {
@@ -53,18 +55,14 @@ export const registerName = data => async (dispatch, getState, { serviceInjector
   }
 };
 
-export const relayTransaction = transactionHex => async (
-  dispatch,
-  getState,
-  { serviceInjector }
-) => {
-  dispatch(relayTransactionRequest());
+export const signRelayTransaction = data => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(signRelayTransactionRequest());
   try {
-    const response = await serviceInjector(AllpayService).relayTransaction(transactionHex);
-    dispatch(relayTransactionSuccess());
+    const response = await serviceInjector(AllpayService).signRelayTransaction(data);
+    dispatch(signRelayTransactionSuccess());
     return response;
   } catch (error) {
-    dispatch(relayTransactionFailure());
+    dispatch(signRelayTransactionFailure());
     throw error;
   }
 };

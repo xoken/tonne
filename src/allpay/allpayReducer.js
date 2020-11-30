@@ -3,14 +3,22 @@ import * as allpayActions from './allpayActions';
 import * as authActions from '../auth/authActions';
 
 const INITIAL_STATE = {
-  psaTx: null,
+  psbt: null,
+  name: null,
+  inputs: null,
+  outputOwner: null,
+  outputChange: null,
 };
 
 export default createReducer(
   {
-    [allpayActions.buyNameSuccess]: (state, { psaTx }) => ({
+    [allpayActions.buyNameSuccess]: (state, { psbt, name, inputs, outputOwner, outputChange }) => ({
       ...state,
-      psaTx,
+      psbt,
+      name,
+      inputs,
+      outputOwner,
+      outputChange,
     }),
     [authActions.logoutSuccess]: state => ({
       ...INITIAL_STATE,
