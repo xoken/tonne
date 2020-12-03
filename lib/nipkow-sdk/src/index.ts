@@ -2,6 +2,7 @@ import * as network from './constants/network';
 import * as derivationPaths from './constants/derivationPaths';
 import * as httpClient from './httpClient';
 import wallet from './Wallet';
+import utils from './Utils';
 import { allPay } from './Allpay';
 import * as persist from './Persist';
 
@@ -18,3 +19,4 @@ export { network, derivationPaths };
 export { wallet };
 export { persist };
 export { allPay };
+export { utils };

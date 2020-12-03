@@ -51,6 +51,22 @@ class Utils {
       utxo1.outputIndex === utxo2.outputIndex
     );
   };
+
+  getCodePoint(name: string) {
+    const nameCodePoints: number[] = [];
+    for (let i = 0; i < name.length; i++) {
+      nameCodePoints.push(name.codePointAt(i)!);
+    }
+    return nameCodePoints;
+  }
+
+  codePointToName = (codePoints: number[]) => {
+    let name = '';
+    for (let i = 0; i < codePoints.length; i++) {
+      name += String.fromCodePoint(codePoints[i]);
+    }
+    return name;
+  };
 }
 
 export default new Utils();

@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Header, Input } from 'semantic-ui-react';
-import { getCodePoint } from '../../shared/utils';
+import { utils } from 'nipkow-sdk';
 import NameRow from '../components/NameRow';
 import * as allpayActions from '../allpayActions';
 
@@ -26,7 +26,9 @@ class BuyName extends React.Component {
     if (queryName) {
       try {
         const { dispatch } = this.props;
-        const response = await dispatch(allpayActions.getOutpointForName(getCodePoint(queryName)));
+        const response = await dispatch(
+          allpayActions.getOutpointForName(utils.getCodePoint(queryName))
+        );
         this.setState({ searchResults: response });
       } catch (error) {
         console.log(error);

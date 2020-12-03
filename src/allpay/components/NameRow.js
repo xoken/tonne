@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Checkbox } from 'semantic-ui-react';
-import { codePointToName, getCodePoint } from '../../shared/utils';
+import { utils } from 'nipkow-sdk';
 
 export default class BuyName extends React.Component {
   constructor(props) {
@@ -14,7 +14,7 @@ export default class BuyName extends React.Component {
 
   render() {
     const { name: codePoints, priceInSatoshi, host, port } = this.props.data;
-    const name = codePointToName(codePoints);
+    const name = utils.codePointToName(codePoints);
     const canBuy = true;
     return (
       <div className='ten wide column centered row'>
@@ -41,7 +41,7 @@ export default class BuyName extends React.Component {
                             <Button
                               fluid
                               onClick={this.props.onBuy({
-                                name: getCodePoint(name),
+                                name: utils.getCodePoint(name),
                                 priceInSatoshi,
                                 isProducer: this.state.resellerRight,
                                 host,

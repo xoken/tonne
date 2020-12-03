@@ -1,5 +1,6 @@
 import CBOR from 'cbor-js';
 import wallet from './Wallet';
+import utils from './Utils';
 import coinSelect from 'coinselect';
 import { post } from './httpClient';
 import * as Persist from './Persist';
@@ -7,7 +8,7 @@ import { transactionAPI } from './TransactionAPI';
 import proxyProvider from './ProxyProvider';
 import Config from './Config.json';
 import network from './constants/network';
-import { Psbt, payments, Transaction } from 'bitcoinjs-lib';
+import { Psbt, payments } from 'bitcoinjs-lib';
 
 class Allpay {
   async buyName(data: {
@@ -182,12 +183,12 @@ class Allpay {
             input: Buffer.from(utxo.script, 'hex'),
             network: network.BITCOIN_SV_REGTEST,
           }).address!;
+          debugger;
           console.log(address);
           const keys: any[] = await wallet._getKeys([
             'mvgiiNZhBHvq3iKxUbqKJTVhNzC23RQUG9',
           ]);
           console.log(keys[0].privateKey.toString('hex'));
-          debugger;
           if (keys.length > 0) {
             const key: any = keys[0];
             psbt.signInput(index, key);
@@ -199,7 +200,6 @@ class Allpay {
     psbt.finalizeAllInputs();
     const transaction = psbt.extractTransaction(true);
     const transactionHex = transaction.toHex();
-    console.log(transactionHex);
     const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
     // const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
     //   base64
@@ -318,29 +318,89 @@ class Allpay {
     }
   }
 
-  async _createTransaction() {
-    const recipient = 't';
-    const changeAddress = 'mtPPGa2nXXqdwmXQekWiyr7Jpmbb37NCS1';
-    const amount = 100000000;
+  async createTransaction(recipient: string, amount: number) {
+    const { unusedDerivedAddresses } = await wallet.getUnusedDerivedKeys();
+    const changeAddress = unusedDerivedAddresses[0].address;
     const { utxos } = await Persist.getUTXOs();
-    const psaTx = await this.createTransaction({
-      proxyHost: '127.0.0.1',
-      port: 9099,
-      recipient,
-      amount,
-      changeAddress,
-      utxos,
-    });
+    this._createTransaction(
+      {
+        proxyHost: '127.0.0.1',
+        port: 9099,
+        recipient,
+        amount,
+        changeAddress,
+        utxos,
+      },
+      (response: any) => {
+        return Promise.resolve(response);
+      }
+    );
   }
 
-  async registerName(name: string) {
-    const nameCodePoint = this.getCodePoint(name);
+  async _createTransaction(
+    data: {
+      proxyHost: string;
+      port: number;
+      recipient: string;
+      amount: number;
+      changeAddress: string;
+      utxos: {
+        opTxHash: string;
+        opIndex: number;
+        value: number;
+      }[];
+    },
+    onResponse: { (response: any): void; (arg0: { psaTx: any }): void }
+  ) {
+    const { recipient, amount, changeAddress, utxos } = data;
+    const inputs = utxos.map((utxo) => {
+      return [
+        {
+          txid: utxo.opTxHash,
+          index: utxo.opIndex,
+        },
+        utxo.value,
+      ];
+    });
+    const jsonRPCRequest = {
+      id: 0,
+      jsonrpc: '2.0',
+      method: 'PS_ALLPAY_TX',
+      params: {
+        inputs: inputs,
+        recipient: recipient,
+        amount: amount,
+        change: changeAddress,
+      },
+    };
+    proxyProvider.sendRequest(
+      data.proxyHost,
+      9099,
+      JSON.stringify(jsonRPCRequest),
+      (response: any) => {
+        if (response.tx) {
+          onResponse({ psaTx: response.tx });
+        } else {
+          throw new Error('Error in making TLS requst');
+        }
+      }
+    );
+  }
+
+  async getNUtxo(name: string) {
+    return await Persist.getNUtxo(name);
+  }
+
+  async registerName(
+    name: string,
+    addressCount: number,
+    nutxo: { opTxHash: string; opIndex: number; value: number }
+  ) {
+    const nameCodePoint = utils.getCodePoint(name);
     const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
     const xpubKey = wallet.getBIP32ExtendedPubKey(bip32ExtendedKey);
     const { unusedDerivedAddresses } = await wallet.getUnusedDerivedKeys();
-    const returnAddress = unusedDerivedAddresses[0];
-    const addressCount = 10;
-    const nutxo = await Persist.getNUtxo(name);
+    const returnAddress = unusedDerivedAddresses[0].address;
     try {
       this._registerName(
         {
@@ -357,7 +417,6 @@ class Allpay {
         }
       );
     } catch (error) {
-      console.log(error);
       throw error;
     }
   }
@@ -386,7 +445,7 @@ class Allpay {
       },
       nutxo.value,
     ];
-    const jsonRequest = {
+    const jsonRPCRequest = {
       id: 0,
       jsonrpc: '2.0',
       method: 'REGISTER',
@@ -398,10 +457,10 @@ class Allpay {
         addressCount: addressCount,
       },
     };
-    proxyProvider.init(
+    proxyProvider.sendRequest(
       data.proxyHost,
       9099,
-      JSON.stringify(jsonRequest),
+      JSON.stringify(jsonRPCRequest),
       (response: any) => {
         if (response.tx) {
           onResponse({ psaTx: response.tx });
@@ -409,49 +468,6 @@ class Allpay {
           throw new Error('Error in making TLS requst');
         }
       }
-    );
-  }
-
-  async createTransaction(data: {
-    proxyHost: string;
-    port: number;
-    recipient: string;
-    amount: number;
-    changeAddress: string;
-    utxos: [
-      {
-        opTxHash: string;
-        opIndex: number;
-        value: number;
-      }
-    ];
-  }) {
-    const { recipient, amount, changeAddress, utxos } = data;
-    const inputs = utxos.map((utxo) => {
-      return [
-        {
-          opTxHash: utxo.opTxHash,
-          opIndex: utxo.opIndex,
-        },
-        utxo.value,
-      ];
-    });
-    const request = {
-      id: 0,
-      jsonrpc: '2.0',
-      method: 'PS_ALLPAY_TX',
-      params: {
-        methodParams: { inputs: inputs },
-        recipient: recipient,
-        amount: amount,
-        change: changeAddress,
-      },
-    };
-    proxyProvider.init(
-      data.proxyHost,
-      9099,
-      JSON.stringify(request),
-      (response: any) => {}
     );
   }
 
@@ -467,14 +483,6 @@ class Allpay {
       allegoryDataBuffer.byteOffset + allegoryDataBuffer.byteLength
     );
     return CBOR.decode(allegoryDataArrayBuffer);
-  }
-
-  getCodePoint(name: string) {
-    const nameCodePoints: number[] = [];
-    for (let i = 0; i < name.length; i++) {
-      nameCodePoints.push(name.codePointAt(i)!);
-    }
-    return nameCodePoints;
   }
 }
 

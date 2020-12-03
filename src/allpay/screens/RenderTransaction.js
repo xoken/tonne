@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Grid, Header, Label, Segment, Button } from 'semantic-ui-react';
-import { getCodePoint, satoshiToBSV } from '../../shared/utils';
+import { satoshiToBSV } from '../../shared/utils';
 import * as allpayActions from '../allpayActions';
 import { allPay } from 'nipkow-sdk';
 
@@ -129,7 +129,7 @@ class RenderTransaction extends React.Component {
                               }>
                               {output.address ? output.address : output.script ? null : null}
                             </span>
-                            {/* allPay.removeOpReturn(output.script) */}
+                            {allPay.removeOpReturn(output.script)}
                           </p>
                         </Grid.Column>
                         <Grid.Column width='6' textAlign='right'>

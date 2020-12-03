@@ -484,39 +484,36 @@ export const runScript = async () => {
   }
 };
 
-export const saveNUtxo = async (name, utxos) => {
-  if (name && utxos.length > 0) {
-    const { existingDerivedKeys } = await getDerivedKeys();
-    let keyId = existingDerivedKeys.length - 1;
-    const docs = {
-      _id: key._id ? key._id : `key-${String(keyId).padStart(20, '0')}`,
-      ...key,
-    };
-
-    if (outputs.length > 0) {
-      const { outputs: existingOutputs } = await getOutputs();
-      let outputId = existingOutputs.length - 1;
-      const docs = outputs.map((output: any, index: number) => {
-        if (!output._id) {
-          outputId = outputId + 1;
-        }
-        return {
-          _id: `nutxo-${String(outputId).padStart(20, '0')}`,
-          isSpent: output.spendInfo ? true : false,
-          confirmed: true,
-          ...output,
-        };
-      });
-
-      docs.push({
-        _id: 'lastUpdated',
-        value: null,
-      });
-      await db.bulkDocs(docs);
-    }
-
-    await db.bulkDocs(docs);
-  }
+export const saveNUtxo = async (name: string, utxos: any) => {
+  // if (name && utxos.length > 0) {
+  //   const { existingDerivedKeys } = await getDerivedKeys();
+  //   let keyId = existingDerivedKeys.length - 1;
+  //   const docs = {
+  //     _id: key._id ? key._id : `key-${String(keyId).padStart(20, '0')}`,
+  //     ...key,
+  //   };
+  //   if (outputs.length > 0) {
+  //     const { outputs: existingOutputs } = await getOutputs();
+  //     let outputId = existingOutputs.length - 1;
+  //     const docs = outputs.map((output: any, index: number) => {
+  //       if (!output._id) {
+  //         outputId = outputId + 1;
+  //       }
+  //       return {
+  //         _id: `nutxo-${String(outputId).padStart(20, '0')}`,
+  //         isSpent: output.spendInfo ? true : false,
+  //         confirmed: true,
+  //         ...output,
+  //       };
+  //     });
+  //     docs.push({
+  //       _id: 'lastUpdated',
+  //       value: null,
+  //     });
+  //     await db.bulkDocs(docs);
+  //   }
+  //   await db.bulkDocs(docs);
+  // }
 };
 
 export const getNUtxo = async (name: string) => {

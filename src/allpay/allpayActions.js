@@ -46,7 +46,6 @@ export const registerName = data => async (dispatch, getState, { serviceInjector
   dispatch(registerNameRequest());
   try {
     const response = await serviceInjector(AllpayService).registerName(data);
-    debugger;
     dispatch(registerNameSuccess());
     return response;
   } catch (error) {
