@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Button, Grid, Input } from 'semantic-ui-react';
 import { satoshiToBSV } from '../../shared/utils';
@@ -321,4 +322,4 @@ const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
 });
 
-export default connect(mapStateToProps)(SendTransaction);
+export default withRouter(connect(mapStateToProps)(SendTransaction));

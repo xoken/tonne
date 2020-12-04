@@ -1,5 +1,6 @@
 import { createReducer } from 'redux-act';
 import * as allpayActions from './allpayActions';
+import * as walletActions from '../wallet/walletActions';
 import * as authActions from '../auth/authActions';
 
 const INITIAL_STATE = {
@@ -23,6 +24,11 @@ export default createReducer(
       outputChange,
     }),
     [allpayActions.registerNameSuccess]: (state, { psbt, inputs }) => ({
+      ...state,
+      psbt,
+      inputs,
+    }),
+    [walletActions.createAllpaySendTransactionSuccess]: (state, { psbt, inputs }) => ({
       ...state,
       psbt,
       inputs,

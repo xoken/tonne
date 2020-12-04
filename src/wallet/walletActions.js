@@ -212,10 +212,8 @@ export const createAllpaySendTransaction = args => async (
 ) => {
   dispatch(createAllpaySendTransactionRequest());
   try {
-    const response = await serviceInjector(WalletService).createAllpaySendTransaction(args);
-    dispatch(createAllpaySendTransactionSuccess(response));
-    const { balance } = await serviceInjector(WalletService).getBalance();
-    dispatch(getBalanceSuccess({ balance }));
+    const { inputs, psbt } = await serviceInjector(WalletService).createAllpaySendTransaction(args);
+    dispatch(createAllpaySendTransactionSuccess({ inputs, psbt }));
   } catch (error) {
     dispatch(createAllpaySendTransactionFailure());
     throw error;

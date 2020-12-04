@@ -340,7 +340,9 @@ class Allpay {
     const targets = [{ value: Number(amountInSatoshi) }];
     let { inputs, outputs } = coinSelect(utxos, targets, feeRate);
     if (!inputs || !outputs) throw new Error('Empty inputs or outputs');
-    const { result } = await this._createTransaction({
+    const {
+      result: { tx: psaBase64 },
+    } = await this._createTransaction({
       proxyHost,
       proxyPort,
       recipient,
@@ -348,7 +350,11 @@ class Allpay {
       changeAddress,
       utxos: inputs,
     });
-    console.log(result);
+    const { psbt } = await this.decodeTransaction(psaBase64);
+    return {
+      psbt,
+      inputs: inputs,
+    };
   }
 
   async _createTransaction(data: {
@@ -370,7 +376,7 @@ class Allpay {
           txid: utxo.outputTxHash,
           index: utxo.outputIndex,
         },
-        utxo.value,
+        Number(utxo.value),
       ];
     });
     const jsonRPCRequest = {
@@ -380,7 +386,7 @@ class Allpay {
       params: {
         inputs: inputs,
         recipient: recipient,
-        amount: amountInSatoshi,
+        amount: Number(amountInSatoshi),
         change: changeAddress,
       },
     };
@@ -467,22 +473,19 @@ class Allpay {
     );
   }
 
-  _removeOpReturn(data: string) {
+  removeOpReturn(data: string) {
     const prefixRemoved = data.substring(36);
     const opcode = parseInt(prefixRemoved.substring(0, 2), 16);
     if (opcode <= 0x4b) {
       return prefixRemoved.substring(2);
       // remaining
     } else if (opcode === 0x4c) {
-      debugger;
       return prefixRemoved.substring(4);
       // take 2
     } else if (opcode === 0x4d) {
-      debugger;
       return prefixRemoved.substring(6);
       // take 4
     } else if (opcode === 0x4e) {
-      debugger;
       return prefixRemoved.substring(10);
       // take 8
     } else if (opcode === 0x99) {
@@ -491,13 +494,8 @@ class Allpay {
     throw new Error('Incorrect data');
   }
 
-  removeOpReturn(data: string) {
-    console.log(data);
-    return Buffer.from(data).toString('hex').substring(38);
-  }
-
   decodeCBORData(data: string) {
-    const hexData = this._removeOpReturn(data);
+    const hexData = this.removeOpReturn(data);
     console.log(hexData);
     const allegoryDataBuffer = Buffer.from(hexData, 'hex');
     const allegoryDataArrayBuffer = allegoryDataBuffer.buffer.slice(

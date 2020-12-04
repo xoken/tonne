@@ -157,7 +157,7 @@ class RenderTransaction extends React.Component {
                               {output.address
                                 ? output.address
                                 : output.script
-                                ? allPay.removeOpReturn(output.script)
+                                ? allPay.removeOpReturn(Buffer.from(output.script).toString('hex'))
                                 : null}
                             </span>
                           </p>
