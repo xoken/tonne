@@ -8,6 +8,8 @@ const INITIAL_STATE = {
   inputs: null,
   outputOwner: null,
   outputChange: null,
+  proxyHost: null,
+  proxyPort: null,
 };
 
 export default createReducer(
@@ -19,6 +21,16 @@ export default createReducer(
       inputs,
       outputOwner,
       outputChange,
+    }),
+    [allpayActions.registerNameSuccess]: (state, { psbt, inputs }) => ({
+      ...state,
+      psbt,
+      inputs,
+    }),
+    [allpayActions.selectProxyProviderSuccess]: (state, { proxyHost, proxyPort }) => ({
+      ...state,
+      proxyHost,
+      proxyPort,
     }),
     [authActions.logoutSuccess]: state => ({
       ...INITIAL_STATE,

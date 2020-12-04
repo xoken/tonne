@@ -518,9 +518,10 @@ export const saveNUtxo = async (name: string, utxos: any) => {
 
 export const getNUtxo = async (name: string) => {
   return {
-    opTxHash:
-      '2f2c8d54715b6ea570145e00dd9ed218ec8604f688ca2b7ca9001994811c3397',
-    opIndex: 1,
-    value: 100000000,
+    outputTxHash:
+      'e8156ff7d45c8f10f2d0278da9f1ff65f62e60a795c31c3563de4ebe341cd95d',
+    outputIndex: 2,
+    value: 10000,
+    address: 'moDKZWACDJYuuYuqy7RVLqK1wLDy9Vsoi7',
   };
 };

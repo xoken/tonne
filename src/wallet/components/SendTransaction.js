@@ -13,10 +13,10 @@ class SendTransaction extends React.Component {
       receiverAddress: '',
       amountInSatoshi: '',
       transactionFee: '',
-      receiverAllpayNameOrAddress: '',
-      feeRate: 5,
-      isError: false,
       message: '',
+      feeRate: 5,
+      isAllpayName: false,
+      isError: false,
       sliderValue: 1,
       maxSliderValue: Math.floor(Math.log(1000000000) / Math.log(1.05)),
       sliderDisabled: true,
@@ -36,14 +36,14 @@ class SendTransaction extends React.Component {
 
   onPaytoNameAddressChange = event => {
     const receiverAllpayNameOrAddress = event.target.value;
-    // if (
-    //   receiverAllpayNameOrAddress.length === 36 &&
-    //   (receiverAllpayNameOrAddress.substring(0, 1) === 'm' ||
-    //     receiverAllpayNameOrAddress.substring(0, 1) === 'n')
-    // ) {
-    this.setState({ receiverAddress: receiverAllpayNameOrAddress });
-    // } else {
-    // }
+    if (
+      receiverAllpayNameOrAddress.substring(0, 1) === 'm' ||
+      receiverAllpayNameOrAddress.substring(0, 1) === 'n'
+    ) {
+      this.setState({ receiverAddress: receiverAllpayNameOrAddress, isAllpayName: false });
+    } else {
+      this.setState({ receiverAddress: receiverAllpayNameOrAddress, isAllpayName: true });
+    }
   };
 
   onAmountChange = async event => {
@@ -81,15 +81,32 @@ class SendTransaction extends React.Component {
 
   onSend = async () => {
     const { dispatch } = this.props;
-    const { receiverAddress, amountInSatoshi, feeRate } = this.state;
+    const { receiverAddress, amountInSatoshi, feeRate, isAllpayName } = this.state;
     if (receiverAddress && amountInSatoshi) {
-      try {
-        await dispatch(
-          walletActions.createSendTransaction(receiverAddress, amountInSatoshi, Number(feeRate))
-        );
-        this.setState({ isError: false, message: 'Transaction Successful' });
-      } catch (error) {
-        this.setState({ isError: true, message: error.message });
+      if (isAllpayName) {
+        try {
+          await dispatch(
+            walletActions.createAllpaySendTransaction({
+              allpayName: receiverAddress,
+              amountInSatoshi,
+              feeRate: Number(feeRate),
+            })
+          );
+          this.props.history.push('/wallet/allpay/render/transaction');
+          // this.setState({ isError: false, message: 'Transaction Successful' });
+        } catch (error) {
+          console.log(error);
+          // this.setState({ isError: true, message: error.message });
+        }
+      } else {
+        try {
+          await dispatch(
+            walletActions.createSendTransaction(receiverAddress, amountInSatoshi, Number(feeRate))
+          );
+          this.setState({ isError: false, message: 'Transaction Successful' });
+        } catch (error) {
+          this.setState({ isError: true, message: error.message });
+        }
       }
     } else {
       this.setState({ isError: true, message: 'Please enter receiver address and amount' });

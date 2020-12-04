@@ -1,12 +1,10 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link, withRouter } from 'react-router-dom';
-import { Button, Dropdown, Icon, Loader, Modal } from 'semantic-ui-react';
+import { withRouter } from 'react-router-dom';
+import { Button, Icon, Loader, Modal } from 'semantic-ui-react';
 import SendTransaction from '../components/SendTransaction';
 import ReceiveTransaction from '../components/ReceiveTransaction';
-import RenameProfile from '../components/RenameProfile';
-import * as authActions from '../../auth/authActions';
 import * as walletSelectors from '../walletSelectors';
 import { satoshiToBSV } from '../../shared/utils';
 import RecentTransaction from '../components/RecentTransaction';
@@ -18,7 +16,6 @@ class WalletDashboard extends React.Component {
     this.state = {
       sendTransactionModal: false,
       receiveTransactionModal: false,
-      renameProfileModal: false,
     };
   }
 
@@ -30,16 +27,6 @@ class WalletDashboard extends React.Component {
   toggleReceiveTransactionModal = () => {
     const { receiveTransactionModal } = this.state;
     this.setState({ receiveTransactionModal: !receiveTransactionModal });
-  };
-
-  onRenameProfile = () => {
-    const { renameProfileModal } = this.state;
-    this.setState({ renameProfileModal: !renameProfileModal });
-  };
-
-  onLogout = () => {
-    const { dispatch } = this.props;
-    dispatch(authActions.logout());
   };
 
   renderSendTransactionModal() {
@@ -74,57 +61,15 @@ class WalletDashboard extends React.Component {
     );
   }
 
-  renderRenameProfileModal() {
-    const { renameProfileModal } = this.state;
-    return (
-      <Modal open={renameProfileModal}>
-        <RenameProfile onClose={this.onRenameProfile} onLogout={this.onLogout} />
-      </Modal>
-    );
-  }
-
   runScript = () => {
     wallet.runScript();
   };
 
   render() {
-    const { isLoading, profile, balance } = this.props;
+    const { isLoading, balance } = this.props;
     return (
       <>
-        <Button onClick={this.runScript}>Run</Button>
         <div className='ui center aligned segment'>
-          <div className='ui grid'>
-            <div className='column'>
-              <Dropdown
-                button
-                className='circular icon top left right floated profile'
-                icon={null}
-                text={profile ? profile.charAt(0) : ''}
-                additionPosition='top'
-                pointing>
-                <Dropdown.Menu>
-                  <Dropdown.Item>
-                    <Link to={`/wallet/allpay/buy`}>Buy Allpay Name</Link>
-                  </Dropdown.Item>
-                  <Dropdown.Item>
-                    <Link to={`/wallet/allpay/register`}>Register with Proxy</Link>
-                  </Dropdown.Item>
-                  <Dropdown.Item text='Rename Profile' onClick={this.onRenameProfile} />
-                  <Dropdown.Item text='Logout' onClick={this.onLogout} />
-                </Dropdown.Menu>
-              </Dropdown>
-              <Dropdown
-                button
-                className='circular icon top left right floated profile'
-                icon='bell outline'
-                additionPosition='top'
-                pointing>
-                <Dropdown.Menu>
-                  <Dropdown.Item text='' />
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-          </div>
           <div className='ui center aligned icon header'>
             <Icon name='btc' size='big' alt='BitcoinSV' />
             <div className='content'>
@@ -146,7 +91,6 @@ class WalletDashboard extends React.Component {
         <RecentTransaction />
         {this.renderSendTransactionModal()}
         {this.renderReceiveTransactionModal()}
-        {this.renderRenameProfileModal()}
       </>
     );
   }
@@ -154,7 +98,6 @@ class WalletDashboard extends React.Component {
 
 WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  profile: PropTypes.string.isRequired,
   balance: PropTypes.number,
 };
 
@@ -163,7 +106,6 @@ WalletDashboard.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  profile: state.auth.profile,
   isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
 });

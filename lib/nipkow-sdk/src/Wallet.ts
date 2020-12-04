@@ -1168,9 +1168,10 @@ class Wallet {
     // const { utxos } = await Persist.getUTXOs();
     // const feeRate = 5;
     // await this._createSendTransaction(utxos, targets, feeRate);
-    // const keys: object[] = await this._getKeys([
-    //   'mx1P1JnLw9m72j5xhSKJP6yhb8BVciaBhY',
-    // ]);
+    const keys: any[] = await this._getKeys([
+      'n3VYrcmpsEKiCJizffyvGit7hq2uS2sLfu',
+    ]);
+    console.log(keys[0].privateKey.toString('hex'));
     // Persist.runScript();
   }
 }

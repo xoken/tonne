@@ -105,7 +105,9 @@
   background: none;
   border: none;
 }
-
+.word-wrap {
+  overflow-wrap: break-word;
+}
 .statusbuttontext {
   position: absolute;
   bottom: 0px !important;

@@ -1,4 +1,4 @@
-import { wallet } from 'nipkow-sdk';
+import { wallet, allPay } from 'nipkow-sdk';
 
 class WalletService {
   constructor(store) {
@@ -35,6 +35,10 @@ class WalletService {
 
   async createSendTransaction(receiverAddress, amountInSatoshi, satoshisPerByte) {
     return await wallet.createSendTransaction(receiverAddress, amountInSatoshi, satoshisPerByte);
+  }
+
+  async createAllpaySendTransaction(args) {
+    return await allPay.createTransaction(args);
   }
 
   async getUsedDerivedKeys() {

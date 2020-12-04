@@ -1,14 +1,15 @@
 import CBOR from 'cbor-js';
+import sha256 from 'crypto-js/sha256';
+import coinSelect from 'coinselect';
+import { Psbt, payments } from 'bitcoinjs-lib';
 import wallet from './Wallet';
 import utils from './Utils';
-import coinSelect from 'coinselect';
 import { post } from './httpClient';
 import * as Persist from './Persist';
 import { transactionAPI } from './TransactionAPI';
 import proxyProvider from './ProxyProvider';
 import Config from './Config.json';
 import network from './constants/network';
-import { Psbt, payments } from 'bitcoinjs-lib';
 
 class Allpay {
   async buyName(data: {
@@ -25,7 +26,6 @@ class Allpay {
       const targets = [{ value: Number(priceInSatoshi) }];
       let { inputs, outputs } = coinSelect(utxos, targets, feeRate);
       if (!inputs || !outputs) throw new Error('Empty inputs or outputs');
-      console.log(inputs);
       const paymentInputs = inputs.map((input: any) => {
         return [
           {
@@ -59,7 +59,7 @@ class Allpay {
             baseURL: `https://${host}:${port}/v1`,
           }
         );
-        const { psbt, inputs } = await this.decodeTransaction(psaBase64);
+        const { psbt } = await this.decodeTransaction(psaBase64);
         return {
           psbt,
           name: [name, isProducer],
@@ -148,7 +148,7 @@ class Allpay {
           }
         }
       );
-      return { psbt, inputs };
+      return { psbt };
     } catch (error) {
       throw error;
     }
@@ -157,15 +157,10 @@ class Allpay {
   async signRelayTransaction({
     psbtHex,
     inputs,
-    outputOwner,
-    outputChange,
   }: {
     psbtHex: string;
     inputs: any[];
-    outputOwner: string;
-    outputChange: string;
   }) {
-    console.log(inputs);
     const psbt: Psbt = Psbt.fromHex(psbtHex, {
       network: network.BITCOIN_SV_REGTEST,
       forkCoin: 'bch',
@@ -173,26 +168,22 @@ class Allpay {
     for (let index = 0; index < psbt.data.inputs.length; index++) {
       const input = psbt.data.inputs[index];
       if (!input.partialSig) {
-        const utxo = inputs.find((inputArg) => {
+        const txInput = psbt.txInputs[index];
+        const utxo = inputs.find((input) => {
           return (
-            inputArg.hex === Buffer.from(input.nonWitnessUtxo!).toString('hex')
+            input.outputTxHash ===
+              Buffer.from(txInput.hash).reverse().toString('hex') &&
+            input.outputIndex === txInput.index
           );
         });
         if (utxo) {
-          const address = payments.p2pkh({
-            input: Buffer.from(utxo.script, 'hex'),
-            network: network.BITCOIN_SV_REGTEST,
-          }).address!;
-          debugger;
-          console.log(address);
-          const keys: any[] = await wallet._getKeys([
-            'mvgiiNZhBHvq3iKxUbqKJTVhNzC23RQUG9',
-          ]);
-          console.log(keys[0].privateKey.toString('hex'));
+          const keys: any[] = await wallet._getKeys([utxo.address]);
           if (keys.length > 0) {
             const key: any = keys[0];
             psbt.signInput(index, key);
           }
+        } else {
+          throw new Error('Error in signing transaction');
         }
       }
     }
@@ -201,26 +192,10 @@ class Allpay {
     const transaction = psbt.extractTransaction(true);
     const transactionHex = transaction.toHex();
     const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
-    // const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
-    //   base64
-    // );
-    // if (txBroadcast) {
-    // wallet.updateDerivedKeys([outputOwner, outputChange]);
-    // const spentUtxos = inputs.map((input: any) => ({
-    //   ...input,
-    //   isSpent: true,
-    //   confirmed: false,
-    // }));
-    // await Persist.updateOutputs(spentUtxos);
-    // await Persist.upsertUnconfirmedTransactions([
-    //   {
-    //     txId: transaction.getId(),
-    //     confirmed: false,
-    //     outputs: spentUtxos,
-    //     createdAt: new Date(),
-    //   },
-    // ]);
-    // }
+    const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
+      base64
+    );
+    return { txBroadcast };
   }
 
   async decodeTransactionOld() {
@@ -299,91 +274,120 @@ class Allpay {
 
   async getOutpointForName(name: number[]) {
     if (name && name.length) {
-      return [{ name, priceInSatoshi: 5000, host: '127.0.0.1', port: 9189 }];
-      // try {
-      //   const {
-      //     data: { uri },
-      //   } = await post('allegory/reseller-uri', {
-      //     name,
-      //     isProducer: true,
-      //   });
-      //   if (uri) {
-      //     return uri;
-      //   }
-      // } catch (error) {
-      //   throw error;
-      // }
+      try {
+        const { data } = await post('allegory/name-outpoint', {
+          name,
+          isProducer: false,
+        });
+        return data;
+      } catch (error) {
+        throw error;
+      }
     } else {
       throw new Error('Invalid name error');
     }
   }
 
-  async createTransaction(recipient: string, amount: number) {
+  async getResellerUri(name: number[]) {
+    if (name && name.length) {
+      // return [{ name, priceInSatoshi: 5000, host: '127.0.0.1', port: 9189 }];
+      try {
+        const {
+          data: { uri },
+        } = await post('allegory/reseller-uri', {
+          name,
+          isProducer: true,
+        });
+        if (uri) {
+          return uri;
+        }
+      } catch (error) {
+        throw error;
+      }
+    } else {
+      throw new Error('Invalid name error');
+    }
+  }
+
+  async createTransaction(args: {
+    allpayName: string;
+    amountInSatoshi: number;
+    feeRate: number;
+  }) {
+    const { allpayName, amountInSatoshi, feeRate } = args;
+    const {
+      forName,
+      isProducer,
+      outPoint: { opTxHash, opIndex },
+      script,
+    } = await this.getOutpointForName(utils.getCodePoint(allpayName));
+    const {
+      tx: {
+        tx: { txOuts },
+      },
+    } = await transactionAPI.getTransactionByTxID(opTxHash);
+    const OP_RETURN_OUTPUT = txOuts[0];
+    const { lockingScript } = OP_RETURN_OUTPUT;
+    const cborData = this.decodeCBORData(lockingScript);
+    console.log(cborData);
+    const proxyHost = '127.0.0.1';
+    const proxyPort = 9099;
+    const recipient = sha256(lockingScript).toString();
+    console.log(recipient);
     const { unusedDerivedAddresses } = await wallet.getUnusedDerivedKeys();
     const changeAddress = unusedDerivedAddresses[0].address;
     const { utxos } = await Persist.getUTXOs();
-    this._createTransaction(
-      {
-        proxyHost: '127.0.0.1',
-        port: 9099,
-        recipient,
-        amount,
-        changeAddress,
-        utxos,
-      },
-      (response: any) => {
-        return Promise.resolve(response);
-      }
-    );
+    const targets = [{ value: Number(amountInSatoshi) }];
+    let { inputs, outputs } = coinSelect(utxos, targets, feeRate);
+    if (!inputs || !outputs) throw new Error('Empty inputs or outputs');
+    const { result } = await this._createTransaction({
+      proxyHost,
+      proxyPort,
+      recipient,
+      amountInSatoshi,
+      changeAddress,
+      utxos: inputs,
+    });
+    console.log(result);
   }
 
-  async _createTransaction(
-    data: {
-      proxyHost: string;
-      port: number;
-      recipient: string;
-      amount: number;
-      changeAddress: string;
-      utxos: {
-        opTxHash: string;
-        opIndex: number;
-        value: number;
-      }[];
-    },
-    onResponse: { (response: any): void; (arg0: { psaTx: any }): void }
-  ) {
-    const { recipient, amount, changeAddress, utxos } = data;
+  async _createTransaction(data: {
+    proxyHost: string;
+    proxyPort: number;
+    recipient: string;
+    amountInSatoshi: number;
+    changeAddress: string;
+    utxos: {
+      outputTxHash: string;
+      outputIndex: number;
+      value: number;
+    }[];
+  }): Promise<any> {
+    const { recipient, amountInSatoshi, changeAddress, utxos } = data;
     const inputs = utxos.map((utxo) => {
       return [
         {
-          txid: utxo.opTxHash,
-          index: utxo.opIndex,
+          txid: utxo.outputTxHash,
+          index: utxo.outputIndex,
         },
         utxo.value,
       ];
     });
     const jsonRPCRequest = {
-      id: 0,
+      id: 1,
       jsonrpc: '2.0',
       method: 'PS_ALLPAY_TX',
       params: {
         inputs: inputs,
         recipient: recipient,
-        amount: amount,
+        amount: amountInSatoshi,
         change: changeAddress,
       },
     };
-    proxyProvider.sendRequest(
+    return await proxyProvider.sendRequest(
       data.proxyHost,
       9099,
-      JSON.stringify(jsonRPCRequest),
-      (response: any) => {
-        if (response.tx) {
-          onResponse({ psaTx: response.tx });
-        } else {
-          throw new Error('Error in making TLS requst');
-        }
-      }
+      JSON.stringify(jsonRPCRequest)
     );
   }
 
@@ -391,57 +395,56 @@ class Allpay {
     return await Persist.getNUtxo(name);
   }
 
-  async registerName(
-    name: string,
-    addressCount: number,
-    nutxo: { opTxHash: string; opIndex: number; value: number }
-  ) {
+  async registerName(data: {
+    proxyHost: string;
+    proxyPort: number;
+    name: string;
+    addressCount: number;
+  }) {
+    const { proxyHost, proxyPort, name, addressCount } = data;
     const nameCodePoint = utils.getCodePoint(name);
     const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
     const xpubKey = wallet.getBIP32ExtendedPubKey(bip32ExtendedKey);
     const { unusedDerivedAddresses } = await wallet.getUnusedDerivedKeys();
     const returnAddress = unusedDerivedAddresses[0].address;
-    try {
-      this._registerName(
-        {
-          proxyHost: '127.0.0.1',
-          port: 9099,
-          name: nameCodePoint,
-          xpubKey,
-          returnAddress,
-          addressCount,
-          nutxo,
-        },
-        (response: any) => {
-          return Promise.resolve(response);
-        }
-      );
-    } catch (error) {
-      throw error;
-    }
+    const nutxo = await this.getNUtxo(name);
+    const {
+      result: { tx: psaBase64 },
+    } = await this._registerName({
+      proxyHost,
+      proxyPort,
+      name: nameCodePoint,
+      xpubKey,
+      returnAddress,
+      addressCount,
+      nutxo,
+    });
+
+    const { psbt } = await this.decodeTransaction(psaBase64);
+    return {
+      psbt,
+      inputs: [nutxo],
+    };
   }
 
-  _registerName(
-    data: {
-      proxyHost: string;
-      port: number;
-      name: number[];
-      xpubKey: string;
-      returnAddress: string;
-      addressCount: number;
-      nutxo: {
-        opTxHash: string;
-        opIndex: number;
-        value: number;
-      };
-    },
-    onResponse: { (response: any): void; (arg0: { psaTx: any }): void }
-  ) {
+  async _registerName(data: {
+    proxyHost: string;
+    proxyPort: number;
+    name: number[];
+    xpubKey: string;
+    returnAddress: string;
+    addressCount: number;
+    nutxo: {
+      outputTxHash: string;
+      outputIndex: number;
+      value: number;
+    };
+  }): Promise<any> {
     const { name, xpubKey, nutxo, returnAddress, addressCount } = data;
     const nameUtxo = [
       {
-        txid: nutxo.opTxHash,
-        index: nutxo.opIndex,
+        txid: nutxo.outputTxHash,
+        index: nutxo.outputIndex,
       },
       nutxo.value,
     ];
@@ -457,32 +460,56 @@ class Allpay {
         addressCount: addressCount,
       },
     };
-    proxyProvider.sendRequest(
+    return await proxyProvider.sendRequest(
       data.proxyHost,
-      9099,
-      JSON.stringify(jsonRPCRequest),
-      (response: any) => {
-        if (response.tx) {
-          onResponse({ psaTx: response.tx });
-        } else {
-          throw new Error('Error in making TLS requst');
-        }
-      }
+      data.proxyPort,
+      JSON.stringify(jsonRPCRequest)
     );
   }
 
+  _removeOpReturn(data: string) {
+    const prefixRemoved = data.substring(36);
+    const opcode = parseInt(prefixRemoved.substring(0, 2), 16);
+    if (opcode <= 0x4b) {
+      return prefixRemoved.substring(2);
+      // remaining
+    } else if (opcode === 0x4c) {
+      debugger;
+      return prefixRemoved.substring(4);
+      // take 2
+    } else if (opcode === 0x4d) {
+      debugger;
+      return prefixRemoved.substring(6);
+      // take 4
+    } else if (opcode === 0x4e) {
+      debugger;
+      return prefixRemoved.substring(10);
+      // take 8
+    } else if (opcode === 0x99) {
+      throw new Error('Incorrect data');
+    }
+    throw new Error('Incorrect data');
+  }
+
   removeOpReturn(data: string) {
+    console.log(data);
     return Buffer.from(data).toString('hex').substring(38);
   }
 
   decodeCBORData(data: string) {
-    const hexData = this.removeOpReturn(data);
+    const hexData = this._removeOpReturn(data);
+    console.log(hexData);
     const allegoryDataBuffer = Buffer.from(hexData, 'hex');
     const allegoryDataArrayBuffer = allegoryDataBuffer.buffer.slice(
       allegoryDataBuffer.byteOffset,
       allegoryDataBuffer.byteOffset + allegoryDataBuffer.byteLength
     );
-    return CBOR.decode(allegoryDataArrayBuffer);
+    try {
+      return CBOR.decode(allegoryDataArrayBuffer);
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
   }
 }
 

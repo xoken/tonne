@@ -10,8 +10,34 @@ import { allPay } from 'nipkow-sdk';
 class RenderTransaction extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      isError: false,
+      message: '',
+    };
   }
+
+  onSignRelay = async () => {
+    const { psbt, inputs } = this.props;
+    if (psbt) {
+      try {
+        const { dispatch } = this.props;
+        const { txBroadcast } = await dispatch(
+          allpayActions.signRelayTransaction({
+            psbtHex: psbt.toHex(),
+            inputs,
+          })
+        );
+        if (txBroadcast) {
+          this.setState({ isError: false, message: 'Transaction signed and relayed successfully' });
+          setTimeout(() => {
+            this.props.history.push('/wallet/dashboard');
+          }, 3000);
+        }
+      } catch (error) {
+        this.setState({ isError: true, message: error.message });
+      }
+    }
+  };
 
   renderTransaction() {
     const { psbt, outputOwner, outputChange } = this.props;
@@ -89,7 +115,7 @@ class RenderTransaction extends React.Component {
                     Inputs
                   </Header>
                   {txInputs.map((input, index) => {
-                    const transactionId = Buffer.from(input.hash).toString('hex');
+                    const transactionId = Buffer.from(input.hash).reverse().toString('hex');
                     return (
                       <Grid key={String(index)}>
                         <Grid.Column width='10'>
@@ -126,10 +152,14 @@ class RenderTransaction extends React.Component {
                                   : output.address === outputChange
                                   ? 'Change'
                                   : ''
-                              }>
-                              {output.address ? output.address : output.script ? null : null}
+                              }
+                              className={output.script && 'word-wrap'}>
+                              {output.address
+                                ? output.address
+                                : output.script
+                                ? allPay.removeOpReturn(output.script)
+                                : null}
                             </span>
-                            {allPay.removeOpReturn(output.script)}
                           </p>
                         </Grid.Column>
                         <Grid.Column width='6' textAlign='right'>
@@ -184,26 +214,24 @@ class RenderTransaction extends React.Component {
     return null;
   }
 
-  onSignRelay = async () => {
-    const { psbt, name, inputs, outputOwner, outputChange } = this.props;
-    if (psbt) {
-      try {
-        const { dispatch } = this.props;
-        await dispatch(
-          allpayActions.signRelayTransaction({
-            psbtHex: psbt.toHex(),
-            name,
-            inputs,
-            outputOwner,
-            outputChange,
-          })
+  renderMessage() {
+    const { isError, message } = this.state;
+    if (message) {
+      if (isError) {
+        return (
+          <div className='ui negative message'>
+            <p>{message}</p>
+          </div>
         );
-        this.props.history.push('/wallet/dashboard');
-      } catch (error) {
-        console.log(error);
+      } else {
+        return (
+          <div className='ui success message'>
+            <p>{message}</p>
+          </div>
+        );
       }
     }
-  };
+  }
 
   render() {
     return (
@@ -212,10 +240,13 @@ class RenderTransaction extends React.Component {
           Partially Sign Transaction
         </Header>
         <div className='ui grid'>
-          {/* <div className='ten wide column centered row'> */}
           <div className='column'>{this.renderTransaction()}</div>
-          {/* </div> */}
         </div>
+        <Grid>
+          <Grid.Row>
+            <Grid.Column width={16}>{this.renderMessage()}</Grid.Column>
+          </Grid.Row>
+        </Grid>
       </>
     );
   }

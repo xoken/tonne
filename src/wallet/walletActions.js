@@ -40,6 +40,16 @@ export const createSendTransactionRequest = createAction('CREATE_SEND_TRANSACTIO
 export const createSendTransactionSuccess = createAction('CREATE_SEND_TRANSACTION_SUCCESS');
 export const createSendTransactionFailure = createAction('CREATE_SEND_TRANSACTION_FAILURE');
 
+export const createAllpaySendTransactionRequest = createAction(
+  'CREATE_ALLPAY_SEND_TRANSACTION_REQUEST'
+);
+export const createAllpaySendTransactionSuccess = createAction(
+  'CREATE_ALLPAY_SEND_TRANSACTION_SUCCESS'
+);
+export const createAllpaySendTransactionFailure = createAction(
+  'CREATE_ALLPAY_SEND_TRANSACTION_FAILURE'
+);
+
 export const getUsedDerivedKeysRequest = createAction('GET_USED_DERIVED_KEYS_REQUEST');
 export const getUsedDerivedKeysSuccess = createAction('GET_USED_DERIVED_KEYS_SUCCESS');
 export const getUsedDerivedKeysFailure = createAction('GET_USED_DERIVED_KEYS_FAILURE');
@@ -191,6 +201,23 @@ export const createSendTransaction = (receiverAddress, amountInSatoshi, satoshis
     dispatch(getBalanceSuccess({ balance }));
   } catch (error) {
     dispatch(createSendTransactionFailure());
+    throw error;
+  }
+};
+
+export const createAllpaySendTransaction = args => async (
+  dispatch,
+  getState,
+  { serviceInjector }
+) => {
+  dispatch(createAllpaySendTransactionRequest());
+  try {
+    const response = await serviceInjector(WalletService).createAllpaySendTransaction(args);
+    dispatch(createAllpaySendTransactionSuccess(response));
+    const { balance } = await serviceInjector(WalletService).getBalance();
+    dispatch(getBalanceSuccess({ balance }));
+  } catch (error) {
+    dispatch(createAllpaySendTransactionFailure());
     throw error;
   }
 };
