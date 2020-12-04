@@ -198,47 +198,6 @@ class Allpay {
     return { txBroadcast };
   }
 
-  async decodeTransactionOld() {
-    // const transactionHex: string = await this.buyName({
-    //   name: 'sh',
-    //   priceInSatoshi: 5000,
-    //   isProducer: true,
-    // });
-    // const transaction = JSON.parse(
-    //   Buffer.from(transactionHex, 'base64').toString()
-    // );
-    // await this.verifyRootTx(transaction);
-    // const data = [0, 1, [115, 104], [1, [0, 0], [0, [0, 1], [[0, 'XokenP2P', 'someuri_1']]], [[0, 'AllPay', 'Public', [0, 'XokenP2P', 'someuri_2'], [0, 'addrCommit', 'utxoCommit', 'signature', 876543]]]]]
-  }
-
-  async relayTransaction(transactionHex: string) {
-    try {
-      const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
-      const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
-        base64
-      );
-      // if (txBroadcast) {
-      //   const spentUtxos = inputs.map((input: any) => ({
-      //     ...input,
-      //     isSpent: true,
-      //     confirmed: false,
-      //   }));
-      //   await Persist.updateOutputs(spentUtxos);
-      //   await Persist.upsertUnconfirmedTransactions([
-      //     {
-      //       txId: transaction.getId(),
-      //       confirmed: false,
-      //       outputs: spentUtxos,
-      //       createdAt: new Date(),
-      //     },
-      //   ]);
-      // }
-      return txBroadcast;
-    } catch (error) {
-      throw error;
-    }
-  }
-
   async verifyRootTx(transaction: any) {
     if (transaction) {
       const resellerInput = transaction.ins[0].outpoint.hash;
@@ -257,6 +216,16 @@ class Allpay {
       //   | OwnerAction
       //   | undefined = allegoryData?.getAction();
       // // const extensions = action.extensions;
+      // const transactionHex: string = await this.buyName({
+      //   name: 'sh',
+      //   priceInSatoshi: 5000,
+      //   isProducer: true,
+      // });
+      // const transaction = JSON.parse(
+      //   Buffer.from(transactionHex, 'base64').toString()
+      // );
+      // await this.verifyRootTx(transaction);
+      // const data = [0, 1, [115, 104], [1, [0, 0], [0, [0, 1], [[0, 'XokenP2P', 'someuri_1']]], [[0, 'AllPay', 'Public', [0, 'XokenP2P', 'someuri_2'], [0, 'addrCommit', 'utxoCommit', 'signature', 876543]]]]]
       if (resellerInput !== Config.allegoryRootNode) {
         const {
           tx: {
@@ -396,10 +365,6 @@ class Allpay {
     );
   }
 
-  async getNUtxo(name: string) {
-    return await Persist.getNUtxo(name);
-  }
-
   async registerName(data: {
     proxyHost: string;
     proxyPort: number;
@@ -412,7 +377,7 @@ class Allpay {
     const xpubKey = wallet.getBIP32ExtendedPubKey(bip32ExtendedKey);
     const { unusedDerivedAddresses } = await wallet.getUnusedDerivedKeys();
     const returnAddress = unusedDerivedAddresses[0].address;
-    const nutxo = await this.getNUtxo(name);
+    const nutxo = await Persist.getNUtxo(name);
     const {
       result: { tx: psaBase64 },
     } = await this._registerName({

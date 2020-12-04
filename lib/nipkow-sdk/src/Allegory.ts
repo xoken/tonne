@@ -148,6 +148,7 @@ function getOwnerAction(data: any) {
   const ownerAction: OwnerAction | null = null;
   return ownerAction;
 }
+
 function getProducerAction(data: any) {
   data = [
     1,
