@@ -13,20 +13,8 @@ class WalletService {
     return await wallet.updateUnconfirmedTransactions();
   }
 
-  async getOutputs(options) {
-    return await wallet.getOutputs(options);
-  }
-
-  async getUTXOs() {
-    return await wallet.getUTXOs();
-  }
-
   getTransactionFee(receiverAddress, amountInSatoshi, feeRate) {
     return wallet.getTransactionFee(receiverAddress, amountInSatoshi, feeRate);
-  }
-
-  async getTransaction(txid) {
-    return await wallet.getTransaction(txid);
   }
 
   async getBalance() {

@@ -23,7 +23,7 @@ class RecentTransaction extends React.Component {
     const { dispatch } = this.props;
     try {
       await dispatch(walletActions.getTransactions({ limit: 10 }));
-      // await dispatch(walletActions.updateUnconfirmedTransactions());
+      await dispatch(walletActions.updateUnconfirmedTransactions());
       this.setState({ lastRefreshed: new Date() });
       this.timerID = setInterval(
         () =>
@@ -34,7 +34,7 @@ class RecentTransaction extends React.Component {
       );
       const autoRefreshTimeInSecs = 1 * 60 * 1000;
       this.autoRefreshTimer = setInterval(() => {
-        // this.onRefresh();
+        this.onRefresh();
       }, autoRefreshTimeInSecs);
     } catch (error) {}
   }

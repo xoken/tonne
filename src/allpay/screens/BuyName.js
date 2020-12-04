@@ -27,7 +27,7 @@ class BuyName extends React.Component {
       try {
         const { dispatch } = this.props;
         const response = await dispatch(
-          allpayActions.getOutpointForName(utils.getCodePoint(queryName))
+          allpayActions.getResellerURI(utils.getCodePoint(queryName))
         );
         this.setState({ searchResults: response });
       } catch (error) {

@@ -43,7 +43,7 @@ class ProxyProvider {
     });
   }
 
-  async sendRequest(host = '127.0.0.1', port = 9090, request: string) {
+  async sendRequest(host: string, port: number, request: string) {
     const requestBuffer = Buffer.from(request);
     // const length = requestBuffer.length;
     // const lengthBuffer = Buffer.allocUnsafe(4);

@@ -5,8 +5,8 @@ class AllpayService {
     this.store = store;
   }
 
-  async getOutpointForName(name) {
-    return await allPay.getOutpointForName(name);
+  async getResellerURI(name) {
+    return await allPay.getResellerURI(name);
   }
 
   async buyName(data) {

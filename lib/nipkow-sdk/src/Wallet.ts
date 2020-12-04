@@ -18,7 +18,6 @@ import network from './constants/network';
 import { addressAPI } from './AddressAPI';
 import { transactionAPI } from './TransactionAPI';
 import { chainAPI } from './ChainAPI';
-// import { allPay } from './allPay';
 
 class Wallet {
   async _initWallet(bip39Mnemonic: string, password?: string) {
@@ -235,14 +234,6 @@ class Wallet {
     return derivedKeys.map((key: { address: any }) => key.address);
   }
 
-  async getTransaction(txid: string) {
-    try {
-      return await transactionAPI.getTransactionByTxID(txid);
-    } catch (error) {
-      throw error;
-    }
-  }
-
   _countOfUnusedKeys(keys: any[]) {
     return keys.reduce((acc: number, currKey: { isUsed: boolean }) => {
       if (!currKey.isUsed) {
@@ -405,44 +396,6 @@ class Wallet {
     const transactions = data.map((element) => element.txs).flat();
     return { txs: transactions };
   }
-
-  // async getOutputs(options?: {
-  //   startkey?: string;
-  //   limit?: number;
-  //   pageNo?: number;
-  //   diff?: boolean;
-  // }) {
-  //   const { existingDerivedKeys } = await Persist.getDerivedKeys();
-  //   if (existingDerivedKeys.length > 0) {
-  //     const {
-  //       derivedKeys: newDerivedKeys,
-  //       diffOutputs,
-  //     } = await this._getOutputs(existingDerivedKeys);
-  //     if (diffOutputs.length > 0) {
-  //       const outputsGroupedByTx = _.groupBy(diffOutputs, (output) => {
-  //         return output.outputTxHash;
-  //       });
-  //       const diffTrasactions = Object.entries(outputsGroupedByTx).map(
-  //         ([key, value], index) => {
-  //           return {
-  //             txId: key,
-  //             confirmed: true,
-  //             outputs: value,
-  //           };
-  //         }
-  //       );
-  //       await Persist.upsertOutputs(diffOutputs);
-  //       await Persist.upsertTransactions(diffTrasactions);
-  //       await Persist.upsertDerivedKeys(newDerivedKeys);
-  //     }
-  //     if (options?.diff) {
-  //       return { outputs: diffOutputs };
-  //     } else {
-  //       return await Persist.getOutputs(options);
-  //     }
-  //   }
-  //   return { outputs: [] };
-  // }
 
   async _getOutputs(
     derivedKeys: any[],
@@ -662,144 +615,6 @@ class Wallet {
     }
   }
 
-  // async getUTXOs() {
-  //   const { existingDerivedKeys } = await Persist.getDerivedKeys();
-  //   if (existingDerivedKeys.length > 0) {
-  //     const { derivedKeys: newDerivedKeys, diffUTXOs } = await this._getUTXOs(
-  //       existingDerivedKeys
-  //     );
-  //     if (diffUTXOs.length > 0) {
-  //       const { lastUpdated } = await Persist.getOutputsLastUpdated();
-  //       const newDiffUtxos = [];
-  //       for (let index = 0; index < diffUTXOs.length; index++) {
-  //         const { isPresent, _id, _rev } = await Persist.isInOutputsNew(
-  //           diffUTXOs[index]
-  //         );
-  //         if (!isPresent) {
-  //           newDiffUtxos.push({ ...diffUTXOs[index], isSpent: false });
-  //         } else {
-  //           const diffInMinutes = differenceInMinutes(
-  //             new Date(),
-  //             Date.parse(lastUpdated)
-  //           );
-  //           if (diffInMinutes > 30) {
-  //             newDiffUtxos.push({
-  //               ...diffUTXOs[index],
-  //               _id,
-  //               _rev,
-  //               isSpent: false,
-  //             });
-  //           }
-  //         }
-  //       }
-  //       if (newDiffUtxos.length > 0) {
-  //         await Persist.upsertDerivedKeys(newDerivedKeys);
-  //         await Persist.updateOutputs(newDiffUtxos);
-  //       }
-  //     }
-  //   }
-  // }
-
-  // async _getUTXOs(
-  //   derivedKeys: any[],
-  //   prevUtxos: any[] = [],
-  //   prevDiffUtxos: any[] = [],
-  //   prevKeys: any[] = []
-  // ): Promise<any> {
-  //   const chunkedUsedDerivedKeys = _.chunk(derivedKeys, 20);
-  //   const data = await Promise.all(
-  //     chunkedUsedDerivedKeys.map(async (chunkedUsedDerivedKey) => {
-  //       return await this._getUTXOsByAddresses(chunkedUsedDerivedKey);
-  //     })
-  //   );
-  //   const utxos = data.flat();
-  //   const diffUTXOs = await this._getDiffUTXOs(utxos);
-  //   const updatedKeys = derivedKeys.map(
-  //     (key: { address: string; indexText: string; isUsed: boolean }) => {
-  //       if (!key.isUsed) {
-  //         const found = utxos.some(
-  //           (utxo: { address: any }) => utxo.address === key.address
-  //         );
-  //         return { ...key, isUsed: found };
-  //       }
-  //       return key;
-  //     }
-  //   );
-  //   const newUtxos = [...prevUtxos, ...utxos];
-  //   const newDiffUtxos = [...prevDiffUtxos, ...diffUTXOs];
-  //   const newKeys = [...prevKeys, ...updatedKeys];
-  //   const countOfUnusedKeys = this._countOfUnusedKeys(newKeys);
-  //   if (countOfUnusedKeys < 20) {
-  //     const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
-  //     const lastKeyIndex = derivedKeys[derivedKeys.length - 1].indexText
-  //       .split('/')
-  //       .pop();
-  //     const { derivedKeys: nextDerivedKeys } = await this.generateDerivedKeys(
-  //       bip32ExtendedKey,
-  //       Number(lastKeyIndex) + 1,
-  //       20 - countOfUnusedKeys,
-  //       false
-  //     );
-  //     return await this._getUTXOs(
-  //       nextDerivedKeys,
-  //       newUtxos,
-  //       newDiffUtxos,
-  //       newKeys
-  //     );
-  //   } else {
-  //     return {
-  //       utxos: newUtxos,
-  //       diffUTXOs: newDiffUtxos,
-  //       derivedKeys: newKeys,
-  //     };
-  //   }
-  // }
-
-  // async _getUTXOsByAddresses(
-  //   keys: any[],
-  //   prevUtxos: any[] = [],
-  //   nextCursor?: number
-  // ): Promise<any> {
-  //   const addresses = this._getAddressesFromKeys(keys);
-  //   const data: {
-  //     utxos: any[];
-  //     nextCursor: number;
-  //   } = await addressAPI.getUTXOsByAddresses(addresses, 100, nextCursor);
-  //   const { lastFetched } = await Persist.getOutputsLastFetched();
-  //   if (lastFetched) {
-  //     const diffUTXOs = await this._getDiffUTXOs(data.utxos);
-  //     if (diffUTXOs.length === data.utxos.length) {
-  //       const utxos = [...prevUtxos, ...diffUTXOs];
-  //       if (data.nextCursor) {
-  //         return await this._getUTXOsByAddresses(keys, utxos, data.nextCursor);
-  //       } else {
-  //         return utxos;
-  //       }
-  //     } else {
-  //       return diffUTXOs;
-  //     }
-  //   } else {
-  //     const utxos = [...prevUtxos, ...data.utxos];
-  //     if (data.nextCursor) {
-  //       return await this._getUTXOsByAddresses(keys, utxos, data.nextCursor);
-  //     } else {
-  //       return utxos;
-  //     }
-  //   }
-  // }
-
-  // async _getDiffUTXOs(utxos: any[]) {
-  //   const newUTXOs: any[] = [];
-  //   for (let index = 0; index < utxos.length; index++) {
-  //     if (!(await Persist.isInUTXOs(utxos[index]))) {
-  //       newUTXOs.push(utxos[index]);
-  //     } else {
-  //       return newUTXOs;
-  //     }
-  //   }
-  //   return newUTXOs;
-  // }
-
   async _getChangeAddress() {
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
     const ununsedKeyIndex = existingDerivedKeys.findIndex(
@@ -828,11 +643,11 @@ class Wallet {
         true
       );
       return ECPair.fromWIF(privkey, networks.regtest);
-      /*
-      return ECPair.fromWIF(
-        'cVi5XGpCSSooYdVreWzTHJHg1cAW1q2Hu9MK64jEsBobYBbfpFBi',
-        networks.regtest
-      );*/
+
+      // return ECPair.fromWIF(
+      //   'cVi5XGpCSSooYdVreWzTHJHg1cAW1q2Hu9MK64jEsBobYBbfpFBi',
+      //   networks.regtest
+      // );
     });
   }
 
@@ -915,7 +730,6 @@ class Wallet {
         const spentUtxos = inputs.map((input: any) => ({
           ...input,
           isSpent: true,
-          confirmed: false,
         }));
         await Persist.updateOutputs(spentUtxos);
         await Persist.upsertUnconfirmedTransactions([
@@ -1168,10 +982,10 @@ class Wallet {
     // const { utxos } = await Persist.getUTXOs();
     // const feeRate = 5;
     // await this._createSendTransaction(utxos, targets, feeRate);
-    const keys: any[] = await this._getKeys([
-      'n3VYrcmpsEKiCJizffyvGit7hq2uS2sLfu',
-    ]);
-    console.log(keys[0].privateKey.toString('hex'));
+    // const keys: any[] = await this._getKeys([
+    //   'n3VYrcmpsEKiCJizffyvGit7hq2uS2sLfu',
+    // ]);
+    // console.log(keys[0].privateKey.toString('hex'));
     // Persist.runScript();
   }
 }

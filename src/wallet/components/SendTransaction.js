@@ -26,8 +26,6 @@ class SendTransaction extends React.Component {
 
   async componentDidMount() {
     document.getElementById('feerate').max = this.state.maxSliderValue;
-    // const { dispatch } = this.props;
-    // await dispatch(walletActions.getUTXOs());
   }
 
   componentDidUpdate() {

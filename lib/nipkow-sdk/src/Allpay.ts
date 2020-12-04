@@ -288,19 +288,18 @@ class Allpay {
     }
   }
 
-  async getResellerUri(name: number[]) {
+  async getResellerURI(name: number[]) {
     if (name && name.length) {
       // return [{ name, priceInSatoshi: 5000, host: '127.0.0.1', port: 9189 }];
       try {
-        const {
-          data: { uri },
-        } = await post('allegory/reseller-uri', {
+        const { data } = await post('allegory/reseller-uri', {
           name,
           isProducer: true,
         });
-        if (uri) {
-          return uri;
-        }
+        console.log(data);
+        // if (uri) {
+        //   return uri;
+        // }
       } catch (error) {
         throw error;
       }
@@ -392,7 +391,7 @@ class Allpay {
     };
     return await proxyProvider.sendRequest(
       data.proxyHost,
-      9099,
+      data.proxyPort,
       JSON.stringify(jsonRPCRequest)
     );
   }

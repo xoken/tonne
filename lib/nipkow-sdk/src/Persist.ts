@@ -233,7 +233,6 @@ export const upsertOutputs = async (outputs: any) => {
       return {
         _id: `output-${String(outputId).padStart(20, '0')}`,
         isSpent: output.spendInfo ? true : false,
-        confirmed: true,
         ...output,
       };
     });
@@ -277,25 +276,6 @@ export const updateOutputs = async (outputs: any) => {
 export const isInOutputs = async (output: {
   outputTxHash: string;
   outputIndex: number;
-  spendInfo: object;
-}) => {
-  await db.createIndex({
-    index: { fields: ['outputTxHash', 'outputIndex', 'spendInfo'] },
-  });
-  const outputDoc = await db.find({
-    selector: {
-      outputTxHash: { $eq: output.outputTxHash },
-      outputIndex: { $eq: output.outputIndex },
-      // spendInfo: { $eq: output.spendInfo },
-    },
-  });
-  if (outputDoc.docs.length > 0) return true;
-  return false;
-};
-
-export const isInOutputsNew = async (output: {
-  outputTxHash: string;
-  outputIndex: number;
 }) => {
   await db.createIndex({
     index: { fields: ['outputTxHash', 'outputIndex'] },
@@ -306,13 +286,8 @@ export const isInOutputsNew = async (output: {
       outputIndex: { $eq: output.outputIndex },
     },
   });
-  if (outputDoc.docs.length > 0)
-    return {
-      isPresent: true,
-      _id: outputDoc.docs[0]._id,
-      _rev: outputDoc.docs[0]._rev,
-    };
-  return { isPresent: false, _id: null, _rev: null };
+  if (outputDoc.docs.length > 0) return true;
+  return false;
 };
 
 export const getTransactions = async (options?: {
@@ -444,24 +419,6 @@ export const getUTXOs = async (options?: {
   return { utxos: [] };
 };
 
-export const isInUTXOs = async (output: {
-  outputTxHash: string;
-  outputIndex: number;
-}) => {
-  await db.createIndex({
-    index: { fields: ['outputTxHash', 'outputIndex', 'isSpent'] },
-  });
-  const outputDoc = await db.find({
-    selector: {
-      outputTxHash: { $eq: output.outputTxHash },
-      outputIndex: { $eq: output.outputIndex },
-      isSpent: false,
-    },
-  });
-  if (outputDoc.docs.length > 0) return true;
-  return false;
-};
-
 export const destroy = async () => {
   try {
     await db.viewCleanup();
@@ -476,9 +433,6 @@ export const destroy = async () => {
 
 export const runScript = async () => {
   try {
-    const doc = await db.get('output-00000000000000000000');
-    doc.isSpent = true;
-    await db.put(doc);
   } catch (error) {
     throw error;
   }

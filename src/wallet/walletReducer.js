@@ -48,14 +48,6 @@ export default createReducer(
         nextTransactionCursor !== undefined ? nextTransactionCursor : state.nextTransactionCursor,
       isLoading: false,
     }),
-    [actions.getTransactionsFailure]: state => ({
-      ...state,
-      isLoading: false,
-    }),
-    [actions.getTransactionRequest]: state => ({
-      ...state,
-      isLoading: true,
-    }),
     [actions.getUsedDerivedKeysRequest]: state => ({
       ...state,
       isLoading: true,

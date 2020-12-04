@@ -7,5 +7,3 @@ export const isLoading = createSelector([getWallet], ({ isLoading }) => isLoadin
 export const getBalance = createSelector([getWallet], ({ balance }) => balance);
 
 export const getTransactions = createSelector([getWallet], ({ transactions }) => transactions);
-
-export const getTransaction = createSelector([getWallet], ({ txoutputs }) => txoutputs);
