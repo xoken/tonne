@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Grid, Header, Input } from 'semantic-ui-react';
+import { Button, Form, Grid, Header, Input } from 'semantic-ui-react';
 import * as allpayActions from '../allpayActions';
+import { wallet } from 'nipkow-sdk';
 
 class ProxyRegistration extends React.Component {
   constructor(props) {
@@ -10,7 +11,17 @@ class ProxyRegistration extends React.Component {
     this.state = {
       name: '',
       addressCount: 10,
+      unregisteredNames: [],
     };
+  }
+
+  async componentDidMount() {
+    const { names } = await wallet.getUnregisteredName();
+    const unregisteredNames = names.map(unregisteredName => ({
+      text: unregisteredName,
+      value: unregisteredName,
+    }));
+    this.setState({ unregisteredNames });
   }
 
   onRegister = async () => {
@@ -29,7 +40,7 @@ class ProxyRegistration extends React.Component {
   }
 
   render() {
-    const { name, addressCount } = this.state;
+    const { unregisteredNames, addressCount } = this.state;
     return (
       <>
         <Header as='h2' textAlign='center'>
@@ -44,11 +55,10 @@ class ProxyRegistration extends React.Component {
                     Name
                   </Grid.Column>
                   <Grid.Column width={6}>
-                    <Input
-                      type='text'
-                      placeholder='Allegory name'
-                      value={name}
-                      onChange={event => this.setState({ name: event.target.value })}
+                    <Form.Select
+                      options={unregisteredNames}
+                      placeholder='Allegory Name'
+                      onChange={(e, { value }) => this.setState({ name: value })}
                     />
                   </Grid.Column>
                 </Grid.Row>

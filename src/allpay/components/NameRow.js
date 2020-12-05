@@ -13,9 +13,8 @@ export default class BuyName extends React.Component {
   toggle = () => this.setState(prevState => ({ resellerRight: !prevState.resellerRight }));
 
   render() {
-    const { name: codePoints, priceInSatoshi, host, port } = this.props.data;
+    const { isAvailable, name: codePoints, priceInSatoshi, host, port } = this.props.data;
     const name = utils.codePointToName(codePoints);
-    const canBuy = true;
     return (
       <div className='ten wide column centered row'>
         <div className='column'>
@@ -24,10 +23,10 @@ export default class BuyName extends React.Component {
               <div className='row'>
                 <div className='nine wide middle aligned column'>
                   <h4 className='ui header'>
-                    {name} is {canBuy ? 'available' : 'not available'}
+                    {name} is {isAvailable ? 'available' : 'not available'}
                   </h4>
                 </div>
-                {canBuy && (
+                {isAvailable && (
                   <div className='seven wide middle aligned column'>
                     <div className='ui grid'>
                       <div className='six wide column middle aligned'>

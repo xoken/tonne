@@ -1,7 +1,7 @@
-import CBOR from 'cbor-js';
 import sha256 from 'crypto-js/sha256';
 import coinSelect from 'coinselect';
 import { Psbt, payments } from 'bitcoinjs-lib';
+import { decodeCBORData } from './Allegory';
 import wallet from './Wallet';
 import utils from './Utils';
 import { post } from './httpClient';
@@ -200,17 +200,17 @@ class Allpay {
 
   async verifyRootTx(transaction: any) {
     if (transaction) {
-      const resellerInput = transaction.ins[0].outpoint.hash;
-      const opReturnData = transaction.outs[0].script;
-      const allegoryDataBuffer = Buffer.from(opReturnData, 'hex');
-      const allegoryDataArrayBuffer = allegoryDataBuffer.buffer.slice(
-        allegoryDataBuffer.byteOffset,
-        allegoryDataBuffer.byteOffset + allegoryDataBuffer.byteLength
-      );
-      const allegoryData = getAllegoryType(
-        CBOR.decode(allegoryDataArrayBuffer)
-      );
-      const nameArray = allegoryData?.getName();
+      // const resellerInput = transaction.ins[0].outpoint.hash;
+      // const opReturnData = transaction.outs[0].script;
+      // const allegoryDataBuffer = Buffer.from(opReturnData, 'hex');
+      // const allegoryDataArrayBuffer = allegoryDataBuffer.buffer.slice(
+      //   allegoryDataBuffer.byteOffset,
+      //   allegoryDataBuffer.byteOffset + allegoryDataBuffer.byteLength
+      // );
+      // const allegoryData = getAllegoryType(
+      //   CBOR.decode(allegoryDataArrayBuffer)
+      // );
+      // const nameArray = allegoryData?.getName();
       // const action:
       //   | ProducerAction
       //   | OwnerAction
@@ -226,17 +226,17 @@ class Allpay {
       // );
       // await this.verifyRootTx(transaction);
       // const data = [0, 1, [115, 104], [1, [0, 0], [0, [0, 1], [[0, 'XokenP2P', 'someuri_1']]], [[0, 'AllPay', 'Public', [0, 'XokenP2P', 'someuri_2'], [0, 'addrCommit', 'utxoCommit', 'signature', 876543]]]]]
-      if (resellerInput !== Config.allegoryRootNode) {
-        const {
-          tx: {
-            tx: { txInps, txOuts },
-          },
-        } = await transactionAPI.getTransactionByTxID(resellerInput);
-        const parentTransaction = { ins: txInps, outs: txOuts };
-        await this.verifyRootTx(parentTransaction);
-      } else {
-        return true;
-      }
+      // if (resellerInput !== Config.allegoryRootNode) {
+      //   const {
+      //     tx: {
+      //       tx: { txInps, txOuts },
+      //     },
+      //   } = await transactionAPI.getTransactionByTxID(resellerInput);
+      //   const parentTransaction = { ins: txInps, outs: txOuts };
+      //   await this.verifyRootTx(parentTransaction);
+      // } else {
+      //   return true;
+      // }
     }
     return false;
   }
@@ -259,16 +259,18 @@ class Allpay {
 
   async getResellerURI(name: number[]) {
     if (name && name.length) {
-      // return [{ name, priceInSatoshi: 5000, host: '127.0.0.1', port: 9189 }];
       try {
-        const { data } = await post('allegory/reseller-uri', {
+        const {
+          data: { forName, uri, protocol, isProducer },
+        } = await post('allegory/reseller-uri', {
           name,
           isProducer: true,
         });
-        console.log(data);
-        // if (uri) {
-        //   return uri;
-        // }
+        if (utils.arraysEqual(name, forName) && isProducer === true) {
+          return { isAvailable: false, name };
+        } else {
+          return { isAvailable: true, name, uri, protocol };
+        }
       } catch (error) {
         throw error;
       }
@@ -296,11 +298,12 @@ class Allpay {
     } = await transactionAPI.getTransactionByTxID(opTxHash);
     const OP_RETURN_OUTPUT = txOuts[0];
     const { lockingScript } = OP_RETURN_OUTPUT;
-    const cborData = this.decodeCBORData(lockingScript);
+    const cborData = decodeCBORData(lockingScript);
     console.log(cborData);
     const proxyHost = '127.0.0.1';
     const proxyPort = 9099;
     const recipient = sha256(lockingScript).toString();
+    console.log(lockingScript);
     console.log(recipient);
     const { unusedDerivedAddresses } = await wallet.getUnusedDerivedKeys();
     const changeAddress = unusedDerivedAddresses[0].address;
@@ -377,24 +380,28 @@ class Allpay {
     const xpubKey = wallet.getBIP32ExtendedPubKey(bip32ExtendedKey);
     const { unusedDerivedAddresses } = await wallet.getUnusedDerivedKeys();
     const returnAddress = unusedDerivedAddresses[0].address;
-    const nutxo = await Persist.getNUtxo(name);
-    const {
-      result: { tx: psaBase64 },
-    } = await this._registerName({
-      proxyHost,
-      proxyPort,
-      name: nameCodePoint,
-      xpubKey,
-      returnAddress,
-      addressCount,
-      nutxo,
-    });
+    const { nUTXOs } = await Persist.getNUtxo(name);
+    if (nUTXOs) {
+      const {
+        result: { tx: psaBase64 },
+      } = await this._registerName({
+        proxyHost,
+        proxyPort,
+        name: nameCodePoint,
+        xpubKey,
+        returnAddress,
+        addressCount,
+        nutxo: nUTXOs,
+      });
 
-    const { psbt } = await this.decodeTransaction(psaBase64);
-    return {
-      psbt,
-      inputs: [nutxo],
-    };
+      const { psbt } = await this.decodeTransaction(psaBase64);
+      return {
+        psbt,
+        inputs: [nUTXOs],
+      };
+    } else {
+      throw new Error("Couldn't find utxo for selected name");
+    }
   }
 
   async _registerName(data: {
@@ -435,43 +442,6 @@ class Allpay {
       data.proxyPort,
       JSON.stringify(jsonRPCRequest)
     );
-  }
-
-  removeOpReturn(data: string) {
-    const prefixRemoved = data.substring(36);
-    const opcode = parseInt(prefixRemoved.substring(0, 2), 16);
-    if (opcode <= 0x4b) {
-      return prefixRemoved.substring(2);
-      // remaining
-    } else if (opcode === 0x4c) {
-      return prefixRemoved.substring(4);
-      // take 2
-    } else if (opcode === 0x4d) {
-      return prefixRemoved.substring(6);
-      // take 4
-    } else if (opcode === 0x4e) {
-      return prefixRemoved.substring(10);
-      // take 8
-    } else if (opcode === 0x99) {
-      throw new Error('Incorrect data');
-    }
-    throw new Error('Incorrect data');
-  }
-
-  decodeCBORData(data: string) {
-    const hexData = this.removeOpReturn(data);
-    console.log(hexData);
-    const allegoryDataBuffer = Buffer.from(hexData, 'hex');
-    const allegoryDataArrayBuffer = allegoryDataBuffer.buffer.slice(
-      allegoryDataBuffer.byteOffset,
-      allegoryDataBuffer.byteOffset + allegoryDataBuffer.byteLength
-    );
-    try {
-      return CBOR.decode(allegoryDataArrayBuffer);
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
   }
 }
 

@@ -408,15 +408,46 @@ export const getUTXOs = async (options?: {
   diff?: boolean;
 }) => {
   await db.createIndex({
-    index: { fields: ['isSpent'] },
+    index: { fields: ['isSpent', 'isNameOutput'] },
   });
   const outputDoc = await db.find({
     selector: {
       isSpent: { $eq: false },
+      isNameOutput: { $exists: false },
     },
   });
   if (outputDoc.docs.length > 0) return { utxos: outputDoc.docs };
   return { utxos: [] };
+};
+
+export const getNUtxo = async (name: string) => {
+  await db.createIndex({
+    index: { fields: ['isSpent', 'name'] },
+  });
+  const outputDoc = await db.find({
+    selector: {
+      isSpent: { $eq: false },
+      name: name,
+    },
+  });
+  if (outputDoc.docs.length > 0) return { nUTXOs: outputDoc.docs[0] };
+  return { nUTXOs: null };
+};
+
+export const getUnregisteredName = async () => {
+  await db.createIndex({
+    index: { fields: ['isSpent', 'isNameOutput'] },
+  });
+  const outputDoc = await db.find({
+    selector: {
+      isSpent: { $eq: false },
+      isNameOutput: { $exists: true },
+    },
+  });
+  if (outputDoc.docs.length > 0) {
+    return { names: outputDoc.docs.map((doc: { name: string }) => doc.name) };
+  }
+  return { names: [] };
 };
 
 export const destroy = async () => {
@@ -436,46 +467,4 @@ export const runScript = async () => {
   } catch (error) {
     throw error;
   }
-};
-
-export const saveNUtxo = async (name: string, utxos: any) => {
-  // if (name && utxos.length > 0) {
-  //   const { existingDerivedKeys } = await getDerivedKeys();
-  //   let keyId = existingDerivedKeys.length - 1;
-  //   const docs = {
-  //     _id: key._id ? key._id : `key-${String(keyId).padStart(20, '0')}`,
-  //     ...key,
-  //   };
-  //   if (outputs.length > 0) {
-  //     const { outputs: existingOutputs } = await getOutputs();
-  //     let outputId = existingOutputs.length - 1;
-  //     const docs = outputs.map((output: any, index: number) => {
-  //       if (!output._id) {
-  //         outputId = outputId + 1;
-  //       }
-  //       return {
-  //         _id: `nutxo-${String(outputId).padStart(20, '0')}`,
-  //         isSpent: output.spendInfo ? true : false,
-  //         confirmed: true,
-  //         ...output,
-  //       };
-  //     });
-  //     docs.push({
-  //       _id: 'lastUpdated',
-  //       value: null,
-  //     });
-  //     await db.bulkDocs(docs);
-  //   }
-  //   await db.bulkDocs(docs);
-  // }
-};
-
-export const getNUtxo = async (name: string) => {
-  return {
-    outputTxHash:
-      'e8156ff7d45c8f10f2d0278da9f1ff65f62e60a795c31c3563de4ebe341cd95d',
-    outputIndex: 2,
-    value: 10000,
-    address: 'moDKZWACDJYuuYuqy7RVLqK1wLDy9Vsoi7',
-  };
 };

@@ -42,16 +42,6 @@ class Utils {
     return path;
   };
 
-  isEqualOutput = (
-    utxo1: { outputTxHash: any; outputIndex: any },
-    utxo2: { outputTxHash: any; outputIndex: any }
-  ) => {
-    return (
-      utxo1.outputTxHash === utxo2.outputTxHash &&
-      utxo1.outputIndex === utxo2.outputIndex
-    );
-  };
-
   getCodePoint(name: string) {
     const nameCodePoints: number[] = [];
     for (let i = 0; i < name.length; i++) {
@@ -66,6 +56,41 @@ class Utils {
       name += String.fromCodePoint(codePoints[i]);
     }
     return name;
+  };
+
+  // unique = (array, col) => [...new Set(array.map(() => col))];
+
+  // groupBy = (arr, col) => {
+  //   return arr.reduce((finalOutput, currVal) => {
+  //     if (!finalOutput[currVal[col]]) {
+  //       finalOutput[currVal[col]] = [];
+  //     }
+  //     finalOutput[currVal[col]].push(currVal);
+  //     return finalOutput;
+  //   }, {});
+  // };
+
+  // chunk = () => {};
+
+  arraysEqual(a: any[], b: any[]) {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
+
+    // If you don't care about the order of the elements inside
+    // the array, you should sort both arrays here.
+    // Please note that calling sort on an array will modify that array.
+    // you might want to clone your array first.
+
+    for (var i = 0; i < a.length; ++i) {
+      if (a[i] !== b[i]) return false;
+    }
+    return true;
+  }
+
+  satoshiToBSV = (satoshi: number) => {
+    if (satoshi) return satoshi / 100000000;
+    return 0;
   };
 }
 

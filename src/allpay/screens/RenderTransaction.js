@@ -2,10 +2,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Grid, Header, Label, Segment, Button } from 'semantic-ui-react';
+import { Grid, Header, Segment, Button } from 'semantic-ui-react';
 import { satoshiToBSV } from '../../shared/utils';
 import * as allpayActions from '../allpayActions';
-import { allPay } from 'nipkow-sdk';
+import { allegory } from 'nipkow-sdk';
 
 class RenderTransaction extends React.Component {
   constructor(props) {
@@ -157,7 +157,9 @@ class RenderTransaction extends React.Component {
                               {output.address
                                 ? output.address
                                 : output.script
-                                ? allPay.removeOpReturn(Buffer.from(output.script).toString('hex'))
+                                ? allegory.removeOpReturn(
+                                    Buffer.from(output.script).toString('hex')
+                                  )
                                 : null}
                             </span>
                           </p>

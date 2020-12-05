@@ -41,11 +41,9 @@ export default createReducer(
       ...state,
       isLoading: false,
     }),
-    [actions.getDiffTransactionsSuccess]: (state, { transactions, nextTransactionCursor }) => ({
+    [actions.getDiffTransactionsSuccess]: (state, { transactions }) => ({
       ...state,
       transactions: [...transactions, ...state.transactions],
-      nextTransactionCursor:
-        nextTransactionCursor !== undefined ? nextTransactionCursor : state.nextTransactionCursor,
       isLoading: false,
     }),
     [actions.getUsedDerivedKeysRequest]: state => ({

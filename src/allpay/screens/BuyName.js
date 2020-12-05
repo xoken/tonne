@@ -26,10 +26,10 @@ class BuyName extends React.Component {
     if (queryName) {
       try {
         const { dispatch } = this.props;
-        const response = await dispatch(
+        const { isAvailable, name, uri, protocol } = await dispatch(
           allpayActions.getResellerURI(utils.getCodePoint(queryName))
         );
-        this.setState({ searchResults: response });
+        this.setState({ searchResults: [{ isAvailable, name, uri, protocol }] });
       } catch (error) {
         console.log(error);
       }
@@ -50,10 +50,14 @@ class BuyName extends React.Component {
 
   renderSearchResults() {
     const { searchResults } = this.state;
-    if (searchResults && searchResults.length) {
-      return searchResults.map((data, index) => {
-        return <NameRow key={index.toString()} data={data} onBuy={this.onBuy} />;
-      });
+    if (searchResults) {
+      if (searchResults.length) {
+        return searchResults.map((data, index) => {
+          return <NameRow key={index.toString()} data={data} onBuy={this.onBuy} />;
+        });
+      } else {
+        return;
+      }
     }
   }
 
@@ -75,7 +79,7 @@ class BuyName extends React.Component {
               />
             </div>
           </div>
-          <div className='ten wide column centered row'>
+          {/* <div className='ten wide column centered row'>
             <div className='column'>
               <div className='ui form'>
                 <div className='fields'>
@@ -94,7 +98,7 @@ class BuyName extends React.Component {
                 </div>
               </div>
             </div>
-          </div>
+          </div> */}
           {this.renderSearchResults()}
         </div>
       </>

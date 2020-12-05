@@ -4,6 +4,7 @@ import * as httpClient from './httpClient';
 import wallet from './Wallet';
 import utils from './Utils';
 import { allPay } from './Allpay';
+import * as allegory from './Allegory';
 import * as persist from './Persist';
 
 export { httpClient };
@@ -19,4 +20,5 @@ export { network, derivationPaths };
 export { wallet };
 export { persist };
 export { allPay };
+export { allegory };
 export { utils };

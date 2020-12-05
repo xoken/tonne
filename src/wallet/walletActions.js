@@ -3,8 +3,9 @@ import WalletService from './walletService';
 
 export const getTransactionsRequest = createAction('GET_TRANSACTIONS_REQUEST');
 export const getTransactionsSuccess = createAction('GET_TRANSACTIONS_SUCCESS');
-export const getDiffTransactionsSuccess = createAction('GET_TRANSACTIONS_DIFF_SUCCESS');
 export const getTransactionsFailure = createAction('GET_TRANSACTIONS_FAILURE');
+
+export const getDiffTransactionsSuccess = createAction('GET_TRANSACTIONS_DIFF_SUCCESS');
 
 export const updateUnconfirmedTransactionsRequest = createAction(
   'UPDATE_UNCONFIRMED_TRANSACTIONS_REQUEST'
@@ -61,8 +62,6 @@ export const getTransactions = options => async (dispatch, getState, { serviceIn
         const { balance } = await serviceInjector(WalletService).getBalance();
         dispatch(getDiffTransactionsSuccess({ transactions }));
         dispatch(getBalanceSuccess({ balance }));
-      } else {
-        dispatch(getTransactionsSuccess({ transactions }));
       }
     } else {
       const { transactions, nextTransactionCursor } = await serviceInjector(

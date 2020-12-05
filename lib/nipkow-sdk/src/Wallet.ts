@@ -12,12 +12,15 @@ import faker from 'faker';
 import * as bip39 from 'bip39';
 import * as _ from 'lodash';
 // import { differenceInMinutes } from 'date-fns';
+import { decodeCBORData, getAllegoryName } from './Allegory';
 import * as Persist from './Persist';
 import derivationPaths from './constants/derivationPaths';
 import network from './constants/network';
 import { addressAPI } from './AddressAPI';
 import { transactionAPI } from './TransactionAPI';
 import { chainAPI } from './ChainAPI';
+import utils from './Utils';
+import { post } from './httpClient';
 
 class Wallet {
   async _initWallet(bip39Mnemonic: string, password?: string) {
@@ -256,6 +259,7 @@ class Wallet {
         diffOutputs,
       } = await this._getOutputs(existingDerivedKeys);
       if (diffOutputs.length > 0) {
+        /* FIX: A Tx can be in spendInfo, and it may not appear in getOutputs API */
         const spentOutputs = diffOutputs.filter(
           (output: { spendInfo: any }) => {
             if (output.spendInfo) return true;
@@ -323,6 +327,7 @@ class Wallet {
                 const newTxOuts = txOuts.map(
                   (output: {
                     address: string;
+                    lockingScript: string;
                     outputIndex: number;
                     value: number;
                   }) => {
@@ -332,6 +337,7 @@ class Wallet {
                     );
                     return {
                       address: output.address,
+                      lockingScript: output.lockingScript,
                       outputIndex: output.outputIndex,
                       value: output.value,
                       isMine: isMineAddress ? true : false,
@@ -360,10 +366,118 @@ class Wallet {
                 unConfirmedTxs.push(transaction);
               }
             });
-            await Persist.upsertOutputs(diffOutputs);
+            const confirmedAllegoryTxs = confirmedTxs.filter((confirmedTx) => {
+              if (
+                confirmedTx.outputs.length > 0 &&
+                confirmedTx.outputs[0].lockingScript.startsWith(
+                  '006a0f416c6c65676f72792f416c6c506179'
+                )
+              ) {
+                return true;
+              }
+              return false;
+            });
+            // const unConfirmedAllegoryTxs = unConfirmedTxs.filter(
+            //   (unConfirmedTx) => {
+            //     if (
+            //       unConfirmedTx.outputs.length > 0 &&
+            //       unConfirmedTx.outputs[0].lockingScript.startsWith(
+            //         '006a0f416c6c65676f72792f416c6c506179'
+            //       )
+            //     ) {
+            //       return true;
+            //     }
+            //     return false;
+            //   }
+            // );
+            const confirmedNamePurchaseTxs: any[] = [];
+            confirmedAllegoryTxs.filter((confirmedAllegoryTx) => {
+              const allegoryData = decodeCBORData(
+                confirmedAllegoryTx.outputs[0].lockingScript
+              );
+              const { name: allegoryName, index } = getAllegoryName(
+                allegoryData
+              );
+              confirmedNamePurchaseTxs.push({
+                name: utils.codePointToName(allegoryName),
+                index: index,
+                tx: confirmedAllegoryTx,
+              });
+            });
+            // const unConfirmedNamePurchaseTxs = [];
+            // unConfirmedAllegoryTxs.filter((unConfirmedAllegoryTx) => {
+            //   const allegoryData = decodeCBORData(
+            //     unConfirmedAllegoryTx.outputs[0].lockingScript
+            //   );
+            //   const { name: allegoryName, index } = getAllegoryName(
+            //     allegoryData
+            //   );
+            //   unConfirmedNamePurchaseTxs.push({
+            //     name: utils.codePointToName(allegoryName),
+            //     index: index,
+            //     tx: unConfirmedAllegoryTx,
+            //   });
+            // });
+            const validConfirmedNamePurchaseTxs: any[] = [];
+            for (
+              let index = 0;
+              index < confirmedNamePurchaseTxs.length;
+              index++
+            ) {
+              const confirmedNamePurchaseTx = confirmedNamePurchaseTxs[index];
+              const {
+                name,
+                tx: { txId },
+              } = confirmedNamePurchaseTx;
+              if (name) {
+                const {
+                  data: {
+                    forName,
+                    isProducer,
+                    outPoint: { opIndex, opTxHash },
+                    script,
+                  },
+                } = await post('allegory/name-outpoint', {
+                  name: utils.getCodePoint(name),
+                  isProducer: false,
+                });
+                if (
+                  utils.codePointToName(forName) === name &&
+                  txId === opTxHash
+                ) {
+                  validConfirmedNamePurchaseTxs.push(confirmedNamePurchaseTx);
+                }
+              }
+            }
+
+            const newDiffOutputs = diffOutputs.map(
+              (diffOutput: { outputTxHash: any; outputIndex: any }) => {
+                const nameOutput = validConfirmedNamePurchaseTxs.find(
+                  (validConfirmedNamePurchaseTx: { tx: any; index: any }) => {
+                    return (
+                      diffOutput.outputTxHash ===
+                        validConfirmedNamePurchaseTx.tx.txId &&
+                      diffOutput.outputIndex ===
+                        validConfirmedNamePurchaseTx.index
+                    );
+                  }
+                );
+                if (nameOutput) {
+                  return {
+                    ...diffOutput,
+                    name: nameOutput.name,
+                    isNameOutput: true,
+                  };
+                } else {
+                  return diffOutput;
+                }
+              }
+            );
+            await Persist.upsertOutputs(newDiffOutputs);
             await Persist.upsertTransactions(confirmedTxs);
             await Persist.upsertUnconfirmedTransactions(unConfirmedTxs);
             await Persist.upsertDerivedKeys(newDerivedKeys);
+
             if (options?.diff) {
               return { transactions };
             } else {
@@ -924,6 +1038,10 @@ class Wallet {
 
   async logout() {
     return await Persist.destroy();
+  }
+
+  async getUnregisteredName() {
+    return await Persist.getUnregisteredName();
   }
 
   async runScript() {
