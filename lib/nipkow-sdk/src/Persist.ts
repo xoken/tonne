@@ -426,7 +426,7 @@ export const getNUtxo = async (name: string) => {
   });
   const outputDoc = await db.find({
     selector: {
-      isSpent: { $eq: false },
+      // isSpent: { $eq: false },
       name: name,
     },
   });

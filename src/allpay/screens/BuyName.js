@@ -12,6 +12,8 @@ class BuyName extends React.Component {
     this.state = {
       queryName: '',
       searchResults: undefined,
+      isError: false,
+      message: '',
     };
   }
 
@@ -24,14 +26,18 @@ class BuyName extends React.Component {
   onSearch = async () => {
     const { queryName } = this.state;
     if (queryName) {
+      debugger;
       try {
         const { dispatch } = this.props;
-        const { isAvailable, name, uri, protocol } = await dispatch(
-          allpayActions.getResellerURI(utils.getCodePoint(queryName))
-        );
-        this.setState({ searchResults: [{ isAvailable, name, uri, protocol }] });
+        const data = { host: '127.0.0.1', port: 9189, name: [115], isProducer: true };
+        await dispatch(allpayActions.buyName(data));
+        this.props.history.push('/wallet/allpay/render/transaction');
+        // const { isAvailable, name, uri, protocol } = await dispatch(
+        //   allpayActions.getResellerURI(utils.getCodePoint(queryName))
+        // );
+        // this.setState({ searchResults: [{ isAvailable, name, uri, protocol }] });
       } catch (error) {
-        console.log(error);
+        this.setState({ isError: true, message: error.message });
       }
     }
   };
@@ -42,7 +48,7 @@ class BuyName extends React.Component {
       await dispatch(allpayActions.buyName(data));
       this.props.history.push('/wallet/allpay/render/transaction');
     } catch (error) {
-      console.log(error);
+      this.setState({ isError: true, message: error.message });
     }
   };
 
@@ -57,6 +63,25 @@ class BuyName extends React.Component {
         });
       } else {
         return;
+      }
+    }
+  }
+
+  renderError() {
+    const { isError, message } = this.state;
+    if (message) {
+      if (isError) {
+        return (
+          <div className='ui negative message'>
+            <p>{message}</p>
+          </div>
+        );
+      } else {
+        return (
+          <div className='ui success message'>
+            <p>{message}</p>
+          </div>
+        );
       }
     }
   }
@@ -100,6 +125,9 @@ class BuyName extends React.Component {
             </div>
           </div> */}
           {this.renderSearchResults()}
+          <div className='ten wide column centered row'>
+            <div className='column'>{this.renderError()}</div>
+          </div>
         </div>
       </>
     );

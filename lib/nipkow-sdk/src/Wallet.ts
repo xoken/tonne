@@ -12,7 +12,13 @@ import faker from 'faker';
 import * as bip39 from 'bip39';
 import * as _ from 'lodash';
 // import { differenceInMinutes } from 'date-fns';
-import { decodeCBORData, getAllegoryName } from './Allegory';
+import {
+  decodeCBORData,
+  getAllegoryType,
+  ProducerAction,
+  Extension,
+  OwnerExtension,
+} from './Allegory';
 import * as Persist from './Persist';
 import derivationPaths from './constants/derivationPaths';
 import network from './constants/network';
@@ -391,16 +397,29 @@ class Wallet {
             //   }
             // );
             const confirmedNamePurchaseTxs: any[] = [];
-            confirmedAllegoryTxs.filter((confirmedAllegoryTx) => {
+            confirmedAllegoryTxs.forEach((confirmedAllegoryTx) => {
               const allegoryData = decodeCBORData(
                 confirmedAllegoryTx.outputs[0].lockingScript
               );
-              const { name: allegoryName, index } = getAllegoryName(
-                allegoryData
-              );
+              const allegory = getAllegoryType(allegoryData);
+              const { name, action } = allegory;
+              let codepoints: number[] = [];
+              if (action instanceof ProducerAction) {
+                const producerAction = action as ProducerAction;
+                if (producerAction.extensions.length > 0) {
+                  codepoints = producerAction.extensions.map(
+                    (extension: Extension) => {
+                      return extension.codePoint;
+                      // return [
+                      //   extension.codePoint,
+                      //   (extension as OwnerExtension).ownerOutputEx.owner,
+                      // ];
+                    }
+                  );
+                }
+              }
               confirmedNamePurchaseTxs.push({
-                name: utils.codePointToName(allegoryName),
-                index: index,
+                name: utils.codePointToName([...name, ...codepoints]),
                 tx: confirmedAllegoryTx,
               });
             });
@@ -449,19 +468,20 @@ class Wallet {
                 }
               }
             }
-
             const newDiffOutputs = diffOutputs.map(
               (diffOutput: { outputTxHash: any; outputIndex: any }) => {
                 const nameOutput = validConfirmedNamePurchaseTxs.find(
                   (validConfirmedNamePurchaseTx: { tx: any; index: any }) => {
                     return (
                       diffOutput.outputTxHash ===
-                        validConfirmedNamePurchaseTx.tx.txId &&
-                      diffOutput.outputIndex ===
-                        validConfirmedNamePurchaseTx.index
+                      validConfirmedNamePurchaseTx.tx.txId
+                      // &&
+                      // diffOutput.outputIndex ===
+                      //   validConfirmedNamePurchaseTx.index
                     );
                   }
                 );
+
                 if (nameOutput) {
                   return {
                     ...diffOutput,
@@ -1100,10 +1120,10 @@ class Wallet {
     // const { utxos } = await Persist.getUTXOs();
     // const feeRate = 5;
     // await this._createSendTransaction(utxos, targets, feeRate);
-    // const keys: any[] = await this._getKeys([
-    //   'n3VYrcmpsEKiCJizffyvGit7hq2uS2sLfu',
-    // ]);
-    // console.log(keys[0].privateKey.toString('hex'));
+    const keys: any[] = await this._getKeys([
+      'mk4GrHjbTR19VqMk6QE528tJ751wLJHfUJ',
+    ]);
+    console.log(keys[0].privateKey.toString('hex'));
     // Persist.runScript();
   }
 }

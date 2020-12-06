@@ -20,7 +20,8 @@ class Allpay {
     isProducer: boolean;
   }) {
     try {
-      const { host, port, name, priceInSatoshi, isProducer } = data;
+      const { host, port, name, isProducer } = data;
+      const priceInSatoshi = 1000000;
       const feeRate = 0;
       const { utxos } = await Persist.getUTXOs();
       const targets = [{ value: Number(priceInSatoshi) }];
@@ -75,7 +76,7 @@ class Allpay {
     }
   }
 
-  async decodeTransaction(psaBase64: string) {
+  async decodeTransaction(psaBase64: string, addFunding?: boolean) {
     const partiallySignTransaction = JSON.parse(
       Buffer.from(psaBase64, 'base64').toString()
     );
@@ -122,14 +123,74 @@ class Allpay {
           });
         }
       );
-      partiallySignTransaction.outs.forEach(
-        (output: { script: any; value: any }, index: number) => {
+      let fundingInputs: any[] = [];
+      if (addFunding) {
+        const { utxos } = await Persist.getUTXOs();
+        const feeRate = 5000;
+        const amountInSatoshi = 10000;
+        const targets = [{ value: Number(amountInSatoshi) }];
+        const { inputs, outputs } = coinSelect(utxos, targets, feeRate);
+        fundingInputs = inputs;
+
+        const txIds = fundingInputs.map(
+          (input: { outputTxHash: any }) => input.outputTxHash
+        );
+        const rawTxsResponse = await transactionAPI.getRawTransactionsByTxIDs(
+          txIds
+        );
+        const inputsWithRawTxs = rawTxsResponse.rawTxs.map((rawTx: any) => {
+          const hex = Buffer.from(rawTx.txSerialized, 'base64').toString('hex');
+          return { ...rawTx, hex };
+        });
+        let merged = [];
+        for (let i = 0; i < fundingInputs.length; i++) {
+          merged.push({
+            ...fundingInputs[i],
+            ...inputsWithRawTxs.find(
+              (element: { txId: any }) =>
+                element.txId === fundingInputs[i].outputTxHash
+            ),
+          });
+        }
+        merged.forEach(
+          (input: { outputTxHash: any; outputIndex: any; hex: any }) => {
+            psbt.addInput({
+              hash: input.outputTxHash,
+              index: input.outputIndex,
+              nonWitnessUtxo: Buffer.from(input.hex, 'hex'),
+            });
+          }
+        );
+
+        partiallySignTransaction.outs.forEach(
+          (output: { script: any; value: any }, index: number) => {
+            psbt.addOutput({
+              script: Buffer.from(output.script, 'hex'),
+              value: output.value,
+            });
+          }
+        );
+
+        for (let index = 0; index < outputs.length; index++) {
+          const output = outputs[index];
+          if (!output.address) {
+            output.address = await wallet._getChangeAddress();
+          }
           psbt.addOutput({
-            script: Buffer.from(output.script, 'hex'),
+            address: output.address,
             value: output.value,
           });
         }
-      );
+      } else {
+        partiallySignTransaction.outs.forEach(
+          (output: { script: any; value: any }, index: number) => {
+            psbt.addOutput({
+              script: Buffer.from(output.script, 'hex'),
+              value: output.value,
+            });
+          }
+        );
+      }
       partiallySignTransaction.ins.forEach(
         (input: { script: string }, index: number) => {
           if (input.script) {
@@ -148,7 +209,7 @@ class Allpay {
           }
         }
       );
-      return { psbt };
+      return { psbt, fundingInputs };
     } catch (error) {
       throw error;
     }
@@ -180,6 +241,7 @@ class Allpay {
           const keys: any[] = await wallet._getKeys([utxo.address]);
           if (keys.length > 0) {
             const key: any = keys[0];
+            console.log(key.privateKey.toString('hex'));
             psbt.signInput(index, key);
           }
         } else {
@@ -198,45 +260,28 @@ class Allpay {
     return { txBroadcast };
   }
 
-  async verifyRootTx(transaction: any) {
-    if (transaction) {
-      // const resellerInput = transaction.ins[0].outpoint.hash;
-      // const opReturnData = transaction.outs[0].script;
-      // const allegoryDataBuffer = Buffer.from(opReturnData, 'hex');
-      // const allegoryDataArrayBuffer = allegoryDataBuffer.buffer.slice(
-      //   allegoryDataBuffer.byteOffset,
-      //   allegoryDataBuffer.byteOffset + allegoryDataBuffer.byteLength
-      // );
-      // const allegoryData = getAllegoryType(
-      //   CBOR.decode(allegoryDataArrayBuffer)
-      // );
-      // const nameArray = allegoryData?.getName();
-      // const action:
-      //   | ProducerAction
-      //   | OwnerAction
-      //   | undefined = allegoryData?.getAction();
-      // // const extensions = action.extensions;
-      // const transactionHex: string = await this.buyName({
-      //   name: 'sh',
-      //   priceInSatoshi: 5000,
-      //   isProducer: true,
-      // });
-      // const transaction = JSON.parse(
-      //   Buffer.from(transactionHex, 'base64').toString()
-      // );
-      // await this.verifyRootTx(transaction);
-      // const data = [0, 1, [115, 104], [1, [0, 0], [0, [0, 1], [[0, 'XokenP2P', 'someuri_1']]], [[0, 'AllPay', 'Public', [0, 'XokenP2P', 'someuri_2'], [0, 'addrCommit', 'utxoCommit', 'signature', 876543]]]]]
-      // if (resellerInput !== Config.allegoryRootNode) {
-      //   const {
-      //     tx: {
-      //       tx: { txInps, txOuts },
-      //     },
-      //   } = await transactionAPI.getTransactionByTxID(resellerInput);
-      //   const parentTransaction = { ins: txInps, outs: txOuts };
-      //   await this.verifyRootTx(parentTransaction);
-      // } else {
-      //   return true;
-      // }
+  async verifyRootTx(args: { psbt?: Psbt; transaction?: any }) {
+    const { psbt, transaction } = args;
+    let inputHash;
+    if (psbt || transaction) {
+      if (psbt) {
+        inputHash = Buffer.from(psbt.txInputs[0].hash)
+          .reverse()
+          .toString('hex');
+      }
+      if (transaction) {
+        const { txInps } = transaction;
+
+        inputHash = txInps[0].outpointTxID;
+      }
+      if (inputHash !== Config.allegoryRootNode) {
+        const {
+          tx: { tx },
+        } = await transactionAPI.getTransactionByTxID(inputHash);
+        await this.verifyRootTx({ transaction: tx });
+      } else {
+        return true;
+      }
     }
     return false;
   }
@@ -310,6 +355,7 @@ class Allpay {
     const { utxos } = await Persist.getUTXOs();
     const targets = [{ value: Number(amountInSatoshi) }];
     let { inputs, outputs } = coinSelect(utxos, targets, feeRate);
+    debugger;
     if (!inputs || !outputs) throw new Error('Empty inputs or outputs');
     const {
       result: { tx: psaBase64 },
@@ -394,10 +440,11 @@ class Allpay {
         nutxo: nUTXOs,
       });
 
-      const { psbt } = await this.decodeTransaction(psaBase64);
+      const { psbt, fundingInputs } = await this.decodeTransaction(psaBase64);
+      debugger;
       return {
         psbt,
-        inputs: [nUTXOs],
+        inputs: [...nUTXOs, ...fundingInputs],
       };
     } else {
       throw new Error("Couldn't find utxo for selected name");

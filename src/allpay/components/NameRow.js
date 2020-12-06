@@ -13,7 +13,9 @@ export default class BuyName extends React.Component {
   toggle = () => this.setState(prevState => ({ resellerRight: !prevState.resellerRight }));
 
   render() {
-    const { isAvailable, name: codePoints, priceInSatoshi, host, port } = this.props.data;
+    const { isAvailable, name: codePoints, uri, protocol } = this.props.data;
+    const host = '127.0.0.1';
+    const port = 9189;
     const name = utils.codePointToName(codePoints);
     return (
       <div className='ten wide column centered row'>
@@ -41,7 +43,6 @@ export default class BuyName extends React.Component {
                               fluid
                               onClick={this.props.onBuy({
                                 name: utils.getCodePoint(name),
-                                priceInSatoshi,
                                 isProducer: this.state.resellerRight,
                                 host,
                                 port,
