@@ -13,6 +13,10 @@ class WalletService {
     return await wallet.updateUnconfirmedTransactions();
   }
 
+  async updateTransactionsConfirmations(options) {
+    return await wallet.updateTransactionsConfirmations();
+  }
+
   getTransactionFee(receiverAddress, amountInSatoshi, feeRate) {
     return wallet.getTransactionFee(receiverAddress, amountInSatoshi, feeRate);
   }

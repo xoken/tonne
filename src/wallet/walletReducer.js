@@ -46,6 +46,18 @@ export default createReducer(
       transactions: [...transactions, ...state.transactions],
       isLoading: false,
     }),
+    [actions.updateTransactionsConfirmationsSuccess]: (state, { updatedTransactions }) => ({
+      ...state,
+      transactions: state.transactions.map(transaction => {
+        const isUpdated = updatedTransactions.find(
+          updatedTransaction => updatedTransaction.txId === transaction.txId
+        );
+        if (isUpdated) {
+          return isUpdated;
+        }
+        return transaction;
+      }),
+    }),
     [actions.getUsedDerivedKeysRequest]: state => ({
       ...state,
       isLoading: true,

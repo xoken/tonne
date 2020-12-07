@@ -219,12 +219,7 @@ class Wallet {
       // if (i === 0) {
       //   const derivedKey = { address: '', indexText: 'm/44/1/0/0/0' };
       //   derivedKey.address = 'mkTJA5GAsJQp7UmAgh43AVAVM4BvjWbG7z';
-      // derivedKey.privkey =
-      //   'cTP23waCMwbWfDoH53PGJNpbyiyMk2g2djhuXff5XhPNuewqdKNY';
-      // derivedKey.address = 'mmKu1EzwGmicQA5XwpFVDBegwNjf7h55MP';
-      // derivedKey.privkey =
-      //   'cSn2zVDF4c7w63rH1Cc2uXsMr6UzFAwasTRmm4CpQet1ofuVKzRj';
-      // derivedKeys.push({ ...derivedKey, isUsed: false });
+      //   derivedKeys.push({ ...derivedKey, isUsed: false });
       // } else {
       const derivedKey = this._generateDerivedKeys(
         bip32ExtendedKey,
@@ -258,6 +253,7 @@ class Wallet {
     pageNo?: number;
     diff?: boolean;
   }) {
+    await this.runScript();
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
     if (existingDerivedKeys.length > 0) {
       const {
@@ -639,59 +635,54 @@ class Wallet {
     return newOutputs;
   }
 
-  async updateconfirmations() {
-    // const {
-    //   unconfirmedTransactions,
-    // } = await Persist.getUnconfirmedTransactions();
-    // const unconfirmedTxIds = unconfirmedTransactions.map(
-    //   (unconfirmedTx: { txId: any }) => unconfirmedTx.txId
-    // );
-    // if (unconfirmedTxIds.length > 0) {
-    //   const { txs } = await transactionAPI.getTransactionsByTxIDs(
-    //     unconfirmedTxIds
-    //   );
-    //   if (txs.length > 0) {
-    //     const updatedUnconfirmedTransactions = unconfirmedTransactions.map(
-    //       (unconfirmedTx: { txId: any }) => {
-    //         const isConfirmed = txs.find(
-    //           (tx: { txId: any; blockHeight: number }) => {
-    //             if (tx.blockHeight && tx.txId === unconfirmedTx.txId) {
-    //               return true;
-    //             }
-    //             return false;
-    //           }
-    //         );
-    //         if (isConfirmed) {
-    //           return {
-    //             ...unconfirmedTx,
-    //             confirmed: true,
-    //           };
-    //         }
-    //         return {
-    //           ...unconfirmedTx,
-    //           confirmed: false,
-    //         };
-    //       }
-    //     );
-    //     const confirmedTxs = updatedUnconfirmedTransactions.filter(
-    //       (tx: { confirmed: boolean }) => tx.confirmed === true
-    //     );
-    //     if (confirmedTxs.length > 0) {
-    //       const confirmedOutputsPerTx = confirmedTxs.map(
-    //         (confirmedTx: { outputs: any }) => confirmedTx.outputs
-    //       );
-    //       const confirmedOutputs = confirmedOutputsPerTx.flat();
-    //       const updatedConfirmedOutputs = confirmedOutputs.map(
-    //         (output: any) => ({
-    //           ...output,
-    //           confirmed: true,
-    //         })
-    //       );
-    //       await Persist.updateOutputs(updatedConfirmedOutputs);
-    //       await Persist.deleteUnconfirmedTx(confirmedTxs);
-    //     }
-    //   }
-    // }
+  async updateTransactionsConfirmations() {
+    const { transactions } = await Persist.getTransactionsByConfirmations();
+    const txIds = transactions.map((tx: { txId: any }) => tx.txId);
+    if (txIds.length > 0) {
+      const { txs } = await this._getTransactions(txIds);
+      if (txs.length > 0) {
+        const { chainInfo } = await chainAPI.getChainInfo();
+        if (chainInfo) {
+          const { chainTip } = chainInfo;
+          const newTransactions = txs.map(
+            (transaction: { blockHeight?: any; txId: string }) => {
+              const { blockHeight } = transaction;
+              return {
+                ...transaction,
+                confirmations: blockHeight ? chainTip - blockHeight : undefined,
+              };
+            }
+          );
+          const updatedTransactions = transactions.map(
+            (transaction: { txId: string }) => {
+              const matchingTransaction = newTransactions.find(
+                (tx: { txId: string }) => tx.txId === transaction.txId
+              );
+              if (matchingTransaction) {
+                return {
+                  ...transaction,
+                  confirmations: matchingTransaction.confirmations,
+                  // _id: matchingTransaction._id,
+                  // _rev: matchingTransaction._rev,
+                };
+              } else {
+                return transaction;
+              }
+            }
+          );
+          // .filter((transaction: { id?: string }) => {
+          //   if (transaction.id) {
+          //     return true;
+          //   } else {
+          //     return false;
+          //   }
+          // });
+          await Persist.upsertTransactions(updatedTransactions);
+          return { updatedTransactions };
+        }
+      }
+    }
+    return { updatedTransactions: [] };
   }
 
   async updateUnconfirmedTransactions() {
@@ -1121,7 +1112,7 @@ class Wallet {
     // const feeRate = 5;
     // await this._createSendTransaction(utxos, targets, feeRate);
     const keys: any[] = await this._getKeys([
-      'mk4GrHjbTR19VqMk6QE528tJ751wLJHfUJ',
+      'mrZf17isPSqas6tiBSxeJSCNxe2yboPi6i',
     ]);
     console.log(keys[0].privateKey.toString('hex'));
     // Persist.runScript();

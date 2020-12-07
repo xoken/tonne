@@ -17,6 +17,16 @@ export const updateUnconfirmedTransactionsFailure = createAction(
   'UPDATE_UNCONFIRMED_TRANSACTIONS_FAILURE'
 );
 
+export const updateTransactionsConfirmationsRequest = createAction(
+  'UPDATE_TRANSACTIONS_CONFIRMATIONS_REQUEST'
+);
+export const updateTransactionsConfirmationsSuccess = createAction(
+  'UPDATE_TRANSACTIONS_CONFIRMATIONS_SUCCESS'
+);
+export const updateTransactionsConfirmationsFailure = createAction(
+  'UPDATE_TRANSACTIONS_CONFIRMATIONS_FAILURE'
+);
+
 export const getBalanceRequest = createAction('GET_BALANCE_REQUEST');
 export const getBalanceSuccess = createAction('GET_BALANCE_SUCCESS');
 export const getBalanceFailure = createAction('GET_BALANCE_FAILURE');
@@ -58,9 +68,9 @@ export const getTransactions = options => async (dispatch, getState, { serviceIn
     }
     if (options.diff) {
       const { transactions } = await serviceInjector(WalletService).getTransactions(options);
+      dispatch(getDiffTransactionsSuccess({ transactions }));
       if (transactions.length > 0) {
         const { balance } = await serviceInjector(WalletService).getBalance();
-        dispatch(getDiffTransactionsSuccess({ transactions }));
         dispatch(getBalanceSuccess({ balance }));
       }
     } else {
@@ -87,6 +97,23 @@ export const updateUnconfirmedTransactions = () => async (
     dispatch(updateUnconfirmedTransactionsSuccess());
   } catch (error) {
     dispatch(updateUnconfirmedTransactionsFailure());
+    throw error;
+  }
+};
+
+export const updateTransactionsConfirmations = () => async (
+  dispatch,
+  getState,
+  { serviceInjector }
+) => {
+  dispatch(updateTransactionsConfirmationsRequest());
+  try {
+    const { updatedTransactions } = await serviceInjector(
+      WalletService
+    ).updateTransactionsConfirmations();
+    dispatch(updateTransactionsConfirmationsSuccess({ updatedTransactions }));
+  } catch (error) {
+    dispatch(updateTransactionsConfirmationsFailure());
     throw error;
   }
 };

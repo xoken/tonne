@@ -298,8 +298,10 @@ export const getTransactions = async (options?: {
   const response = await db.allDocs({
     include_docs: true,
     ...options,
-    startkey: options?.startkey || 'transaction',
-    endkey: 'transaction\ufff0',
+    descending: true,
+    endkey: 'transaction',
+    // endkey: 'transaction\ufff0',
+    startkey: options?.startkey || 'transaction\ufff0',
     skip: options?.startkey ? 1 : false,
   });
   if (response && response.rows.length > 0) {
@@ -316,21 +318,44 @@ export const getTransactions = async (options?: {
   }
 };
 
+export const getTransactionsByConfirmations = async (options?: {
+  startkey?: string;
+  limit?: number;
+  diff?: boolean;
+}) => {
+  await db.createIndex({
+    index: { fields: ['confirmations'] },
+  });
+  const transactionDocs = await db.find({
+    selector: {
+      $and: [
+        { confirmations: { $lte: 10 } },
+        { confirmations: { $exists: true } },
+      ],
+    },
+  });
+  if (transactionDocs.docs.length > 0)
+    return { transactions: transactionDocs.docs };
+  return { transactions: [] };
+};
+
 export const upsertTransactions = async (transactions: any[]) => {
   if (transactions.length > 0) {
     const { transactions: existingTransactions } = await getTransactions();
     let txId = existingTransactions.length - 1;
-    const docs = transactions.map((transaction: any, index: number) => {
-      if (!transaction._id) {
-        txId = txId + 1;
-      }
-      return {
-        _id: transaction._id
-          ? transaction._id
-          : `transaction-${String(txId).padStart(20, '0')}`,
-        ...transaction,
-      };
-    });
+    const docs = transactions
+      .reverse()
+      .map((transaction: any, index: number) => {
+        if (!transaction._id) {
+          txId = txId + 1;
+        }
+        return {
+          ...transaction,
+          _id: transaction._id
+            ? transaction._id
+            : `transaction-${String(txId).padStart(20, '0')}`,
+        };
+      });
     await db.bulkDocs(docs);
   }
 };

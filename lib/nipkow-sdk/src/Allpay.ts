@@ -257,6 +257,21 @@ class Allpay {
     const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
       base64
     );
+    if (txBroadcast) {
+      const spentUtxos = inputs.map((input: any) => ({
+        ...input,
+        isSpent: true,
+      }));
+      await Persist.updateOutputs(spentUtxos);
+      await Persist.upsertUnconfirmedTransactions([
+        {
+          txId: transaction.getId(),
+          confirmed: false,
+          outputs: spentUtxos,
+          createdAt: new Date(),
+        },
+      ]);
+    }
     return { txBroadcast };
   }
 
@@ -424,8 +439,10 @@ class Allpay {
     const nameCodePoint = utils.getCodePoint(name);
     const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
     const xpubKey = wallet.getBIP32ExtendedPubKey(bip32ExtendedKey);
-    const { unusedDerivedAddresses } = await wallet.getUnusedDerivedKeys();
-    const returnAddress = unusedDerivedAddresses[0].address;
+    const { unusedDerivedAddresses } = await wallet.getUnusedDerivedKeys({
+      count: 3,
+    });
+    const returnAddress = unusedDerivedAddresses[2].address;
     const { nUTXOs } = await Persist.getNUtxo(name);
     if (nUTXOs) {
       const {

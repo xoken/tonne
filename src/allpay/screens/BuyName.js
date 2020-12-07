@@ -26,16 +26,15 @@ class BuyName extends React.Component {
   onSearch = async () => {
     const { queryName } = this.state;
     if (queryName) {
-      debugger;
       try {
         const { dispatch } = this.props;
-        const data = { host: '127.0.0.1', port: 9189, name: [115], isProducer: true };
-        await dispatch(allpayActions.buyName(data));
-        this.props.history.push('/wallet/allpay/render/transaction');
-        // const { isAvailable, name, uri, protocol } = await dispatch(
-        //   allpayActions.getResellerURI(utils.getCodePoint(queryName))
-        // );
-        // this.setState({ searchResults: [{ isAvailable, name, uri, protocol }] });
+        // const data = { host: '127.0.0.1', port: 9189, name: [115], isProducer: true };
+        // await dispatch(allpayActions.buyName(data));
+        // this.props.history.push('/wallet/allpay/render/transaction');
+        const { isAvailable, name, uri, protocol } = await dispatch(
+          allpayActions.getResellerURI(utils.getCodePoint(queryName))
+        );
+        this.setState({ searchResults: [{ isAvailable, name, uri, protocol }] });
       } catch (error) {
         this.setState({ isError: true, message: error.message });
       }
