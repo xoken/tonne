@@ -62,7 +62,6 @@ class Allpay {
         );
         const { psbt } = await this.decodeTransaction(psaBase64);
         const isSNV = await this.verifyRootTx({ psbt });
-        debugger;
         return {
           psbt,
           name: [name, isProducer],
@@ -291,7 +290,6 @@ class Allpay {
 
         inputHash = txInps[0].outpointTxID;
       }
-      debugger;
       if (inputHash !== Config.allegoryRootNode) {
         const {
           tx: { tx },
@@ -373,7 +371,6 @@ class Allpay {
     const { utxos } = await Persist.getUTXOs();
     const targets = [{ value: Number(amountInSatoshi) }];
     let { inputs, outputs } = coinSelect(utxos, targets, feeRate);
-    debugger;
     if (!inputs || !outputs) throw new Error('Empty inputs or outputs');
     const {
       result: { tx: psaBase64 },
@@ -461,7 +458,6 @@ class Allpay {
       });
 
       const { psbt, fundingInputs } = await this.decodeTransaction(psaBase64);
-      debugger;
       return {
         psbt,
         inputs: [...nUTXOs, ...fundingInputs],
