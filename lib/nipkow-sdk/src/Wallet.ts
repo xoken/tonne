@@ -253,7 +253,6 @@ class Wallet {
     pageNo?: number;
     diff?: boolean;
   }) {
-    await this.runScript();
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
     if (existingDerivedKeys.length > 0) {
       const {

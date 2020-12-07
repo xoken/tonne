@@ -61,6 +61,8 @@ class Allpay {
           }
         );
         const { psbt } = await this.decodeTransaction(psaBase64);
+        const isSNV = await this.verifyRootTx({ psbt });
+        debugger;
         return {
           psbt,
           name: [name, isProducer],
@@ -289,6 +291,7 @@ class Allpay {
 
         inputHash = txInps[0].outpointTxID;
       }
+      debugger;
       if (inputHash !== Config.allegoryRootNode) {
         const {
           tx: { tx },
