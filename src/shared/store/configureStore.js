@@ -5,6 +5,7 @@ import { persistStore, persistReducer } from 'redux-persist';
 import ReduxPersistConfig from '../configs/reduxPersistConfig';
 import thunkMiddleware from 'redux-thunk';
 import rootReducer from './reducers';
+import thunk from 'redux-thunk';
 
 const { storeConfig, active: shouldPersistStore } = ReduxPersistConfig;
 
@@ -16,9 +17,14 @@ export default preloadedState => {
   ];
   const middlewareEnhancer = applyMiddleware(...middlewares);
 
+  // const enhancers = [
+  //   middlewareEnhancer,
+  //   DebugConfig.useReactotron && ReactotronConfig.createEnhancer(),
+  // ].filter(Boolean);
+
   const enhancers = [
     middlewareEnhancer,
-    DebugConfig.useReactotron && ReactotronConfig.createEnhancer(),
+    window.devToolsExtension ? window.devToolsExtension() : f => f,
   ].filter(Boolean);
 
   const composedEnhancers = compose(...enhancers);

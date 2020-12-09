@@ -1,7 +1,7 @@
-const { app, BrowserWindow } = require('electron');
-
+const { app, BrowserWindow, session } = require('electron');
+const path = require('path');
+const os = require('os');
 // const proxyProvider = require('./ProxyProvider');
-// const path = require('path');
 
 // var widthHeight;
 function createWindow() {
@@ -23,8 +23,11 @@ function createWindow() {
   const url = 'http://localhost:3000';
   // const url = `file://${path.join(__dirname, '/../build/index.html')}`;
   win.loadURL(url);
-  //win.webContents.send('win', win);
+  //win.addDevToolsExtensionwebContents.send('win', win);
   // Open the DevTools.
+  session.defaultSession.loadExtension(
+    '/home/xkn/snap/chromium/common/chromium/Default/Extensions/lmhkpmbekcpmknklioeibfkpmmfibljd/2.17.0_0'
+  );
   win.webContents.openDevTools();
 }
 

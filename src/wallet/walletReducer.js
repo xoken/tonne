@@ -11,6 +11,10 @@ const INITIAL_STATE = {
   unusedDerivedAddresses: [],
 };
 
+const RESET_RECEIVE_STATE = {
+  unusedDerivedAddresses: [],
+};
+
 export default createReducer(
   {
     [actions.getBalanceRequest]: state => ({
@@ -79,6 +83,10 @@ export default createReducer(
     }),
     [authActions.logoutSuccess]: state => ({
       ...INITIAL_STATE,
+    }),
+    [actions.receiveResetSuccess]: state => ({
+      ...state,
+      unusedDerivedAddresses: [],
     }),
   },
   INITIAL_STATE

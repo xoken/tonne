@@ -31,6 +31,10 @@ export const getBalanceRequest = createAction('GET_BALANCE_REQUEST');
 export const getBalanceSuccess = createAction('GET_BALANCE_SUCCESS');
 export const getBalanceFailure = createAction('GET_BALANCE_FAILURE');
 
+export const receiveResetRequest = createAction('RECEIVE_RESET_REQUEST');
+export const receiveResetSuccess = createAction('RECEIVE_RESET_SUCCESS');
+export const receiveResetFailure = createAction('RECEIVE_RESET_FAILURE');
+
 export const getTransactionFeeRequest = createAction('GET_TRANSACTION_FEE_REQUEST');
 export const getTransactionFeeSuccess = createAction('GET_TRANSACTION_FEE_SUCCESS');
 export const getTransactionFeeFailure = createAction('GET_TRANSACTION_FEE_FAILURE');
@@ -209,6 +213,17 @@ export const getUnusedDerivedKeys = () => async (dispatch, getState, { serviceIn
     dispatch(getUnusedDerivedKeysSuccess({ unusedDerivedAddresses }));
   } catch (error) {
     dispatch(getUnusedDerivedKeysFailure());
+    throw error;
+  }
+};
+
+export const receiveReset = () => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(receiveResetRequest());
+  try {
+    const flag = await serviceInjector(WalletService).receiveReset();
+    dispatch(receiveResetSuccess());
+  } catch (error) {
+    dispatch(receiveResetFailure());
     throw error;
   }
 };

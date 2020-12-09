@@ -40,6 +40,10 @@ class WalletService {
   async getUnusedDerivedKeys(options) {
     return await wallet.getUnusedDerivedKeys(options);
   }
+
+  async receiveReset() {
+    return await wallet.reset();
+  }
 }
 
 export default WalletService;

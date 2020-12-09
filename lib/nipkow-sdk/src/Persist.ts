@@ -487,6 +487,14 @@ export const destroy = async () => {
   }
 };
 
+export const reset = async () => {
+  try {
+    return true;
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const runScript = async () => {
   try {
   } catch (error) {

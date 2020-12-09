@@ -1050,6 +1050,10 @@ class Wallet {
     return await Persist.destroy();
   }
 
+  async reset() {
+    return await Persist.reset();
+  }
+
   async getUnregisteredName() {
     return await Persist.getUnregisteredName();
   }

@@ -1,6 +1,6 @@
 const app = window.require('electron').remote;
-const tls = app.require('tls');
-const process = app.require('process');
+const tls = require('tls');
+const process = require('process');
 
 class ProxyProvider {
   sock!: any;

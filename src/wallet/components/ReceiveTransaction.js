@@ -41,6 +41,7 @@ class ReceiveTransaction extends React.Component {
 
   renderUnusedDerivedKeys() {
     const { unusedDerivedAddresses } = this.props;
+    console.log(unusedDerivedAddresses);
     const { copiedAddress } = this.state;
     if (unusedDerivedAddresses && unusedDerivedAddresses.length > 0) {
       return (
@@ -144,10 +145,15 @@ class ReceiveTransaction extends React.Component {
     );
   }
 
+  async reset() {
+    const { dispatch } = this.props;
+    dispatch(walletActions.receiveReset());
+  }
   componentWillUnmount() {
     this.timers.forEach(timer => {
       clearTimeout(timer);
     });
+    this.reset();
   }
 }
 
