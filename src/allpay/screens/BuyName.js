@@ -28,7 +28,7 @@ class BuyName extends React.Component {
     if (queryName) {
       try {
         const { dispatch } = this.props;
-        // const data = { host: '127.0.0.1', port: 9189, name: [115], isProducer: true };
+        // const data = { host: '127.0.0.1', port: 9189, name: [115], isProducer: false };
         // await dispatch(allpayActions.buyName(data));
         // this.props.history.push('/wallet/allpay/render/transaction');
         const { isAvailable, name, uri, protocol } = await dispatch(

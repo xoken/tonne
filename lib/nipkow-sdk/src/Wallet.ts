@@ -55,7 +55,7 @@ class Wallet {
         bip32ExtendedKey,
         Number(lastKeyIndex) + 1,
         20 - countOfUnusedKeys,
-        true
+        false
       );
       await Persist.upsertDerivedKeys(newDerivedKeys);
     }
@@ -564,7 +564,7 @@ class Wallet {
         bip32ExtendedKey,
         Number(lastKeyIndex) + 1,
         20 - countOfUnusedKeys,
-        true
+        false
       );
       return await this._getOutputs(
         nextDerivedKeys,
@@ -764,7 +764,7 @@ class Wallet {
       const { privkey } = this._getPrivKey(
         bip32ExtendedKey,
         Number(KeyIndex),
-        true
+        false
       );
       return ECPair.fromWIF(privkey, networks.regtest);
 

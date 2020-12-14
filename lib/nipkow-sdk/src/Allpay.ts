@@ -61,7 +61,7 @@ class Allpay {
           }
         );
         const { psbt } = await this.decodeTransaction(psaBase64);
-        const isSNV = await this.verifyRootTx({ psbt });
+        // const isSNV = await this.verifyRootTx({ psbt });
         return {
           psbt,
           name: [name, isProducer],
@@ -115,13 +115,30 @@ class Allpay {
           sequence: number;
           script: string;
           hex: string;
+          value: number;
         }) => {
+          // if (input.script) {
+          //   const p2pkh = payments.p2pkh({
+          //     input: Buffer.from(input.script, 'hex'),
+          //     network: network.BITCOIN_SV_REGTEST,
+          //   });
+          //   psbt.addInput({
+          //     hash: input.outpoint.hash,
+          //     index: input.outpoint.index,
+          //     sequence: input.sequence,
+          //     witnessUtxo: {
+          //       script: p2pkh.output!,
+          //       value: input.value,
+          //     },
+          //   });
+          // } else {
           psbt.addInput({
             hash: input.outpoint.hash,
             index: input.outpoint.index,
             sequence: input.sequence,
             nonWitnessUtxo: Buffer.from(input.hex, 'hex'),
           });
+          // }
         }
       );
       let fundingInputs: any[] = [];
@@ -175,7 +192,9 @@ class Allpay {
         for (let index = 0; index < outputs.length; index++) {
           const output = outputs[index];
           if (!output.address) {
-            output.address = await wallet._getChangeAddress();
+            const address = await wallet._getChangeAddress();
+            output.address = address;
+            await Persist.updateDerivedKeys([address]);
           }
           psbt.addOutput({
             address: output.address,
@@ -372,9 +391,8 @@ class Allpay {
     const targets = [{ value: Number(amountInSatoshi) }];
     let { inputs, outputs } = coinSelect(utxos, targets, feeRate);
     if (!inputs || !outputs) throw new Error('Empty inputs or outputs');
-    const {
-      result: { tx: psaBase64 },
-    } = await this._createTransaction({
+
+    const data = await this._createTransaction({
       proxyHost,
       proxyPort,
       recipient,
@@ -382,7 +400,13 @@ class Allpay {
       changeAddress,
       utxos: inputs,
     });
-    const { psbt } = await this.decodeTransaction(psaBase64);
+    console.log(data);
+    const tData = data.substring(1);
+    const jsonData = JSON.parse(tData);
+    const {
+      result: { tx: psbtTx },
+    } = jsonData;
+    const { psbt } = await this.decodeTransaction(psbtTx);
     return {
       psbt,
       inputs: inputs,
@@ -445,9 +469,7 @@ class Allpay {
     const returnAddress = unusedDerivedAddresses[2].address;
     const { nUTXOs } = await Persist.getNUtxo(name);
     if (nUTXOs) {
-      const {
-        result: { tx: psaBase64 },
-      } = await this._registerName({
+      const data = await this._registerName({
         proxyHost,
         proxyPort,
         name: nameCodePoint,
@@ -456,8 +478,15 @@ class Allpay {
         addressCount,
         nutxo: nUTXOs,
       });
+      const tData = JSON.parse(data);
+      const {
+        result: { tx: psaBase64 },
+      } = tData;
 
-      const { psbt, fundingInputs } = await this.decodeTransaction(psaBase64);
+      const { psbt, fundingInputs } = await this.decodeTransaction(
+        psaBase64,
+        true
+      );
       return {
         psbt,
         inputs: [...nUTXOs, ...fundingInputs],
@@ -497,9 +526,10 @@ class Allpay {
         xpubKey: xpubKey,
         nutxo: nameUtxo,
         return: returnAddress,
-        addressCount: addressCount,
+        addressCount: Number(addressCount),
       },
     };
+    console.log(JSON.stringify(jsonRPCRequest));
     return await proxyProvider.sendRequest(
       data.proxyHost,
       data.proxyPort,

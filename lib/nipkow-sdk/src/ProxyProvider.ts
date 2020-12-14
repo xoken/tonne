@@ -61,8 +61,8 @@ class ProxyProvider {
           this.responseFlag = 1;
         } else {
           this.responseFlag = 0;
-          const response = JSON.parse(data);
-          resolve(response);
+          // const response = JSON.parse(data);
+          resolve(data);
         }
       });
     });

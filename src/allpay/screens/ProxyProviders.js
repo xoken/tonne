@@ -25,8 +25,6 @@ class ProxyProviders extends React.Component {
   renderProxyProviders() {
     const proxyProviders = [
       { name: 'Proxy Provider 1', proxyHost: '127.0.0.1', proxyPort: 9099 },
-      { name: 'Proxy Provider 2', proxyHost: '127.0.0.1', proxyPort: 9099 },
-      { name: 'Proxy Provider 3', proxyHost: '127.0.0.1', proxyPort: 9099 },
     ];
     return proxyProviders.map(({ name, proxyHost, proxyPort }, index) => {
       return (
