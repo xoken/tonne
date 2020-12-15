@@ -60,7 +60,7 @@ class Allpay {
             baseURL: `https://${host}:${port}/v1`,
           }
         );
-        const { psbt } = await this.decodeTransaction(psaBase64);
+        const { psbt } = await this.decodeTransaction(psaBase64, inputs);
         // const isSNV = await this.verifyRootTx({ psbt });
         return {
           psbt,
@@ -77,7 +77,11 @@ class Allpay {
     }
   }
 
-  async decodeTransaction(psaBase64: string, addFunding?: boolean) {
+  async decodeTransaction(
+    psaBase64: string,
+    inputs: any[],
+    addFunding?: boolean
+  ) {
     const partiallySignTransaction = JSON.parse(
       Buffer.from(psaBase64, 'base64').toString()
     );
@@ -87,29 +91,7 @@ class Allpay {
         forkCoin: 'bch',
       });
       psbt.setVersion(1);
-      const txIds = partiallySignTransaction.ins.map(
-        (input: { outpoint: { hash: string; index: number } }) =>
-          input.outpoint.hash
-      );
-      const rawTxsResponse = await transactionAPI.getRawTransactionsByTxIDs(
-        txIds
-      );
-      const inputsWithRawTxs = rawTxsResponse.rawTxs.map((rawTx: any) => {
-        const hex = Buffer.from(rawTx.txSerialized, 'base64').toString('hex');
-        return { ...rawTx, hex };
-      });
-      let inputs = [];
-      for (let i = 0; i < partiallySignTransaction.ins.length; i++) {
-        const rawTx = inputsWithRawTxs.find(
-          (element: { txId: any }) =>
-            element.txId === partiallySignTransaction.ins[i].outpoint.hash
-        );
-        inputs.push({
-          ...partiallySignTransaction.ins[i],
-          hex: rawTx ? rawTx.hex : '',
-        });
-      }
-      inputs.forEach(
+      partiallySignTransaction.ins.forEach(
         (input: {
           outpoint: { hash: string; index: number };
           sequence: number;
@@ -117,28 +99,45 @@ class Allpay {
           hex: string;
           value: number;
         }) => {
-          // if (input.script) {
-          //   const p2pkh = payments.p2pkh({
-          //     input: Buffer.from(input.script, 'hex'),
-          //     network: network.BITCOIN_SV_REGTEST,
-          //   });
-          //   psbt.addInput({
-          //     hash: input.outpoint.hash,
-          //     index: input.outpoint.index,
-          //     sequence: input.sequence,
-          //     witnessUtxo: {
-          //       script: p2pkh.output!,
-          //       value: input.value,
-          //     },
-          //   });
-          // } else {
-          psbt.addInput({
-            hash: input.outpoint.hash,
-            index: input.outpoint.index,
-            sequence: input.sequence,
-            nonWitnessUtxo: Buffer.from(input.hex, 'hex'),
-          });
-          // }
+          if (input.script) {
+            const p2pkh = payments.p2pkh({
+              input: Buffer.from(input.script, 'hex'),
+              network: network.BITCOIN_SV_REGTEST,
+            });
+            psbt.addInput({
+              hash: input.outpoint.hash,
+              index: input.outpoint.index,
+              sequence: input.sequence,
+              witnessUtxo: {
+                script: p2pkh.output!,
+                value: input.value,
+              },
+            });
+          } else {
+            const utxoInput = inputs.find((inp) => {
+              return (
+                inp.outputTxHash === input.outpoint.hash &&
+                inp.outputIndex === input.outpoint.index
+              );
+            });
+            if (utxoInput) {
+              const p2pkh = payments.p2pkh({
+                address: utxoInput.address,
+                network: network.BITCOIN_SV_REGTEST,
+              });
+              psbt.addInput({
+                hash: input.outpoint.hash,
+                index: input.outpoint.index,
+                sequence: input.sequence,
+                witnessUtxo: {
+                  script: p2pkh.output!,
+                  value: utxoInput.value,
+                },
+              });
+            } else {
+              throw new Error('Error in setting psbt inputs');
+            }
+          }
         }
       );
       let fundingInputs: any[] = [];
@@ -406,7 +405,7 @@ class Allpay {
     const {
       result: { tx: psbtTx },
     } = jsonData;
-    const { psbt } = await this.decodeTransaction(psbtTx);
+    const { psbt } = await this.decodeTransaction(psbtTx, inputs);
     return {
       psbt,
       inputs: inputs,
@@ -485,6 +484,7 @@ class Allpay {
 
       const { psbt, fundingInputs } = await this.decodeTransaction(
         psaBase64,
+        [],
         true
       );
       return {

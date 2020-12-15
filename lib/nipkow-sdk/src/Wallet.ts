@@ -200,7 +200,7 @@ class Wallet {
     // }
     // if (index === 0) {
     //   return {
-    //     privkey: 'cTP23waCMwbWfDoH53PGJNpbyiyMk2g2djhuXff5XhPNuewqdKNY',
+    //     privkey: 'cQmNC5DxFdWhEqmzeWZ1Gk62hmLTai8vs9fvRVz2KsxKd9fYJTWH',
     //   };
     // }
     return { privkey };
@@ -218,7 +218,7 @@ class Wallet {
     for (let i = indexStart; i < indexStart + count; i++) {
       // if (i === 0) {
       //   const derivedKey = { address: '', indexText: 'm/44/1/0/0/0' };
-      //   derivedKey.address = 'mkTJA5GAsJQp7UmAgh43AVAVM4BvjWbG7z';
+      //   derivedKey.address = 'msWHgqiPB4dDe7MK455MvkNkixhCZsNKdy';
       //   derivedKeys.push({ ...derivedKey, isUsed: false });
       // } else {
       const derivedKey = this._generateDerivedKeys(
@@ -469,10 +469,9 @@ class Wallet {
                   (validConfirmedNamePurchaseTx: { tx: any; index: any }) => {
                     return (
                       diffOutput.outputTxHash ===
-                      validConfirmedNamePurchaseTx.tx.txId
-                      // &&
-                      // diffOutput.outputIndex ===
-                      //   validConfirmedNamePurchaseTx.index
+                        validConfirmedNamePurchaseTx.tx.txId &&
+                      diffOutput.outputIndex === 2
+                      // validConfirmedNamePurchaseTx.index
                     );
                   }
                 );
@@ -794,36 +793,30 @@ class Wallet {
       //   }
       // }
 
-      const txIds = inputs.map(
-        (input: { outputTxHash: any }) => input.outputTxHash
-      );
-      const rawTxsResponse = await transactionAPI.getRawTransactionsByTxIDs(
-        txIds
-      );
-      const inputsWithRawTxs = rawTxsResponse.rawTxs.map((rawTx: any) => {
-        const hex = Buffer.from(rawTx.txSerialized, 'base64').toString('hex');
-        return { ...rawTx, hex };
-      });
-      let merged = [];
-      for (let i = 0; i < inputs.length; i++) {
-        merged.push({
-          ...inputs[i],
-          ...inputsWithRawTxs.find(
-            (element: { txId: any }) => element.txId === inputs[i].outputTxHash
-          ),
-        });
-      }
       const psbt = new Psbt({
         network: network.BITCOIN_SV_REGTEST,
         forkCoin: 'bch',
       });
       psbt.setVersion(1);
-      merged.forEach(
-        (input: { outputTxHash: any; outputIndex: any; hex: any }) => {
+      inputs.forEach(
+        (input: {
+          outputTxHash: any;
+          outputIndex: any;
+          address: string;
+          value: number;
+          hex: any;
+        }) => {
+          const p2pkh = payments.p2pkh({
+            address: input.address,
+            network: network.BITCOIN_SV_REGTEST,
+          });
           psbt.addInput({
             hash: input.outputTxHash,
             index: input.outputIndex,
-            nonWitnessUtxo: Buffer.from(input.hex, 'hex'),
+            witnessUtxo: {
+              script: p2pkh.output!,
+              value: input.value,
+            },
           });
         }
       );
@@ -837,7 +830,9 @@ class Wallet {
           value: output.value,
         });
       }
-      const addresses = merged.map((input) => input.address);
+      const addresses = inputs.map(
+        (input: { address: string }) => input.address
+      );
       const keys: object[] = await this._getKeys(addresses);
       keys.forEach((key: any, i) => {
         psbt.signInput(i, key);
@@ -1055,63 +1050,113 @@ class Wallet {
   }
 
   async runScript() {
-    // const targets = [
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    //   { address: 'mtrhqWnEWA8TRmp6oJLoxEVrR1Pc28h9ZX', value: 500 },
-    // ];
+    const targets = [
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+      { address: 'mruMP6ZsrgnqMs1S39nAJNDrwJd2i12eNx', value: 500 },
+    ];
     // const { utxos } = await Persist.getUTXOs();
     // const feeRate = 5;
     // await this._createSendTransaction(utxos, targets, feeRate);
     const keys: any[] = await this._getKeys([
-      'mrZf17isPSqas6tiBSxeJSCNxe2yboPi6i',
+      'mzJF4LyDRDy3YFEG9hCZ2VSsSrwiaNooGR',
     ]);
     console.log(keys[0].privateKey.toString('hex'));
     // Persist.runScript();

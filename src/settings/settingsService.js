@@ -44,7 +44,7 @@ class SettingsService {
     const nexaHost = '127.0.0.1';
     const nexaPort = 9091;
     const userName = 'admin';
-    const password = 'MTAyMzAxNjkwMzc5NDYyNDc5Mj';
+    const password = 'MTgzNTkzODY4MzE0Mjg1MTA5MT';
     const { sessionKey } = await this.setConfig(nexaHost, nexaPort, userName, password);
     return { nexaHost, nexaPort, userName, password, sessionKey };
   }
