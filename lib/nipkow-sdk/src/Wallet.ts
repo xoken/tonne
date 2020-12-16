@@ -39,7 +39,15 @@ class Wallet {
       derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath,
       bip32RootKey
     );
+    const nUTXOExtendedKey = this._getBIP32ExtendedKey(
+      derivationPaths.BITCOIN_SV_REGTEST.BIP44.nUTXODerivationPath,
+      bip32RootKey
+    );
     await Persist.setBip32ExtendedKey(bip32ExtendedKey);
+    await Persist.setNUTXOExtendedKey(nUTXOExtendedKey);
+
+    console.log(this.getBIP32ExtendedPrivKey(bip32RootKey));
+
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
     const countOfUnusedKeys = this._countOfUnusedKeys(existingDerivedKeys);
     if (countOfUnusedKeys < 20) {
@@ -53,11 +61,35 @@ class Wallet {
       }
       const { derivedKeys: newDerivedKeys } = await this.generateDerivedKeys(
         bip32ExtendedKey,
+        derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath,
         Number(lastKeyIndex) + 1,
         20 - countOfUnusedKeys,
         false
       );
       await Persist.upsertDerivedKeys(newDerivedKeys);
+    }
+
+    const { existingNUTXODerivedKeys } = await Persist.getNUTXODerivedKeys();
+    const countOfUnusedNUTXOKeys = this._countOfUnusedKeys(
+      existingNUTXODerivedKeys
+    );
+    if (countOfUnusedNUTXOKeys < 20) {
+      let lastKeyIndex = -1;
+      if (existingNUTXODerivedKeys.length > 0) {
+        lastKeyIndex = existingNUTXODerivedKeys[
+          existingNUTXODerivedKeys.length - 1
+        ].indexText
+          .split('/')
+          .pop();
+      }
+      const { derivedKeys: newDerivedKeys } = await this.generateDerivedKeys(
+        nUTXOExtendedKey,
+        derivationPaths.BITCOIN_SV_REGTEST.BIP44.nUTXODerivationPath,
+        Number(lastKeyIndex) + 1,
+        20 - countOfUnusedNUTXOKeys,
+        false
+      );
+      await Persist.upsertNUTXODerivedKeys(newDerivedKeys);
     }
   }
 
@@ -116,6 +148,7 @@ class Wallet {
 
   _generateDerivedKeys(
     bip32ExtendedKey: string,
+    derivationPath: string,
     index: number,
     useBip38?: boolean,
     bip38password: string = '',
@@ -145,8 +178,7 @@ class Wallet {
       pubkey: keyPair.publicKey,
       network: network.BITCOIN_SV_REGTEST,
     }).address!;
-    let indexText =
-      derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath + '/' + index;
+    let indexText = derivationPath + '/' + index;
     if (useHardenedAddresses) {
       indexText = indexText + "'";
     }
@@ -208,6 +240,7 @@ class Wallet {
 
   async generateDerivedKeys(
     bip32ExtendedKey: string,
+    derivationPath: string,
     indexStart: number,
     count: number,
     useBip38: boolean,
@@ -223,6 +256,7 @@ class Wallet {
       // } else {
       const derivedKey = this._generateDerivedKeys(
         bip32ExtendedKey,
+        derivationPath,
         i,
         useBip38,
         bip38password,
@@ -254,12 +288,16 @@ class Wallet {
     diff?: boolean;
   }) {
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
-    if (existingDerivedKeys.length > 0) {
+    const { existingNUTXODerivedKeys } = await Persist.getNUTXODerivedKeys();
+    const keys = [...existingDerivedKeys, ...existingNUTXODerivedKeys];
+    if (keys.length > 0) {
       const {
         derivedKeys: newDerivedKeys,
+        nUTXODerivedKeys: newNUTXODerivedKeys,
         diffOutputs,
-      } = await this._getOutputs(existingDerivedKeys);
+      } = await this._getOutputs(keys);
       if (diffOutputs.length > 0) {
+        const newKeys = [...newDerivedKeys, ...newNUTXODerivedKeys];
         /* FIX: A Tx can be in spendInfo, and it may not appear in getOutputs API */
         const spentOutputs = diffOutputs.filter(
           (output: { spendInfo: any }) => {
@@ -313,7 +351,7 @@ class Wallet {
                     txInputIndex: number;
                     value: number;
                   }) => {
-                    const isMineAddress = newDerivedKeys.find(
+                    const isMineAddress = newKeys.find(
                       (derivedKey: { address: any }) =>
                         derivedKey.address === input.address
                     );
@@ -332,7 +370,7 @@ class Wallet {
                     outputIndex: number;
                     value: number;
                   }) => {
-                    const isMineAddress = newDerivedKeys.find(
+                    const isMineAddress = newKeys.find(
                       (derivedKey: { address: any }) =>
                         derivedKey.address === output.address
                     );
@@ -491,6 +529,7 @@ class Wallet {
             await Persist.upsertTransactions(confirmedTxs);
             await Persist.upsertUnconfirmedTransactions(unConfirmedTxs);
             await Persist.upsertDerivedKeys(newDerivedKeys);
+            await Persist.upsertNUTXODerivedKeys(newNUTXODerivedKeys);
 
             if (options?.diff) {
               return { transactions };
@@ -553,20 +592,49 @@ class Wallet {
     const newOutputs = [...prevOutputs, ...outputs];
     const newDiffOutputs = [...prevDiffOutputs, ...diffOutputs];
     const newKeys = [...prevKeys, ...updatedKeys];
-    const countOfUnusedKeys = this._countOfUnusedKeys(newKeys);
-    if (countOfUnusedKeys < 20) {
+    const walletKeys = newKeys.filter((key: { indexText: string }) => {
+      return key.indexText.startsWith(
+        derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath
+      );
+    });
+    const nUTXOKeys = newKeys.filter((key: { indexText: string }) => {
+      return key.indexText.startsWith(
+        derivationPaths.BITCOIN_SV_REGTEST.BIP44.nUTXODerivationPath
+      );
+    });
+    const countOfUnusedKeys = this._countOfUnusedKeys(walletKeys);
+    const countOfUnusedNUTXOKeys = this._countOfUnusedKeys(nUTXOKeys);
+    if (countOfUnusedKeys < 20 || countOfUnusedNUTXOKeys < 20) {
       const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
       const lastKeyIndex = derivedKeys[derivedKeys.length - 1].indexText
         .split('/')
         .pop();
       const { derivedKeys: nextDerivedKeys } = await this.generateDerivedKeys(
         bip32ExtendedKey,
+        derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath,
         Number(lastKeyIndex) + 1,
         20 - countOfUnusedKeys,
         false
       );
+
+      const nUTXOExtendedKey = await Persist.getNUTXOExtendedKey();
+      const lastNUTXOKeyIndex = derivedKeys[derivedKeys.length - 1].indexText
+        .split('/')
+        .pop();
+      const {
+        derivedKeys: nextNUTXODerivedKeys,
+      } = await this.generateDerivedKeys(
+        nUTXOExtendedKey,
+        derivationPaths.BITCOIN_SV_REGTEST.BIP44.nUTXODerivationPath,
+        Number(lastNUTXOKeyIndex) + 1,
+        20 - countOfUnusedNUTXOKeys,
+        false
+      );
+
+      const nextKeys = [...nextDerivedKeys, ...nextNUTXODerivedKeys];
+
       return await this._getOutputs(
-        nextDerivedKeys,
+        nextKeys,
         newOutputs,
         newDiffOutputs,
         newKeys
@@ -575,7 +643,8 @@ class Wallet {
       return {
         outputs: newOutputs,
         diffOutputs: newDiffOutputs,
-        derivedKeys: newKeys,
+        derivedKeys: walletKeys,
+        nUTXODerivedKeys: nUTXOKeys,
       };
     }
   }
@@ -738,39 +807,82 @@ class Wallet {
     }
   }
 
-  async _getChangeAddress() {
+  async getChangeAddress() {
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
-    const ununsedKeyIndex = existingDerivedKeys.findIndex(
-      (derivedKey: { isUsed: boolean }) => derivedKey.isUsed === false
-    );
-    const newDerivedKeys = [...existingDerivedKeys];
-    newDerivedKeys[ununsedKeyIndex] = {
-      ...newDerivedKeys[ununsedKeyIndex],
-      isUsed: true,
-    };
-    Persist.upsertDerivedKeys(newDerivedKeys);
-    return newDerivedKeys[ununsedKeyIndex].address;
+    const unusedDerivedKeys = existingDerivedKeys
+      .filter(
+        (existingDerivedKey: { isUsed: any }) =>
+          existingDerivedKey.isUsed === false
+      )
+      .map(
+        ({ indexText, address }: { indexText: string; address: string }) =>
+          address
+      );
+    // const ununsedKeyIndex = existingDerivedKeys.findIndex(
+    //   (derivedKey: { isUsed: boolean }) => derivedKey.isUsed === false
+    // );
+    // const newDerivedKeys = [...existingDerivedKeys];
+    // newDerivedKeys[ununsedKeyIndex] = {
+    //   ...newDerivedKeys[ununsedKeyIndex],
+    //   isUsed: true,
+    // };
+    // Persist.upsertDerivedKeys(newDerivedKeys);
+    // return newDerivedKeys[ununsedKeyIndex].address;
+    return unusedDerivedKeys.find(Boolean);
+  }
+
+  async getUnusedNUTXOAddress() {
+    const { existingNUTXODerivedKeys } = await Persist.getNUTXODerivedKeys();
+    const unusedNUTXODerivedKeys = existingNUTXODerivedKeys
+      .filter(
+        (existingDerivedKey: { isUsed: any }) =>
+          existingDerivedKey.isUsed === false
+      )
+      .map(
+        ({ indexText, address }: { indexText: string; address: string }) =>
+          address
+      );
+    // const ununsedKeyIndex = existingNUTXODerivedKeys.findIndex(
+    //   (derivedKey: { isUsed: boolean }) => derivedKey.isUsed === false
+    // );
+    // const newDerivedKeys = [...existingNUTXODerivedKeys];
+    // newDerivedKeys[ununsedKeyIndex] = {
+    //   ...newDerivedKeys[ununsedKeyIndex],
+    //   isUsed: true,
+    // };
+    // Persist.upsertNUTXODerivedKeys(newDerivedKeys);
+    // return newDerivedKeys[ununsedKeyIndex].address;
+    return unusedNUTXODerivedKeys.find(Boolean);
   }
 
   async _getKeys(addresses: string[]): Promise<object[]> {
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
+    const { existingNUTXODerivedKeys } = await Persist.getNUTXODerivedKeys();
+    const keys = [...existingDerivedKeys, ...existingNUTXODerivedKeys];
     const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
+    const nUTXOExtendedKey = await Persist.getNUTXOExtendedKey();
+
     return addresses.map((address) => {
-      const derivedKey = existingDerivedKeys.find(
+      const derivedKey = keys.find(
         (derivedKey: { address: string }) => derivedKey.address === address
       );
+      let extendedKey;
+      if (
+        derivedKey.indexText.startsWith(
+          derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath
+        )
+      ) {
+        extendedKey = bip32ExtendedKey;
+      } else {
+        extendedKey = nUTXOExtendedKey;
+      }
       const KeyIndex = derivedKey.indexText.split('/').pop();
       const { privkey } = this._getPrivKey(
-        bip32ExtendedKey,
+        extendedKey,
         Number(KeyIndex),
         false
       );
       return ECPair.fromWIF(privkey, networks.regtest);
-
-      // return ECPair.fromWIF(
-      //   'cVi5XGpCSSooYdVreWzTHJHg1cAW1q2Hu9MK64jEsBobYBbfpFBi',
-      //   networks.regtest
-      // );
     });
   }
 
@@ -804,7 +916,6 @@ class Wallet {
           outputIndex: any;
           address: string;
           value: number;
-          hex: any;
         }) => {
           const p2pkh = payments.p2pkh({
             address: input.address,
@@ -823,7 +934,7 @@ class Wallet {
       for (let index = 0; index < outputs.length; index++) {
         const output = outputs[index];
         if (!output.address) {
-          output.address = await this._getChangeAddress();
+          output.address = await this.getChangeAddress();
         }
         psbt.addOutput({
           address: output.address,
@@ -1156,7 +1267,7 @@ class Wallet {
     // const feeRate = 5;
     // await this._createSendTransaction(utxos, targets, feeRate);
     const keys: any[] = await this._getKeys([
-      'mzJF4LyDRDy3YFEG9hCZ2VSsSrwiaNooGR',
+      'mtvVa8AiobcjDPBvx91XMBQVPXqNaznD2L',
     ]);
     console.log(keys[0].privateKey.toString('hex'));
     // Persist.runScript();

@@ -38,12 +38,13 @@ class ProxyProvider {
         this.sock.setNoDelay(true);
         this.sock.setKeepAlive(true, 0);
         this.sock.write(requestBuffer);
-        resolve();
+        resolve(true);
       });
     });
   }
 
   async sendRequest(host: string, port: number, request: string) {
+    console.log(request);
     const requestBuffer = Buffer.from(request);
     // const length = requestBuffer.length;
     // const lengthBuffer = Buffer.allocUnsafe(4);

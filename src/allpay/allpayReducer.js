@@ -7,31 +7,50 @@ const INITIAL_STATE = {
   psbt: null,
   name: null,
   inputs: null,
-  outputOwner: null,
-  outputChange: null,
+  ownOutputs: null,
+  snv: null,
+  addressCommitment: null,
+  utxoCommitment: null,
   proxyHost: null,
   proxyPort: null,
 };
 
 export default createReducer(
   {
-    [allpayActions.buyNameSuccess]: (state, { psbt, name, inputs, outputOwner, outputChange }) => ({
+    [allpayActions.buyNameSuccess]: (state, { psbt, name, inputs, ownOutputs, snv }) => ({
       ...state,
       psbt,
       name,
       inputs,
-      outputOwner,
-      outputChange,
+      ownOutputs,
+      snv,
     }),
-    [allpayActions.registerNameSuccess]: (state, { psbt, inputs }) => ({
+    [allpayActions.registerNameRequest]: () => ({
+      snv: null,
+      addressCommitment: null,
+      utxoCommitment: null,
+    }),
+    [allpayActions.registerNameSuccess]: (state, { psbt, inputs, ownOutputs }) => ({
       ...state,
       psbt,
       inputs,
+      ownOutputs,
     }),
-    [walletActions.createAllpaySendTransactionSuccess]: (state, { psbt, inputs }) => ({
+    [allpayActions.signRelayTransactionSuccess]: state => ({
+      ...state,
+      snv: null,
+      addressCommitment: null,
+      utxoCommitment: null,
+    }),
+    [walletActions.createAllpaySendTransactionSuccess]: (
+      state,
+      { psbt, inputs, addressCommitment, utxoCommitment }
+    ) => ({
       ...state,
       psbt,
       inputs,
+      addressCommitment,
+      utxoCommitment,
     }),
     [allpayActions.selectProxyProviderSuccess]: (state, { proxyHost, proxyPort }) => ({
       ...state,

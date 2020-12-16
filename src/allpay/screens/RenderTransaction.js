@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Grid, Header, Segment, Button } from 'semantic-ui-react';
+import { Button, Grid, Header, Label, Segment } from 'semantic-ui-react';
 import { satoshiToBSV } from '../../shared/utils';
 import * as allpayActions from '../allpayActions';
 import { allegory } from 'nipkow-sdk';
@@ -40,7 +40,7 @@ class RenderTransaction extends React.Component {
   };
 
   renderTransaction() {
-    const { psbt, outputOwner, outputChange } = this.props;
+    const { psbt, inputs, ownOutputs, snv, addressCommitment, utxoCommitment } = this.props;
     if (psbt) {
       const { txInputs, txOutputs } = psbt;
       // let totalInput = 0;
@@ -89,23 +89,31 @@ class RenderTransaction extends React.Component {
               <Grid.Column width={10}>
                 <span className='monospace'>{`${psbt.toHex().substring(0, 20)}...`}</span>
               </Grid.Column>
-              <Grid.Column width={5} textAlign='right'>
-                {/* {renderCreditOrDebit(credit, debit)} */}
-              </Grid.Column>
-              <Grid.Column width={1} textAlign='right'>
+              {/* <Grid.Column width={5} textAlign='right'>
+                {renderCreditOrDebit(credit, debit)}
+              </Grid.Column> */}
+              <Grid.Column width={6} textAlign='right'>
                 {/* <Label className='plain'>
-                <i
-                  title={
-                    transaction.confirmations > 10
-                      ? 'More than 10 Confirmations'
-                      : `${transaction.confirmations} Confirmations`
-                  }
-                  className={
-                    transaction.confirmations > 10
-                      ? 'green lock icon'
-                      : 'warning unlock alternate icon'
-                  }></i>
-              </Label> */}
+                  <i title={''} className={''}></i>
+                </Label> */}
+                {snv && (
+                  <div className='ui green label'>
+                    SNV
+                    <div className='detail'>Passing</div>
+                  </div>
+                )}
+                {addressCommitment && (
+                  <div className='ui green label'>
+                    Address Commitment
+                    <div className='detail positive'>Passing</div>
+                  </div>
+                )}
+                {utxoCommitment && (
+                  <div className='ui green label'>
+                    UTXO Commitment
+                    <div className='detail negative'>Passing</div>
+                  </div>
+                )}
               </Grid.Column>
             </Grid>
             <Grid divided columns='two'>
@@ -116,19 +124,23 @@ class RenderTransaction extends React.Component {
                   </Header>
                   {txInputs.map((input, index) => {
                     const transactionId = Buffer.from(input.hash).reverse().toString('hex');
+                    const value = psbt.data.inputs[index].witnessUtxo?.value;
+                    const isMine = inputs.find(inp => {
+                      return inp.outputTxHash === transactionId && inp.outputIndex === input.index;
+                    });
                     return (
                       <Grid key={String(index)}>
-                        <Grid.Column width='10'>
+                        <Grid.Column width='12'>
                           <p
                             className='monospace'
-                            title={transactionId}>{`${transactionId.substring(0, 20)}...[${
+                            title={transactionId}>{`${transactionId.substring(0, 50)}...[${
                             input.index
                           }]`}</p>
                         </Grid.Column>
-                        <Grid.Column width='6' textAlign='right'>
+                        <Grid.Column width='4' textAlign='right'>
                           <p className='monospace'>
-                            <span className={input.isMine ? 'debit' : ''}>
-                              {input.value && `${satoshiToBSV(input.value)} BSV`}
+                            <span className={isMine ? 'debit' : ''}>
+                              {value && `${satoshiToBSV(value)} BSV`}
                             </span>
                           </p>
                         </Grid.Column>
@@ -141,18 +153,19 @@ class RenderTransaction extends React.Component {
                     Outputs
                   </Header>
                   {txOutputs.map((output, index) => {
+                    const isMine = ownOutputs.find(ownOutput => ownOutput === output.address);
                     return (
                       <Grid key={String(index)}>
                         <Grid.Column width='10'>
                           <p className='monospace'>
                             <span
-                              title={
-                                output.address === outputOwner
-                                  ? 'Owner'
-                                  : output.address === outputChange
-                                  ? 'Change'
-                                  : ''
-                              }
+                              // title={
+                              //   output.address === outputOwner
+                              //     ? 'Owner'
+                              //     : output.address === outputChange
+                              //     ? 'Change'
+                              //     : ''
+                              // }
                               className={output.script && 'word-wrap'}>
                               {output.address
                                 ? output.address
@@ -166,12 +179,9 @@ class RenderTransaction extends React.Component {
                         </Grid.Column>
                         <Grid.Column width='6' textAlign='right'>
                           <p className='monospace'>
-                            <span
-                              className={
-                                output.address === outputOwner || output.address === outputChange
-                                  ? 'credit'
-                                  : ''
-                              }>{`${satoshiToBSV(output.value)} BSV`}</span>
+                            <span className={isMine ? 'credit' : ''}>{`${satoshiToBSV(
+                              output.value
+                            )} BSV`}</span>
                           </p>
                         </Grid.Column>
                       </Grid>
@@ -239,7 +249,7 @@ class RenderTransaction extends React.Component {
     return (
       <>
         <Header as='h2' textAlign='center'>
-          Partially Sign Transaction
+          Partially Signed Transaction
         </Header>
         <div className='ui grid'>
           <div className='column'>{this.renderTransaction()}</div>
@@ -264,8 +274,10 @@ const mapStateToProps = state => ({
   psbt: state.allpay.psbt,
   name: state.allpay.name,
   inputs: state.allpay.inputs,
-  outputOwner: state.allpay.outputOwner,
-  outputChange: state.allpay.outputChange,
+  ownOutputs: state.allpay.ownOutputs,
+  snv: state.allpay.snv,
+  addressCommitment: state.allpay.addressCommitment,
+  utxoCommitment: state.allpay.utxoCommitment,
 });
 
 export default withRouter(connect(mapStateToProps)(RenderTransaction));

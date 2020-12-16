@@ -175,8 +175,12 @@ export const createAllpaySendTransaction = args => async (
 ) => {
   dispatch(createAllpaySendTransactionRequest());
   try {
-    const { inputs, psbt } = await serviceInjector(WalletService).createAllpaySendTransaction(args);
-    dispatch(createAllpaySendTransactionSuccess({ inputs, psbt }));
+    const { inputs, psbt, addressCommitment, utxoCommitment } = await serviceInjector(
+      WalletService
+    ).createAllpaySendTransaction(args);
+    dispatch(
+      createAllpaySendTransactionSuccess({ inputs, psbt, addressCommitment, utxoCommitment })
+    );
   } catch (error) {
     dispatch(createAllpaySendTransactionFailure());
     throw error;

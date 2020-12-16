@@ -9,6 +9,7 @@ export default {
       account: 0,
       change: 0,
       derivationPath: "m/44'/236'/0'/0",
+      nUTXODerivationPath: "m/44'/236'/1'/0",
     },
   },
   BITCOIN_SV_TESTNET: {
@@ -21,6 +22,7 @@ export default {
       account: 0,
       change: 0,
       derivationPath: 'm/44/1/0/0',
+      nUTXODerivationPath: 'm/44/1/1/0',
     },
   },
   BITCOIN_SV_REGTEST: {
@@ -33,6 +35,7 @@ export default {
       account: 0,
       change: 0,
       derivationPath: 'm/44/1/0/0',
+      nUTXODerivationPath: 'm/44/1/1/0',
     },
   },
 };

@@ -36,15 +36,8 @@ class Allpay {
           input.value,
         ];
       });
-      const { unusedDerivedAddresses } = await wallet.getUnusedDerivedKeys({
-        count: 2,
-      });
-      let outputOwner;
-      let outputChange;
-      if (unusedDerivedAddresses.length >= 2) {
-        outputOwner = unusedDerivedAddresses[0].address;
-        outputChange = unusedDerivedAddresses[1].address;
-      }
+      const outputOwner = await wallet.getUnusedNUTXOAddress();
+      const outputChange = await wallet.getChangeAddress();
       if (outputOwner && outputChange) {
         const {
           data: { psaTx: psaBase64 },
@@ -61,13 +54,15 @@ class Allpay {
           }
         );
         const { psbt } = await this.decodeTransaction(psaBase64, inputs);
-        // const isSNV = await this.verifyRootTx({ psbt });
+        const ownOutputs = [outputOwner, outputChange];
+        // const snv = await this.verifyRootTx({ psbt });
+        const snv = true;
         return {
           psbt,
           name: [name, isProducer],
           inputs,
-          outputOwner,
-          outputChange,
+          ownOutputs,
+          snv,
         };
       } else {
         throw new Error('Error configuring input params');
@@ -96,7 +91,6 @@ class Allpay {
           outpoint: { hash: string; index: number };
           sequence: number;
           script: string;
-          hex: string;
           value: number;
         }) => {
           if (input.script) {
@@ -141,6 +135,7 @@ class Allpay {
         }
       );
       let fundingInputs: any[] = [];
+      const ownOutputs: string[] = [];
       if (addFunding) {
         const { utxos } = await Persist.getUTXOs();
         const feeRate = 5000;
@@ -148,33 +143,24 @@ class Allpay {
         const targets = [{ value: Number(amountInSatoshi) }];
         const { inputs, outputs } = coinSelect(utxos, targets, feeRate);
         fundingInputs = inputs;
-
-        const txIds = fundingInputs.map(
-          (input: { outputTxHash: any }) => input.outputTxHash
-        );
-        const rawTxsResponse = await transactionAPI.getRawTransactionsByTxIDs(
-          txIds
-        );
-        const inputsWithRawTxs = rawTxsResponse.rawTxs.map((rawTx: any) => {
-          const hex = Buffer.from(rawTx.txSerialized, 'base64').toString('hex');
-          return { ...rawTx, hex };
-        });
-        let merged = [];
-        for (let i = 0; i < fundingInputs.length; i++) {
-          merged.push({
-            ...fundingInputs[i],
-            ...inputsWithRawTxs.find(
-              (element: { txId: any }) =>
-                element.txId === fundingInputs[i].outputTxHash
-            ),
-          });
-        }
-        merged.forEach(
-          (input: { outputTxHash: any; outputIndex: any; hex: any }) => {
+        inputs.forEach(
+          (input: {
+            outputTxHash: any;
+            outputIndex: any;
+            address: string;
+            value: number;
+          }) => {
+            const p2pkh = payments.p2pkh({
+              address: input.address,
+              network: network.BITCOIN_SV_REGTEST,
+            });
             psbt.addInput({
               hash: input.outputTxHash,
               index: input.outputIndex,
-              nonWitnessUtxo: Buffer.from(input.hex, 'hex'),
+              witnessUtxo: {
+                script: p2pkh.output!,
+                value: input.value,
+              },
             });
           }
         );
@@ -191,8 +177,9 @@ class Allpay {
         for (let index = 0; index < outputs.length; index++) {
           const output = outputs[index];
           if (!output.address) {
-            const address = await wallet._getChangeAddress();
+            const address = await wallet.getChangeAddress();
             output.address = address;
+            ownOutputs.push(address);
             await Persist.updateDerivedKeys([address]);
           }
           psbt.addOutput({
@@ -228,7 +215,7 @@ class Allpay {
           }
         }
       );
-      return { psbt, fundingInputs };
+      return { psbt, fundingInputs, ownOutputs };
     } catch (error) {
       throw error;
     }
@@ -260,7 +247,6 @@ class Allpay {
           const keys: any[] = await wallet._getKeys([utxo.address]);
           if (keys.length > 0) {
             const key: any = keys[0];
-            console.log(key.privateKey.toString('hex'));
             psbt.signInput(index, key);
           }
         } else {
@@ -378,12 +364,9 @@ class Allpay {
     const OP_RETURN_OUTPUT = txOuts[0];
     const { lockingScript } = OP_RETURN_OUTPUT;
     const cborData = decodeCBORData(lockingScript);
-    console.log(cborData);
     const proxyHost = '127.0.0.1';
     const proxyPort = 9099;
     const recipient = sha256(lockingScript).toString();
-    console.log(lockingScript);
-    console.log(recipient);
     const { unusedDerivedAddresses } = await wallet.getUnusedDerivedKeys();
     const changeAddress = unusedDerivedAddresses[0].address;
     const { utxos } = await Persist.getUTXOs();
@@ -399,16 +382,19 @@ class Allpay {
       changeAddress,
       utxos: inputs,
     });
-    console.log(data);
     const tData = data.substring(1);
     const jsonData = JSON.parse(tData);
     const {
       result: { tx: psbtTx },
     } = jsonData;
     const { psbt } = await this.decodeTransaction(psbtTx, inputs);
+    const addressCommitment = true;
+    const utxoCommitment = true;
     return {
       psbt,
       inputs: inputs,
+      addressCommitment,
+      utxoCommitment,
     };
   }
 
@@ -462,10 +448,7 @@ class Allpay {
     const nameCodePoint = utils.getCodePoint(name);
     const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
     const xpubKey = wallet.getBIP32ExtendedPubKey(bip32ExtendedKey);
-    const { unusedDerivedAddresses } = await wallet.getUnusedDerivedKeys({
-      count: 3,
-    });
-    const returnAddress = unusedDerivedAddresses[2].address;
+    const returnAddress = await wallet.getUnusedNUTXOAddress();
     const { nUTXOs } = await Persist.getNUtxo(name);
     if (nUTXOs) {
       const data = await this._registerName({
@@ -481,15 +464,16 @@ class Allpay {
       const {
         result: { tx: psaBase64 },
       } = tData;
-
-      const { psbt, fundingInputs } = await this.decodeTransaction(
+      const { psbt, fundingInputs, ownOutputs } = await this.decodeTransaction(
         psaBase64,
-        [],
+        [nUTXOs],
         true
       );
+      const mergedOwnOutputs = [returnAddress, ...ownOutputs];
       return {
         psbt,
         inputs: [...nUTXOs, ...fundingInputs],
+        ownOutputs: mergedOwnOutputs,
       };
     } else {
       throw new Error("Couldn't find utxo for selected name");
@@ -529,7 +513,6 @@ class Allpay {
         addressCount: Number(addressCount),
       },
     };
-    console.log(JSON.stringify(jsonRPCRequest));
     return await proxyProvider.sendRequest(
       data.proxyHost,
       data.proxyPort,

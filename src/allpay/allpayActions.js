@@ -36,10 +36,10 @@ export const getResellerURI = name => async (dispatch, getState, { serviceInject
 export const buyName = data => async (dispatch, getState, { serviceInjector }) => {
   dispatch(buyNameRequest());
   try {
-    const { psbt, name, inputs, outputOwner, outputChange } = await serviceInjector(
-      AllpayService
-    ).buyName(data);
-    dispatch(buyNameSuccess({ psbt, name, inputs, outputOwner, outputChange }));
+    const { psbt, name, inputs, ownOutputs, snv } = await serviceInjector(AllpayService).buyName(
+      data
+    );
+    dispatch(buyNameSuccess({ psbt, name, inputs, ownOutputs, snv }));
   } catch (error) {
     dispatch(buyNameFailure());
     throw error;
@@ -70,13 +70,13 @@ export const registerName = ({ name, addressCount }) => async (
   } = getState();
   dispatch(registerNameRequest());
   try {
-    const { psbt, inputs } = await serviceInjector(AllpayService).registerName({
+    const { psbt, inputs, ownOutputs } = await serviceInjector(AllpayService).registerName({
       proxyHost,
       proxyPort,
       name,
       addressCount,
     });
-    dispatch(registerNameSuccess({ psbt, inputs }));
+    dispatch(registerNameSuccess({ psbt, inputs, ownOutputs }));
   } catch (error) {
     dispatch(registerNameFailure());
     throw error;

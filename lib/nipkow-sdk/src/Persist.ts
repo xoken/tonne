@@ -12,6 +12,7 @@ let db: any;
 let credentials: any;
 
 export const BIP32_EXTENDED_KEY = 'bip32ExtendedKey';
+export const NUTXO_EXTENDED_KEY = 'nUTXOExtendedKey';
 
 const get = async (db: any, key: string) => await db.get(key);
 
@@ -33,7 +34,10 @@ export const init = async (dbName: string) => {
     auto_compaction: true,
     // adapter: 'memory',
   });
-  await credentials.bulkDocs([{ _id: BIP32_EXTENDED_KEY, value: null }]);
+  await credentials.bulkDocs([
+    { _id: BIP32_EXTENDED_KEY, value: null },
+    { _id: NUTXO_EXTENDED_KEY, value: null },
+  ]);
 };
 
 export const createProfile = async (
@@ -142,6 +146,47 @@ export const getBip32ExtendedKey = async () => {
 
 export const setBip32ExtendedKey = async (value: any) =>
   await set(credentials, BIP32_EXTENDED_KEY, { value });
+
+export const getNUTXOExtendedKey = async () => {
+  const nUTXOExtendedKeyDoc: any = await get(credentials, NUTXO_EXTENDED_KEY);
+  return nUTXOExtendedKeyDoc.value;
+};
+
+export const setNUTXOExtendedKey = async (value: any) =>
+  await set(credentials, NUTXO_EXTENDED_KEY, { value });
+
+export const getNUTXODerivedKeys = async () => {
+  const response = await db.allDocs({
+    include_docs: true,
+    startkey: 'nUTXOKey',
+    endkey: 'nUTXOKey\ufff0',
+  });
+  if (response && response.rows.length > 0) {
+    const existingNUTXODerivedKeys = response.rows.map(
+      (row: { doc: any }) => row.doc
+    );
+    return { existingNUTXODerivedKeys };
+  } else {
+    return { existingNUTXODerivedKeys: [] };
+  }
+};
+
+export const upsertNUTXODerivedKeys = async (keys: any) => {
+  if (keys.length > 0) {
+    const { existingNUTXODerivedKeys } = await getNUTXODerivedKeys();
+    let keyId = existingNUTXODerivedKeys.length - 1;
+    const docs = keys.map((key: any, index: number) => {
+      if (!key._id) {
+        keyId = keyId + 1;
+      }
+      return {
+        _id: key._id ? key._id : `nUTXOKey-${String(keyId).padStart(20, '0')}`,
+        ...key,
+      };
+    });
+    await db.bulkDocs(docs);
+  }
+};
 
 export const getDerivedKeys = async () => {
   const response = await db.allDocs({
