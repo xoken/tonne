@@ -328,8 +328,12 @@ function _getPOwnerOutput(data: any[]) {
 
 function _getExtensions(datas: any[]) {
   const extensions: Extension[] = datas.map((data: any[]) => {
-    const extension = _getOwnerExtension(data);
-    return extension;
+    if (data[0] === 0) {
+      return _getOwnerExtension(data);
+    } else {
+      console.log('Check: Got Producer Extension');
+      return _getProducerExtension(data);
+    }
   });
   return extensions;
 }

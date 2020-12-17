@@ -118,15 +118,15 @@ class RecentTransaction extends React.Component {
               if (credit > 0 && debit > 0) {
                 return (
                   <>
-                    <span className='monospace debit'>{`-${satoshiToBSV(debit)} BSV`}</span>
+                    <span className='monospace debit'>{`-${satoshiToBSV(debit)}`}</span>
                     <span className='monospace'>{` / `}</span>
-                    <span className='monospace credit'>{`+${satoshiToBSV(credit)} BSV`}</span>
+                    <span className='monospace credit'>{`+${satoshiToBSV(credit)}`}</span>
                   </>
                 );
               } else if (credit > 0) {
-                return <span className='monospace credit'>{`+${satoshiToBSV(credit)} BSV`}</span>;
+                return <span className='monospace credit'>{`+${satoshiToBSV(credit)}`}</span>;
               } else if (debit > 0) {
-                return <span className='monospace debit'>{`-${satoshiToBSV(debit)} BSV`}</span>;
+                return <span className='monospace debit'>{`-${satoshiToBSV(debit)}`}</span>;
               }
               return '';
             };
@@ -173,12 +173,18 @@ class RecentTransaction extends React.Component {
                           return (
                             <Grid key={input.txInputIndex}>
                               <Grid.Column width='10'>
-                                <p className='monospace'>{input.address}</p>
+                                <p className='monospace'>
+                                  <span
+                                    className={input.isNUTXO ? 'nUTXO' : undefined}
+                                    title={input.isNUTXO ? 'Name UTXO' : undefined}>
+                                    {input.address}
+                                  </span>
+                                </p>
                               </Grid.Column>
                               <Grid.Column width='6' textAlign='right'>
                                 <p className='monospace'>
                                   <span className={input.isMine ? 'debit' : ''}>
-                                    {`${satoshiToBSV(input.value)} BSV`}
+                                    {satoshiToBSV(input.value)}
                                   </span>
                                 </p>
                               </Grid.Column>
@@ -194,12 +200,26 @@ class RecentTransaction extends React.Component {
                           return (
                             <Grid key={output.outputIndex}>
                               <Grid.Column width='10'>
-                                <p className='monospace'>{output.address}</p>
+                                <p className='monospace'>
+                                  <span
+                                    className={output.isNUTXO ? 'nUTXO' : undefined}
+                                    title={output.isNUTXO ? 'Name UTXO' : undefined}>
+                                    {output.address
+                                      ? output.address
+                                      : output.lockingScript
+                                      ? output.lockingScript.startsWith(
+                                          '006a0f416c6c65676f72792f416c6c506179'
+                                        )
+                                        ? 'OP_RETURN'
+                                        : output.lockingScript
+                                      : null}
+                                  </span>
+                                </p>
                               </Grid.Column>
                               <Grid.Column width='6' textAlign='right'>
                                 <p className='monospace'>
                                   <span className={output.isMine ? 'credit' : ''}>
-                                    {`${satoshiToBSV(output.value)} BSV`}
+                                    {satoshiToBSV(output.value)}
                                   </span>
                                 </p>
                               </Grid.Column>
@@ -211,9 +231,7 @@ class RecentTransaction extends React.Component {
                             <Label className='monospace plain'>
                               {debit > 0 ? 'Total debit:' : 'Total credit:'}
                               <Label.Detail>
-                                {debit > 0
-                                  ? `${satoshiToBSV(outgoing)} BSV`
-                                  : `${satoshiToBSV(credit)} BSV`}
+                                {debit > 0 ? satoshiToBSV(outgoing) : satoshiToBSV(credit)}
                               </Label.Detail>
                             </Label>
                           </div>
@@ -222,9 +240,7 @@ class RecentTransaction extends React.Component {
                           <div className='column'>
                             <Label className='monospace plain'>
                               Fee:
-                              <Label.Detail>
-                                {`${satoshiToBSV(totalInput - totalOutput)} BSV`}
-                              </Label.Detail>
+                              <Label.Detail>{satoshiToBSV(totalInput - totalOutput)}</Label.Detail>
                             </Label>
                           </div>
                         </div>

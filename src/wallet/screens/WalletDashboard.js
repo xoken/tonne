@@ -76,7 +76,7 @@ class WalletDashboard extends React.Component {
             <div className='content'>
               Your Current Balance is
               <div className='sub header'>
-                {isLoading ? <Loader inline active /> : `${satoshiToBSV(balance)} BSV`}
+                {isLoading ? <Loader inline active /> : satoshiToBSV(balance)}
               </div>
             </div>
           </div>

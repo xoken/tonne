@@ -253,9 +253,7 @@ class SendTransaction extends React.Component {
             />
           </Grid.Column>
           <Grid.Column width={6}>
-            <p className='form-control-plaintext'>
-              {satoshiToBSV(Number(amountInSatoshi)) + ' BSV'}
-            </p>
+            <p className='form-control-plaintext'>{satoshiToBSV(Number(amountInSatoshi))}</p>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
@@ -274,7 +272,7 @@ class SendTransaction extends React.Component {
             />
           </Grid.Column>
           <Grid.Column width={6}>
-            <p>{`${satoshiToBSV(Number(transactionFee))} BSV (${feeRate} satoshis/byte)`}</p>
+            <p>{`${satoshiToBSV(Number(transactionFee))} (${feeRate} satoshis/byte)`}</p>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
