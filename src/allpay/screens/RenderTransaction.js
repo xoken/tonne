@@ -96,24 +96,24 @@ class RenderTransaction extends React.Component {
                 {/* <Label className='plain'>
                   <i title={''} className={''}></i>
                 </Label> */}
-                {snv && (
+                {snv !== null ? (
                   <div className='ui green label'>
                     SNV
-                    <div className='detail'>Passing</div>
+                    <div className='detail'>{snv ? 'Passing' : 'Failing'}</div>
                   </div>
-                )}
-                {addressCommitment && (
+                ) : null}
+                {addressCommitment !== null ? (
                   <div className='ui green label'>
                     Address Commitment
-                    <div className='detail positive'>Passing</div>
+                    <div className='detail'>{addressCommitment ? 'Passing' : 'Failing'}</div>
                   </div>
-                )}
-                {utxoCommitment && (
+                ) : null}
+                {utxoCommitment !== null ? (
                   <div className='ui green label'>
                     UTXO Commitment
-                    <div className='detail negative'>Passing</div>
+                    <div className='detail'>{utxoCommitment ? 'Passing' : 'Failing'}</div>
                   </div>
-                )}
+                ) : null}
               </Grid.Column>
             </Grid>
             <Grid divided columns='two'>
@@ -131,16 +131,20 @@ class RenderTransaction extends React.Component {
                     return (
                       <Grid key={String(index)}>
                         <Grid.Column width='12'>
-                          <p
-                            className='monospace'
-                            title={transactionId}>{`${transactionId.substring(0, 50)}...[${
-                            input.index
-                          }]`}</p>
+                          <p className='monospace'>
+                            <span
+                              className={isMine.isNameOutpoint ? 'nUTXO' : undefined}
+                              title={
+                                isMine.isNameOutpoint
+                                  ? `Name Outpoint: ${transactionId}`
+                                  : transactionId
+                              }>{`${transactionId.substring(0, 50)}...[${input.index}]`}</span>
+                          </p>
                         </Grid.Column>
                         <Grid.Column width='4' textAlign='right'>
                           <p className='monospace'>
                             <span className={isMine ? 'debit' : ''}>
-                              {value && `${satoshiToBSV(value)} BSV`}
+                              {value && satoshiToBSV(value)}
                             </span>
                           </p>
                         </Grid.Column>
@@ -153,35 +157,33 @@ class RenderTransaction extends React.Component {
                     Outputs
                   </Header>
                   {txOutputs.map((output, index) => {
-                    const isMine = ownOutputs.find(ownOutput => ownOutput === output.address);
+                    const isMine = ownOutputs.find(
+                      ownOutput => ownOutput.address === output.address
+                    );
                     return (
                       <Grid key={String(index)}>
                         <Grid.Column width='10'>
                           <p className='monospace'>
                             <span
-                              // title={
-                              //   output.address === outputOwner
-                              //     ? 'Owner'
-                              //     : output.address === outputChange
-                              //     ? 'Change'
-                              //     : ''
-                              // }
-                              className={output.script && 'word-wrap'}>
+                              className={isMine && isMine.type === 'nUTXO' ? 'nUTXO' : ''}
+                              title={isMine ? isMine.title : undefined}>
                               {output.address
                                 ? output.address
                                 : output.script
-                                ? allegory.removeOpReturn(
-                                    Buffer.from(output.script).toString('hex')
-                                  )
+                                ? Buffer.from(output.script)
+                                    .toString('hex')
+                                    .startsWith('006a0f416c6c65676f72792f416c6c506179')
+                                  ? 'OP_RETURN'
+                                  : output.script
                                 : null}
                             </span>
                           </p>
                         </Grid.Column>
                         <Grid.Column width='6' textAlign='right'>
                           <p className='monospace'>
-                            <span className={isMine ? 'credit' : ''}>{`${satoshiToBSV(
-                              output.value
-                            )} BSV`}</span>
+                            <span className={isMine ? 'credit' : ''}>
+                              {satoshiToBSV(output.value)}
+                            </span>
                           </p>
                         </Grid.Column>
                       </Grid>
@@ -193,8 +195,8 @@ class RenderTransaction extends React.Component {
                       {debit > 0 ? 'Total debit:' : 'Total credit:'}
                       <Label.Detail>
                         {debit > 0
-                          ? `${satoshiToBSV(outgoing)} BSV`
-                          : `${satoshiToBSV(credit)} BSV`}
+                          ? satoshiToBSV(outgoing)
+                          : satoshiToBSV(credit)}
                       </Label.Detail>
                     </Label> */}
                     </div>
@@ -203,7 +205,7 @@ class RenderTransaction extends React.Component {
                     <div className='column'>
                       {/* <Label className='monospace plain'>
                       Fee:
-                      <Label.Detail>{`${satoshiToBSV(totalInput - totalOutput)} BSV`}</Label.Detail>
+                      <Label.Detail>{satoshiToBSV(totalInput - totalOutput)}</Label.Detail>
                     </Label> */}
                     </div>
                   </div>

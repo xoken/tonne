@@ -478,12 +478,12 @@ export const getUTXOs = async (options?: {
   diff?: boolean;
 }) => {
   await db.createIndex({
-    index: { fields: ['isSpent', 'isNameOutput'] },
+    index: { fields: ['isSpent', 'isNameOutpoint'] },
   });
   const outputDoc = await db.find({
     selector: {
       isSpent: { $eq: false },
-      isNameOutput: { $exists: false },
+      isNameOutpoint: { $exists: false },
     },
   });
   if (outputDoc.docs.length > 0) return { utxos: outputDoc.docs };
@@ -506,12 +506,12 @@ export const getNUtxo = async (name: string) => {
 
 export const getUnregisteredName = async () => {
   await db.createIndex({
-    index: { fields: ['isSpent', 'isNameOutput'] },
+    index: { fields: ['isSpent', 'isNameOutpoint'] },
   });
   const outputDoc = await db.find({
     selector: {
       isSpent: { $eq: false },
-      isNameOutput: { $exists: true },
+      isNameOutpoint: { $exists: true },
     },
   });
   if (outputDoc.docs.length > 0) {

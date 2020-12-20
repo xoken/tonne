@@ -109,17 +109,17 @@ class ReceiveTransaction extends React.Component {
                     <Table.Cell className='monospace'>
                       <div>
                         {incomingBalance !== null
-                          ? `Total Incoming: ${satoshiToBSV(Number(incomingBalance))} BSV`
+                          ? `Total Incoming: ${satoshiToBSV(Number(incomingBalance))}`
                           : ''}
                       </div>
                       <div>
                         {outgoingBalance !== null
-                          ? `Total Outgoing: ${satoshiToBSV(Number(outgoingBalance))} BSV`
+                          ? `Total Outgoing: ${satoshiToBSV(Number(outgoingBalance))}`
                           : ''}
                       </div>
                       <div>
                         {currentBalance !== null
-                          ? `Current Balance: ${satoshiToBSV(Number(currentBalance))} BSV`
+                          ? `Current Balance: ${satoshiToBSV(Number(currentBalance))}`
                           : ''}
                       </div>
                     </Table.Cell>

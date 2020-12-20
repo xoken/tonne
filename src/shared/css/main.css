@@ -73,6 +73,9 @@
 .debit {
   color: #dc3545 !important;
 }
+.nUTXO {
+  color: #28a745;
+}
 .ui.transparent.label,
 .ui.transparent.labels .label {
   background-color: transparent;

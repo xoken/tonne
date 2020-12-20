@@ -32,9 +32,9 @@ export default class BuyName extends React.Component {
                   <div className='seven wide middle aligned column'>
                     <div className='ui grid'>
                       <div className='six wide column middle aligned'>
-                        {/* <div className='ui plain label'>{`${satoshiToBSV(
+                        {/* <div className='ui plain label'>{satoshiToBSV(
                           priceInSatoshi
-                        )} BSV`}</div> */}
+                        )}</div> */}
                       </div>
                       <div className='ten wide column'>
                         <div className='ui form'>

@@ -1,7 +1,7 @@
 import sha256 from 'crypto-js/sha256';
 import coinSelect from 'coinselect';
 import { Psbt, payments } from 'bitcoinjs-lib';
-import { decodeCBORData } from './Allegory';
+import { decodeCBORData, getAllegoryType, OwnerAction } from './Allegory';
 import wallet from './Wallet';
 import utils from './Utils';
 import { post } from './httpClient';
@@ -54,9 +54,11 @@ class Allpay {
           }
         );
         const { psbt } = await this.decodeTransaction(psaBase64, inputs);
-        const ownOutputs = [outputOwner, outputChange];
-        // const snv = await this.verifyRootTx({ psbt });
-        const snv = true;
+        const snv = await this.verifyRootTx({ psbt });
+        const ownOutputs = [
+          { type: 'nUTXO', title: 'Name UTXO', address: outputOwner },
+          { type: '', title: '', address: outputChange },
+        ];
         return {
           psbt,
           name: [name, isProducer],
@@ -135,7 +137,7 @@ class Allpay {
         }
       );
       let fundingInputs: any[] = [];
-      const ownOutputs: string[] = [];
+      const ownOutputs: { type: string; title: ''; address: string }[] = [];
       if (addFunding) {
         const { utxos } = await Persist.getUTXOs();
         const feeRate = 5000;
@@ -179,7 +181,7 @@ class Allpay {
           if (!output.address) {
             const address = await wallet.getChangeAddress();
             output.address = address;
-            ownOutputs.push(address);
+            ownOutputs.push({ type: '', title: '', address });
             await Persist.updateDerivedKeys([address]);
           }
           psbt.addOutput({
@@ -280,7 +282,10 @@ class Allpay {
     return { txBroadcast };
   }
 
-  async verifyRootTx(args: { psbt?: Psbt; transaction?: any }) {
+  async verifyRootTx(args: {
+    psbt?: Psbt;
+    transaction?: any;
+  }): Promise<boolean> {
     const { psbt, transaction } = args;
     let inputHash;
     if (psbt || transaction) {
@@ -291,19 +296,39 @@ class Allpay {
       }
       if (transaction) {
         const { txInps } = transaction;
-
         inputHash = txInps[0].outpointTxID;
       }
-      if (inputHash !== Config.allegoryRootNode) {
+      if (
+        inputHash ===
+        '0000000000000000000000000000000000000000000000000000000000000000'
+      ) {
+        return false;
+      } else if (inputHash === Config.allegoryRootNode) {
+        return true;
+      } else {
         const {
           tx: { tx },
         } = await transactionAPI.getTransactionByTxID(inputHash);
-        await this.verifyRootTx({ transaction: tx });
-      } else {
-        return true;
+        return await this.verifyRootTx({ transaction: tx });
       }
     }
     return false;
+  }
+
+  verifyMerkelRoot(args: {
+    leafNode: string;
+    merkelRoot: string;
+    proof: any[];
+  }) {
+    const { leafNode, merkelRoot, proof } = args;
+    let merkelProof = proof;
+    let finalHash = leafNode;
+    while (merkelProof.length > 0) {
+      finalHash = sha256(sha256(finalHash).toString()).toString();
+      const secondLeafHash = merkelProof.shift();
+      finalHash = finalHash.concat(secondLeafHash);
+    }
+    return merkelRoot === finalHash;
   }
 
   async getOutpointForName(name: number[]) {
@@ -363,7 +388,8 @@ class Allpay {
     } = await transactionAPI.getTransactionByTxID(opTxHash);
     const OP_RETURN_OUTPUT = txOuts[0];
     const { lockingScript } = OP_RETURN_OUTPUT;
-    const cborData = decodeCBORData(lockingScript);
+    const allegoryData = decodeCBORData(lockingScript);
+    const allegory = getAllegoryType(allegoryData);
     const proxyHost = '127.0.0.1';
     const proxyPort = 9099;
     const recipient = sha256(lockingScript).toString();
@@ -385,17 +411,43 @@ class Allpay {
     const tData = data.substring(1);
     const jsonData = JSON.parse(tData);
     const {
-      result: { tx: psbtTx },
+      result: { tx: psbtTx, addressProof, utxoProof },
     } = jsonData;
     const { psbt } = await this.decodeTransaction(psbtTx, inputs);
-    const addressCommitment = true;
-    const utxoCommitment = true;
-    return {
-      psbt,
-      inputs: inputs,
-      addressCommitment,
-      utxoCommitment,
-    };
+    if (allegory && allegory.action instanceof OwnerAction) {
+      const ownerAction = allegory.action as OwnerAction;
+      if (ownerAction.oProxyProviders.length > 0) {
+        const utxoLeafNode = Buffer.from(psbt.txInputs[0].hash)
+          .reverse()
+          .toString('hex')
+          .concat(String(psbt.txInputs[0].index));
+        const addressLeafNode = psbt.txOutputs[0].address!;
+        const addressMerkelRoot =
+          ownerAction.oProxyProviders[0].registration.addressCommitment;
+        const utxoMerkelRoot =
+          ownerAction.oProxyProviders[0].registration.utxoCommitment;
+        // const addressCommitment = this.verifyMerkelRoot({
+        //   leafNode: addressLeafNode,
+        //   merkelRoot: addressMerkelRoot,
+        //   proof: addressProof,
+        // });
+        // const utxoCommitment = this.verifyMerkelRoot({
+        //   leafNode: utxoLeafNode,
+        //   merkelRoot: utxoMerkelRoot,
+        //   proof: utxoProof,
+        // });
+
+        const addressCommitment = true;
+        const utxoCommitment = true;
+        return {
+          psbt,
+          inputs: inputs,
+          addressCommitment,
+          utxoCommitment,
+        };
+      }
+    }
+    throw Error('Error in drafting Allegory Transaction');
   }
 
   async _createTransaction(data: {
@@ -469,11 +521,13 @@ class Allpay {
         [nUTXOs],
         true
       );
-      const mergedOwnOutputs = [returnAddress, ...ownOutputs];
       return {
         psbt,
         inputs: [...nUTXOs, ...fundingInputs],
-        ownOutputs: mergedOwnOutputs,
+        ownOutputs: [
+          { type: 'nUTXO', title: 'Name UTXO', address: returnAddress },
+          ...ownOutputs,
+        ],
       };
     } else {
       throw new Error("Couldn't find utxo for selected name");

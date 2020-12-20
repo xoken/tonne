@@ -46,8 +46,6 @@ class Wallet {
     await Persist.setBip32ExtendedKey(bip32ExtendedKey);
     await Persist.setNUTXOExtendedKey(nUTXOExtendedKey);
 
-    console.log(this.getBIP32ExtendedPrivKey(bip32RootKey));
-
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
     const countOfUnusedKeys = this._countOfUnusedKeys(existingDerivedKeys);
     if (countOfUnusedKeys < 20) {
@@ -355,11 +353,16 @@ class Wallet {
                       (derivedKey: { address: any }) =>
                         derivedKey.address === input.address
                     );
+                    const isNUTXOAddress = newNUTXODerivedKeys.find(
+                      (derivedKey: { address: any }) =>
+                        derivedKey.address === input.address
+                    );
                     return {
                       address: input.address,
                       txInputIndex: input.txInputIndex,
                       value: input.value,
                       isMine: isMineAddress ? true : false,
+                      isNUTXO: isNUTXOAddress ? true : false,
                     };
                   }
                 );
@@ -374,12 +377,17 @@ class Wallet {
                       (derivedKey: { address: any }) =>
                         derivedKey.address === output.address
                     );
+                    const isNUTXOAddress = newNUTXODerivedKeys.find(
+                      (derivedKey: { address: any }) =>
+                        derivedKey.address === output.address
+                    );
                     return {
                       address: output.address,
                       lockingScript: output.lockingScript,
                       outputIndex: output.outputIndex,
                       value: output.value,
                       isMine: isMineAddress ? true : false,
+                      isNUTXO: isNUTXOAddress ? true : false,
                     };
                   }
                 );
@@ -518,7 +526,7 @@ class Wallet {
                   return {
                     ...diffOutput,
                     name: nameOutput.name,
-                    isNameOutput: true,
+                    isNameOutpoint: true,
                   };
                 } else {
                   return diffOutput;
