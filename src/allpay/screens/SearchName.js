@@ -6,7 +6,7 @@ import { utils } from 'nipkow-sdk';
 import NameRow from '../components/NameRow';
 import * as allpayActions from '../allpayActions';
 
-class BuyName extends React.Component {
+class SearchName extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -135,4 +135,4 @@ class BuyName extends React.Component {
 
 const mapStateToProps = state => ({});
 
-export default withRouter(connect(mapStateToProps)(BuyName));
+export default withRouter(connect(mapStateToProps)(SearchName));
