@@ -133,9 +133,9 @@ class RenderTransaction extends React.Component {
                         <Grid.Column width='12'>
                           <p className='monospace'>
                             <span
-                              className={isMine.isNameOutpoint ? 'nUTXO' : undefined}
+                              className={isMine && isMine.isNameOutpoint ? 'nUTXO' : undefined}
                               title={
-                                isMine.isNameOutpoint
+                                isMine && isMine.isNameOutpoint
                                   ? `Name Outpoint: ${transactionId}`
                                   : transactionId
                               }>{`${transactionId.substring(0, 50)}...[${input.index}]`}</span>
