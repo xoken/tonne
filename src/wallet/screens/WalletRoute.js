@@ -13,10 +13,11 @@ import SendTransaction from '../components/SendTransaction';
 import WalletPassword from './WalletPassword';
 import WalletHome from './WalletHome';
 import WalletDashboard from './WalletDashboard';
-import BuyName from '../../allpay/screens/BuyName';
-import ProxyProviders from '../../allpay/screens/ProxyProviders';
-import ProxyRegistration from '../../allpay/screens/ProxyRegistration';
-import RenderTransaction from '../../allpay/screens/RenderTransaction';
+// import SearchName from '../../allpay/screens/SearchName';
+import AllpayContainer from '../../allpay/allpayContainer';
+// import ProxyProviders from '../../allpay/screens/ProxyProviders';
+// import ProxyRegistration from '../../allpay/screens/ProxyRegistration';
+// import RenderTransaction from '../../allpay/screens/RenderTransaction';
 import RenameProfile from '../components/RenameProfile';
 import * as authActions from '../../auth/authActions';
 
@@ -115,8 +116,8 @@ class WalletRoute extends React.Component {
           <PrivateRoute path={`${path}/send`}>
             <SendTransaction />
           </PrivateRoute>
-          <PrivateRoute path={`${path}/allpay/buy`}>
-            <BuyName />
+          {/* <PrivateRoute path={`${path}/allpay/buy`}>
+            <SearchName />
           </PrivateRoute>
           <PrivateRoute path={`${path}/allpay/proxy-providers`}>
             <ProxyProviders />
@@ -126,9 +127,10 @@ class WalletRoute extends React.Component {
           </PrivateRoute>
           <PrivateRoute path={`${path}/allpay/render/transaction`}>
             <RenderTransaction />
-          </PrivateRoute>
+          </PrivateRoute> */}
           <PublicRoute exact path={path}>
-            <WalletHome />
+            {/* <WalletHome /> */}
+            <AllpayContainer />
           </PublicRoute>
           <Route path='*'>
             <NoMatch />

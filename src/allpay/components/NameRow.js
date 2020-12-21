@@ -2,7 +2,7 @@ import React from 'react';
 import { Button, Checkbox } from 'semantic-ui-react';
 import { utils } from 'nipkow-sdk';
 
-export default class BuyName extends React.Component {
+export default class NameRow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {

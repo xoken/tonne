@@ -1,4 +1,5 @@
 import { createAction } from 'redux-act';
+import { allpayFlows } from './allpayRoutes';
 import AllpayService from './allpayService';
 
 export const getResellerURIRequest = createAction('GET_RESELLER_URI_REQUEST');
@@ -92,5 +93,59 @@ export const signRelayTransaction = data => async (dispatch, getState, { service
   } catch (error) {
     dispatch(signRelayTransactionFailure());
     throw error;
+  }
+};
+
+export const UPDATE_PROGRESS_STEP = 'UPDATE_PROGRESS_STEP';
+export const updateProgress = step => dispatch => {
+  dispatch({
+    type: UPDATE_PROGRESS_STEP,
+    payload: step,
+  });
+};
+
+export const ALLPAY_UPDATE_SCREEN_PROPS = 'ALLPAY_UPDATE_SCREEN_PROPS';
+
+export const updateScreenProps = props => dispatch => {
+  dispatch({
+    type: ALLPAY_UPDATE_SCREEN_PROPS,
+    payload: props,
+  });
+};
+
+export const RESET_ALLPAY = 'RESET_ALLPAY';
+export const resetAllpay = () => async dispatch => {
+  dispatch({ type: RESET_ALLPAY, payload: {} });
+};
+
+export const incrementFlow = (history, count = 1) => (dispatch, getState) => {
+  const { activeStep, id } = getState();
+  const nextStep = activeStep + count;
+
+  dispatch({
+    type: ALLPAY_UPDATE_SCREEN_PROPS,
+    payload: {
+      activeStep: nextStep,
+    },
+  });
+  dispatch(updateProgress(nextStep));
+  history.push(allpayFlows[id][nextStep - 1]);
+};
+
+export const decrementFlow = (history, count = 1) => (dispatch, getState) => {
+  const { activeStep, id } = getState();
+  if (activeStep !== 1) {
+    const prevStep = activeStep - count;
+    dispatch({
+      type: ALLPAY_UPDATE_SCREEN_PROPS,
+      payload: {
+        activeStep: prevStep,
+      },
+    });
+    dispatch(updateProgress(prevStep));
+    history.push(allpayFlows[id][prevStep - 1]);
+  } else {
+    dispatch(resetAllpay());
+    history.push('/auth');
   }
 };
