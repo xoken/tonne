@@ -242,6 +242,7 @@ export const getOutputs = async (options?: {
   }
 };
 
+/* See if this can be removed */
 export const getOutputsLastFetched = async () => {
   try {
     const doc = await db.get('lastFetched');
@@ -255,6 +256,7 @@ export const getOutputsLastFetched = async () => {
   }
 };
 
+/* See if this can be removed */
 export const getOutputsLastUpdated = async () => {
   try {
     const doc = await db.get('lastUpdated');

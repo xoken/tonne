@@ -574,22 +574,20 @@ class Wallet {
 
   async _getOutputs(
     derivedKeys: any[],
-    prevOutputs: any[] = [],
     prevDiffOutputs: any[] = [],
     prevKeys: any[] = []
   ): Promise<any> {
     const chunkedUsedDerivedKeys = _.chunk(derivedKeys, 20);
-    const data = await Promise.all(
+    const outputsByAddresses = await Promise.all(
       chunkedUsedDerivedKeys.map(async (chunkedUsedDerivedKey) => {
         return await this._getOutputsByAddresses(chunkedUsedDerivedKey);
       })
     );
-    const outputs = data.flat();
-    const diffOutputs = await this._getDiffOutputs(outputs);
+    const diffOutputs = outputsByAddresses.flat();
     const updatedKeys = derivedKeys.map(
       (key: { address: string; indexText: string; isUsed: boolean }) => {
         if (!key.isUsed) {
-          const found = outputs.some(
+          const found = diffOutputs.some(
             (output: { address: any }) => output.address === key.address
           );
           return { ...key, isUsed: found };
@@ -597,7 +595,6 @@ class Wallet {
         return key;
       }
     );
-    const newOutputs = [...prevOutputs, ...outputs];
     const newDiffOutputs = [...prevDiffOutputs, ...diffOutputs];
     const newKeys = [...prevKeys, ...updatedKeys];
     const walletKeys = newKeys.filter((key: { indexText: string }) => {
@@ -641,15 +638,9 @@ class Wallet {
 
       const nextKeys = [...nextDerivedKeys, ...nextNUTXODerivedKeys];
 
-      return await this._getOutputs(
-        nextKeys,
-        newOutputs,
-        newDiffOutputs,
-        newKeys
-      );
+      return await this._getOutputs(nextKeys, newDiffOutputs, newKeys);
     } else {
       return {
-        outputs: newOutputs,
         diffOutputs: newDiffOutputs,
         derivedKeys: walletKeys,
         nUTXODerivedKeys: nUTXOKeys,
@@ -682,7 +673,7 @@ class Wallet {
           return outputs;
         }
       } else {
-        return diffOutputs;
+        return [...prevOutputs, ...diffOutputs];
       }
     } else {
       const outputs = [...prevOutputs, ...data.outputs];
