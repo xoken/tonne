@@ -37,10 +37,10 @@ export const getResellerURI = name => async (dispatch, getState, { serviceInject
 export const buyName = data => async (dispatch, getState, { serviceInjector }) => {
   dispatch(buyNameRequest());
   try {
-    const { psbt, name, inputs, ownOutputs, snv } = await serviceInjector(AllpayService).buyName(
-      data
-    );
-    dispatch(buyNameSuccess({ psbt, name, inputs, ownOutputs, snv }));
+    const { psbt, outpoint, inputs, ownOutputs, snv } = await serviceInjector(
+      AllpayService
+    ).buyName(data);
+    dispatch(buyNameSuccess({ psbt, outpoint, inputs, ownOutputs, snv }));
   } catch (error) {
     dispatch(buyNameFailure());
     throw error;
@@ -96,16 +96,12 @@ export const signRelayTransaction = data => async (dispatch, getState, { service
   }
 };
 
-export const UPDATE_PROGRESS_STEP = 'UPDATE_PROGRESS_STEP';
-export const updateProgress = step => dispatch => {
-  dispatch({
-    type: UPDATE_PROGRESS_STEP,
-    payload: step,
-  });
+export const updateProgressStep = createAction('UPDATE_PROGRESS_STEP');
+export const updateProgress = payload => dispatch => {
+  dispatch(updateProgressStep(payload));
 };
 
 export const ALLPAY_UPDATE_SCREEN_PROPS = 'ALLPAY_UPDATE_SCREEN_PROPS';
-
 export const updateScreenProps = props => dispatch => {
   dispatch({
     type: ALLPAY_UPDATE_SCREEN_PROPS,
@@ -133,7 +129,11 @@ export const incrementFlow = (history, count = 1) => (dispatch, getState) => {
 };
 
 export const decrementFlow = (history, count = 1) => (dispatch, getState) => {
-  const { activeStep, id } = getState();
+  const {
+    allpay: {
+      ui: { activeStep },
+    },
+  } = getState();
   if (activeStep !== 1) {
     const prevStep = activeStep - count;
     dispatch({
@@ -143,9 +143,9 @@ export const decrementFlow = (history, count = 1) => (dispatch, getState) => {
       },
     });
     dispatch(updateProgress(prevStep));
-    history.push(allpayFlows[id][prevStep - 1]);
+    history.push(allpayFlows['buy-allpay-name'][prevStep - 1]);
   } else {
     dispatch(resetAllpay());
-    history.push('/auth');
+    history.push('/wallet/dashboard');
   }
 };

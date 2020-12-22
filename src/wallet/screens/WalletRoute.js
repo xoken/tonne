@@ -13,11 +13,8 @@ import SendTransaction from '../components/SendTransaction';
 import WalletPassword from './WalletPassword';
 import WalletHome from './WalletHome';
 import WalletDashboard from './WalletDashboard';
-// import SearchName from '../../allpay/screens/SearchName';
 import AllpayContainer from '../../allpay/allpayContainer';
-// import ProxyProviders from '../../allpay/screens/ProxyProviders';
-// import ProxyRegistration from '../../allpay/screens/ProxyRegistration';
-// import RenderTransaction from '../../allpay/screens/RenderTransaction';
+import ProxyRegistration from '../../allpay/screens/ProxyRegistration';
 import RenameProfile from '../components/RenameProfile';
 import * as authActions from '../../auth/authActions';
 
@@ -57,11 +54,11 @@ class WalletRoute extends React.Component {
                   <Link to={`/wallet/dashboard`}>Wallet Dashboard</Link>
                 </Dropdown.Item>
                 <Dropdown.Item>
-                  <Link to={`/wallet/allpay/buy`}>Buy Allpay Name</Link>
+                  <Link to={`/wallet/allpay/search`}>Buy Allpay Name</Link>
                 </Dropdown.Item>
-                <Dropdown.Item>
+                {/* <Dropdown.Item>
                   <Link to={`/wallet/allpay/proxy-providers`}>Register with Proxy</Link>
-                </Dropdown.Item>
+                </Dropdown.Item> */}
                 <Dropdown.Item text='Rename Profile' onClick={this.toggleRenameProfileModal} />
                 <Dropdown.Item text='Logout' onClick={this.onLogout} />
               </Dropdown.Menu>
@@ -116,21 +113,12 @@ class WalletRoute extends React.Component {
           <PrivateRoute path={`${path}/send`}>
             <SendTransaction />
           </PrivateRoute>
-          {/* <PrivateRoute path={`${path}/allpay/buy`}>
-            <SearchName />
-          </PrivateRoute>
-          <PrivateRoute path={`${path}/allpay/proxy-providers`}>
-            <ProxyProviders />
-          </PrivateRoute>
-          <PrivateRoute path={`${path}/allpay/register`}>
-            <ProxyRegistration />
-          </PrivateRoute>
-          <PrivateRoute path={`${path}/allpay/render/transaction`}>
-            <RenderTransaction />
-          </PrivateRoute> */}
-          <PublicRoute exact path={path}>
-            {/* <WalletHome /> */}
+          <PrivateRoute path={`${path}/allpay`}>
             <AllpayContainer />
+          </PrivateRoute>
+          <PublicRoute exact path={path}>
+            <WalletHome />
+            {/* <ProxyRegistration /> */}
           </PublicRoute>
           <Route path='*'>
             <NoMatch />

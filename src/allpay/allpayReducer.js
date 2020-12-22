@@ -4,8 +4,13 @@ import * as walletActions from '../wallet/walletActions';
 import * as authActions from '../auth/authActions';
 
 const INITIAL_STATE = {
+  ui: {
+    activeStep: 1,
+    title: null,
+    progressTotalSteps: 5,
+  },
   psbt: null,
-  name: null,
+  outpoint: null,
   inputs: null,
   ownOutputs: null,
   snv: null,
@@ -17,15 +22,28 @@ const INITIAL_STATE = {
 
 export default createReducer(
   {
-    [allpayActions.buyNameSuccess]: (state, { psbt, name, inputs, ownOutputs, snv }) => ({
+    [allpayActions.ALLPAY_UPDATE_SCREEN_PROPS]: (state, payload) => ({
+      ...state,
+      ui: {
+        ...state.ui,
+        ...payload,
+      },
+    }),
+    [allpayActions.RESET_ALLPAY]: () => ({
+      ...INITIAL_STATE,
+    }),
+    [allpayActions.buyNameSuccess]: (state, { psbt, outpoint, inputs, ownOutputs, snv }) => ({
       ...state,
       psbt,
-      name,
+      outpoint,
       inputs,
       ownOutputs,
       snv,
     }),
     [allpayActions.registerNameRequest]: () => ({
+      psbt: null,
+      inputs: null,
+      ownOutputs: null,
       snv: null,
       addressCommitment: null,
       utxoCommitment: null,

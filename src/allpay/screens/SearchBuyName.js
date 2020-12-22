@@ -1,12 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Header, Input } from 'semantic-ui-react';
+import { Header, Input, Popup } from 'semantic-ui-react';
 import { utils } from 'nipkow-sdk';
 import NameRow from '../components/NameRow';
 import * as allpayActions from '../allpayActions';
 
-class SearchName extends React.Component {
+class SearchBuyName extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -17,6 +17,15 @@ class SearchName extends React.Component {
     };
   }
 
+  componentDidMount() {
+    const { dispatch } = this.props;
+    dispatch(
+      allpayActions.updateScreenProps({
+        title: 'Buy Allpay name',
+      })
+    );
+  }
+
   onKeyPress = e => {
     if (e.key === 'Enter') {
       this.onSearch();
@@ -24,19 +33,25 @@ class SearchName extends React.Component {
   };
 
   onSearch = async () => {
+    this.setState({ searchResults: undefined, isError: false, message: '' });
     const { queryName } = this.state;
     if (queryName) {
-      try {
-        const { dispatch } = this.props;
-        // const data = { host: '127.0.0.1', port: 9189, name: [115], isProducer: false };
-        // await dispatch(allpayActions.buyName(data));
-        // this.props.history.push('/wallet/allpay/render/transaction');
-        const { isAvailable, name, uri, protocol } = await dispatch(
-          allpayActions.getResellerURI(utils.getCodePoint(queryName))
-        );
-        this.setState({ searchResults: [{ isAvailable, name, uri, protocol }] });
-      } catch (error) {
-        this.setState({ isError: true, message: error.message });
+      if (queryName.includes('/') || queryName.includes('\\')) {
+        this.setState({ isError: true, message: '\\ , / characters are not allowed' });
+      } else {
+        try {
+          const { dispatch } = this.props;
+          // const data = { host: '127.0.0.1', port: 9189, name: [115], isProducer: false };
+          // await dispatch(allpayActions.buyName(data));
+          // this.props.history.push('/wallet/allpay/confirm-purchase');
+          // [97, 112, 47]
+          const { isAvailable, name, uri, protocol } = await dispatch(
+            allpayActions.getResellerURI([97, 112, 47].concat(utils.getCodePoint(queryName)))
+          );
+          this.setState({ searchResults: [{ isAvailable, name, uri, protocol }] });
+        } catch (error) {
+          this.setState({ isError: true, message: error.message });
+        }
       }
     }
   };
@@ -45,7 +60,7 @@ class SearchName extends React.Component {
     const { dispatch } = this.props;
     try {
       await dispatch(allpayActions.buyName(data));
-      this.props.history.push('/wallet/allpay/render/transaction');
+      this.props.history.push('/wallet/allpay/confirm-purchase');
     } catch (error) {
       this.setState({ isError: true, message: error.message });
     }
@@ -88,19 +103,32 @@ class SearchName extends React.Component {
   render() {
     return (
       <>
-        <Header as='h2' textAlign='center'>
-          Buy Allpay name
-        </Header>
         <div className='ui grid'>
           <div className='ten wide column centered row'>
             <div className='column'>
-              <Input
-                fluid
-                placeholder='Enter a name you want to purchase'
-                action={{ content: 'Search', onClick: this.onSearch }}
-                onChange={event => this.setState({ queryName: event.target.value })}
-                onKeyPress={this.onKeyPress}
-              />
+              <div className='ui fluid action labeled large input'>
+                <Popup
+                  trigger={<div className='ui yellow label'>ap/</div>}
+                  content='AllPay default namespace'
+                  inverted
+                />
+                <input
+                  type='text'
+                  placeholder='Enter a name you want to purchase'
+                  onChange={event =>
+                    this.setState({
+                      queryName: event.target.value,
+                      searchResults: undefined,
+                      isError: false,
+                      message: '',
+                    })
+                  }
+                  onKeyPress={this.onKeyPress}
+                />
+                <button className='ui yellow button' onClick={this.onSearch}>
+                  Search
+                </button>
+              </div>
             </div>
           </div>
           {/* <div className='ten wide column centered row'>
@@ -135,4 +163,4 @@ class SearchName extends React.Component {
 
 const mapStateToProps = state => ({});
 
-export default withRouter(connect(mapStateToProps)(SearchName));
+export default withRouter(connect(mapStateToProps)(SearchBuyName));

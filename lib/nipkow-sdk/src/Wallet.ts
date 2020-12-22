@@ -1275,7 +1275,7 @@ class Wallet {
     // const feeRate = 5;
     // await this._createSendTransaction(utxos, targets, feeRate);
     const keys: any[] = await this._getKeys([
-      'mtvVa8AiobcjDPBvx91XMBQVPXqNaznD2L',
+      'n3cFZxbA1TAfwQk2HEBYw35L47g5M4BeEL',
     ]);
     console.log(keys[0].privateKey.toString('hex'));
     // Persist.runScript();

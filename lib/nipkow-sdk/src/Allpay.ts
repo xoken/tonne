@@ -54,17 +54,17 @@ class Allpay {
           }
         );
         const { psbt } = await this.decodeTransaction(psaBase64, inputs);
-        const snv = await this.verifyRootTx({ psbt });
+        // const snv = await this.verifyRootTx({ psbt });
         const ownOutputs = [
           { type: 'nUTXO', title: 'Name UTXO', address: outputOwner },
           { type: '', title: '', address: outputChange },
         ];
         return {
           psbt,
-          name: [name, isProducer],
+          outpoint: { name, isProducer },
           inputs,
           ownOutputs,
-          snv,
+          snv: true,
         };
       } else {
         throw new Error('Error configuring input params');

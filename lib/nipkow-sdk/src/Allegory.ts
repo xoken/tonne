@@ -331,7 +331,6 @@ function _getExtensions(datas: any[]) {
     if (data[0] === 0) {
       return _getOwnerExtension(data);
     } else {
-      console.log('Check: Got Producer Extension');
       return _getProducerExtension(data);
     }
   });

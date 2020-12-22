@@ -3,27 +3,40 @@ import PropTypes from 'prop-types';
 import { Route, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { VerticalAnimatedSwitch } from '../shared/components/Animations';
-import SearchName from './screens/SearchName';
-import RenderTransaction from './screens/RenderTransaction';
-import ProxyProviders from './screens/ProxyProviders';
+import SearchBuyName from './screens/SearchBuyName';
+import ConfirmNamePurchase from './screens/ConfirmNamePurchase';
+import NameRegistration from './screens/NameRegistration';
+import ProxyRegistration from './screens/ProxyRegistration';
 
 export const allpayPaths = {
-  searchName: '/allpay/search',
-  confirmBuy: '/allpay/confirm-purchase',
-  registerName: '/allpay/register',
+  SearchBuyName: '/wallet/allpay/search',
+  confirmBuy: '/wallet/allpay/confirm-purchase',
+  purchaseSuccess: '/wallet/allpay/purchase-success',
+  registerName: '/wallet/allpay/register',
+  confirmRegister: '/wallet/allpay/confirm-register',
 };
 
 export const allpayFlows = {
-  'buy-allpay-name': [allpayPaths.searchName, allpayPaths.confirmBuy, allpayPaths.registerName],
+  'buy-allpay-name': [allpayPaths.SearchBuyName, allpayPaths.confirmBuy, allpayPaths.registerName],
 };
 
 const AllpayComponent = () => {
   return (
-    <VerticalAnimatedSwitch>
-      <Route exact path={allpayPaths.searchName} render={() => <SearchName />} />
-      <Route exact path={allpayPaths.confirmBuy} render={() => <RenderTransaction />} />
-      <Route exact path={allpayPaths.registerName} render={() => <ProxyProviders />} />
-    </VerticalAnimatedSwitch>
+    <div style={{ paddingLeft: 10 }}>
+      <Route exact path={allpayPaths.SearchBuyName} render={() => <SearchBuyName />} />
+      <Route
+        exact
+        path={allpayPaths.confirmBuy}
+        render={() => <ConfirmNamePurchase activeStep={2} />}
+      />
+      <Route exact path={allpayPaths.purchaseSuccess} render={() => <NameRegistration />} />
+      <Route exact path={allpayPaths.registerName} render={() => <ProxyRegistration />} />
+      <Route
+        exact
+        path={allpayPaths.confirmRegister}
+        render={() => <ConfirmNamePurchase activeStep={5} />}
+      />
+    </div>
   );
 };
 

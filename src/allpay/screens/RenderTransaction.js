@@ -97,19 +97,21 @@ class RenderTransaction extends React.Component {
                   <i title={''} className={''}></i>
                 </Label> */}
                 {snv !== null ? (
-                  <div className='ui green label'>
+                  <div className='ui label'>
                     SNV
-                    <div className='detail'>{snv ? 'Passing' : 'Failing'}</div>
+                    <div className='detail'>
+                      {snv ? <span>&#10003;</span> : <span>&#10005;</span>}
+                    </div>
                   </div>
                 ) : null}
                 {addressCommitment !== null ? (
-                  <div className='ui green label'>
+                  <div className='ui label'>
                     Address Commitment
                     <div className='detail'>{addressCommitment ? 'Passing' : 'Failing'}</div>
                   </div>
                 ) : null}
                 {utxoCommitment !== null ? (
-                  <div className='ui green label'>
+                  <div className='ui label'>
                     UTXO Commitment
                     <div className='detail'>{utxoCommitment ? 'Passing' : 'Failing'}</div>
                   </div>
@@ -138,7 +140,7 @@ class RenderTransaction extends React.Component {
                                 isMine && isMine.isNameOutpoint
                                   ? `Name Outpoint: ${transactionId}`
                                   : transactionId
-                              }>{`${transactionId.substring(0, 50)}...[${input.index}]`}</span>
+                              }>{`${transactionId.substring(0, 30)}...[${input.index}]`}</span>
                           </p>
                         </Grid.Column>
                         <Grid.Column width='4' textAlign='right'>
@@ -213,7 +215,7 @@ class RenderTransaction extends React.Component {
               </Grid.Row>
             </Grid>
           </Segment>
-          <Grid>
+          {/* <Grid>
             <Grid.Row>
               <Grid.Column textAlign='right'>
                 <Button color='yellow' onClick={this.onSignRelay}>
@@ -221,7 +223,7 @@ class RenderTransaction extends React.Component {
                 </Button>
               </Grid.Column>
             </Grid.Row>
-          </Grid>
+          </Grid> */}
         </>
       );
     }
@@ -250,17 +252,17 @@ class RenderTransaction extends React.Component {
   render() {
     return (
       <>
-        <Header as='h2' textAlign='center'>
+        {/* <Header as='h2' textAlign='center'>
           Partially Signed Transaction
-        </Header>
+        </Header> */}
         <div className='ui grid'>
           <div className='column'>{this.renderTransaction()}</div>
         </div>
-        <Grid>
+        {/* <Grid>
           <Grid.Row>
             <Grid.Column width={16}>{this.renderMessage()}</Grid.Column>
           </Grid.Row>
-        </Grid>
+        </Grid> */}
       </>
     );
   }
