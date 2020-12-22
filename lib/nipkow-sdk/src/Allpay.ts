@@ -37,7 +37,8 @@ class Allpay {
         ];
       });
       const outputOwner = await wallet.getUnusedNUTXOAddress();
-      const outputChange = await wallet.getChangeAddress();
+      const { unusedAddresses } = await wallet.getUnusedAddresses();
+      const outputChange = unusedAddresses[0];
       if (outputOwner && outputChange) {
         const {
           data: { psaTx: psaBase64 },
@@ -179,10 +180,11 @@ class Allpay {
         for (let index = 0; index < outputs.length; index++) {
           const output = outputs[index];
           if (!output.address) {
-            const address = await wallet.getChangeAddress();
+            const { unusedAddresses } = await wallet.getUnusedAddresses();
+            const address = unusedAddresses[0];
             output.address = address;
             ownOutputs.push({ type: '', title: '', address });
-            await Persist.updateDerivedKeys([address]);
+            await wallet.updateDerivedKeys([address]);
           }
           psbt.addOutput({
             address: output.address,
@@ -393,8 +395,8 @@ class Allpay {
     const proxyHost = '127.0.0.1';
     const proxyPort = 9099;
     const recipient = sha256(lockingScript).toString();
-    const { unusedDerivedAddresses } = await wallet.getUnusedDerivedKeys();
-    const changeAddress = unusedDerivedAddresses[0].address;
+    const { unusedAddresses } = await wallet.getUnusedAddresses();
+    const changeAddress = unusedAddresses[0].address;
     const { utxos } = await Persist.getUTXOs();
     const targets = [{ value: Number(amountInSatoshi) }];
     let { inputs, outputs } = coinSelect(utxos, targets, feeRate);

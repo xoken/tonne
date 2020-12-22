@@ -49,13 +49,13 @@ export const createAllpaySendTransactionFailure = createAction(
   'CREATE_ALLPAY_SEND_TRANSACTION_FAILURE'
 );
 
-export const getUsedDerivedKeysRequest = createAction('GET_USED_DERIVED_KEYS_REQUEST');
-export const getUsedDerivedKeysSuccess = createAction('GET_USED_DERIVED_KEYS_SUCCESS');
-export const getUsedDerivedKeysFailure = createAction('GET_USED_DERIVED_KEYS_FAILURE');
+export const getUsedAddressesRequest = createAction('GET_USED_ADDRESSES_REQUEST');
+export const getUsedAddressesSuccess = createAction('GET_USED_ADDRESSES_SUCCESS');
+export const getUsedAddressesFailure = createAction('GET_USED_ADDRESSES_FAILURE');
 
-export const getUnusedDerivedKeysRequest = createAction('GET_UNUSED_DERIVED_KEYS_REQUEST');
-export const getUnusedDerivedKeysSuccess = createAction('GET_UNUSED_DERIVED_KEYS_SUCCESS');
-export const getUnusedDerivedKeysFailure = createAction('GET_UNUSED_DERIVED_KEYS_FAILURE');
+export const getUnusedAddressesRequest = createAction('GET_UNUSED_ADDRESSES_REQUEST');
+export const getUnusedAddressesSuccess = createAction('GET_UNUSED_ADDRESSES_SUCCESS');
+export const getUnusedAddressesFailure = createAction('GET_UNUSED_ADDRESSES_FAILURE');
 
 export const getTransactions = options => async (dispatch, getState, { serviceInjector }) => {
   dispatch(getTransactionsRequest());
@@ -187,32 +187,30 @@ export const createAllpaySendTransaction = args => async (
   }
 };
 
-export const getUsedDerivedKeys = () => async (dispatch, getState, { serviceInjector }) => {
-  dispatch(getUsedDerivedKeysRequest());
+export const getUsedAddresses = () => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(getUsedAddressesRequest());
   try {
-    const { usedDerivedKeys } = await serviceInjector(WalletService).getUsedDerivedKeys();
-    dispatch(getUsedDerivedKeysSuccess({ usedDerivedKeys }));
+    const { usedAddresses } = await serviceInjector(WalletService).getUsedAddresses();
+    dispatch(getUsedAddressesSuccess({ usedAddresses }));
   } catch (error) {
-    dispatch(getUsedDerivedKeysFailure());
+    dispatch(getUsedAddressesFailure());
     throw error;
   }
 };
 
-export const getUnusedDerivedKeys = () => async (dispatch, getState, { serviceInjector }) => {
+export const getUnusedAddresses = () => async (dispatch, getState, { serviceInjector }) => {
   const {
-    wallet: { unusedDerivedAddresses },
+    wallet: { unusedAddresses },
   } = getState();
-  dispatch(getUnusedDerivedKeysRequest());
-  const excludeAddresses = unusedDerivedAddresses.map(
-    unusedDerivedAddress => unusedDerivedAddress.address
-  );
+  dispatch(getUnusedAddressesRequest());
+  const excludeAddresses = unusedAddresses.map(unusedAddress => unusedAddress.address);
   try {
-    const { unusedDerivedAddresses } = await serviceInjector(WalletService).getUnusedDerivedKeys({
+    const { unusedAddresses } = await serviceInjector(WalletService).getUnusedAddresses({
       excludeAddresses,
     });
-    dispatch(getUnusedDerivedKeysSuccess({ unusedDerivedAddresses }));
+    dispatch(getUnusedAddressesSuccess({ unusedAddresses }));
   } catch (error) {
-    dispatch(getUnusedDerivedKeysFailure());
+    dispatch(getUnusedAddressesFailure());
     throw error;
   }
 };

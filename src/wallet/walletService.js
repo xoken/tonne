@@ -33,12 +33,12 @@ class WalletService {
     return await allPay.createTransaction(args);
   }
 
-  async getUsedDerivedKeys() {
-    return await wallet.getUsedDerivedKeys();
+  async getUsedAddresses() {
+    return await wallet.getUsedAddresses();
   }
 
-  async getUnusedDerivedKeys(options) {
-    return await wallet.getUnusedDerivedKeys(options);
+  async getUnusedAddresses(options) {
+    return await wallet.getUnusedAddresses(options);
   }
 }
 

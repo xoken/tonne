@@ -806,30 +806,6 @@ class Wallet {
     }
   }
 
-  async getChangeAddress() {
-    const { existingDerivedKeys } = await Persist.getDerivedKeys();
-    const unusedDerivedKeys = existingDerivedKeys
-      .filter(
-        (existingDerivedKey: { isUsed: any }) =>
-          existingDerivedKey.isUsed === false
-      )
-      .map(
-        ({ indexText, address }: { indexText: string; address: string }) =>
-          address
-      );
-    // const ununsedKeyIndex = existingDerivedKeys.findIndex(
-    //   (derivedKey: { isUsed: boolean }) => derivedKey.isUsed === false
-    // );
-    // const newDerivedKeys = [...existingDerivedKeys];
-    // newDerivedKeys[ununsedKeyIndex] = {
-    //   ...newDerivedKeys[ununsedKeyIndex],
-    //   isUsed: true,
-    // };
-    // Persist.upsertDerivedKeys(newDerivedKeys);
-    // return newDerivedKeys[ununsedKeyIndex].address;
-    return unusedDerivedKeys.find(Boolean);
-  }
-
   async getUnusedNUTXOAddress() {
     const { existingNUTXODerivedKeys } = await Persist.getNUTXODerivedKeys();
     const unusedNUTXODerivedKeys = existingNUTXODerivedKeys
@@ -841,16 +817,6 @@ class Wallet {
         ({ indexText, address }: { indexText: string; address: string }) =>
           address
       );
-    // const ununsedKeyIndex = existingNUTXODerivedKeys.findIndex(
-    //   (derivedKey: { isUsed: boolean }) => derivedKey.isUsed === false
-    // );
-    // const newDerivedKeys = [...existingNUTXODerivedKeys];
-    // newDerivedKeys[ununsedKeyIndex] = {
-    //   ...newDerivedKeys[ununsedKeyIndex],
-    //   isUsed: true,
-    // };
-    // Persist.upsertNUTXODerivedKeys(newDerivedKeys);
-    // return newDerivedKeys[ununsedKeyIndex].address;
     return unusedNUTXODerivedKeys.find(Boolean);
   }
 
@@ -883,6 +849,32 @@ class Wallet {
       );
       return ECPair.fromWIF(privkey, networks.regtest);
     });
+  }
+
+  async relayTx(
+    transactionHex: string,
+    inputs: object[],
+    usedAddresses: string[]
+  ) {
+    const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
+    const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
+      base64
+    );
+    if (txBroadcast) {
+      const spentUtxos = inputs.map((input: any) => ({
+        ...input,
+        isSpent: true,
+      }));
+      await Persist.updateOutputs(spentUtxos);
+      await Persist.upsertUnconfirmedTransactions([
+        {
+          txId: transaction.getId(),
+          confirmed: false,
+          outputs: spentUtxos,
+          createdAt: new Date(),
+        },
+      ]);
+    }
   }
 
   async _createSendTransaction(utxos: any[], targets: any[], feeRate: number) {
@@ -930,10 +922,14 @@ class Wallet {
           });
         }
       );
+      const usedAddresses = [];
       for (let index = 0; index < outputs.length; index++) {
         const output = outputs[index];
         if (!output.address) {
-          output.address = await this.getChangeAddress();
+          const { unusedAddresses } = await this.getUnusedAddresses();
+          const address = unusedAddresses[0];
+          usedAddresses.push(address);
+          output.address = address;
         }
         psbt.addOutput({
           address: output.address,
@@ -951,25 +947,7 @@ class Wallet {
       psbt.finalizeAllInputs();
       const transaction = psbt.extractTransaction(true);
       const transactionHex = transaction.toHex();
-      const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
-      const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
-        base64
-      );
-      if (txBroadcast) {
-        const spentUtxos = inputs.map((input: any) => ({
-          ...input,
-          isSpent: true,
-        }));
-        await Persist.updateOutputs(spentUtxos);
-        await Persist.upsertUnconfirmedTransactions([
-          {
-            txId: transaction.getId(),
-            confirmed: false,
-            outputs: spentUtxos,
-            createdAt: new Date(),
-          },
-        ]);
-      }
+      this.relayTx(transactionHex, inputs, usedAddresses);
     } catch (error) {
       throw error;
     }
@@ -1025,12 +1003,12 @@ class Wallet {
     return bip39.generateMnemonic(strength, rng, wordlist);
   }
 
-  async getUsedDerivedKeys() {
+  async getUsedAddresses() {
     const { outputs } = await Persist.getOutputs();
     const outputsGroupedByAddress = _.groupBy(outputs, (output) => {
       return output.address;
     });
-    const usedDerivedKeys: {
+    const usedAddresses: {
       address: string;
       incomingBalance: number;
       outgoingBalance: number;
@@ -1052,7 +1030,7 @@ class Wallet {
         }
         incomingBalance = incomingBalance + output.value;
       });
-      usedDerivedKeys.push({
+      usedAddresses.push({
         address,
         incomingBalance,
         outgoingBalance,
@@ -1061,16 +1039,16 @@ class Wallet {
       });
     }
     return {
-      usedDerivedKeys,
+      usedAddresses,
     };
   }
 
-  async getUnusedDerivedKeys(options?: {
+  async getUnusedAddresses(options?: {
     excludeAddresses?: string[];
     count?: number;
-  }): Promise<{ unusedDerivedAddresses: any[] }> {
+  }): Promise<{ unusedAddresses: any[] }> {
     const { existingDerivedKeys } = await Persist.getDerivedKeys();
-    const unusedDerivedKeys = existingDerivedKeys
+    const unusedAddresses = existingDerivedKeys
       .filter(
         (existingDerivedKey: { isUsed: any }) =>
           existingDerivedKey.isUsed === false
@@ -1081,7 +1059,7 @@ class Wallet {
         })
       );
     if (options?.excludeAddresses) {
-      const filteredUnusedDerivedKeys = unusedDerivedKeys.filter(
+      const filteredUnusedAddresses = unusedAddresses.filter(
         (existingDerivedKey: { address: string }) => {
           return !options.excludeAddresses?.includes(
             existingDerivedKey.address
@@ -1090,24 +1068,21 @@ class Wallet {
       );
       if (options?.count) {
         return {
-          unusedDerivedAddresses: filteredUnusedDerivedKeys.slice(
-            0,
-            options.count
-          ),
+          unusedAddresses: filteredUnusedAddresses.slice(0, options.count),
         };
       } else {
         return {
-          unusedDerivedAddresses: filteredUnusedDerivedKeys.slice(0, 1),
+          unusedAddresses: filteredUnusedAddresses.slice(0, 1),
         };
       }
     }
     if (options?.count) {
       return {
-        unusedDerivedAddresses: unusedDerivedKeys.slice(0, options.count),
+        unusedAddresses: unusedAddresses.slice(0, options.count),
       };
     }
     return {
-      unusedDerivedAddresses: unusedDerivedKeys.slice(0, 1),
+      unusedAddresses: unusedAddresses.slice(0, 1),
     };
   }
 
@@ -1151,12 +1126,12 @@ class Wallet {
     return { profiles: await Persist.getProfiles() };
   }
 
-  async logout() {
-    return await Persist.destroy();
-  }
-
   async getUnregisteredName() {
     return await Persist.getUnregisteredName();
+  }
+
+  async logout() {
+    return await Persist.destroy();
   }
 
   async runScript() {

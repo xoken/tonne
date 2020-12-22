@@ -7,8 +7,8 @@ const INITIAL_STATE = {
   transactions: [],
   nextTransactionCursor: null,
   balance: 0,
-  usedDerivedKeys: null,
-  unusedDerivedAddresses: [],
+  usedAddresses: null,
+  unusedAddresses: [],
 };
 
 export default createReducer(
@@ -58,24 +58,24 @@ export default createReducer(
         return transaction;
       }),
     }),
-    [actions.getUsedDerivedKeysRequest]: state => ({
+    [actions.getUsedAddressesRequest]: state => ({
       ...state,
       isLoading: true,
     }),
-    [actions.getUsedDerivedKeysSuccess]: (state, { usedDerivedKeys }) => ({
+    [actions.getUsedAddressesSuccess]: (state, { usedAddresses }) => ({
       ...state,
       isLoading: false,
-      usedDerivedKeys,
+      usedAddresses,
     }),
-    [actions.getUsedDerivedKeysFailure]: state => ({
+    [actions.getUsedAddressesFailure]: state => ({
       ...state,
       isLoading: true,
     }),
-    [actions.getUnusedDerivedKeysSuccess]: (state, { unusedDerivedAddresses }) => ({
+    [actions.getUnusedAddressesSuccess]: (state, { unusedAddresses }) => ({
       ...state,
-      unusedDerivedAddresses: state.unusedDerivedAddresses
-        ? [...state.unusedDerivedAddresses, ...unusedDerivedAddresses]
-        : unusedDerivedAddresses,
+      unusedAddresses: state.unusedAddresses
+        ? [...state.unusedAddresses, ...unusedAddresses]
+        : unusedAddresses,
     }),
     [authActions.logoutSuccess]: state => ({
       ...INITIAL_STATE,

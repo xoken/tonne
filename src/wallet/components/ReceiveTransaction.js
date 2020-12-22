@@ -15,8 +15,8 @@ class ReceiveTransaction extends React.Component {
 
   async componentDidMount() {
     const { dispatch } = this.props;
-    await dispatch(walletActions.getUsedDerivedKeys());
-    await dispatch(walletActions.getUnusedDerivedKeys());
+    await dispatch(walletActions.getUsedAddresses());
+    await dispatch(walletActions.getUnusedAddresses());
   }
 
   onCopy = address => () => {
@@ -36,13 +36,13 @@ class ReceiveTransaction extends React.Component {
 
   onNewUnusedAddress = () => {
     const { dispatch } = this.props;
-    dispatch(walletActions.getUnusedDerivedKeys());
+    dispatch(walletActions.getUnusedAddresses());
   };
 
-  renderUnusedDerivedKeys() {
-    const { unusedDerivedAddresses } = this.props;
+  renderUnusedAddresses() {
+    const { unusedAddresses } = this.props;
     const { copiedAddress } = this.state;
-    if (unusedDerivedAddresses && unusedDerivedAddresses.length > 0) {
+    if (unusedAddresses && unusedAddresses.length > 0) {
       return (
         <>
           <div className='ui grid'>
@@ -52,14 +52,14 @@ class ReceiveTransaction extends React.Component {
             <div className='right floated right aligned six wide column'>
               <Button
                 color='yellow'
-                disabled={unusedDerivedAddresses.length > 10 ? true : false}
+                disabled={unusedAddresses.length > 10 ? true : false}
                 onClick={this.onNewUnusedAddress}>
                 Get new Addresses
               </Button>
             </div>
           </div>
           <Divider />
-          {unusedDerivedAddresses.map(({ address }, index) => (
+          {unusedAddresses.map(({ address }, index) => (
             <div className='ui two column grid' key={index.toString()}>
               <div className='column'>
                 <div className='ui fluid action input'>
@@ -85,9 +85,9 @@ class ReceiveTransaction extends React.Component {
     return null;
   }
 
-  renderUsedDerivedKeys() {
-    const { usedDerivedKeys } = this.props;
-    if (usedDerivedKeys && usedDerivedKeys.length > 0) {
+  renderUsedAddresses() {
+    const { usedAddresses } = this.props;
+    if (usedAddresses && usedAddresses.length > 0) {
       return (
         <>
           <Table striped>
@@ -99,7 +99,7 @@ class ReceiveTransaction extends React.Component {
               </Table.Row>
             </Table.Header>
             <Table.Body>
-              {usedDerivedKeys.map(
+              {usedAddresses.map(
                 (
                   { address, incomingBalance, outgoingBalance, currentBalance, lastTransaction },
                   index
@@ -138,8 +138,8 @@ class ReceiveTransaction extends React.Component {
   render() {
     return (
       <>
-        {this.renderUnusedDerivedKeys()}
-        {this.renderUsedDerivedKeys()}
+        {this.renderUnusedAddresses()}
+        {this.renderUsedAddresses()}
       </>
     );
   }
@@ -159,8 +159,8 @@ ReceiveTransaction.defaultProps = {};
 
 const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
-  usedDerivedKeys: state.wallet.usedDerivedKeys,
-  unusedDerivedAddresses: state.wallet.unusedDerivedAddresses,
+  usedAddresses: state.wallet.usedAddresses,
+  unusedAddresses: state.wallet.unusedAddresses,
 });
 
 export default connect(mapStateToProps)(ReceiveTransaction);
