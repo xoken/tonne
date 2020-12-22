@@ -91,7 +91,7 @@ class SendTransaction extends React.Component {
               feeRate: Number(feeRate),
             })
           );
-          this.props.history.push('/wallet/allpay/render/transaction');
+          this.props.history.push('/wallet/allpay/transaction');
           // this.setState({ isError: false, message: 'Transaction Successful' });
         } catch (error) {
           console.log(error);

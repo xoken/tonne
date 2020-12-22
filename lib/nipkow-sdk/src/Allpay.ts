@@ -177,14 +177,17 @@ class Allpay {
           }
         );
 
+        const usedAddresses: string[] = [];
         for (let index = 0; index < outputs.length; index++) {
           const output = outputs[index];
           if (!output.address) {
-            const { unusedAddresses } = await wallet.getUnusedAddresses();
+            const { unusedAddresses } = await wallet.getUnusedAddresses({
+              excludeAddresses: usedAddresses,
+            });
             const address = unusedAddresses[0];
+            usedAddresses.push(address);
             output.address = address;
             ownOutputs.push({ type: '', title: '', address });
-            await wallet.updateDerivedKeys([address]);
           }
           psbt.addOutput({
             address: output.address,
@@ -228,9 +231,11 @@ class Allpay {
   async signRelayTransaction({
     psbtHex,
     inputs,
+    ownOutputs,
   }: {
     psbtHex: string;
     inputs: any[];
+    ownOutputs: any[];
   }) {
     const psbt: Psbt = Psbt.fromHex(psbtHex, {
       network: network.BITCOIN_SV_REGTEST,
@@ -261,27 +266,8 @@ class Allpay {
     psbt.validateSignaturesOfAllInputs();
     psbt.finalizeAllInputs();
     const transaction = psbt.extractTransaction(true);
-    const transactionHex = transaction.toHex();
-    const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
-    const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
-      base64
-    );
-    if (txBroadcast) {
-      const spentUtxos = inputs.map((input: any) => ({
-        ...input,
-        isSpent: true,
-      }));
-      await Persist.updateOutputs(spentUtxos);
-      await Persist.upsertUnconfirmedTransactions([
-        {
-          txId: transaction.getId(),
-          confirmed: false,
-          outputs: spentUtxos,
-          createdAt: new Date(),
-        },
-      ]);
-    }
-    return { txBroadcast };
+    const usedAddresses = ownOutputs.map(({ address }) => address);
+    return wallet.relayTx(transaction, inputs, usedAddresses);
   }
 
   async verifyRootTx(args: {
@@ -444,6 +430,7 @@ class Allpay {
         return {
           psbt,
           inputs: inputs,
+          ownOutputs: [{ type: '', title: '', address: changeAddress }],
           addressCommitment,
           utxoCommitment,
         };

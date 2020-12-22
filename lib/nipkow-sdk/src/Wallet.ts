@@ -5,6 +5,7 @@ import {
   networks,
   payments,
   Psbt,
+  Transaction,
 } from 'bitcoinjs-lib';
 import AES from 'crypto-js/aes';
 import coinSelect from 'coinselect';
@@ -852,10 +853,11 @@ class Wallet {
   }
 
   async relayTx(
-    transactionHex: string,
+    transaction: Transaction,
     inputs: object[],
     usedAddresses: string[]
   ) {
+    const transactionHex = transaction.toHex();
     const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
     const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
       base64
@@ -865,6 +867,7 @@ class Wallet {
         ...input,
         isSpent: true,
       }));
+      await this.updateDerivedKeys(usedAddresses);
       await Persist.updateOutputs(spentUtxos);
       await Persist.upsertUnconfirmedTransactions([
         {
@@ -875,6 +878,7 @@ class Wallet {
         },
       ]);
     }
+    return { txBroadcast };
   }
 
   async _createSendTransaction(utxos: any[], targets: any[], feeRate: number) {
@@ -922,11 +926,13 @@ class Wallet {
           });
         }
       );
-      const usedAddresses = [];
+      const usedAddresses: string[] = [];
       for (let index = 0; index < outputs.length; index++) {
         const output = outputs[index];
         if (!output.address) {
-          const { unusedAddresses } = await this.getUnusedAddresses();
+          const { unusedAddresses } = await this.getUnusedAddresses({
+            excludeAddresses: usedAddresses,
+          });
           const address = unusedAddresses[0];
           usedAddresses.push(address);
           output.address = address;
@@ -946,8 +952,7 @@ class Wallet {
       psbt.validateSignaturesOfAllInputs();
       psbt.finalizeAllInputs();
       const transaction = psbt.extractTransaction(true);
-      const transactionHex = transaction.toHex();
-      this.relayTx(transactionHex, inputs, usedAddresses);
+      this.relayTx(transaction, inputs, usedAddresses);
     } catch (error) {
       throw error;
     }

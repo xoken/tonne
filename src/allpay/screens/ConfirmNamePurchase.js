@@ -28,7 +28,7 @@ class ConfirmNamePurchase extends React.Component {
   }
 
   onSignRelay = async () => {
-    // const { psbt, inputs } = this.props;
+    // const { psbt, inputs, ownOutputs } = this.props;
     // if (psbt) {
     //   try {
     //     const { dispatch } = this.props;
@@ -36,6 +36,7 @@ class ConfirmNamePurchase extends React.Component {
     //       allpayActions.signRelayTransaction({
     //         psbtHex: psbt.toHex(),
     //         inputs,
+    //         ownOutputs
     //       })
     //     );
     //     if (txBroadcast) {

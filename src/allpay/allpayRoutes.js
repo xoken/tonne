@@ -14,6 +14,7 @@ export const allpayPaths = {
   purchaseSuccess: '/wallet/allpay/purchase-success',
   registerName: '/wallet/allpay/register',
   confirmRegister: '/wallet/allpay/confirm-register',
+  renderTransaction: '/wallet/allpay/transaction',
 };
 
 export const allpayFlows = {
