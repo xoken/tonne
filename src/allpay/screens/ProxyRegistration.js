@@ -42,34 +42,52 @@ class ProxyRegistration extends React.Component {
   }
 
   onRegister = async () => {
-    const { addressCount } = this.state;
+    const {
+      proxyProvider: { proxyHost, proxyPort },
+      addressCount,
+    } = this.state;
     const {
       outpoint: { name },
       dispatch,
     } = this.props;
     try {
       await dispatch(
-        allpayActions.registerName({ name: utils.codePointToName(name), addressCount })
+        allpayActions.registerName({
+          proxyHost,
+          proxyPort,
+          name: utils.codePointToName(name),
+          addressCount,
+        })
       );
-      this.props.history.push('/wallet/allpay/confirm-register');
+      // this.props.history.push('/wallet/allpay/confirm-register');
     } catch (error) {
-      console.log(error);
+      this.setState({ isError: true, message: error.message });
     }
   };
 
   onSelect = proxyProvider => async () => {
-    const { dispatch } = this.props;
-    try {
-      this.setState({
-        proxyProvider: proxyProvider,
-      });
-      const { proxyHost, proxyPort } = proxyProvider;
-      await dispatch(allpayActions.selectProxyProvider({ proxyHost, proxyPort }));
-    } catch (error) {}
+    this.setState({
+      proxyProvider: proxyProvider,
+    });
   };
 
   renderMessage() {
-    return null;
+    const { isError, message } = this.state;
+    if (message) {
+      if (isError) {
+        return (
+          <div className='ui negative message'>
+            <p>{message}</p>
+          </div>
+        );
+      } else {
+        return (
+          <div className='ui success message'>
+            <p>{message}</p>
+          </div>
+        );
+      }
+    }
   }
 
   renderProxyProviders() {
@@ -145,9 +163,6 @@ class ProxyRegistration extends React.Component {
                   </Button>
                 </Grid.Column>
               </Grid.Row> */}
-              <Grid.Row>
-                <Grid.Column width={16}>{this.renderMessage()}</Grid.Column>
-              </Grid.Row>
             </Grid>
           </div>
         </div>
@@ -191,6 +206,7 @@ class ProxyRegistration extends React.Component {
             </Grid.Column>
           </Grid.Row>
         </Grid>
+        {this.renderMessage()}
         {this.renderProxyProviders()}
         {this.renderRegistrationOption()}
       </>
@@ -199,11 +215,7 @@ class ProxyRegistration extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  psbt: state.allpay.psbt,
   outpoint: state.allpay.outpoint,
-  inputs: state.allpay.inputs,
-  ownOutputs: state.allpay.ownOutputs,
-  snv: state.allpay.snv,
 });
 
 export default withRouter(connect(mapStateToProps)(ProxyRegistration));

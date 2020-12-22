@@ -10,10 +10,6 @@ export const buyNameRequest = createAction('BUY_NAME_REQUEST');
 export const buyNameSuccess = createAction('BUY_NAME_SUCCESS');
 export const buyNameFailure = createAction('BUY_NAME_FAILURE');
 
-export const selectProxyProviderRequest = createAction('SELECT_PROXY_PROVIDER_REQUEST');
-export const selectProxyProviderSuccess = createAction('SELECT_PROXY_PROVIDER_SUCCESS');
-export const selectProxyProviderFailure = createAction('SELECT_PROXY_PROVIDER_FAILURE');
-
 export const registerNameRequest = createAction('REGISTER_NAME_REQUEST');
 export const registerNameSuccess = createAction('REGISTER_NAME_SUCCESS');
 export const registerNameFailure = createAction('REGISTER_NAME_FAILURE');
@@ -47,28 +43,11 @@ export const buyName = data => async (dispatch, getState, { serviceInjector }) =
   }
 };
 
-export const selectProxyProvider = ({ proxyHost, proxyPort }) => (
+export const registerName = ({ proxyHost, proxyPort, name, addressCount }) => async (
   dispatch,
   getState,
   { serviceInjector }
 ) => {
-  dispatch(selectProxyProviderRequest());
-  try {
-    dispatch(selectProxyProviderSuccess({ proxyHost, proxyPort }));
-  } catch (error) {
-    dispatch(selectProxyProviderFailure());
-    throw error;
-  }
-};
-
-export const registerName = ({ name, addressCount }) => async (
-  dispatch,
-  getState,
-  { serviceInjector }
-) => {
-  const {
-    allpay: { proxyHost, proxyPort },
-  } = getState();
   dispatch(registerNameRequest());
   try {
     const { psbt, inputs, ownOutputs } = await serviceInjector(AllpayService).registerName({

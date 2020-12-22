@@ -16,8 +16,6 @@ const INITIAL_STATE = {
   snv: null,
   addressCommitment: null,
   utxoCommitment: null,
-  proxyHost: null,
-  proxyPort: null,
 };
 
 export default createReducer(
@@ -40,7 +38,8 @@ export default createReducer(
       ownOutputs,
       snv,
     }),
-    [allpayActions.registerNameRequest]: () => ({
+    [allpayActions.registerNameRequest]: state => ({
+      ...state,
       psbt: null,
       inputs: null,
       ownOutputs: null,
@@ -69,11 +68,6 @@ export default createReducer(
       inputs,
       addressCommitment,
       utxoCommitment,
-    }),
-    [allpayActions.selectProxyProviderSuccess]: (state, { proxyHost, proxyPort }) => ({
-      ...state,
-      proxyHost,
-      proxyPort,
     }),
     [authActions.logoutSuccess]: state => ({
       ...INITIAL_STATE,

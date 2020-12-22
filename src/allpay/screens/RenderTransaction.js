@@ -8,37 +8,6 @@ import * as allpayActions from '../allpayActions';
 import { allegory } from 'nipkow-sdk';
 
 class RenderTransaction extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isError: false,
-      message: '',
-    };
-  }
-
-  onSignRelay = async () => {
-    const { psbt, inputs } = this.props;
-    if (psbt) {
-      try {
-        const { dispatch } = this.props;
-        const { txBroadcast } = await dispatch(
-          allpayActions.signRelayTransaction({
-            psbtHex: psbt.toHex(),
-            inputs,
-          })
-        );
-        if (txBroadcast) {
-          this.setState({ isError: false, message: 'Transaction signed and relayed successfully' });
-          setTimeout(() => {
-            this.props.history.push('/wallet/dashboard');
-          }, 3000);
-        }
-      } catch (error) {
-        this.setState({ isError: true, message: error.message });
-      }
-    }
-  };
-
   renderTransaction() {
     const { psbt, inputs, ownOutputs, snv, addressCommitment, utxoCommitment } = this.props;
     if (psbt) {
@@ -230,25 +199,6 @@ class RenderTransaction extends React.Component {
     return null;
   }
 
-  renderMessage() {
-    const { isError, message } = this.state;
-    if (message) {
-      if (isError) {
-        return (
-          <div className='ui negative message'>
-            <p>{message}</p>
-          </div>
-        );
-      } else {
-        return (
-          <div className='ui success message'>
-            <p>{message}</p>
-          </div>
-        );
-      }
-    }
-  }
-
   render() {
     return (
       <>
@@ -258,11 +208,6 @@ class RenderTransaction extends React.Component {
         <div className='ui grid'>
           <div className='column'>{this.renderTransaction()}</div>
         </div>
-        {/* <Grid>
-          <Grid.Row>
-            <Grid.Column width={16}>{this.renderMessage()}</Grid.Column>
-          </Grid.Row>
-        </Grid> */}
       </>
     );
   }

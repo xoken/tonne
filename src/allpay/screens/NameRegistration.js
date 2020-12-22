@@ -62,8 +62,8 @@ class NameRegistration extends React.Component {
 
   render() {
     return (
-      <Form>
-        <Form.Field>
+      <div className='ui form'>
+        <div className='field'>
           <Radio
             label='I would like to register with proxy provider'
             name='radioGroup'
@@ -71,8 +71,8 @@ class NameRegistration extends React.Component {
             checked={this.state.registerNameWithProxy === true}
             onChange={this.onChangeValue}
           />
-        </Form.Field>
-        <Form.Field>
+        </div>
+        <div className='field'>
           <Radio
             label='Register with Proxy later'
             name='radioGroup'
@@ -80,9 +80,9 @@ class NameRegistration extends React.Component {
             checked={this.state.registerNameWithProxy === false}
             onChange={this.onChangeValue}
           />
-        </Form.Field>
+        </div>
         {this.renderActionButton()}
-      </Form>
+      </div>
     );
   }
 }

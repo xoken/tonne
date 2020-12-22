@@ -496,41 +496,45 @@ class Allpay {
     name: string;
     addressCount: number;
   }) {
-    const { proxyHost, proxyPort, name, addressCount } = data;
-    const nameCodePoint = utils.getCodePoint(name);
-    const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
-    const xpubKey = wallet.getBIP32ExtendedPubKey(bip32ExtendedKey);
-    const returnAddress = await wallet.getUnusedNUTXOAddress();
-    const { nUTXOs } = await Persist.getNUtxo(name);
-    if (nUTXOs) {
-      const data = await this._registerName({
-        proxyHost,
-        proxyPort,
-        name: nameCodePoint,
-        xpubKey,
-        returnAddress,
-        addressCount,
-        nutxo: nUTXOs,
-      });
-      const tData = JSON.parse(data);
-      const {
-        result: { tx: psaBase64 },
-      } = tData;
-      const { psbt, fundingInputs, ownOutputs } = await this.decodeTransaction(
-        psaBase64,
-        [nUTXOs],
-        true
-      );
-      return {
-        psbt,
-        inputs: [...nUTXOs, ...fundingInputs],
-        ownOutputs: [
-          { type: 'nUTXO', title: 'Name UTXO', address: returnAddress },
-          ...ownOutputs,
-        ],
-      };
-    } else {
-      throw new Error("Couldn't find utxo for selected name");
+    try {
+      const { proxyHost, proxyPort, name, addressCount } = data;
+      const nameCodePoint = utils.getCodePoint(name);
+      const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
+      const xpubKey = wallet.getBIP32ExtendedPubKey(bip32ExtendedKey);
+      const returnAddress = await wallet.getUnusedNUTXOAddress();
+      const { nUTXOs } = await Persist.getNUtxo(name);
+      if (nUTXOs) {
+        const data = await this._registerName({
+          proxyHost,
+          proxyPort,
+          name: nameCodePoint,
+          xpubKey,
+          returnAddress,
+          addressCount,
+          nutxo: nUTXOs,
+        });
+        const tData = JSON.parse(data);
+        const {
+          result: { tx: psaBase64 },
+        } = tData;
+        const {
+          psbt,
+          fundingInputs,
+          ownOutputs,
+        } = await this.decodeTransaction(psaBase64, [nUTXOs], true);
+        return {
+          psbt,
+          inputs: [...nUTXOs, ...fundingInputs],
+          ownOutputs: [
+            { type: 'nUTXO', title: 'Name UTXO', address: returnAddress },
+            ...ownOutputs,
+          ],
+        };
+      } else {
+        throw new Error("Couldn't find utxo for selected name");
+      }
+    } catch (error) {
+      throw error;
     }
   }
 
