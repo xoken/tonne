@@ -59,17 +59,17 @@ class ReceiveTransaction extends React.Component {
             </div>
           </div>
           <Divider />
-          {unusedAddresses.map(({ address }, index) => (
+          {unusedAddresses.map((unusedAddress, index) => (
             <div className='ui two column grid' key={index.toString()}>
               <div className='column'>
                 <div className='ui fluid action input'>
-                  <input type='text' className='monospace' readOnly value={address} />
-                  <button className='ui yellow button' onClick={this.onCopy(address)}>
+                  <input type='text' className='monospace' readOnly value={unusedAddress} />
+                  <button className='ui yellow button' onClick={this.onCopy(unusedAddress)}>
                     Copy
                   </button>
                 </div>
               </div>
-              {copiedAddress === address ? (
+              {copiedAddress === unusedAddress ? (
                 <div className='column middle aligned'>
                   <Label>
                     <Icon name='check' color='green' />

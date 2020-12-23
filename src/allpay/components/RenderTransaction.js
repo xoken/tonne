@@ -2,9 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Button, Grid, Header, Label, Segment } from 'semantic-ui-react';
+import { Grid, Header, Segment } from 'semantic-ui-react';
 import { satoshiToBSV } from '../../shared/utils';
-import * as allpayActions from '../allpayActions';
 import { allegory } from 'nipkow-sdk';
 
 class RenderTransaction extends React.Component {
@@ -66,7 +65,7 @@ class RenderTransaction extends React.Component {
                   <i title={''} className={''}></i>
                 </Label> */}
                 {snv !== null ? (
-                  <div className='ui label'>
+                  <div className='ui green label'>
                     SNV
                     <div className='detail'>
                       {snv ? <span>&#10003;</span> : <span>&#10005;</span>}
@@ -74,15 +73,19 @@ class RenderTransaction extends React.Component {
                   </div>
                 ) : null}
                 {addressCommitment !== null ? (
-                  <div className='ui label'>
+                  <div className='ui green label'>
                     Address Commitment
-                    <div className='detail'>{addressCommitment ? 'Passing' : 'Failing'}</div>
+                    <div className='detail'>
+                      {addressCommitment ? <span>&#10003;</span> : <span>&#10005;</span>}
+                    </div>
                   </div>
                 ) : null}
                 {utxoCommitment !== null ? (
-                  <div className='ui label'>
+                  <div className='ui green label'>
                     UTXO Commitment
-                    <div className='detail'>{utxoCommitment ? 'Passing' : 'Failing'}</div>
+                    <div className='detail'>
+                      {utxoCommitment ? <span>&#10003;</span> : <span>&#10005;</span>}
+                    </div>
                   </div>
                 ) : null}
               </Grid.Column>
@@ -184,15 +187,6 @@ class RenderTransaction extends React.Component {
               </Grid.Row>
             </Grid>
           </Segment>
-          {/* <Grid>
-            <Grid.Row>
-              <Grid.Column textAlign='right'>
-                <Button color='yellow' onClick={this.onSignRelay}>
-                  Sign & Relay
-                </Button>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid> */}
         </>
       );
     }
@@ -202,9 +196,6 @@ class RenderTransaction extends React.Component {
   render() {
     return (
       <>
-        {/* <Header as='h2' textAlign='center'>
-          Partially Signed Transaction
-        </Header> */}
         <div className='ui grid'>
           <div className='column'>{this.renderTransaction()}</div>
         </div>

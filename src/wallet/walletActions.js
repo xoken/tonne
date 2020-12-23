@@ -70,8 +70,7 @@ export const getTransactions = options => async (dispatch, getState, { serviceIn
       const { transactions } = await serviceInjector(WalletService).getTransactions(options);
       dispatch(getDiffTransactionsSuccess({ transactions }));
       if (transactions.length > 0) {
-        const { balance } = await serviceInjector(WalletService).getBalance();
-        dispatch(getBalanceSuccess({ balance }));
+        await dispatch(getBalance());
       }
     } else {
       const { transactions, nextTransactionCursor } = await serviceInjector(
@@ -160,8 +159,7 @@ export const createSendTransaction = (receiverAddress, amountInSatoshi, satoshis
       satoshisPerByte
     );
     dispatch(createSendTransactionSuccess(response));
-    const { balance } = await serviceInjector(WalletService).getBalance();
-    dispatch(getBalanceSuccess({ balance }));
+    await dispatch(getBalance());
   } catch (error) {
     dispatch(createSendTransactionFailure());
     throw error;

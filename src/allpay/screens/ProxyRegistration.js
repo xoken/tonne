@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Form, Grid, Header, Input } from 'semantic-ui-react';
+import { Button, Grid, Header, Input } from 'semantic-ui-react';
 import * as allpayActions from '../allpayActions';
 import { wallet, utils } from 'nipkow-sdk';
 

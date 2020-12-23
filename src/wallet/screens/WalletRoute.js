@@ -14,7 +14,6 @@ import WalletPassword from './WalletPassword';
 import WalletHome from './WalletHome';
 import WalletDashboard from './WalletDashboard';
 import AllpayContainer from '../../allpay/allpayContainer';
-import ProxyRegistration from '../../allpay/screens/ProxyRegistration';
 import RenameProfile from '../components/RenameProfile';
 import * as authActions from '../../auth/authActions';
 
@@ -118,7 +117,6 @@ class WalletRoute extends React.Component {
           </PrivateRoute>
           <PublicRoute exact path={path}>
             <WalletHome />
-            {/* <ProxyRegistration /> */}
           </PublicRoute>
           <Route path='*'>
             <NoMatch />

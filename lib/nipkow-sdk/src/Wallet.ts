@@ -12,7 +12,7 @@ import coinSelect from 'coinselect';
 import faker from 'faker';
 import * as bip39 from 'bip39';
 import * as _ from 'lodash';
-// import { differenceInMinutes } from 'date-fns';
+import { differenceInMinutes } from 'date-fns';
 import {
   decodeCBORData,
   getAllegoryType,
@@ -659,8 +659,8 @@ class Wallet {
       outputs: any[];
       nextCursor: number;
     } = await addressAPI.getOutputsByAddresses(addresses, 100, nextCursor);
-    const { lastFetched } = await Persist.getOutputsLastFetched();
-    if (lastFetched) {
+    const { outputs } = await Persist.getOutputs();
+    if (outputs.length > 0) {
       const diffOutputs = await this._getDiffOutputs(data.outputs);
       if (diffOutputs.length === data.outputs.length) {
         const outputs = [...prevOutputs, ...diffOutputs];
@@ -700,6 +700,123 @@ class Wallet {
       }
     }
     return newOutputs;
+  }
+
+  async getUnusedNUTXOAddress() {
+    const { existingNUTXODerivedKeys } = await Persist.getNUTXODerivedKeys();
+    const unusedNUTXODerivedKeys = existingNUTXODerivedKeys
+      .filter(
+        (existingDerivedKey: { isUsed: any }) =>
+          existingDerivedKey.isUsed === false
+      )
+      .map(
+        ({ indexText, address }: { indexText: string; address: string }) =>
+          address
+      );
+    return unusedNUTXODerivedKeys.find(Boolean);
+  }
+
+  async _getKeys(addresses: string[]): Promise<object[]> {
+    const { existingDerivedKeys } = await Persist.getDerivedKeys();
+    const { existingNUTXODerivedKeys } = await Persist.getNUTXODerivedKeys();
+    const keys = [...existingDerivedKeys, ...existingNUTXODerivedKeys];
+    const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
+    const nUTXOExtendedKey = await Persist.getNUTXOExtendedKey();
+
+    return addresses.map((address) => {
+      const derivedKey = keys.find(
+        (derivedKey: { address: string }) => derivedKey.address === address
+      );
+      let extendedKey;
+      if (
+        derivedKey.indexText.startsWith(
+          derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath
+        )
+      ) {
+        extendedKey = bip32ExtendedKey;
+      } else {
+        extendedKey = nUTXOExtendedKey;
+      }
+      const KeyIndex = derivedKey.indexText.split('/').pop();
+      const { privkey } = this._getPrivKey(
+        extendedKey,
+        Number(KeyIndex),
+        false
+      );
+      return ECPair.fromWIF(privkey, networks.regtest);
+    });
+  }
+
+  async updateUnconfirmedTransactions() {
+    const {
+      unconfirmedTransactions,
+    } = await Persist.getUnconfirmedTransactions();
+    const unconfirmedTxIds = unconfirmedTransactions.map(
+      (unconfirmedTx: { txId: any }) => unconfirmedTx.txId
+    );
+    if (unconfirmedTxIds.length > 0) {
+      const { txs } = await transactionAPI.getTransactionsByTxIDs(
+        unconfirmedTxIds
+      );
+      if (txs.length > 0) {
+        const updatedUnconfirmedTransactions = unconfirmedTransactions.map(
+          (unconfirmedTx: { txId: any }) => {
+            const isConfirmed = txs.find(
+              (tx: { txId: any; blockHeight: number }) => {
+                if (tx.blockHeight && tx.txId === unconfirmedTx.txId) {
+                  return true;
+                }
+                return false;
+              }
+            );
+            if (isConfirmed) {
+              return {
+                ...unconfirmedTx,
+                confirmed: true,
+              };
+            }
+            return {
+              ...unconfirmedTx,
+              confirmed: false,
+            };
+          }
+        );
+        const confirmedTxs = updatedUnconfirmedTransactions.filter(
+          (tx: { confirmed: boolean }) => tx.confirmed === true
+        );
+        const unconfirmedTxs = updatedUnconfirmedTransactions.filter(
+          (tx: { confirmed: boolean }) => tx.confirmed === false
+        );
+        if (confirmedTxs.length > 0) {
+          const deletedUnconfirmedTxs = confirmedTxs.map((transaction: any) => {
+            return {
+              ...transaction,
+              _deleted: true,
+            };
+          });
+          await Persist.upsertUnconfirmedTransactions(deletedUnconfirmedTxs);
+        }
+        if (unconfirmedTxs.length > 0) {
+          for (let index = 0; index < unconfirmedTxs.length; index++) {
+            const unconfirmedTx = unconfirmedTxs[index];
+            const diffInMinutes = differenceInMinutes(
+              new Date(),
+              Date.parse(unconfirmedTx.createdAt)
+            );
+            if (diffInMinutes > 30) {
+              const unconfirmedOutputs = unconfirmedTx.outputs;
+              const updatedunConfirmedOutputs = unconfirmedOutputs.map(
+                (output: any) => ({
+                  ...output,
+                  isSpent: false,
+                })
+              );
+              await Persist.updateOutputs(updatedunConfirmedOutputs);
+            }
+          }
+        }
+      }
+    }
   }
 
   async updateTransactionsConfirmations() {
@@ -752,106 +869,6 @@ class Wallet {
     return { updatedTransactions: [] };
   }
 
-  async updateUnconfirmedTransactions() {
-    const {
-      unconfirmedTransactions,
-    } = await Persist.getUnconfirmedTransactions();
-    const unconfirmedTxIds = unconfirmedTransactions.map(
-      (unconfirmedTx: { txId: any }) => unconfirmedTx.txId
-    );
-    if (unconfirmedTxIds.length > 0) {
-      const { txs } = await transactionAPI.getTransactionsByTxIDs(
-        unconfirmedTxIds
-      );
-      if (txs.length > 0) {
-        const updatedUnconfirmedTransactions = unconfirmedTransactions.map(
-          (unconfirmedTx: { txId: any }) => {
-            const isConfirmed = txs.find(
-              (tx: { txId: any; blockHeight: number }) => {
-                if (tx.blockHeight && tx.txId === unconfirmedTx.txId) {
-                  return true;
-                }
-                return false;
-              }
-            );
-            if (isConfirmed) {
-              return {
-                ...unconfirmedTx,
-                confirmed: true,
-              };
-            }
-            return {
-              ...unconfirmedTx,
-              confirmed: false,
-            };
-          }
-        );
-        const confirmedTxs = updatedUnconfirmedTransactions.filter(
-          (tx: { confirmed: boolean }) => tx.confirmed === true
-        );
-        if (confirmedTxs.length > 0) {
-          const confirmedOutputsPerTx = confirmedTxs.map(
-            (confirmedTx: { outputs: any }) => confirmedTx.outputs
-          );
-          const confirmedOutputs = confirmedOutputsPerTx.flat();
-          const updatedConfirmedOutputs = confirmedOutputs.map(
-            (output: any) => ({
-              ...output,
-              confirmed: true,
-            })
-          );
-          await Persist.updateOutputs(updatedConfirmedOutputs);
-          await Persist.deleteUnconfirmedTx(confirmedTxs);
-        }
-      }
-    }
-  }
-
-  async getUnusedNUTXOAddress() {
-    const { existingNUTXODerivedKeys } = await Persist.getNUTXODerivedKeys();
-    const unusedNUTXODerivedKeys = existingNUTXODerivedKeys
-      .filter(
-        (existingDerivedKey: { isUsed: any }) =>
-          existingDerivedKey.isUsed === false
-      )
-      .map(
-        ({ indexText, address }: { indexText: string; address: string }) =>
-          address
-      );
-    return unusedNUTXODerivedKeys.find(Boolean);
-  }
-
-  async _getKeys(addresses: string[]): Promise<object[]> {
-    const { existingDerivedKeys } = await Persist.getDerivedKeys();
-    const { existingNUTXODerivedKeys } = await Persist.getNUTXODerivedKeys();
-    const keys = [...existingDerivedKeys, ...existingNUTXODerivedKeys];
-    const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
-    const nUTXOExtendedKey = await Persist.getNUTXOExtendedKey();
-
-    return addresses.map((address) => {
-      const derivedKey = keys.find(
-        (derivedKey: { address: string }) => derivedKey.address === address
-      );
-      let extendedKey;
-      if (
-        derivedKey.indexText.startsWith(
-          derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath
-        )
-      ) {
-        extendedKey = bip32ExtendedKey;
-      } else {
-        extendedKey = nUTXOExtendedKey;
-      }
-      const KeyIndex = derivedKey.indexText.split('/').pop();
-      const { privkey } = this._getPrivKey(
-        extendedKey,
-        Number(KeyIndex),
-        false
-      );
-      return ECPair.fromWIF(privkey, networks.regtest);
-    });
-  }
-
   async relayTx(
     transaction: Transaction,
     inputs: object[],
@@ -867,8 +884,8 @@ class Wallet {
         ...input,
         isSpent: true,
       }));
-      await this.updateDerivedKeys(usedAddresses);
-      await Persist.updateOutputs(spentUtxos);
+      await this.markAddressesUsed(usedAddresses);
+      await Persist.upsertOutputs(spentUtxos);
       await Persist.upsertUnconfirmedTransactions([
         {
           txId: transaction.getId(),
@@ -952,7 +969,7 @@ class Wallet {
       psbt.validateSignaturesOfAllInputs();
       psbt.finalizeAllInputs();
       const transaction = psbt.extractTransaction(true);
-      this.relayTx(transaction, inputs, usedAddresses);
+      return await this.relayTx(transaction, inputs, usedAddresses);
     } catch (error) {
       throw error;
     }
@@ -1058,17 +1075,11 @@ class Wallet {
         (existingDerivedKey: { isUsed: any }) =>
           existingDerivedKey.isUsed === false
       )
-      .map(
-        ({ indexText, address }: { indexText: string; address: string }) => ({
-          address,
-        })
-      );
+      .map(({ address }: { address: string }) => address);
     if (options?.excludeAddresses) {
       const filteredUnusedAddresses = unusedAddresses.filter(
-        (existingDerivedKey: { address: string }) => {
-          return !options.excludeAddresses?.includes(
-            existingDerivedKey.address
-          );
+        (unusedAddress: string) => {
+          return !options.excludeAddresses?.includes(unusedAddress);
         }
       );
       if (options?.count) {
@@ -1091,8 +1102,8 @@ class Wallet {
     };
   }
 
-  async updateDerivedKeys(addresses: string[]) {
-    await Persist.updateDerivedKeys(addresses);
+  async markAddressesUsed(addresses: string[]) {
+    await Persist.markAddressesUsed(addresses);
   }
 
   async login(profileId: string, password: string) {
@@ -1120,7 +1131,7 @@ class Wallet {
 
   async updateProfileName(currentProfileName: string, newProfileName: string) {
     try {
-      await Persist.updateProfileName(currentProfileName, newProfileName);
+      await Persist.updateProfile(currentProfileName, newProfileName);
       return { profile: newProfileName };
     } catch (error) {
       throw error;

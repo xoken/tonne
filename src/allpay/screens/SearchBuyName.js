@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Header, Input, Popup } from 'semantic-ui-react';
+import { Popup } from 'semantic-ui-react';
 import { utils } from 'nipkow-sdk';
 import NameRow from '../components/NameRow';
 import * as allpayActions from '../allpayActions';

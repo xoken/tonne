@@ -1,9 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Form, Radio, Header, Input } from 'semantic-ui-react';
+import { Button, Radio } from 'semantic-ui-react';
 import * as allpayActions from '../allpayActions';
-import { wallet } from 'nipkow-sdk';
 
 class NameRegistration extends React.Component {
   constructor(props) {

@@ -14,6 +14,8 @@ let credentials: any;
 export const BIP32_EXTENDED_KEY = 'bip32ExtendedKey';
 export const NUTXO_EXTENDED_KEY = 'nUTXOExtendedKey';
 
+/* Revisit all fn for try-catch error handling */
+
 const get = async (db: any, key: string) => await db.get(key);
 
 const set = async (db: any, key: string, value: any) => {
@@ -40,6 +42,7 @@ export const init = async (dbName: string) => {
   ]);
 };
 
+/* Revisit required */
 export const createProfile = async (
   cryptedMnemonic: string,
   profileName: string
@@ -68,7 +71,8 @@ export const createProfile = async (
   }
 };
 
-export const updateProfileName = async (
+/* Revisit required */
+export const updateProfile = async (
   currentProfileName: string,
   newProfileName: string
 ) => {
@@ -95,6 +99,7 @@ export const updateProfileName = async (
   }
 };
 
+/* Revisit required */
 export const getProfiles = async () => {
   try {
     profiles = new PouchDB('Profiles', {
@@ -119,6 +124,7 @@ export const getProfiles = async () => {
   }
 };
 
+/* Revisit required */
 export const login = async (profile: string, password: string) => {
   const existingProfiles = await getProfiles();
   const selectedProfile = existingProfiles.find(
@@ -180,8 +186,8 @@ export const upsertNUTXODerivedKeys = async (keys: any) => {
         keyId = keyId + 1;
       }
       return {
-        _id: key._id ? key._id : `nUTXOKey-${String(keyId).padStart(20, '0')}`,
         ...key,
+        _id: key._id ? key._id : `nUTXOKey-${String(keyId).padStart(20, '0')}`,
       };
     });
     await db.bulkDocs(docs);
@@ -213,8 +219,8 @@ export const upsertDerivedKeys = async (keys: any) => {
         keyId = keyId + 1;
       }
       return {
-        _id: key._id ? key._id : `key-${String(keyId).padStart(20, '0')}`,
         ...key,
+        _id: key._id ? key._id : `key-${String(keyId).padStart(20, '0')}`,
       };
     });
     await db.bulkDocs(docs);
@@ -242,33 +248,6 @@ export const getOutputs = async (options?: {
   }
 };
 
-/* See if this can be removed */
-export const getOutputsLastFetched = async () => {
-  try {
-    const doc = await db.get('lastFetched');
-    return {
-      lastFetched: doc.value,
-      doc,
-    };
-  } catch (error) {
-    return { lastFetched: null };
-    // throw error;
-  }
-};
-
-/* See if this can be removed */
-export const getOutputsLastUpdated = async () => {
-  try {
-    const doc = await db.get('lastUpdated');
-    return {
-      lastUpdated: doc.value,
-      doc,
-    };
-  } catch (error) {
-    throw error;
-  }
-};
-
 export const upsertOutputs = async (outputs: any) => {
   if (outputs.length > 0) {
     const { outputs: existingOutputs } = await getOutputs();
@@ -278,23 +257,22 @@ export const upsertOutputs = async (outputs: any) => {
         outputId = outputId + 1;
       }
       return {
-        _id: `output-${String(outputId).padStart(20, '0')}`,
-        isSpent: output.spendInfo ? true : false,
         ...output,
+        isSpent: output.isSpent
+          ? output.isSpent
+          : output.spendInfo
+          ? true
+          : false,
+        _id: output._id
+          ? output._id
+          : `output-${String(outputId).padStart(20, '0')}`,
       };
-    });
-    docs.push({
-      _id: 'lastFetched',
-      value: new Date(),
-    });
-    docs.push({
-      _id: 'lastUpdated',
-      value: null,
     });
     await db.bulkDocs(docs);
   }
 };
 
+/* _rev change case */
 export const updateOutputs = async (outputs: any) => {
   const updateDoc = [];
   for (let index = 0; index < outputs.length; index++) {
@@ -302,12 +280,6 @@ export const updateOutputs = async (outputs: any) => {
     const outputDoc = await db.get(element._id);
     updateDoc.push({ ...element, _rev: outputDoc._rev });
   }
-  const { doc } = await getOutputsLastUpdated();
-  updateDoc.push({
-    _id: 'lastUpdated',
-    _rev: doc._rev,
-    value: new Date(),
-  });
   try {
     const results = await db.bulkDocs(updateDoc);
     results.forEach((result: { error: any }) => {
@@ -407,6 +379,22 @@ export const upsertTransactions = async (transactions: any[]) => {
   }
 };
 
+export const getUnconfirmedTransactions = async () => {
+  const response = await db.allDocs({
+    include_docs: true,
+    startkey: 'unconfirmedTransaction',
+    endkey: 'unconfirmedTransaction\ufff0',
+  });
+  if (response && response.rows.length > 0) {
+    const unconfirmedTransactions = response.rows.map(
+      (row: { doc: any }) => row.doc
+    );
+    return { unconfirmedTransactions };
+  } else {
+    return { unconfirmedTransactions: [] };
+  }
+};
+
 export const upsertUnconfirmedTransactions = async (transactions: any[]) => {
   if (transactions.length > 0) {
     const {
@@ -418,10 +406,10 @@ export const upsertUnconfirmedTransactions = async (transactions: any[]) => {
         txId = txId + 1;
       }
       return {
+        ...transaction,
         _id: transaction._id
           ? transaction._id
           : `unconfirmedTransaction-${String(txId).padStart(20, '0')}`,
-        ...transaction,
       };
     });
     await db.bulkDocs(docs);
@@ -440,23 +428,7 @@ export const deleteUnconfirmedTx = async (transactions: any) => {
   }
 };
 
-export const getUnconfirmedTransactions = async () => {
-  const response = await db.allDocs({
-    include_docs: true,
-    startkey: 'unconfirmedTransaction',
-    endkey: 'unconfirmedTransaction\ufff0',
-  });
-  if (response && response.rows.length > 0) {
-    const unconfirmedTransactions = response.rows.map(
-      (row: { doc: any }) => row.doc
-    );
-    return { unconfirmedTransactions };
-  } else {
-    return { unconfirmedTransactions: [] };
-  }
-};
-
-export const updateDerivedKeys = async (addresses: string[]) => {
+export const markAddressesUsed = async (addresses: string[]) => {
   if (addresses.length > 0) {
     const { existingDerivedKeys } = await getDerivedKeys();
     const matchedDerivedKeys = existingDerivedKeys.filter(

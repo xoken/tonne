@@ -266,7 +266,7 @@ class ExplorerBlockHeight extends React.Component {
       this.selected = this.state.selectnum;
       this.currentbatchnum = Math.ceil(this.selected / this.fixedarrlength);
       if (this.txcache[(this.selected - 1) * this.transactionsperpage + 1] !== undefined) {
-        var tempindex, tempind;
+        var tempindex;
         if (this.currentbatchnum === this.batches) {
           if (this.numberofpages % this.fixedarrlength === 0) {
             this.pagearrlength = this.fixedarrlength;
@@ -277,7 +277,6 @@ class ExplorerBlockHeight extends React.Component {
           this.pagearrlength = this.fixedarrlength;
         }
         tempindex = (this.currentbatchnum - 1) * this.fixedarrlength + 1;
-        tempind = (tempindex - 1) * this.transactionsperpage;
         for (var b = 0; b < this.pagearrlength; b++) {
           this.pagearray[b] = tempindex;
           tempindex += 1;

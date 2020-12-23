@@ -267,7 +267,7 @@ class Allpay {
     psbt.finalizeAllInputs();
     const transaction = psbt.extractTransaction(true);
     const usedAddresses = ownOutputs.map(({ address }) => address);
-    return wallet.relayTx(transaction, inputs, usedAddresses);
+    return await wallet.relayTx(transaction, inputs, usedAddresses);
   }
 
   async verifyRootTx(args: {
@@ -382,7 +382,7 @@ class Allpay {
     const proxyPort = 9099;
     const recipient = sha256(lockingScript).toString();
     const { unusedAddresses } = await wallet.getUnusedAddresses();
-    const changeAddress = unusedAddresses[0].address;
+    const changeAddress = unusedAddresses[0];
     const { utxos } = await Persist.getUTXOs();
     const targets = [{ value: Number(amountInSatoshi) }];
     let { inputs, outputs } = coinSelect(utxos, targets, feeRate);

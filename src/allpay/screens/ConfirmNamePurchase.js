@@ -1,10 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Header, Input, Button } from 'semantic-ui-react';
 import { utils } from 'nipkow-sdk';
 import { satoshiToBSV } from '../../shared/utils';
-import RenderTransaction from './RenderTransaction';
+import RenderTransaction from '../components/RenderTransaction';
 import * as allpayActions from '../allpayActions';
 
 class ConfirmNamePurchase extends React.Component {
@@ -28,7 +27,7 @@ class ConfirmNamePurchase extends React.Component {
   }
 
   onSignRelay = async () => {
-    // const { psbt, inputs, ownOutputs } = this.props;
+    const { psbt, inputs, ownOutputs } = this.props;
     // if (psbt) {
     //   try {
     //     const { dispatch } = this.props;
@@ -36,17 +35,17 @@ class ConfirmNamePurchase extends React.Component {
     //       allpayActions.signRelayTransaction({
     //         psbtHex: psbt.toHex(),
     //         inputs,
-    //         ownOutputs
+    //         ownOutputs,
     //       })
     //     );
     //     if (txBroadcast) {
     //       this.setState({ isError: false, message: 'Transaction signed and relayed successfully' });
+    this.props.history.push('/wallet/allpay/purchase-success');
     //     }
     //   } catch (error) {
     //     this.setState({ isError: true, message: error.message });
     //   }
     // }
-    this.props.history.push('/wallet/allpay/purchase-success');
   };
 
   renderMessage() {

@@ -302,8 +302,8 @@ class ExplorerDashboard extends React.Component {
 
   componentDidMount() {
     this.initDashboard();
-    var blockListArray = document.getElementsByClassName('');
   }
+
   render() {
     return (
       <>
