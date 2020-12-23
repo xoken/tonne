@@ -201,7 +201,7 @@ export const getUnusedAddresses = () => async (dispatch, getState, { serviceInje
     wallet: { unusedAddresses },
   } = getState();
   dispatch(getUnusedAddressesRequest());
-  const excludeAddresses = unusedAddresses.map(unusedAddress => unusedAddress.address);
+  const excludeAddresses = unusedAddresses.map(unusedAddress => unusedAddress);
   try {
     const { unusedAddresses } = await serviceInjector(WalletService).getUnusedAddresses({
       excludeAddresses,
@@ -211,4 +211,11 @@ export const getUnusedAddresses = () => async (dispatch, getState, { serviceInje
     dispatch(getUnusedAddressesFailure());
     throw error;
   }
+};
+
+export const CLEAR_USED_UNUSED_ADDRESS = 'CLEAR_USED_UNUSED_ADDRESS';
+export const clearUsedUnusedAddresses = () => (dispatch, getState, { serviceInjector }) => {
+  dispatch({
+    type: CLEAR_USED_UNUSED_ADDRESS,
+  });
 };

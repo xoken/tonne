@@ -77,6 +77,11 @@ export default createReducer(
         ? [...state.unusedAddresses, ...unusedAddresses]
         : unusedAddresses,
     }),
+    [actions.CLEAR_USED_UNUSED_ADDRESS]: state => ({
+      ...state,
+      usedAddresses: null,
+      unusedAddresses: [],
+    }),
     [authActions.logoutSuccess]: state => ({
       ...INITIAL_STATE,
     }),

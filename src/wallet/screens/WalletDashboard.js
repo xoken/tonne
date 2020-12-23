@@ -5,10 +5,11 @@ import { withRouter } from 'react-router-dom';
 import { Button, Icon, Loader, Modal } from 'semantic-ui-react';
 import SendTransaction from '../components/SendTransaction';
 import ReceiveTransaction from '../components/ReceiveTransaction';
-import * as walletSelectors from '../walletSelectors';
-import { satoshiToBSV } from '../../shared/utils';
 import RecentTransaction from '../components/RecentTransaction';
+import { satoshiToBSV } from '../../shared/utils';
 import { wallet } from 'nipkow-sdk';
+import * as walletActions from '../walletActions';
+import * as walletSelectors from '../walletSelectors';
 
 class WalletDashboard extends React.Component {
   constructor(props) {
@@ -25,7 +26,9 @@ class WalletDashboard extends React.Component {
   };
 
   toggleReceiveTransactionModal = () => {
+    const { dispatch } = this.props;
     const { receiveTransactionModal } = this.state;
+    if (receiveTransactionModal) dispatch(walletActions.clearUsedUnusedAddresses());
     this.setState({ receiveTransactionModal: !receiveTransactionModal });
   };
 
