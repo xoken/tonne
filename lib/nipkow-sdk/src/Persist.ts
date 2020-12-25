@@ -380,53 +380,51 @@ export const upsertTransactions = async (transactions: any[]) => {
 };
 
 export const getUnconfirmedTransactions = async () => {
-  const response = await db.allDocs({
-    include_docs: true,
-    startkey: 'unconfirmedTransaction',
-    endkey: 'unconfirmedTransaction\ufff0',
+  await db.createIndex({
+    index: { fields: ['confirmations'] },
   });
-  if (response && response.rows.length > 0) {
-    const unconfirmedTransactions = response.rows.map(
-      (row: { doc: any }) => row.doc
-    );
-    return { unconfirmedTransactions };
-  } else {
-    return { unconfirmedTransactions: [] };
-  }
+  const outputDoc = await db.find({
+    selector: {
+      confirmations: { $eq: null },
+    },
+  });
+  if (outputDoc.docs.length > 0)
+    return { unconfirmedTransactions: outputDoc.docs };
+  return { unconfirmedTransactions: [] };
 };
 
-export const upsertUnconfirmedTransactions = async (transactions: any[]) => {
-  if (transactions.length > 0) {
-    const {
-      unconfirmedTransactions: existingUnconfirmedTransactions,
-    } = await getUnconfirmedTransactions();
-    let txId = existingUnconfirmedTransactions.length - 1;
-    const docs = transactions.map((transaction: any, index: number) => {
-      if (!transaction._id) {
-        txId = txId + 1;
-      }
-      return {
-        ...transaction,
-        _id: transaction._id
-          ? transaction._id
-          : `unconfirmedTransaction-${String(txId).padStart(20, '0')}`,
-      };
-    });
-    await db.bulkDocs(docs);
-  }
-};
+// export const upsertUnconfirmedTransactions = async (transactions: any[]) => {
+//   if (transactions.length > 0) {
+//     const {
+//       unconfirmedTransactions: existingUnconfirmedTransactions,
+//     } = await getUnconfirmedTransactions();
+//     let txId = existingUnconfirmedTransactions.length - 1;
+//     const docs = transactions.map((transaction: any, index: number) => {
+//       if (!transaction._id) {
+//         txId = txId + 1;
+//       }
+//       return {
+//         ...transaction,
+//         _id: transaction._id
+//           ? transaction._id
+//           : `unconfirmedTransaction-${String(txId).padStart(20, '0')}`,
+//       };
+//     });
+//     await db.bulkDocs(docs);
+//   }
+// };
 
-export const deleteUnconfirmedTx = async (transactions: any) => {
-  if (transactions.length > 0) {
-    const docs = transactions.map((transaction: any, index: number) => {
-      return {
-        ...transaction,
-        _deleted: true,
-      };
-    });
-    await db.bulkDocs(docs);
-  }
-};
+// export const deleteUnconfirmedTx = async (transactions: any) => {
+//   if (transactions.length > 0) {
+//     const docs = transactions.map((transaction: any, index: number) => {
+//       return {
+//         ...transaction,
+//         _deleted: true,
+//       };
+//     });
+//     await db.bulkDocs(docs);
+//   }
+// };
 
 export const markAddressesUsed = async (addresses: string[]) => {
   if (addresses.length > 0) {

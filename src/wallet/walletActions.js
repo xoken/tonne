@@ -153,12 +153,12 @@ export const createSendTransaction = (receiverAddress, amountInSatoshi, satoshis
 ) => {
   dispatch(createSendTransactionRequest());
   try {
-    const response = await serviceInjector(WalletService).createSendTransaction(
+    const { transaction } = await serviceInjector(WalletService).createSendTransaction(
       receiverAddress,
       amountInSatoshi,
       satoshisPerByte
     );
-    dispatch(createSendTransactionSuccess(response));
+    dispatch(createSendTransactionSuccess({ transaction }));
     await dispatch(getBalance());
   } catch (error) {
     dispatch(createSendTransactionFailure());

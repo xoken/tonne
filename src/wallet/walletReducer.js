@@ -58,6 +58,10 @@ export default createReducer(
         return transaction;
       }),
     }),
+    [actions.createSendTransactionSuccess]: (state, { transaction }) => ({
+      ...state,
+      transactions: [transaction, ...state.transactions],
+    }),
     [actions.getUsedAddressesRequest]: state => ({
       ...state,
       isLoading: true,

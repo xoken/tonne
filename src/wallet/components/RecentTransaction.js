@@ -148,14 +148,14 @@ class RecentTransaction extends React.Component {
                       <Label className='plain'>
                         <i
                           title={
-                            transaction.confirmations >= 0
+                            transaction.confirmations !== null
                               ? transaction.confirmations > 10
                                 ? 'More than 10 Confirmations'
                                 : `${transaction.confirmations} Confirmations`
                               : 'Unconfirmed Transaction'
                           }
                           className={
-                            transaction.confirmations >= 0
+                            transaction.confirmations !== null
                               ? transaction.confirmations > 10
                                 ? 'green lock icon'
                                 : 'warning unlock alternate icon'

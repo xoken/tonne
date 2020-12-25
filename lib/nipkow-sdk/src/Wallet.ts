@@ -547,7 +547,8 @@ class Wallet {
             );
             await Persist.upsertOutputs(newDiffOutputs);
             await Persist.upsertTransactions(confirmedTxs);
-            await Persist.upsertUnconfirmedTransactions(unConfirmedTxs);
+            /* FIX This */
+            // await Persist.upsertUnconfirmedTransactions(unConfirmedTxs);
             await Persist.upsertDerivedKeys(newDerivedKeys);
             await Persist.upsertNUTXODerivedKeys(newNUTXODerivedKeys);
 
@@ -808,7 +809,8 @@ class Wallet {
               _deleted: true,
             };
           });
-          await Persist.upsertUnconfirmedTransactions(deletedUnconfirmedTxs);
+          /* FIX this */
+          // await Persist.upsertUnconfirmedTransactions(deletedUnconfirmedTxs);
         }
         if (unconfirmedTxs.length > 0) {
           for (let index = 0; index < unconfirmedTxs.length; index++) {
@@ -891,9 +893,10 @@ class Wallet {
   ) {
     const transactionHex = transaction.toHex();
     const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
-    const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
-      base64
-    );
+    // const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
+    //   base64
+    // );
+    const txBroadcast = true;
     if (txBroadcast) {
       const spentUtxos = inputs.map((input: any) => ({
         ...input,
@@ -917,9 +920,6 @@ class Wallet {
           };
         }
       );
-      await this.markAddressesUsed(ownOutputs.map(({ address }) => address));
-      await Persist.upsertOutputs(spentUtxos);
-      await Persist.upsertOutputs(changeOutputs);
       const unconfirmedTransaction = {
         txId: transaction.getId(),
         inputs: transaction.ins.map((input, index) => {
@@ -964,12 +964,16 @@ class Wallet {
             value: output.value,
           };
         }),
-        confirmed: false,
+        confirmations: null,
         createdAt: new Date(),
       };
-      await Persist.upsertUnconfirmedTransactions([unconfirmedTransaction]);
+      await this.markAddressesUsed(ownOutputs.map(({ address }) => address));
+      await Persist.upsertOutputs(spentUtxos);
+      await Persist.upsertOutputs(changeOutputs);
+      await Persist.upsertTransactions([unconfirmedTransaction]);
+      return { transaction: unconfirmedTransaction, txBroadcast };
     }
-    return { txBroadcast };
+    throw new Error('Broadcast failed');
   }
 
   async _createSendTransaction(utxos: any[], targets: any[], feeRate: number) {
@@ -1058,7 +1062,7 @@ class Wallet {
     const targets = [
       { address: receiverAddress, value: Number(amountInSatoshi) },
     ];
-    await this._createSendTransaction(utxos, targets, feeRate);
+    return await this._createSendTransaction(utxos, targets, feeRate);
   }
 
   async getTransactionFee(
