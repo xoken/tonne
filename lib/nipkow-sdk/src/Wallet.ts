@@ -280,6 +280,42 @@ class Wallet {
     }, 0);
   }
 
+  _removeDuplicate(outputs: any[]) {
+    const unconfirmedOutputs = [];
+    for (let index = 0; index < outputs.length; index++) {
+      const output = outputs[index];
+      if (output.txIndex === null) {
+        unconfirmedOutputs.push(output);
+      } else {
+        break;
+      }
+    }
+    if (unconfirmedOutputs.length > 0) {
+      for (let index = 0; index < unconfirmedOutputs.length; index++) {
+        const unconfirmedOutput = unconfirmedOutputs[index];
+        const duplicateOutputs = outputs.splice(
+          0,
+          unconfirmedOutputs.length * 2
+        );
+        const uniqueOutputs = duplicateOutputs.filter(
+          (element, index, self) => {
+            return (
+              index ===
+              self.findIndex(
+                (t) =>
+                  t.txIndex !== null &&
+                  t.outputTxHash === element.outputTxHash &&
+                  t.outputIndex === element.outputIndex
+              )
+            );
+          }
+        );
+        return [...uniqueOutputs, ...outputs];
+      }
+    }
+    return outputs;
+  }
+
   async getTransactions(options?: {
     startkey?: string;
     limit?: number;
@@ -293,9 +329,10 @@ class Wallet {
       const {
         derivedKeys: newDerivedKeys,
         nUTXODerivedKeys: newNUTXODerivedKeys,
-        diffOutputs,
+        diffOutputs: diffOutputsWithDuplicate,
       } = await this._getOutputs(keys);
-      if (diffOutputs.length > 0) {
+      if (diffOutputsWithDuplicate.length > 0) {
+        const diffOutputs = this._removeDuplicate(diffOutputsWithDuplicate);
         const newKeys = [...newDerivedKeys, ...newNUTXODerivedKeys];
         /* FIX: A Tx can be in spendInfo, and it may not appear in getOutputs API */
         const spentOutputs = diffOutputs.filter(
@@ -411,6 +448,7 @@ class Wallet {
               if (transaction.confirmations! >= 0) {
                 confirmedTxs.push(transaction);
               } else {
+                debugger;
                 unConfirmedTxs.push(transaction);
               }
             });
@@ -425,19 +463,6 @@ class Wallet {
               }
               return false;
             });
-            // const unConfirmedAllegoryTxs = unConfirmedTxs.filter(
-            //   (unConfirmedTx) => {
-            //     if (
-            //       unConfirmedTx.outputs.length > 0 &&
-            //       unConfirmedTx.outputs[0].lockingScript.startsWith(
-            //         '006a0f416c6c65676f72792f416c6c506179'
-            //       )
-            //     ) {
-            //       return true;
-            //     }
-            //     return false;
-            //   }
-            // );
             const confirmedNamePurchaseTxs: any[] = [];
             confirmedAllegoryTxs.forEach((confirmedAllegoryTx) => {
               const allegoryData = decodeCBORData(
@@ -465,20 +490,6 @@ class Wallet {
                 tx: confirmedAllegoryTx,
               });
             });
-            // const unConfirmedNamePurchaseTxs = [];
-            // unConfirmedAllegoryTxs.filter((unConfirmedAllegoryTx) => {
-            //   const allegoryData = decodeCBORData(
-            //     unConfirmedAllegoryTx.outputs[0].lockingScript
-            //   );
-            //   const { name: allegoryName, index } = getAllegoryName(
-            //     allegoryData
-            //   );
-            //   unConfirmedNamePurchaseTxs.push({
-            //     name: utils.codePointToName(allegoryName),
-            //     index: index,
-            //     tx: unConfirmedAllegoryTx,
-            //   });
-            // });
             const validConfirmedNamePurchaseTxs: any[] = [];
             for (
               let index = 0;
@@ -541,8 +552,10 @@ class Wallet {
             await Persist.upsertNUTXODerivedKeys(newNUTXODerivedKeys);
 
             if (options?.diff) {
+              debugger;
               return { transactions };
             } else {
+              debugger;
               return await Persist.getTransactions(options);
             }
           } else {
@@ -612,9 +625,10 @@ class Wallet {
     const countOfUnusedNUTXOKeys = this._countOfUnusedKeys(nUTXOKeys);
     if (countOfUnusedKeys < 20 || countOfUnusedNUTXOKeys < 20) {
       const bip32ExtendedKey = await Persist.getBip32ExtendedKey();
-      const lastKeyIndex = derivedKeys[derivedKeys.length - 1].indexText
+      const lastKeyIndex = walletKeys[walletKeys.length - 1].indexText
         .split('/')
         .pop();
+
       const { derivedKeys: nextDerivedKeys } = await this.generateDerivedKeys(
         bip32ExtendedKey,
         derivationPaths.BITCOIN_SV_REGTEST.BIP44.derivationPath,
@@ -624,7 +638,7 @@ class Wallet {
       );
 
       const nUTXOExtendedKey = await Persist.getNUTXOExtendedKey();
-      const lastNUTXOKeyIndex = derivedKeys[derivedKeys.length - 1].indexText
+      const lastNUTXOKeyIndex = nUTXOKeys[nUTXOKeys.length - 1].indexText
         .split('/')
         .pop();
       const {
@@ -870,9 +884,10 @@ class Wallet {
   }
 
   async relayTx(
+    psbt: Psbt,
     transaction: Transaction,
-    inputs: object[],
-    usedAddresses: string[]
+    inputs: any[],
+    ownOutputs: any[]
   ) {
     const transactionHex = transaction.toHex();
     const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
@@ -884,16 +899,75 @@ class Wallet {
         ...input,
         isSpent: true,
       }));
-      await this.markAddressesUsed(usedAddresses);
+      const changeOutputs = ownOutputs.map(
+        (ownOutput: { address: string }, index) => {
+          const transactionOutput = transaction.outs.find((output, index) => {
+            const p2pkh = payments.p2pkh({
+              output: output.script,
+              network: network.BITCOIN_SV_REGTEST,
+            });
+            return ownOutput.address === p2pkh.address!;
+          });
+          return {
+            address: ownOutput.address,
+            isSpent: false,
+            outputIndex: index,
+            outputTxHash: transaction.getId(),
+            value: transactionOutput?.value,
+          };
+        }
+      );
+      await this.markAddressesUsed(ownOutputs.map(({ address }) => address));
       await Persist.upsertOutputs(spentUtxos);
-      await Persist.upsertUnconfirmedTransactions([
-        {
-          txId: transaction.getId(),
-          confirmed: false,
-          outputs: spentUtxos,
-          createdAt: new Date(),
-        },
-      ]);
+      await Persist.upsertOutputs(changeOutputs);
+      const unconfirmedTransaction = {
+        txId: transaction.getId(),
+        inputs: transaction.ins.map((input, index) => {
+          const p2pkh = payments.p2pkh({
+            input: input.script,
+            network: network.BITCOIN_SV_REGTEST,
+          });
+          const isMineInput = inputs.find(
+            (inp: { outputTxHash: string; outputIndex: number }) => {
+              return (
+                inp.outputTxHash ===
+                  Buffer.from(input.hash).reverse().toString('hex') &&
+                inp.outputIndex === input.index
+              );
+            }
+          );
+          return {
+            address: p2pkh.address!,
+            isMine: isMineInput ? true : false,
+            isNUTXO: isMineInput && isMineInput.isNameOutpoint ? true : false,
+            txInputIndex: input.index,
+            value: psbt.data.inputs[index].witnessUtxo?.value,
+          };
+        }),
+        outputs: transaction.outs.map((output, index) => {
+          const p2pkh = payments.p2pkh({
+            output: output.script,
+            network: network.BITCOIN_SV_REGTEST,
+          });
+          const isMineOutput = ownOutputs.find(
+            (ownOutput: { address: string }) => {
+              return ownOutput.address === p2pkh.address!;
+            }
+          );
+          return {
+            address: p2pkh.address!,
+            isMine: isMineOutput ? true : false,
+            isNUTXO:
+              isMineOutput && isMineOutput.type === 'nUTXO' ? true : false,
+            lockingScript: Buffer.from(output.script).toString('hex'),
+            outputIndex: index,
+            value: output.value,
+          };
+        }),
+        confirmed: false,
+        createdAt: new Date(),
+      };
+      await Persist.upsertUnconfirmedTransactions([unconfirmedTransaction]);
     }
     return { txBroadcast };
   }
@@ -943,7 +1017,7 @@ class Wallet {
           });
         }
       );
-      const usedAddresses: string[] = [];
+      const usedAddresses: any[] = [];
       for (let index = 0; index < outputs.length; index++) {
         const output = outputs[index];
         if (!output.address) {
@@ -951,7 +1025,7 @@ class Wallet {
             excludeAddresses: usedAddresses,
           });
           const address = unusedAddresses[0];
-          usedAddresses.push(address);
+          usedAddresses.push({ type: '', title: '', address });
           output.address = address;
         }
         psbt.addOutput({
@@ -969,7 +1043,7 @@ class Wallet {
       psbt.validateSignaturesOfAllInputs();
       psbt.finalizeAllInputs();
       const transaction = psbt.extractTransaction(true);
-      return await this.relayTx(transaction, inputs, usedAddresses);
+      return await this.relayTx(psbt, transaction, inputs, usedAddresses);
     } catch (error) {
       throw error;
     }
@@ -1256,11 +1330,19 @@ class Wallet {
     // const { utxos } = await Persist.getUTXOs();
     // const feeRate = 5;
     // await this._createSendTransaction(utxos, targets, feeRate);
-    const keys: any[] = await this._getKeys([
-      'n3cFZxbA1TAfwQk2HEBYw35L47g5M4BeEL',
-    ]);
-    console.log(keys[0].privateKey.toString('hex'));
-    // Persist.runScript();
+    // const keys: any[] = await this._getKeys([
+    //   'n3cFZxbA1TAfwQk2HEBYw35L47g5M4BeEL',
+    // ]);
+    // console.log(keys[0].privateKey.toString('hex'));
+    console.log(await this.getBalance());
+    const { utxos } = await Persist.getUTXOs();
+    const balance = utxos.reduce((acc: number, currOutput: any) => {
+      if (!currOutput.isSpent) {
+        acc = acc + currOutput.value;
+      }
+      return acc;
+    }, 0);
+    console.log(balance);
   }
 }
 

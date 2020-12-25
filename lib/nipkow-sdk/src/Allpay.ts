@@ -266,8 +266,8 @@ class Allpay {
     psbt.validateSignaturesOfAllInputs();
     psbt.finalizeAllInputs();
     const transaction = psbt.extractTransaction(true);
-    const usedAddresses = ownOutputs.map(({ address }) => address);
-    return await wallet.relayTx(transaction, inputs, usedAddresses);
+    // const usedAddresses = ownOutputs.map(({ address }) => address);
+    return await wallet.relayTx(psbt, transaction, inputs, ownOutputs);
   }
 
   async verifyRootTx(args: {

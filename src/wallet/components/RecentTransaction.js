@@ -34,7 +34,7 @@ class RecentTransaction extends React.Component {
       );
       const autoRefreshTimeInSecs = 1 * 60 * 1000;
       this.autoRefreshTimer = setInterval(() => {
-        this.onRefresh();
+        // this.onRefresh();
       }, autoRefreshTimeInSecs);
     } catch (error) {}
   }
@@ -130,7 +130,6 @@ class RecentTransaction extends React.Component {
               }
               return '';
             };
-
             return (
               <Segment key={index.toString()} className='transaction'>
                 <Accordion.Title
@@ -149,14 +148,18 @@ class RecentTransaction extends React.Component {
                       <Label className='plain'>
                         <i
                           title={
-                            transaction.confirmations > 10
-                              ? 'More than 10 Confirmations'
-                              : `${transaction.confirmations} Confirmations`
+                            transaction.confirmations >= 0
+                              ? transaction.confirmations > 10
+                                ? 'More than 10 Confirmations'
+                                : `${transaction.confirmations} Confirmations`
+                              : 'Unconfirmed Transaction'
                           }
                           className={
-                            transaction.confirmations > 10
-                              ? 'green lock icon'
-                              : 'warning unlock alternate icon'
+                            transaction.confirmations >= 0
+                              ? transaction.confirmations > 10
+                                ? 'green lock icon'
+                                : 'warning unlock alternate icon'
+                              : 'red unlock alternate icon'
                           }></i>
                       </Label>
                     </Grid.Column>
