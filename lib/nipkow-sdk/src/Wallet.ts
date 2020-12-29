@@ -28,6 +28,7 @@ import { transactionAPI } from './TransactionAPI';
 import { chainAPI } from './ChainAPI';
 import utils from './Utils';
 import { post } from './httpClient';
+import { codePointAt } from 'pouchdb-find';
 
 class Wallet {
   async _initWallet(bip39Mnemonic: string, password?: string) {
@@ -336,21 +337,27 @@ class Wallet {
       );
       const allegory = getAllegoryType(allegoryData);
       const { name, action } = allegory;
-      let codepoints: number[] = [];
+      let producerExtensions: { codePoint: number; index: any }[] = [];
       if (action instanceof ProducerAction) {
         const producerAction = action as ProducerAction;
         if (producerAction.extensions.length > 0) {
-          codepoints = producerAction.extensions.map((extension: Extension) => {
-            return extension.codePoint;
-            // return [
-            //   extension.codePoint,
-            //   (extension as OwnerExtension).ownerOutputEx.owner,
-            // ];
-          });
+          producerExtensions = producerAction.extensions.map(
+            (extension: Extension) => {
+              return {
+                codePoint: extension.codePoint,
+                index: (extension as OwnerExtension).ownerOutputEx.owner,
+              };
+            }
+          );
         }
       }
+      const producerCodePoints = producerExtensions?.map(
+        ({ codePoint }) => codePoint
+      );
       confirmedNamePurchaseTxs.push({
-        name: utils.codePointToName([...name, ...codepoints]),
+        name: utils.codePointToName([...name, ...producerCodePoints]),
+        index:
+          producerExtensions.length > 0 ? producerExtensions[0].index : null,
         tx: allegoryTransaction,
       });
     });
@@ -385,8 +392,7 @@ class Wallet {
             return (
               diffOutput.outputTxHash ===
                 validConfirmedNamePurchaseTx.tx.txId &&
-              diffOutput.outputIndex === 2
-              // validConfirmedNamePurchaseTx.index
+              diffOutput.outputIndex === validConfirmedNamePurchaseTx.index
             );
           }
         );
