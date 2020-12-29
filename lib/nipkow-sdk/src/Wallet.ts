@@ -1318,7 +1318,8 @@ class Wallet {
     // ]);
     // console.log(keys[0].privateKey.toString('hex'));
     // console.log(await this.getBalance());
-    // const { utxos } = await Persist.getUTXOs();
+    const { utxos } = await Persist.getUTXOs();
+    console.log(utxos);
     // const balance = utxos.reduce((acc: number, currOutput: any) => {
     //   if (!currOutput.isSpent) {
     //     acc = acc + currOutput.value;
@@ -1326,13 +1327,6 @@ class Wallet {
     //   return acc;
     // }, 0);
     // console.log(balance);
-    await Persist.deleteOutputs([
-      {
-        outputTxHash:
-          'ffcd565d5ccd065e73463304f30009e5c9d542d3cec274e4a5d6cebfd943bf88',
-        outputIndex: 1,
-      },
-    ]);
   }
 }
 

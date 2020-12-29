@@ -28,24 +28,24 @@ class ConfirmNamePurchase extends React.Component {
 
   onSignRelay = async () => {
     const { psbt, inputs, ownOutputs } = this.props;
-    // if (psbt) {
-    //   try {
-    //     const { dispatch } = this.props;
-    //     const { txBroadcast } = await dispatch(
-    //       allpayActions.signRelayTransaction({
-    //         psbtHex: psbt.toHex(),
-    //         inputs,
-    //         ownOutputs,
-    //       })
-    //     );
-    //     if (txBroadcast) {
-    //       this.setState({ isError: false, message: 'Transaction signed and relayed successfully' });
-    this.props.history.push('/wallet/allpay/purchase-success');
-    //     }
-    //   } catch (error) {
-    //     this.setState({ isError: true, message: error.message });
-    //   }
-    // }
+    if (psbt) {
+      try {
+        const { dispatch } = this.props;
+        const { txBroadcast } = await dispatch(
+          allpayActions.signRelayTransaction({
+            psbtHex: psbt.toHex(),
+            inputs,
+            ownOutputs,
+          })
+        );
+        if (txBroadcast) {
+          this.setState({ isError: false, message: 'Transaction signed and relayed successfully' });
+          this.props.history.push('/wallet/allpay/purchase-success');
+        }
+      } catch (error) {
+        this.setState({ isError: true, message: error.message });
+      }
+    }
   };
 
   renderMessage() {
