@@ -766,6 +766,7 @@ class Wallet {
           );
 
           const updatedTransactions: any[] = [];
+          const deletedTransactions: any[] = [];
           const unconfirmedTransactions: any[] = [];
           transactions.forEach(
             (transaction: { txId: string; confirmation: number | null }) => {
@@ -790,6 +791,8 @@ class Wallet {
             }
           );
 
+          await Persist.upsertTransactions(updatedTransactions);
+
           if (unconfirmedTransactions.length > 0) {
             for (
               let index = 0;
@@ -801,7 +804,7 @@ class Wallet {
                 new Date(),
                 Date.parse(unconfirmedTransaction.createdAt)
               );
-              if (true || diffInMinutes > 0) {
+              if (diffInMinutes > 30) {
                 // make inputs of the tx as unspent
                 const unspentOutputs = unconfirmedTransaction.inputs.map(
                   (input: { outputTxHash: string; txInputIndex: number }) => {
@@ -828,17 +831,20 @@ class Wallet {
                 await Persist.deleteOutputs(deletedOutputs);
 
                 // delete transaction
+                deletedTransactions.push(unconfirmedTransaction);
                 await Persist.deleteTransactions([unconfirmedTransaction]);
               }
             }
+            return {
+              updatedTransactions,
+              deletedTransactions,
+            };
           }
-
-          await Persist.upsertTransactions(updatedTransactions);
-          return { updatedTransactions };
+          return { updatedTransactions, deletedTransactions };
         }
       }
     }
-    return { updatedTransactions: [] };
+    return { updatedTransactions: [], deletedTransactions: [] };
   }
 
   async relayTx(
