@@ -41,8 +41,11 @@ class SettingsService {
     // const nexaPort = 9091;
     // const userName = 'ExplorerUser';
     // const password = 'MjYxNjM5NjQyMjU0NzMxMjQyNw';
+    // const nexaHost = '3.238.95.71';
     const nexaHost = '127.0.0.1';
     const nexaPort = 9091;
+    // const userName = 'harish';
+    // const password = 'MTMzNDg4MzMyODgxNjI1ODkzNQ';
     const userName = 'admin';
     const password = 'MTgzNTkzODY4MzE0Mjg1MTA5MT';
     const { sessionKey } = await this.setConfig(nexaHost, nexaPort, userName, password);

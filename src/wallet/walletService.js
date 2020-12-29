@@ -9,10 +9,6 @@ class WalletService {
     return await wallet.getTransactions(options);
   }
 
-  async updateUnconfirmedTransactions(options) {
-    return await wallet.updateUnconfirmedTransactions();
-  }
-
   async updateTransactionsConfirmations(options) {
     return await wallet.updateTransactionsConfirmations();
   }

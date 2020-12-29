@@ -248,9 +248,46 @@ export const getOutputs = async (options?: {
   }
 };
 
+export const markOutputAsUnspent = async (
+  inputs: [
+    {
+      outputTxHash: string;
+      outputIndex: number;
+    }
+  ]
+) => {
+  const markAsUnspentOutputs: any[] = [];
+  for (let index = 0; index < inputs.length; index++) {
+    const input = inputs[index];
+    await db.createIndex({
+      index: { fields: ['outputTxHash', 'outputIndex'] },
+    });
+    const outputDoc = await db.find({
+      selector: {
+        outputTxHash: { $eq: input.outputTxHash },
+        outputIndex: { $eq: input.outputIndex },
+      },
+    });
+    if (outputDoc.docs.length > 0) {
+      const unspentOutputs = outputDoc.docs.map((output: any) => {
+        return {
+          ...output,
+          isSpent: false,
+        };
+      });
+      markAsUnspentOutputs.push(...unspentOutputs);
+    }
+  }
+  await db.bulkDocs(markAsUnspentOutputs);
+};
+
 export const upsertOutputs = async (outputs: any) => {
   if (outputs.length > 0) {
     const { outputs: existingOutputs } = await getOutputs();
+
+    if (existingOutputs.length > 0) {
+    } else {
+    }
     let outputId = existingOutputs.length - 1;
     const docs = outputs.map((output: any, index: number) => {
       if (!output._id) {
@@ -284,12 +321,46 @@ export const updateOutputs = async (outputs: any) => {
     const results = await db.bulkDocs(updateDoc);
     results.forEach((result: { error: any }) => {
       if (result.error) {
-        throw new Error('Error in updating utxos');
+        throw new Error('Error in updating outputs');
       }
     });
   } catch (error) {
     throw error;
   }
+};
+
+/* No _id, _rev change case */
+export const deleteOutputs = async (
+  outputs: [
+    {
+      outputTxHash: string;
+      outputIndex: number;
+    }
+  ]
+) => {
+  const deletedOutputs: any[] = [];
+  for (let index = 0; index < outputs.length; index++) {
+    const output = outputs[index];
+    await db.createIndex({
+      index: { fields: ['outputTxHash', 'outputIndex'] },
+    });
+    const outputDoc = await db.find({
+      selector: {
+        outputTxHash: { $eq: output.outputTxHash },
+        outputIndex: { $eq: output.outputIndex },
+      },
+    });
+    if (outputDoc.docs.length > 0) {
+      const deletedOutput = outputDoc.docs.map((output: any) => {
+        return {
+          ...output,
+          _deleted: true,
+        };
+      });
+      deletedOutputs.push(...deletedOutput);
+    }
+  }
+  await db.bulkDocs(deletedOutputs);
 };
 
 export const isInOutputs = async (output: {
@@ -343,13 +414,13 @@ export const getTransactionsByConfirmations = async (options?: {
   diff?: boolean;
 }) => {
   await db.createIndex({
-    index: { fields: ['confirmations'] },
+    index: { fields: ['confirmation'] },
   });
   const transactionDocs = await db.find({
     selector: {
       $and: [
-        { confirmations: { $lte: 10 } },
-        { confirmations: { $exists: true } },
+        { confirmation: { $lte: 10 } },
+        { confirmation: { $exists: true } },
       ],
     },
   });
@@ -379,19 +450,19 @@ export const upsertTransactions = async (transactions: any[]) => {
   }
 };
 
-export const getUnconfirmedTransactions = async () => {
-  await db.createIndex({
-    index: { fields: ['confirmations'] },
-  });
-  const outputDoc = await db.find({
-    selector: {
-      confirmations: { $eq: null },
-    },
-  });
-  if (outputDoc.docs.length > 0)
-    return { unconfirmedTransactions: outputDoc.docs };
-  return { unconfirmedTransactions: [] };
-};
+// export const getUnconfirmedTransactions = async () => {
+//   await db.createIndex({
+//     index: { fields: ['confirmation'] },
+//   });
+//   const outputDoc = await db.find({
+//     selector: {
+//       confirmation: { $eq: null },
+//     },
+//   });
+//   if (outputDoc.docs.length > 0)
+//     return { unconfirmedTransactions: outputDoc.docs };
+//   return { unconfirmedTransactions: [] };
+// };
 
 // export const upsertUnconfirmedTransactions = async (transactions: any[]) => {
 //   if (transactions.length > 0) {
@@ -414,17 +485,29 @@ export const getUnconfirmedTransactions = async () => {
 //   }
 // };
 
-// export const deleteUnconfirmedTx = async (transactions: any) => {
-//   if (transactions.length > 0) {
-//     const docs = transactions.map((transaction: any, index: number) => {
-//       return {
-//         ...transaction,
-//         _deleted: true,
-//       };
-//     });
-//     await db.bulkDocs(docs);
-//   }
-// };
+/* No _rev case */
+export const deleteTransactions = async (transactions: any) => {
+  const updatedDoc = [];
+  for (let index = 0; index < transactions.length; index++) {
+    const transaction = transactions[index];
+    const transactionDoc = await db.get(transaction._id);
+    updatedDoc.push({
+      ...transaction,
+      _rev: transactionDoc._rev,
+      _deleted: true,
+    });
+  }
+  try {
+    const results = await db.bulkDocs(updatedDoc);
+    results.forEach((result: { error: any }) => {
+      if (result.error) {
+        throw new Error('Error in updating transactions');
+      }
+    });
+  } catch (error) {
+    throw error;
+  }
+};
 
 export const markAddressesUsed = async (addresses: string[]) => {
   if (addresses.length > 0) {
@@ -499,13 +582,6 @@ export const destroy = async () => {
     db = null;
     credentials = null;
     return true;
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const runScript = async () => {
-  try {
   } catch (error) {
     throw error;
   }

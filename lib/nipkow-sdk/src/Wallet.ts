@@ -316,6 +316,95 @@ class Wallet {
     return outputs;
   }
 
+  async processAllegoryTransactions(outputs: any[], transactions: any[]) {
+    const allegoryTransactions = transactions.filter((transaction) => {
+      if (
+        transaction.outputs.length > 0 &&
+        transaction.outputs[0].lockingScript.startsWith(
+          '006a0f416c6c65676f72792f416c6c506179'
+        )
+      ) {
+        return true;
+      }
+      return false;
+    });
+
+    const confirmedNamePurchaseTxs: any[] = [];
+    allegoryTransactions.forEach((allegoryTransaction) => {
+      const allegoryData = decodeCBORData(
+        allegoryTransaction.outputs[0].lockingScript
+      );
+      const allegory = getAllegoryType(allegoryData);
+      const { name, action } = allegory;
+      let codepoints: number[] = [];
+      if (action instanceof ProducerAction) {
+        const producerAction = action as ProducerAction;
+        if (producerAction.extensions.length > 0) {
+          codepoints = producerAction.extensions.map((extension: Extension) => {
+            return extension.codePoint;
+            // return [
+            //   extension.codePoint,
+            //   (extension as OwnerExtension).ownerOutputEx.owner,
+            // ];
+          });
+        }
+      }
+      confirmedNamePurchaseTxs.push({
+        name: utils.codePointToName([...name, ...codepoints]),
+        tx: allegoryTransaction,
+      });
+    });
+    const validConfirmedNamePurchaseTxs: any[] = [];
+    for (let index = 0; index < confirmedNamePurchaseTxs.length; index++) {
+      const confirmedNamePurchaseTx = confirmedNamePurchaseTxs[index];
+      const {
+        name,
+        tx: { txId },
+      } = confirmedNamePurchaseTx;
+      if (name) {
+        const {
+          data: {
+            forName,
+            isProducer,
+            outPoint: { opIndex, opTxHash },
+            script,
+          },
+        } = await post('allegory/name-outpoint', {
+          name: utils.getCodePoint(name),
+          isProducer: false,
+        });
+        if (utils.codePointToName(forName) === name && txId === opTxHash) {
+          validConfirmedNamePurchaseTxs.push(confirmedNamePurchaseTx);
+        }
+      }
+    }
+    const diffOutputs = outputs.map(
+      (diffOutput: { outputTxHash: any; outputIndex: any }) => {
+        const nameOutput = validConfirmedNamePurchaseTxs.find(
+          (validConfirmedNamePurchaseTx: { tx: any; index: any }) => {
+            return (
+              diffOutput.outputTxHash ===
+                validConfirmedNamePurchaseTx.tx.txId &&
+              diffOutput.outputIndex === 2
+              // validConfirmedNamePurchaseTx.index
+            );
+          }
+        );
+
+        if (nameOutput) {
+          return {
+            ...diffOutput,
+            name: nameOutput.name,
+            isNameOutpoint: true,
+          };
+        } else {
+          return diffOutput;
+        }
+      }
+    );
+    return { diffOutputs };
+  }
+
   async getTransactions(options?: {
     startkey?: string;
     limit?: number;
@@ -360,7 +449,6 @@ class Wallet {
           new Set([...incomingTxIds, ...outgoingTxIds])
         );
         const { txs } = await this._getTransactions(txIds);
-        // const { txs } = await transactionAPI.getTransactionsByTxIDs(txIds);
         const { chainInfo } = await chainAPI.getChainInfo();
         if (chainInfo) {
           const { chainTip } = chainInfo;
@@ -374,7 +462,7 @@ class Wallet {
               txId: any;
               inputs: any;
               outputs: any;
-              confirmations?: number;
+              confirmation?: number | null;
             }[] = sortedTx.map(
               (transaction: { txId?: any; tx?: any; blockHeight?: any }) => {
                 const {
@@ -436,127 +524,23 @@ class Wallet {
                 };
                 return {
                   ...newTransaction,
-                  confirmations: blockHeight
-                    ? chainTip - blockHeight
-                    : undefined,
+                  confirmation: blockHeight ? chainTip - blockHeight : null,
                 };
               }
             );
-            let confirmedTxs: any[] = [];
-            let unConfirmedTxs: any[] = [];
-            transactions.forEach((transaction) => {
-              if (transaction.confirmations! >= 0) {
-                confirmedTxs.push(transaction);
-              } else {
-                debugger;
-                unConfirmedTxs.push(transaction);
-              }
-            });
-            const confirmedAllegoryTxs = confirmedTxs.filter((confirmedTx) => {
-              if (
-                confirmedTx.outputs.length > 0 &&
-                confirmedTx.outputs[0].lockingScript.startsWith(
-                  '006a0f416c6c65676f72792f416c6c506179'
-                )
-              ) {
-                return true;
-              }
-              return false;
-            });
-            const confirmedNamePurchaseTxs: any[] = [];
-            confirmedAllegoryTxs.forEach((confirmedAllegoryTx) => {
-              const allegoryData = decodeCBORData(
-                confirmedAllegoryTx.outputs[0].lockingScript
-              );
-              const allegory = getAllegoryType(allegoryData);
-              const { name, action } = allegory;
-              let codepoints: number[] = [];
-              if (action instanceof ProducerAction) {
-                const producerAction = action as ProducerAction;
-                if (producerAction.extensions.length > 0) {
-                  codepoints = producerAction.extensions.map(
-                    (extension: Extension) => {
-                      return extension.codePoint;
-                      // return [
-                      //   extension.codePoint,
-                      //   (extension as OwnerExtension).ownerOutputEx.owner,
-                      // ];
-                    }
-                  );
-                }
-              }
-              confirmedNamePurchaseTxs.push({
-                name: utils.codePointToName([...name, ...codepoints]),
-                tx: confirmedAllegoryTx,
-              });
-            });
-            const validConfirmedNamePurchaseTxs: any[] = [];
-            for (
-              let index = 0;
-              index < confirmedNamePurchaseTxs.length;
-              index++
-            ) {
-              const confirmedNamePurchaseTx = confirmedNamePurchaseTxs[index];
-              const {
-                name,
-                tx: { txId },
-              } = confirmedNamePurchaseTx;
-              if (name) {
-                const {
-                  data: {
-                    forName,
-                    isProducer,
-                    outPoint: { opIndex, opTxHash },
-                    script,
-                  },
-                } = await post('allegory/name-outpoint', {
-                  name: utils.getCodePoint(name),
-                  isProducer: false,
-                });
-                if (
-                  utils.codePointToName(forName) === name &&
-                  txId === opTxHash
-                ) {
-                  validConfirmedNamePurchaseTxs.push(confirmedNamePurchaseTx);
-                }
-              }
-            }
-            const newDiffOutputs = diffOutputs.map(
-              (diffOutput: { outputTxHash: any; outputIndex: any }) => {
-                const nameOutput = validConfirmedNamePurchaseTxs.find(
-                  (validConfirmedNamePurchaseTx: { tx: any; index: any }) => {
-                    return (
-                      diffOutput.outputTxHash ===
-                        validConfirmedNamePurchaseTx.tx.txId &&
-                      diffOutput.outputIndex === 2
-                      // validConfirmedNamePurchaseTx.index
-                    );
-                  }
-                );
-
-                if (nameOutput) {
-                  return {
-                    ...diffOutput,
-                    name: nameOutput.name,
-                    isNameOutpoint: true,
-                  };
-                } else {
-                  return diffOutput;
-                }
-              }
+            const {
+              diffOutputs: newDiffOutputs,
+            } = await this.processAllegoryTransactions(
+              diffOutputs,
+              transactions
             );
             await Persist.upsertOutputs(newDiffOutputs);
-            await Persist.upsertTransactions(confirmedTxs);
-            /* FIX This */
-            // await Persist.upsertUnconfirmedTransactions(unConfirmedTxs);
+            await Persist.upsertTransactions(transactions);
             await Persist.upsertDerivedKeys(newDerivedKeys);
             await Persist.upsertNUTXODerivedKeys(newNUTXODerivedKeys);
-
             if (options?.diff) {
-              debugger;
               return { transactions };
             } else {
-              debugger;
               return await Persist.getTransactions(options);
             }
           } else {
@@ -762,79 +746,6 @@ class Wallet {
     });
   }
 
-  async updateUnconfirmedTransactions() {
-    const {
-      unconfirmedTransactions,
-    } = await Persist.getUnconfirmedTransactions();
-    const unconfirmedTxIds = unconfirmedTransactions.map(
-      (unconfirmedTx: { txId: any }) => unconfirmedTx.txId
-    );
-    if (unconfirmedTxIds.length > 0) {
-      const { txs } = await transactionAPI.getTransactionsByTxIDs(
-        unconfirmedTxIds
-      );
-      if (txs.length > 0) {
-        const updatedUnconfirmedTransactions = unconfirmedTransactions.map(
-          (unconfirmedTx: { txId: any }) => {
-            const isConfirmed = txs.find(
-              (tx: { txId: any; blockHeight: number }) => {
-                if (tx.blockHeight && tx.txId === unconfirmedTx.txId) {
-                  return true;
-                }
-                return false;
-              }
-            );
-            if (isConfirmed) {
-              return {
-                ...unconfirmedTx,
-                confirmed: true,
-              };
-            }
-            return {
-              ...unconfirmedTx,
-              confirmed: false,
-            };
-          }
-        );
-        const confirmedTxs = updatedUnconfirmedTransactions.filter(
-          (tx: { confirmed: boolean }) => tx.confirmed === true
-        );
-        const unconfirmedTxs = updatedUnconfirmedTransactions.filter(
-          (tx: { confirmed: boolean }) => tx.confirmed === false
-        );
-        if (confirmedTxs.length > 0) {
-          const deletedUnconfirmedTxs = confirmedTxs.map((transaction: any) => {
-            return {
-              ...transaction,
-              _deleted: true,
-            };
-          });
-          /* FIX this */
-          // await Persist.upsertUnconfirmedTransactions(deletedUnconfirmedTxs);
-        }
-        if (unconfirmedTxs.length > 0) {
-          for (let index = 0; index < unconfirmedTxs.length; index++) {
-            const unconfirmedTx = unconfirmedTxs[index];
-            const diffInMinutes = differenceInMinutes(
-              new Date(),
-              Date.parse(unconfirmedTx.createdAt)
-            );
-            if (diffInMinutes > 30) {
-              const unconfirmedOutputs = unconfirmedTx.outputs;
-              const updatedunConfirmedOutputs = unconfirmedOutputs.map(
-                (output: any) => ({
-                  ...output,
-                  isSpent: false,
-                })
-              );
-              await Persist.updateOutputs(updatedunConfirmedOutputs);
-            }
-          }
-        }
-      }
-    }
-  }
-
   async updateTransactionsConfirmations() {
     const { transactions } = await Persist.getTransactionsByConfirmations();
     const txIds = transactions.map((tx: { txId: any }) => tx.txId);
@@ -844,39 +755,84 @@ class Wallet {
         const { chainInfo } = await chainAPI.getChainInfo();
         if (chainInfo) {
           const { chainTip } = chainInfo;
-          const newTransactions = txs.map(
+          const txsWithConfirmation = txs.map(
             (transaction: { blockHeight?: any; txId: string }) => {
               const { blockHeight } = transaction;
               return {
                 ...transaction,
-                confirmations: blockHeight ? chainTip - blockHeight : undefined,
+                confirmation: blockHeight ? chainTip - blockHeight : null,
               };
             }
           );
-          const updatedTransactions = transactions.map(
-            (transaction: { txId: string }) => {
-              const matchingTransaction = newTransactions.find(
-                (tx: { txId: string }) => tx.txId === transaction.txId
+
+          const updatedTransactions: any[] = [];
+          const unconfirmedTransactions: any[] = [];
+          transactions.forEach(
+            (transaction: { txId: string; confirmation: number | null }) => {
+              const matchedTxWithConfirmation = txsWithConfirmation.find(
+                (tx: { txId: string; confirmation: number | null }) =>
+                  tx.txId === transaction.txId
               );
-              if (matchingTransaction) {
-                return {
+              if (
+                matchedTxWithConfirmation?.confirmation !==
+                transaction.confirmation
+              ) {
+                updatedTransactions.push({
                   ...transaction,
-                  confirmations: matchingTransaction.confirmations,
-                  // _id: matchingTransaction._id,
-                  // _rev: matchingTransaction._rev,
-                };
-              } else {
-                return transaction;
+                  confirmation: matchedTxWithConfirmation?.confirmation,
+                });
+              }
+              if (matchedTxWithConfirmation?.confirmation === null) {
+                unconfirmedTransactions.push({
+                  ...transaction,
+                });
               }
             }
           );
-          // .filter((transaction: { id?: string }) => {
-          //   if (transaction.id) {
-          //     return true;
-          //   } else {
-          //     return false;
-          //   }
-          // });
+
+          if (unconfirmedTransactions.length > 0) {
+            for (
+              let index = 0;
+              index < unconfirmedTransactions.length;
+              index++
+            ) {
+              const unconfirmedTransaction = unconfirmedTransactions[index];
+              const diffInMinutes = differenceInMinutes(
+                new Date(),
+                Date.parse(unconfirmedTransaction.createdAt)
+              );
+              if (true || diffInMinutes > 0) {
+                // make inputs of the tx as unspent
+                const unspentOutputs = unconfirmedTransaction.inputs.map(
+                  (input: { outputTxHash: string; txInputIndex: number }) => {
+                    return {
+                      outputTxHash: input.outputTxHash,
+                      outputIndex: input.txInputIndex,
+                    };
+                  }
+                );
+                await Persist.markOutputAsUnspent(unspentOutputs);
+
+                // delete own outputs of this tx
+                const ownOutputs = unconfirmedTransaction.outputs.filter(
+                  (output: { isMine: boolean }) => output.isMine === true
+                );
+                const deletedOutputs = ownOutputs.map(
+                  (output: { outputIndex: number }) => {
+                    return {
+                      outputTxHash: unconfirmedTransaction.txId,
+                      outputIndex: output.outputIndex,
+                    };
+                  }
+                );
+                await Persist.deleteOutputs(deletedOutputs);
+
+                // delete transaction
+                await Persist.deleteTransactions([unconfirmedTransaction]);
+              }
+            }
+          }
+
           await Persist.upsertTransactions(updatedTransactions);
           return { updatedTransactions };
         }
@@ -893,10 +849,9 @@ class Wallet {
   ) {
     const transactionHex = transaction.toHex();
     const base64 = Buffer.from(transactionHex, 'hex').toString('base64');
-    // const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
-    //   base64
-    // );
-    const txBroadcast = true;
+    const { txBroadcast } = await transactionAPI.broadcastRawTransaction(
+      base64
+    );
     if (txBroadcast) {
       const spentUtxos = inputs.map((input: any) => ({
         ...input,
@@ -911,10 +866,21 @@ class Wallet {
             });
             return ownOutput.address === p2pkh.address!;
           });
+
+          const transactionIndex = transaction.outs.findIndex(
+            (output, index) => {
+              const p2pkh = payments.p2pkh({
+                output: output.script,
+                network: network.BITCOIN_SV_REGTEST,
+              });
+              return ownOutput.address === p2pkh.address!;
+            }
+          );
+
           return {
             address: ownOutput.address,
             isSpent: false,
-            outputIndex: index,
+            outputIndex: transactionIndex,
             outputTxHash: transaction.getId(),
             value: transactionOutput?.value,
           };
@@ -941,6 +907,7 @@ class Wallet {
             isMine: isMineInput ? true : false,
             isNUTXO: isMineInput && isMineInput.isNameOutpoint ? true : false,
             txInputIndex: input.index,
+            outputTxHash: Buffer.from(input.hash).reverse().toString('hex'),
             value: psbt.data.inputs[index].witnessUtxo?.value,
           };
         }),
@@ -964,7 +931,7 @@ class Wallet {
             value: output.value,
           };
         }),
-        confirmations: null,
+        confirmation: null,
         createdAt: new Date(),
       };
       await this.markAddressesUsed(ownOutputs.map(({ address }) => address));
@@ -1338,15 +1305,22 @@ class Wallet {
     //   'n3cFZxbA1TAfwQk2HEBYw35L47g5M4BeEL',
     // ]);
     // console.log(keys[0].privateKey.toString('hex'));
-    console.log(await this.getBalance());
-    const { utxos } = await Persist.getUTXOs();
-    const balance = utxos.reduce((acc: number, currOutput: any) => {
-      if (!currOutput.isSpent) {
-        acc = acc + currOutput.value;
-      }
-      return acc;
-    }, 0);
-    console.log(balance);
+    // console.log(await this.getBalance());
+    // const { utxos } = await Persist.getUTXOs();
+    // const balance = utxos.reduce((acc: number, currOutput: any) => {
+    //   if (!currOutput.isSpent) {
+    //     acc = acc + currOutput.value;
+    //   }
+    //   return acc;
+    // }, 0);
+    // console.log(balance);
+    await Persist.deleteOutputs([
+      {
+        outputTxHash:
+          'ffcd565d5ccd065e73463304f30009e5c9d542d3cec274e4a5d6cebfd943bf88',
+        outputIndex: 1,
+      },
+    ]);
   }
 }
 

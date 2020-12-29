@@ -23,7 +23,6 @@ class RecentTransaction extends React.Component {
     const { dispatch } = this.props;
     try {
       await dispatch(walletActions.getTransactions({ limit: 10 }));
-      await dispatch(walletActions.updateUnconfirmedTransactions());
       this.setState({ lastRefreshed: new Date() });
       this.timerID = setInterval(
         () =>
@@ -41,8 +40,7 @@ class RecentTransaction extends React.Component {
 
   onRefresh = async () => {
     const { dispatch } = this.props;
-    await dispatch(walletActions.getTransactions({ diff: true }));
-    await dispatch(walletActions.updateUnconfirmedTransactions());
+    // await dispatch(walletActions.getTransactions({ diff: true }));
     await dispatch(walletActions.updateTransactionsConfirmations());
     this.setState({
       lastRefreshed: new Date(),
@@ -148,15 +146,15 @@ class RecentTransaction extends React.Component {
                       <Label className='plain'>
                         <i
                           title={
-                            transaction.confirmations !== null
-                              ? transaction.confirmations > 10
+                            transaction.confirmation !== null
+                              ? transaction.confirmation > 10
                                 ? 'More than 10 Confirmations'
-                                : `${transaction.confirmations} Confirmations`
+                                : `${transaction.confirmation} Confirmations`
                               : 'Unconfirmed Transaction'
                           }
                           className={
-                            transaction.confirmations !== null
-                              ? transaction.confirmations > 10
+                            transaction.confirmation !== null
+                              ? transaction.confirmation > 10
                                 ? 'green lock icon'
                                 : 'warning unlock alternate icon'
                               : 'red unlock alternate icon'
