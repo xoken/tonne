@@ -7,7 +7,7 @@ const INITIAL_STATE = {
   ui: {
     activeStep: 1,
     title: null,
-    progressTotalSteps: 5,
+    progressTotalSteps: 6,
   },
   psbt: null,
   outpoint: null,

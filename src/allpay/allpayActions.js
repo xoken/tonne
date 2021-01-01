@@ -1,5 +1,6 @@
 import { createAction } from 'redux-act';
 import { allpayFlows } from './allpayRoutes';
+import * as walletActions from '../wallet/walletActions';
 import AllpayService from './allpayService';
 
 export const getResellerURIRequest = createAction('GET_RESELLER_URI_REQUEST');
@@ -66,8 +67,12 @@ export const registerName = ({ proxyHost, proxyPort, name, addressCount }) => as
 export const signRelayTransaction = data => async (dispatch, getState, { serviceInjector }) => {
   dispatch(signRelayTransactionRequest());
   try {
-    const { txBroadcast } = await serviceInjector(AllpayService).signRelayTransaction(data);
+    const { transaction, txBroadcast } = await serviceInjector(AllpayService).signRelayTransaction(
+      data
+    );
     dispatch(signRelayTransactionSuccess());
+    dispatch(walletActions.createSendTransactionSuccess({ transaction }));
+    await dispatch(walletActions.getBalance());
     return { txBroadcast };
   } catch (error) {
     dispatch(signRelayTransactionFailure());

@@ -6,7 +6,7 @@ import { satoshiToBSV } from '../../shared/utils';
 import RenderTransaction from '../components/RenderTransaction';
 import * as allpayActions from '../allpayActions';
 
-class ConfirmNamePurchase extends React.Component {
+class ConfirmRegistration extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -20,8 +20,8 @@ class ConfirmNamePurchase extends React.Component {
     const { dispatch } = this.props;
     dispatch(
       allpayActions.updateScreenProps({
-        title: 'Confirm Allpay Name Purchase',
-        activeStep: 2,
+        title: 'Confirm Allpay Name Registration',
+        activeStep: 5,
       })
     );
   }
@@ -40,7 +40,7 @@ class ConfirmNamePurchase extends React.Component {
         );
         if (txBroadcast) {
           this.setState({ isError: false, message: 'Transaction signed and relayed successfully' });
-          this.props.history.push('/wallet/allpay/purchase-success');
+          this.props.history.push('/wallet/allpay/register-success');
         } else {
           this.setState({ isError: true, message: 'Error in relaying Transaction' });
         }
@@ -91,7 +91,7 @@ class ConfirmNamePurchase extends React.Component {
         return satoshiToBSV(nameOutpoint.value);
       }
     }
-    return '0.0001 BSV';
+    return null;
   }
 
   renderTransactionFee() {
@@ -137,27 +137,18 @@ class ConfirmNamePurchase extends React.Component {
                   <div className='detail'>{utils.codePointToName(name)}</div>
                 </div>
               </div>
-              <div className='item'>
-                <div className='ui large custom label'>
-                  Reseller right:
-                  <div className='detail'>{isProducer.toString()}</div>
-                </div>
-              </div>
-
-              <div className='item'>
+              {/* <div className='item'>
                 <div className='ui large custom label'>
                   Name Price:
                   <div className='detail'>{this.renderPurchaseCost()}</div>
                 </div>
-              </div>
-
+              </div> */}
               <div className='item'>
                 <div className='ui large custom label'>
                   Transaction Fee:
                   <div className='detail'>{this.renderTransactionFee()}</div>
                 </div>
               </div>
-
               <div className='item'>
                 <div className='ui large custom label'>
                   Note:
@@ -169,7 +160,7 @@ class ConfirmNamePurchase extends React.Component {
           <div className='four wide middle aligned column'>
             <h4 className='ui center aligned header'>{this.renderPurchaseCost()}</h4>
             <button className='fluid ui yellow button' onClick={this.onSignRelay}>
-              Confirm Purchase
+              Confirm Registration
             </button>
             <button
               className='fluid ui basic borderless button'
@@ -194,4 +185,4 @@ const mapStateToProps = state => ({
   snv: state.allpay.snv,
 });
 
-export default withRouter(connect(mapStateToProps)(ConfirmNamePurchase));
+export default withRouter(connect(mapStateToProps)(ConfirmRegistration));

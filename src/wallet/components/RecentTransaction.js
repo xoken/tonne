@@ -20,23 +20,25 @@ class RecentTransaction extends React.Component {
   }
 
   async componentDidMount() {
-    const { dispatch } = this.props;
-    try {
-      await dispatch(walletActions.getTransactions({ limit: 10 }));
-      await dispatch(walletActions.updateTransactionsConfirmations());
-      this.setState({ lastRefreshed: new Date() });
-      this.timerID = setInterval(
-        () =>
-          this.setState({
-            timeSinceLastRefreshed: new Date(),
-          }),
-        1000
-      );
-      const autoRefreshTimeInSecs = 1 * 60 * 1000;
-      this.autoRefreshTimer = setInterval(() => {
-        this.onRefresh();
-      }, autoRefreshTimeInSecs);
-    } catch (error) {}
+    const { transactions, dispatch } = this.props;
+    if (transactions.length === 0) {
+      try {
+        await dispatch(walletActions.getTransactions({ limit: 10 }));
+        await dispatch(walletActions.updateTransactionsConfirmations());
+        this.setState({ lastRefreshed: new Date() });
+        this.timerID = setInterval(
+          () =>
+            this.setState({
+              timeSinceLastRefreshed: new Date(),
+            }),
+          1000
+        );
+        const autoRefreshTimeInSecs = 1 * 60 * 1000;
+        this.autoRefreshTimer = setInterval(() => {
+          // this.onRefresh();
+        }, autoRefreshTimeInSecs);
+      } catch (error) {}
+    }
   }
 
   onRefresh = async () => {
@@ -90,7 +92,6 @@ class RecentTransaction extends React.Component {
         <Accordion fluid exclusive={false}>
           {transactions.map((transaction, index) => {
             const { inputs: txInps, outputs: txOuts } = transaction;
-
             let totalInput = 0;
             let totalOutput = 0;
             let credit = 0;

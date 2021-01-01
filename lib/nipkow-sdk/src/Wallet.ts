@@ -19,6 +19,7 @@ import {
   ProducerAction,
   Extension,
   OwnerExtension,
+  ProducerExtension,
 } from './Allegory';
 import * as Persist from './Persist';
 import derivationPaths from './constants/derivationPaths';
@@ -28,7 +29,6 @@ import { transactionAPI } from './TransactionAPI';
 import { chainAPI } from './ChainAPI';
 import utils from './Utils';
 import { post } from './httpClient';
-import { codePointAt } from 'pouchdb-find';
 
 class Wallet {
   async _initWallet(bip39Mnemonic: string, password?: string) {
@@ -282,9 +282,18 @@ class Wallet {
   }
 
   _removeDuplicate(outputs: any[]) {
+    const sortedOutputs = outputs.sort(
+      (output1: { blockHeight: number }, output2: { blockHeight: number }) => {
+        const a =
+          output1.blockHeight !== null ? output1.blockHeight : 999999999;
+        const b =
+          output2.blockHeight !== null ? output2.blockHeight : 999999999;
+        return b - a;
+      }
+    );
     const unconfirmedOutputs = [];
-    for (let index = 0; index < outputs.length; index++) {
-      const output = outputs[index];
+    for (let index = 0; index < sortedOutputs.length; index++) {
+      const output = sortedOutputs[index];
       if (output.txIndex === null) {
         unconfirmedOutputs.push(output);
       } else {
@@ -292,29 +301,23 @@ class Wallet {
       }
     }
     if (unconfirmedOutputs.length > 0) {
-      for (let index = 0; index < unconfirmedOutputs.length; index++) {
-        const unconfirmedOutput = unconfirmedOutputs[index];
-        const duplicateOutputs = outputs.splice(
-          0,
-          unconfirmedOutputs.length * 2
+      const duplicateOutputs = sortedOutputs.splice(
+        0,
+        unconfirmedOutputs.length * 2
+      );
+      const uniqueOutputs = duplicateOutputs.filter((element, index, self) => {
+        return (
+          index ===
+          self.findIndex(
+            (t) =>
+              t.outputTxHash === element.outputTxHash &&
+              t.outputIndex === element.outputIndex
+          )
         );
-        const uniqueOutputs = duplicateOutputs.filter(
-          (element, index, self) => {
-            return (
-              index ===
-              self.findIndex(
-                (t) =>
-                  t.txIndex !== null &&
-                  t.outputTxHash === element.outputTxHash &&
-                  t.outputIndex === element.outputIndex
-              )
-            );
-          }
-        );
-        return [...uniqueOutputs, ...outputs];
-      }
+      });
+      return [...uniqueOutputs, ...sortedOutputs];
     }
-    return outputs;
+    return sortedOutputs;
   }
 
   async processAllegoryTransactions(outputs: any[], transactions: any[]) {
@@ -329,7 +332,6 @@ class Wallet {
       }
       return false;
     });
-
     const confirmedNamePurchaseTxs: any[] = [];
     allegoryTransactions.forEach((allegoryTransaction) => {
       const allegoryData = decodeCBORData(
@@ -343,10 +345,19 @@ class Wallet {
         if (producerAction.extensions.length > 0) {
           producerExtensions = producerAction.extensions.map(
             (extension: Extension) => {
-              return {
-                codePoint: extension.codePoint,
-                index: (extension as OwnerExtension).ownerOutputEx.owner,
-              };
+              if (extension instanceof ProducerExtension) {
+                return {
+                  codePoint: extension.codePoint,
+                  index: (extension as ProducerExtension).producerOutputEx
+                    .producer.index,
+                };
+              } else {
+                return {
+                  codePoint: extension.codePoint,
+                  index: (extension as OwnerExtension).ownerOutputEx.owner
+                    .index,
+                };
+              }
             }
           );
         }
@@ -369,46 +380,46 @@ class Wallet {
         tx: { txId },
       } = confirmedNamePurchaseTx;
       if (name) {
-        const {
-          data: {
+        try {
+          const { data } = await post('allegory/name-outpoint', {
+            name: utils.getCodePoint(name),
+            isProducer: false,
+          });
+          const {
             forName,
             isProducer,
             outPoint: { opIndex, opTxHash },
             script,
-          },
-        } = await post('allegory/name-outpoint', {
-          name: utils.getCodePoint(name),
-          isProducer: false,
-        });
-        if (utils.codePointToName(forName) === name && txId === opTxHash) {
-          validConfirmedNamePurchaseTxs.push(confirmedNamePurchaseTx);
-        }
+          } = data;
+          if (utils.codePointToName(forName) === name && txId === opTxHash) {
+            validConfirmedNamePurchaseTxs.push(confirmedNamePurchaseTx);
+          }
+        } catch (error) {}
       }
     }
-    const diffOutputs = outputs.map(
-      (diffOutput: { outputTxHash: any; outputIndex: any }) => {
+    const updatedOutputs = outputs.map(
+      (output: { outputTxHash: any; outputIndex: any }) => {
         const nameOutput = validConfirmedNamePurchaseTxs.find(
           (validConfirmedNamePurchaseTx: { tx: any; index: any }) => {
             return (
-              diffOutput.outputTxHash ===
-                validConfirmedNamePurchaseTx.tx.txId &&
-              diffOutput.outputIndex === validConfirmedNamePurchaseTx.index
+              output.outputTxHash === validConfirmedNamePurchaseTx.tx.txId &&
+              output.outputIndex === validConfirmedNamePurchaseTx.index
             );
           }
         );
 
         if (nameOutput) {
           return {
-            ...diffOutput,
+            ...output,
             name: nameOutput.name,
             isNameOutpoint: true,
           };
         } else {
-          return diffOutput;
+          return output;
         }
       }
     );
-    return { diffOutputs };
+    return { outputs: updatedOutputs };
   }
 
   async getTransactions(options?: {
@@ -535,7 +546,7 @@ class Wallet {
               }
             );
             const {
-              diffOutputs: newDiffOutputs,
+              outputs: newDiffOutputs,
             } = await this.processAllegoryTransactions(
               diffOutputs,
               transactions
@@ -781,22 +792,21 @@ class Wallet {
                   tx.txId === transaction.txId
               );
               if (
-                matchedTxWithConfirmation?.confirmation !==
-                transaction.confirmation
+                matchedTxWithConfirmation &&
+                matchedTxWithConfirmation.confirmation !==
+                  transaction.confirmation
               ) {
                 updatedTransactions.push({
                   ...transaction,
-                  confirmation: matchedTxWithConfirmation?.confirmation,
+                  confirmation: matchedTxWithConfirmation.confirmation,
                 });
-              }
-              if (matchedTxWithConfirmation?.confirmation === null) {
+              } else if (transaction.confirmation === null) {
                 unconfirmedTransactions.push({
                   ...transaction,
                 });
               }
             }
           );
-
           await Persist.upsertTransactions(updatedTransactions);
 
           if (unconfirmedTransactions.length > 0) {
@@ -872,20 +882,35 @@ class Wallet {
       const changeOutputs = ownOutputs.map(
         (ownOutput: { address: string }, index) => {
           const transactionOutput = transaction.outs.find((output, index) => {
-            const p2pkh = payments.p2pkh({
-              output: output.script,
-              network: network.BITCOIN_SV_REGTEST,
-            });
-            return ownOutput.address === p2pkh.address!;
-          });
-
-          const transactionIndex = transaction.outs.findIndex(
-            (output, index) => {
+            if (
+              !Buffer.from(output.script)
+                .toString('hex')
+                .startsWith('006a0f416c6c65676f72792f416c6c506179')
+            ) {
               const p2pkh = payments.p2pkh({
                 output: output.script,
                 network: network.BITCOIN_SV_REGTEST,
               });
+
               return ownOutput.address === p2pkh.address!;
+            }
+            return false;
+          });
+          const transactionIndex = transaction.outs.findIndex(
+            (output, index) => {
+              if (
+                !Buffer.from(output.script)
+                  .toString('hex')
+                  .startsWith('006a0f416c6c65676f72792f416c6c506179')
+              ) {
+                const p2pkh = payments.p2pkh({
+                  output: output.script,
+                  network: network.BITCOIN_SV_REGTEST,
+                });
+
+                return ownOutput.address === p2pkh.address!;
+              }
+              return false;
             }
           );
 
@@ -924,31 +949,50 @@ class Wallet {
           };
         }),
         outputs: transaction.outs.map((output, index) => {
-          const p2pkh = payments.p2pkh({
-            output: output.script,
-            network: network.BITCOIN_SV_REGTEST,
-          });
-          const isMineOutput = ownOutputs.find(
-            (ownOutput: { address: string }) => {
-              return ownOutput.address === p2pkh.address!;
-            }
-          );
-          return {
-            address: p2pkh.address!,
-            isMine: isMineOutput ? true : false,
-            isNUTXO:
-              isMineOutput && isMineOutput.type === 'nUTXO' ? true : false,
-            lockingScript: Buffer.from(output.script).toString('hex'),
-            outputIndex: index,
-            value: output.value,
-          };
+          if (
+            !Buffer.from(output.script)
+              .toString('hex')
+              .startsWith('006a0f416c6c65676f72792f416c6c506179')
+          ) {
+            const p2pkh = payments.p2pkh({
+              output: output.script,
+              network: network.BITCOIN_SV_REGTEST,
+            });
+            const isMineOutput = ownOutputs.find(
+              (ownOutput: { address: string }) => {
+                return ownOutput.address === p2pkh.address!;
+              }
+            );
+            return {
+              address: p2pkh.address!,
+              isMine: isMineOutput ? true : false,
+              isNUTXO:
+                isMineOutput && isMineOutput.type === 'nUTXO' ? true : false,
+              lockingScript: Buffer.from(output.script).toString('hex'),
+              outputIndex: index,
+              value: output.value,
+            };
+          } else {
+            return {
+              address: null,
+              isMine: false,
+              isNUTXO: false,
+              lockingScript: Buffer.from(output.script).toString('hex'),
+              outputIndex: index,
+              value: output.value,
+            };
+          }
         }),
         confirmation: null,
         createdAt: new Date(),
       };
+      const { outputs } = await this.processAllegoryTransactions(
+        changeOutputs,
+        [unconfirmedTransaction]
+      );
       await this.markAddressesUsed(ownOutputs.map(({ address }) => address));
       await Persist.upsertOutputs(spentUtxos);
-      await Persist.upsertOutputs(changeOutputs);
+      await Persist.upsertOutputs(outputs);
       await Persist.upsertTransactions([unconfirmedTransaction]);
       return { transaction: unconfirmedTransaction, txBroadcast };
     }
@@ -1313,20 +1357,17 @@ class Wallet {
     // const { utxos } = await Persist.getUTXOs();
     // const feeRate = 5;
     // await this._createSendTransaction(utxos, targets, feeRate);
-    // const keys: any[] = await this._getKeys([
-    //   'n3cFZxbA1TAfwQk2HEBYw35L47g5M4BeEL',
-    // ]);
-    // console.log(keys[0].privateKey.toString('hex'));
-    // console.log(await this.getBalance());
-    const { utxos } = await Persist.getUTXOs();
-    console.log(utxos);
+    const keys: any[] = await this._getKeys([
+      'mmFXRtUtKN9znnF9DFgQqvKP5TBHZmgmym',
+    ]);
+    console.log(keys[0].privateKey.toString('hex'));
+    // const { utxos } = await Persist.getUTXOs();
     // const balance = utxos.reduce((acc: number, currOutput: any) => {
     //   if (!currOutput.isSpent) {
     //     acc = acc + currOutput.value;
     //   }
     //   return acc;
     // }, 0);
-    // console.log(balance);
   }
 }
 

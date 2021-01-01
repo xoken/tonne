@@ -7,6 +7,8 @@ import SearchBuyName from './screens/SearchBuyName';
 import ConfirmNamePurchase from './screens/ConfirmNamePurchase';
 import NameRegistration from './screens/NameRegistration';
 import ProxyRegistration from './screens/ProxyRegistration';
+import ConfirmRegistration from './screens/ConfirmRegistration';
+import RegistrationSuccess from './screens/RegistrationSuccess';
 import PartiallySignTransaction from './screens/PartiallySignTransaction';
 
 export const allpayPaths = {
@@ -15,6 +17,7 @@ export const allpayPaths = {
   purchaseSuccess: '/wallet/allpay/purchase-success',
   registerName: '/wallet/allpay/register',
   confirmRegister: '/wallet/allpay/confirm-register',
+  registerSuccess: '/wallet/allpay/register-success',
   renderTransaction: '/wallet/allpay/transaction',
 };
 
@@ -26,18 +29,11 @@ const AllpayComponent = () => {
   return (
     <div style={{ paddingLeft: 10 }}>
       <Route exact path={allpayPaths.SearchBuyName} render={() => <SearchBuyName />} />
-      <Route
-        exact
-        path={allpayPaths.confirmBuy}
-        render={() => <ConfirmNamePurchase activeStep={2} />}
-      />
+      <Route exact path={allpayPaths.confirmBuy} render={() => <ConfirmNamePurchase />} />
       <Route exact path={allpayPaths.purchaseSuccess} render={() => <NameRegistration />} />
       <Route exact path={allpayPaths.registerName} render={() => <ProxyRegistration />} />
-      <Route
-        exact
-        path={allpayPaths.confirmRegister}
-        render={() => <ConfirmNamePurchase activeStep={5} />}
-      />
+      <Route exact path={allpayPaths.confirmRegister} render={() => <ConfirmRegistration />} />
+      <Route exact path={allpayPaths.registerSuccess} render={() => <RegistrationSuccess />} />
       <Route
         exact
         path={allpayPaths.renderTransaction}
