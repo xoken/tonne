@@ -123,7 +123,7 @@ class ConfirmRegistration extends React.Component {
 
   render() {
     const {
-      outpoint: { name, isProducer },
+      outpoint: { name },
     } = this.props;
     const { showTxDetails } = this.state;
     return (

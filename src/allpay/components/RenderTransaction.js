@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Grid, Header, Segment } from 'semantic-ui-react';
+import RenderOutput from '../../wallet/components/RenderOutput';
 import { satoshiToBSV } from '../../shared/utils';
-import { allegory } from 'nipkow-sdk';
 
 class RenderTransaction extends React.Component {
   renderTransaction() {
@@ -135,32 +135,26 @@ class RenderTransaction extends React.Component {
                       ownOutput => ownOutput.address === output.address
                     );
                     return (
-                      <Grid key={String(index)}>
-                        <Grid.Column width='10'>
-                          <p className='monospace'>
-                            <span
-                              className={isMine && isMine.type === 'nUTXO' ? 'nUTXO' : ''}
-                              title={isMine ? isMine.title : undefined}>
-                              {output.address
-                                ? output.address
-                                : output.script
-                                ? Buffer.from(output.script)
-                                    .toString('hex')
-                                    .startsWith('006a0f416c6c65676f72792f416c6c506179')
-                                  ? 'OP_RETURN'
-                                  : output.script
-                                : null}
-                            </span>
-                          </p>
-                        </Grid.Column>
-                        <Grid.Column width='6' textAlign='right'>
-                          <p className='monospace'>
-                            <span className={isMine ? 'credit' : ''}>
-                              {satoshiToBSV(output.value)}
-                            </span>
-                          </p>
-                        </Grid.Column>
-                      </Grid>
+                      // <Grid key={String(index)}>
+                      // <Grid.Column width='10'>
+                      <RenderOutput
+                        key={String(index)}
+                        addressStyle={isMine && isMine.type === 'nUTXO' ? 'nUTXO' : undefined}
+                        address={output.address}
+                        script={Buffer.from(output.script).toString('hex')}
+                        title={isMine ? isMine.title : undefined}
+                        valueStyle={isMine ? 'credit' : ''}
+                        value={output.value}
+                      />
+                      // </Grid.Column>
+                      // <Grid.Column width='6' textAlign='right'>
+                      // <p className='monospace'>
+                      // <span className={isMine ? 'credit' : ''}>
+                      // {satoshiToBSV(output.value)}
+                      // </span>
+                      // </p>
+                      // </Grid.Column>
+                      // </Grid>
                     );
                   })}
                   <div className='ui right aligned grid'>

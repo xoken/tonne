@@ -30,6 +30,12 @@ export default createReducer(
     [allpayActions.RESET_ALLPAY]: () => ({
       ...INITIAL_STATE,
     }),
+    [allpayActions.SET_NAME]: (state, { name }) => ({
+      ...state,
+      outpoint: {
+        name,
+      },
+    }),
     [allpayActions.buyNameSuccess]: (state, { psbt, outpoint, inputs, ownOutputs, snv }) => ({
       ...state,
       psbt,
@@ -61,11 +67,12 @@ export default createReducer(
     }),
     [walletActions.createAllpaySendTransactionSuccess]: (
       state,
-      { psbt, inputs, addressCommitment, utxoCommitment }
+      { psbt, inputs, ownOutputs, addressCommitment, utxoCommitment }
     ) => ({
       ...state,
       psbt,
       inputs,
+      ownOutputs,
       addressCommitment,
       utxoCommitment,
     }),

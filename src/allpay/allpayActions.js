@@ -64,6 +64,14 @@ export const registerName = ({ proxyHost, proxyPort, name, addressCount }) => as
   }
 };
 
+export const SET_NAME = 'SET_NAME';
+export const setName = ({ name }) => async (dispatch, getState, { serviceInjector }) => {
+  dispatch({
+    type: SET_NAME,
+    payload: { name },
+  });
+};
+
 export const signRelayTransaction = data => async (dispatch, getState, { serviceInjector }) => {
   dispatch(signRelayTransactionRequest());
   try {

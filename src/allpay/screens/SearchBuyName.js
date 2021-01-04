@@ -23,6 +23,7 @@ class SearchBuyName extends React.Component {
       allpayActions.updateScreenProps({
         title: 'Buy Allpay name',
         activeStep: 1,
+        progressTotalSteps: 6,
       })
     );
   }
@@ -46,8 +47,9 @@ class SearchBuyName extends React.Component {
           // const data = { host: '127.0.0.1', port: 9189, name: [115], isProducer: false };
           // await dispatch(allpayActions.buyName(data));
           // this.props.history.push('/wallet/allpay/confirm-purchase');
+          // [97, 112, 47]
           const { isAvailable, name, uri, protocol } = await dispatch(
-            allpayActions.getResellerURI([97, 112, 47].concat(utils.getCodePoint(queryName)))
+            allpayActions.getResellerURI([].concat(utils.getCodePoint(queryName)))
           );
           this.setState({ searchResults: [{ isAvailable, name, uri, protocol }] });
         } catch (error) {

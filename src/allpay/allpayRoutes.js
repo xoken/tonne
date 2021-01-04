@@ -9,7 +9,6 @@ import NameRegistration from './screens/NameRegistration';
 import ProxyRegistration from './screens/ProxyRegistration';
 import ConfirmRegistration from './screens/ConfirmRegistration';
 import RegistrationSuccess from './screens/RegistrationSuccess';
-import PartiallySignTransaction from './screens/PartiallySignTransaction';
 
 export const allpayPaths = {
   SearchBuyName: '/wallet/allpay/search',
@@ -18,7 +17,6 @@ export const allpayPaths = {
   registerName: '/wallet/allpay/register',
   confirmRegister: '/wallet/allpay/confirm-register',
   registerSuccess: '/wallet/allpay/register-success',
-  renderTransaction: '/wallet/allpay/transaction',
 };
 
 export const allpayFlows = {
@@ -34,11 +32,6 @@ const AllpayComponent = () => {
       <Route exact path={allpayPaths.registerName} render={() => <ProxyRegistration />} />
       <Route exact path={allpayPaths.confirmRegister} render={() => <ConfirmRegistration />} />
       <Route exact path={allpayPaths.registerSuccess} render={() => <RegistrationSuccess />} />
-      <Route
-        exact
-        path={allpayPaths.renderTransaction}
-        render={() => <PartiallySignTransaction />}
-      />
     </div>
   );
 };

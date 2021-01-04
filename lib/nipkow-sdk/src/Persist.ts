@@ -450,41 +450,6 @@ export const upsertTransactions = async (transactions: any[]) => {
   }
 };
 
-// export const getUnconfirmedTransactions = async () => {
-//   await db.createIndex({
-//     index: { fields: ['confirmation'] },
-//   });
-//   const outputDoc = await db.find({
-//     selector: {
-//       confirmation: { $eq: null },
-//     },
-//   });
-//   if (outputDoc.docs.length > 0)
-//     return { unconfirmedTransactions: outputDoc.docs };
-//   return { unconfirmedTransactions: [] };
-// };
-
-// export const upsertUnconfirmedTransactions = async (transactions: any[]) => {
-//   if (transactions.length > 0) {
-//     const {
-//       unconfirmedTransactions: existingUnconfirmedTransactions,
-//     } = await getUnconfirmedTransactions();
-//     let txId = existingUnconfirmedTransactions.length - 1;
-//     const docs = transactions.map((transaction: any, index: number) => {
-//       if (!transaction._id) {
-//         txId = txId + 1;
-//       }
-//       return {
-//         ...transaction,
-//         _id: transaction._id
-//           ? transaction._id
-//           : `unconfirmedTransaction-${String(txId).padStart(20, '0')}`,
-//       };
-//     });
-//     await db.bulkDocs(docs);
-//   }
-// };
-
 /* No _rev case */
 export const deleteTransactions = async (transactions: any) => {
   const updatedDoc = [];

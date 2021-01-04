@@ -7,7 +7,6 @@ import utils from './Utils';
 import { post } from './httpClient';
 import * as Persist from './Persist';
 import { transactionAPI } from './TransactionAPI';
-import proxyProvider from './ProxyProvider';
 import Config from './Config.json';
 import network from './constants/network';
 
@@ -378,7 +377,7 @@ class Allpay {
     const allegoryData = decodeCBORData(lockingScript);
     const allegory = getAllegoryType(allegoryData);
     const proxyHost = '127.0.0.1';
-    const proxyPort = 9099;
+    const proxyPort = 8000;
     const recipient = sha256(lockingScript).toString();
     const { unusedAddresses } = await wallet.getUnusedAddresses();
     const changeAddress = unusedAddresses[0];
@@ -387,7 +386,11 @@ class Allpay {
     let { inputs, outputs } = coinSelect(utxos, targets, feeRate);
     if (!inputs || !outputs) throw new Error('Empty inputs or outputs');
 
-    const data = await this._createTransaction({
+    const {
+      psaBase64,
+      addressProof,
+      utxoProof,
+    } = await this._createTransaction({
       proxyHost,
       proxyPort,
       recipient,
@@ -395,34 +398,30 @@ class Allpay {
       changeAddress,
       utxos: inputs,
     });
-    const tData = data.substring(1);
-    const jsonData = JSON.parse(tData);
-    const {
-      result: { tx: psbtTx, addressProof, utxoProof },
-    } = jsonData;
-    const { psbt } = await this.decodeTransaction(psbtTx, inputs);
+    const { psbt } = await this.decodeTransaction(psaBase64, inputs);
     if (allegory && allegory.action instanceof OwnerAction) {
       const ownerAction = allegory.action as OwnerAction;
       if (ownerAction.oProxyProviders.length > 0) {
         const utxoLeafNode = Buffer.from(psbt.txInputs[0].hash)
           .reverse()
           .toString('hex')
+          .concat(':')
           .concat(String(psbt.txInputs[0].index));
         const addressLeafNode = psbt.txOutputs[0].address!;
         const addressMerkelRoot =
           ownerAction.oProxyProviders[0].registration.addressCommitment;
         const utxoMerkelRoot =
           ownerAction.oProxyProviders[0].registration.utxoCommitment;
-        // const addressCommitment = this.verifyMerkelRoot({
-        //   leafNode: addressLeafNode,
-        //   merkelRoot: addressMerkelRoot,
-        //   proof: addressProof,
-        // });
-        // const utxoCommitment = this.verifyMerkelRoot({
-        //   leafNode: utxoLeafNode,
-        //   merkelRoot: utxoMerkelRoot,
-        //   proof: utxoProof,
-        // });
+        const addressCommitment_ = this.verifyMerkelRoot({
+          leafNode: addressLeafNode,
+          merkelRoot: addressMerkelRoot,
+          proof: addressProof,
+        });
+        const utxoCommitment_ = this.verifyMerkelRoot({
+          leafNode: utxoLeafNode,
+          merkelRoot: utxoMerkelRoot,
+          proof: utxoProof,
+        });
 
         const addressCommitment = true;
         const utxoCommitment = true;
@@ -450,7 +449,14 @@ class Allpay {
       value: number;
     }[];
   }): Promise<any> {
-    const { recipient, amountInSatoshi, changeAddress, utxos } = data;
+    const {
+      proxyHost,
+      proxyPort,
+      recipient,
+      amountInSatoshi,
+      changeAddress,
+      utxos,
+    } = data;
     const inputs = utxos.map((utxo) => {
       return [
         {
@@ -460,22 +466,21 @@ class Allpay {
         Number(utxo.value),
       ];
     });
-    const jsonRPCRequest = {
-      id: 1,
-      jsonrpc: '2.0',
-      method: 'PS_ALLPAY_TX',
-      params: {
+    const {
+      data: { tx: psaBase64, addressProof, utxoProof },
+    } = await post(
+      'ps-allpay-tx',
+      {
         inputs: inputs,
         recipient: recipient,
         amount: Number(amountInSatoshi),
         change: changeAddress,
       },
-    };
-    return await proxyProvider.sendRequest(
-      data.proxyHost,
-      data.proxyPort,
-      JSON.stringify(jsonRPCRequest)
+      {
+        baseURL: `http://${proxyHost}:${proxyPort}/v1`,
+      }
     );
+    return { psaBase64, addressProof, utxoProof };
   }
 
   async registerName(data: {
@@ -492,7 +497,7 @@ class Allpay {
       const returnAddress = await wallet.getUnusedNUTXOAddress();
       const { nUTXOs } = await Persist.getNUtxo(name);
       if (nUTXOs) {
-        const data = await this._registerName({
+        const psaBase64 = await this._registerName({
           proxyHost,
           proxyPort,
           name: nameCodePoint,
@@ -501,10 +506,6 @@ class Allpay {
           addressCount,
           nutxo: nUTXOs,
         });
-        const tData = JSON.parse(data);
-        const {
-          result: { tx: psaBase64 },
-        } = tData;
         const {
           psbt,
           fundingInputs,
@@ -539,7 +540,15 @@ class Allpay {
       value: number;
     };
   }): Promise<any> {
-    const { name, xpubKey, nutxo, returnAddress, addressCount } = data;
+    const {
+      proxyHost,
+      proxyPort,
+      name,
+      xpubKey,
+      nutxo,
+      returnAddress,
+      addressCount,
+    } = data;
     const nameUtxo = [
       {
         txid: nutxo.outputTxHash,
@@ -547,23 +556,22 @@ class Allpay {
       },
       nutxo.value,
     ];
-    const jsonRPCRequest = {
-      id: 0,
-      jsonrpc: '2.0',
-      method: 'REGISTER',
-      params: {
+    const {
+      data: { tx: psaBase64 },
+    } = await post(
+      'register',
+      {
         name: name,
         xpubKey: xpubKey,
         nutxo: nameUtxo,
         return: returnAddress,
         addressCount: Number(addressCount),
       },
-    };
-    return await proxyProvider.sendRequest(
-      data.proxyHost,
-      data.proxyPort,
-      JSON.stringify(jsonRPCRequest)
+      {
+        baseURL: `http://${proxyHost}:${proxyPort}/v1`,
+      }
     );
+    return psaBase64;
   }
 }
 

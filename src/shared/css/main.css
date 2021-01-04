@@ -197,3 +197,17 @@
 .ui.basic.button.borderless {
   box-shadow: none;
 }
+.menu .item > a {
+  color: rgba(0, 0, 0, 0.87);
+}
+.menu .item > .active {
+  color: rgba(0, 0, 0, 0.6);
+}
+.embed-data {
+  cursor: pointer;
+  color: #fbbd08;
+}
+.embed-data-json {
+  border: 1px solid rgba(34, 36, 38, 0.15);
+  padding: 1em;
+}

@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Accordion, Button, Grid, Header, Icon, Label, Segment } from 'semantic-ui-react';
+import RenderOutput from './RenderOutput';
 import { formatDistanceToNow } from 'date-fns';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
@@ -35,7 +36,7 @@ class RecentTransaction extends React.Component {
         );
         const autoRefreshTimeInSecs = 1 * 60 * 1000;
         this.autoRefreshTimer = setInterval(() => {
-          // this.onRefresh();
+          this.onRefresh();
         }, autoRefreshTimeInSecs);
       } catch (error) {}
     }
@@ -201,32 +202,26 @@ class RecentTransaction extends React.Component {
                         </Header>
                         {txOuts.map(output => {
                           return (
-                            <Grid key={output.outputIndex}>
-                              <Grid.Column width='10'>
-                                <p className='monospace'>
-                                  <span
-                                    className={output.isNUTXO ? 'nUTXO' : undefined}
-                                    title={output.isNUTXO ? 'Name UTXO' : undefined}>
-                                    {output.address
-                                      ? output.address
-                                      : output.lockingScript
-                                      ? output.lockingScript.startsWith(
-                                          '006a0f416c6c65676f72792f416c6c506179'
-                                        )
-                                        ? 'OP_RETURN'
-                                        : output.lockingScript
-                                      : null}
-                                  </span>
-                                </p>
-                              </Grid.Column>
-                              <Grid.Column width='6' textAlign='right'>
-                                <p className='monospace'>
-                                  <span className={output.isMine ? 'credit' : ''}>
-                                    {satoshiToBSV(output.value)}
-                                  </span>
-                                </p>
-                              </Grid.Column>
-                            </Grid>
+                            // <Grid key={output.outputIndex}>
+                            // <Grid.Column width='10'>
+                            <RenderOutput
+                              key={output.outputIndex}
+                              addressStyle={output.isNUTXO ? 'nUTXO' : undefined}
+                              address={output.address}
+                              script={output.lockingScript}
+                              title={output.isNUTXO ? 'Name UTXO' : undefined}
+                              valueStyle={output.isMine ? 'credit' : ''}
+                              value={output.value}
+                            />
+                            // </Grid.Column>
+                            // <Grid.Column width='6' textAlign='right'>
+                            // <p className='monospace'>
+                            // <span className={output.isMine ? 'credit' : ''}>
+                            // {satoshiToBSV(output.value)}
+                            // </span>
+                            // </p>
+                            // </Grid.Column>
+                            // </Grid>
                           );
                         })}
                         <div className='ui right aligned grid'>

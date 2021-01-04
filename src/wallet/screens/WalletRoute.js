@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { Link, Route, Switch, withRouter } from 'react-router-dom';
+import { NavLink, Route, Switch, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dropdown, Modal } from 'semantic-ui-react';
 import ExistingWallet from './ExistingWallet';
@@ -15,6 +15,7 @@ import WalletHome from './WalletHome';
 import WalletDashboard from './WalletDashboard';
 import AllpayContainer from '../../allpay/allpayContainer';
 import RenameProfile from '../components/RenameProfile';
+import PartiallySignTransaction from '../../allpay/screens/PartiallySignTransaction';
 import * as authActions from '../../auth/authActions';
 
 class WalletRoute extends React.Component {
@@ -50,19 +51,27 @@ class WalletRoute extends React.Component {
               pointing>
               <Dropdown.Menu>
                 <Dropdown.Item>
-                  <Link to={`/wallet/dashboard`}>Wallet Dashboard</Link>
+                  <NavLink to={`/wallet/dashboard`} activeClassName='active'>
+                    Wallet Dashboard
+                  </NavLink>
                 </Dropdown.Item>
                 <Dropdown.Item>
-                  <Link to={`/wallet/allpay/search`}>Buy Allpay Name</Link>
+                  <NavLink to={`/wallet/allpay/search`} activeClassName='active'>
+                    Buy Allpay Name
+                  </NavLink>
                 </Dropdown.Item>
-                {/* <Dropdown.Item>
-                  <Link to={`/wallet/allpay/proxy-providers`}>Register with Proxy</Link>
-                </Dropdown.Item> */}
+                <Dropdown.Item>
+                  <NavLink
+                    to={`/wallet/allpay/register?progressTotalSteps=3&activeStep=1`}
+                    activeClassName='active'>
+                    Register with Proxy
+                  </NavLink>
+                </Dropdown.Item>
                 <Dropdown.Item text='Rename Profile' onClick={this.toggleRenameProfileModal} />
                 <Dropdown.Item text='Logout' onClick={this.onLogout} />
               </Dropdown.Menu>
             </Dropdown>
-            <Dropdown
+            {/* <Dropdown
               button
               className='circular icon top left right floated profile'
               icon='bell outline'
@@ -71,7 +80,7 @@ class WalletRoute extends React.Component {
               <Dropdown.Menu>
                 <Dropdown.Item text='' />
               </Dropdown.Menu>
-            </Dropdown>
+            </Dropdown> */}
           </div>
         </div>
       );
@@ -111,6 +120,9 @@ class WalletRoute extends React.Component {
           </PrivateRoute>
           <PrivateRoute path={`${path}/send`}>
             <SendTransaction />
+          </PrivateRoute>
+          <PrivateRoute path={`${path}/allpay/transaction`}>
+            <PartiallySignTransaction />
           </PrivateRoute>
           <PrivateRoute path={`${path}/allpay`}>
             <AllpayContainer />

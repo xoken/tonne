@@ -51,11 +51,14 @@ class Utils {
   }
 
   codePointToName = (codePoints: number[]) => {
-    let name = '';
-    for (let i = 0; i < codePoints.length; i++) {
-      name += String.fromCodePoint(codePoints[i]);
+    if (codePoints && codePoints.length > 0) {
+      let name = '';
+      for (let i = 0; i < codePoints.length; i++) {
+        name += String.fromCodePoint(codePoints[i]);
+      }
+      return name;
     }
-    return name;
+    return null;
   };
 
   // unique = (array, col) => [...new Set(array.map(() => col))];
