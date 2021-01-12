@@ -7,7 +7,7 @@ import SendTransaction from '../components/SendTransaction';
 import ReceiveTransaction from '../components/ReceiveTransaction';
 import RecentTransaction from '../components/RecentTransaction';
 import { satoshiToBSV } from '../../shared/utils';
-import { wallet } from 'nipkow-sdk';
+import { wallet } from 'client-sdk';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
 

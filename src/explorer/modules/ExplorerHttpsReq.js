@@ -1,4 +1,4 @@
-import { addressAPI, blockAPI, chainAPI, transactionAPI } from 'nipkow-sdk';
+import { addressAPI, blockAPI, chainAPI, transactionAPI } from 'client-sdk';
 
 export default class ExplorerHttpsReq {
   static async httpsreq(...reqparameter) {

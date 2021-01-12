@@ -1,4 +1,4 @@
-import { wallet, allPay } from 'nipkow-sdk';
+import { wallet, allPay } from 'client-sdk';
 
 class WalletService {
   constructor(store) {

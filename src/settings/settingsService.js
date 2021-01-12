@@ -1,4 +1,4 @@
-import { httpClient, authAPI } from 'nipkow-sdk';
+import { httpClient, authAPI } from 'client-sdk';
 
 class SettingsService {
   constructor(store) {

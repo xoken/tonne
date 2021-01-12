@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Button, Form, Grid, Header, Input } from 'semantic-ui-react';
 import * as allpayActions from '../allpayActions';
-import { wallet, utils } from 'nipkow-sdk';
+import { wallet, utils } from 'client-sdk';
 
 class ProxyRegistration extends React.Component {
   constructor(props) {

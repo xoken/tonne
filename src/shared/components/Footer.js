@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { chainAPI } from 'nipkow-sdk';
+import { chainAPI } from 'client-sdk';
 import { Button } from 'semantic-ui-react';
 
 class Footer extends React.Component {
