@@ -14,11 +14,15 @@ sudo apt install npm
 git clone https://github.com/xoken/nipkow.git
 ```
 
+```bash
+git clone https://github.com/xoken/client-sdk.git
+```
+
 **Step 3:**
-cd into the nipkow-sdk directory and run the following command.
+cd into the client-sdk directory and run the following command.
 
 ```bash
-cd lib/nipkow-sdk
+cd client-sdk
 ```
 
 ```bash
@@ -43,7 +47,7 @@ Open a new terminal.
 If you are not already in nipkow repo directory, cd into nipkow repo directory and run the following commands.
 
 ```bash
-cd lib/nipkow-sdk
+cd client-sdk
 ```
 
 ```bash
@@ -79,31 +83,3 @@ npm run electron
 ```
 
 Keep this terminal window open.
-
-## To update nipkow
-
-**Step 1:**
-Open a new terminal.
-If you are not already in nipkow repo directory, cd into nipkow repo directory and run the following commands.
-
-```bash
-git pull
-```
-
-```bash
-cd lib/nipkow-sdk
-```
-
-```bash
-npm install
-```
-
-```bash
-cd nipkow
-```
-
-```bash
-npm install
-```
-
-To launch updated nipkow, refer to the previous section titled "To launch nipkow".
