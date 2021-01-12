@@ -34,6 +34,31 @@ class SearchBuyName extends React.Component {
     }
   };
 
+  onSetRoot = async () => {
+    this.setState({ searchResults: undefined, isError: false, message: '' });
+    const { queryName } = this.state;
+    if (queryName) {
+      // if (queryName.includes('/') || queryName.includes('\\')) {
+      // this.setState({ isError: true, message: '\\ , / characters are not allowed' });
+      // } else {
+      try {
+        const { dispatch } = this.props;
+        // const data = { host: '3.238.95.71', port: 9189, name: [97], isProducer: true };
+        const data = { host: '127.0.0.1', port: 9189, name: [115], isProducer: false };
+        await dispatch(allpayActions.buyName(data));
+        this.props.history.push('/wallet/allpay/confirm-purchase');
+        // [97, 112, 47]
+        // const { isAvailable, name, uri, protocol } = await dispatch(
+        //   allpayActions.getResellerURI([].concat(utils.getCodePoint(queryName)))
+        // );
+        // this.setState({ searchResults: [{ isAvailable, name, uri, protocol }] });
+      } catch (error) {
+        this.setState({ isError: true, message: error.message });
+      }
+      // }
+    }
+  };
+
   onSearch = async () => {
     this.setState({ searchResults: undefined, isError: false, message: '' });
     const { queryName } = this.state;
@@ -130,6 +155,9 @@ class SearchBuyName extends React.Component {
                 />
                 <button className='ui yellow button' onClick={this.onSearch}>
                   Search
+                </button>
+                <button className='ui yellow button' onClick={this.onSetRoot}>
+                  Set root
                 </button>
               </div>
             </div>

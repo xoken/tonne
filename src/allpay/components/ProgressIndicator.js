@@ -13,7 +13,9 @@ export default class ProgressIndicator extends React.Component {
     return Array.apply(null, {
       length: steps,
     }).map((step, index) => (
-      <li key={'Progress Step ' + index} className='progress-indicator-step'></li>
+      <li
+        key={'Progress Step ' + index}
+        className='progress-indicator-step progressIndicatorStep'></li>
     ));
   }
 
@@ -23,23 +25,12 @@ export default class ProgressIndicator extends React.Component {
       <div className='progress-indicator'>
         <ul className='progress-indicator-list'>{this.renderSteps(steps)}</ul>
         <span
-          className='progress-indicator-fill'
+          className='progress-indicator-fill progressIndicatorFill'
           style={{ height: this.activeHeight(activeStep) }}></span>
       </div>
     );
   }
 }
-
-// const styles = StyleSheet.create({
-//   progressIndicatorStep: {
-//     width: stepIndicatorSize,
-//     height: stepIndicatorSize,
-//   },
-//   progressIndicatorFill: {
-//     width: stepIndicatorSize,
-//     height: stepIndicatorSize,
-//   },
-// });
 
 ProgressIndicator.defaultProps = {
   activeStep: 1,

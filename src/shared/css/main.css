@@ -211,3 +211,11 @@
   border: 1px solid rgba(34, 36, 38, 0.15);
   padding: 1em;
 }
+.progressIndicatorStep {
+  width: 10;
+  height: 10;
+}
+.progressindicatorfill {
+  width: 10;
+  height: 10;
+}
