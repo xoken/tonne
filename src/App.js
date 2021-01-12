@@ -7,6 +7,7 @@ import ExplorerHome from './explorer/screens/ExplorerHome';
 import Home from './shared/components/home';
 import NoMatch from './shared/components/noMatch';
 import SettingsScreen from './settings/screens/SettingsScreen';
+import AnalyticsScreen from './analytics/screens/AnalyticsScreen';
 import WalletRoute from './wallet/screens/WalletRoute';
 import Header from './shared/components/Header';
 import Footer from './shared/components/Footer';
@@ -47,6 +48,9 @@ class App extends React.Component {
                 </Route>
                 <Route exact path='/settings'>
                   <SettingsScreen />
+                </Route>
+                <Route exact path='/analytics'>
+                  <AnalyticsScreen />
                 </Route>
                 <Route path='*'>
                   <NoMatch />

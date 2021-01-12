@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "aphrodite": "^2.4.0",
+    "d3": "^6.3.1",
     "date-fns": "^2.16.1",
     "nipkow-sdk": "file:lib/nipkow-sdk",
     "react": "^16.13.1",

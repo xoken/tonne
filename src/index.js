@@ -8,6 +8,7 @@ import { PersistGate } from 'redux-persist/integration/react';
 import './shared/css/explorer.css';
 import 'semantic-ui-css/semantic.min.css';
 import './shared/css/main.css';
+import './shared/css/analytics.css';
 
 const { store, persistor } = configureStore();
 

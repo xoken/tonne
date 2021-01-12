@@ -24,6 +24,10 @@ class Header extends React.Component {
                 <Icon name='bitcoin' />
                 Wallet
               </NavLink>
+              <NavLink to='/analytics' className='ui item'>
+                <Icon name='line graph' />
+                Analytics
+              </NavLink>
               <NavLink to='/settings' className='ui item'>
                 <Icon name='setting' />
                 Settings
