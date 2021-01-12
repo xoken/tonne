@@ -302,8 +302,8 @@ class ExplorerDashboard extends React.Component {
 
   componentDidMount() {
     this.initDashboard();
-    var blockListArray = document.getElementsByClassName('');
   }
+
   render() {
     return (
       <>
@@ -325,41 +325,39 @@ class ExplorerDashboard extends React.Component {
               <div className='latestblocks'>{this.resultsrow}</div>
               <br />
             </Segment>
-            <Segment>
-              <nav aria-label='transactions navigation'>
-                <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
-              </nav>
-
-              <form onSubmit={this.pagebutton}>
-                <div className='ui form'>
-                  <div className='inline fields'>
-                    <div className='five wide field'></div>
-                    <div className='two wide field'>
-                      <h5>Enter page number</h5>
-                    </div>
-                    <div className='three wide field'>
-                      <input
-                        className='pagenuminput'
-                        size='5'
-                        type='text'
-                        onChange={event =>
-                          this.setState({
-                            selectnum: event.target.value.replace(/\s/g, ''),
-                          })
-                        }
-                      />
-                    </div>
-                    <div className='one wide field'>
-                      <Button type='submit' className='explorerbuttoncolor'>
-                        Go
-                      </Button>
-                    </div>
-                    <div className='five wide field'></div>
-                  </div>
-                </div>
-              </form>
-            </Segment>
           </Segment.Group>
+          <center>
+            <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
+          </center>
+
+          <form onSubmit={this.pagebutton}>
+            <div className='ui form'>
+              <div className='inline fields'>
+                <div className='five wide field'></div>
+                <div className='two wide field'>
+                  <h5>Enter page number</h5>
+                </div>
+                <div className='three wide field'>
+                  <input
+                    className='pagenuminput'
+                    size='5'
+                    type='text'
+                    onChange={event =>
+                      this.setState({
+                        selectnum: event.target.value.replace(/\s/g, ''),
+                      })
+                    }
+                  />
+                </div>
+                <div className='one wide field'>
+                  <Button type='submit' className='explorerbuttoncolor'>
+                    Go
+                  </Button>
+                </div>
+                <div className='five wide field'></div>
+              </div>
+            </div>
+          </form>
         </div>
       </>
     );

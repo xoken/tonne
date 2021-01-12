@@ -3,26 +3,19 @@ import WalletService from './walletService';
 
 export const getTransactionsRequest = createAction('GET_TRANSACTIONS_REQUEST');
 export const getTransactionsSuccess = createAction('GET_TRANSACTIONS_SUCCESS');
-export const getDiffTransactionsSuccess = createAction('GET_TRANSACTIONS_DIFF_SUCCESS');
 export const getTransactionsFailure = createAction('GET_TRANSACTIONS_FAILURE');
 
-export const updateUnconfirmedTransactionsRequest = createAction(
-  'UPDATE_UNCONFIRMED_TRANSACTIONS_REQUEST'
-);
-export const updateUnconfirmedTransactionsSuccess = createAction(
-  'UPDATE_UNCONFIRMED_TRANSACTIONS_SUCCESS'
-);
-export const updateUnconfirmedTransactionsFailure = createAction(
-  'UPDATE_UNCONFIRMED_TRANSACTIONS_FAILURE'
-);
+export const getDiffTransactionsSuccess = createAction('GET_TRANSACTIONS_DIFF_SUCCESS');
 
-export const getOutputsRequest = createAction('GET_OUTPUTS_REQUEST');
-export const getOutputsSuccess = createAction('GET_OUTPUTS_SUCCESS');
-export const getOutputsFailure = createAction('GET_OUTPUTS_FAILURE');
-
-export const getUTXOsRequest = createAction('GET_UTXOS_REQUEST');
-export const getUTXOsSuccess = createAction('GET_UTXOS_SUCCESS');
-export const getUTXOsFailure = createAction('GET_UTXOS_FAILURE');
+export const updateTransactionsConfirmationsRequest = createAction(
+  'UPDATE_TRANSACTIONS_CONFIRMATIONS_REQUEST'
+);
+export const updateTransactionsConfirmationsSuccess = createAction(
+  'UPDATE_TRANSACTIONS_CONFIRMATIONS_SUCCESS'
+);
+export const updateTransactionsConfirmationsFailure = createAction(
+  'UPDATE_TRANSACTIONS_CONFIRMATIONS_FAILURE'
+);
 
 export const getBalanceRequest = createAction('GET_BALANCE_REQUEST');
 export const getBalanceSuccess = createAction('GET_BALANCE_SUCCESS');
@@ -32,21 +25,27 @@ export const getTransactionFeeRequest = createAction('GET_TRANSACTION_FEE_REQUES
 export const getTransactionFeeSuccess = createAction('GET_TRANSACTION_FEE_SUCCESS');
 export const getTransactionFeeFailure = createAction('GET_TRANSACTION_FEE_FAILURE');
 
-export const getTransactionRequest = createAction('GET_TRANSACTION_REQUEST');
-export const getTransactionSuccess = createAction('GET_TRANSACTION_SUCCESS');
-export const getTransactionFailure = createAction('GET_TRANSACTION_FAILURE');
-
 export const createSendTransactionRequest = createAction('CREATE_SEND_TRANSACTION_REQUEST');
 export const createSendTransactionSuccess = createAction('CREATE_SEND_TRANSACTION_SUCCESS');
 export const createSendTransactionFailure = createAction('CREATE_SEND_TRANSACTION_FAILURE');
 
-export const getUsedDerivedKeysRequest = createAction('GET_USED_DERIVED_KEYS_REQUEST');
-export const getUsedDerivedKeysSuccess = createAction('GET_USED_DERIVED_KEYS_SUCCESS');
-export const getUsedDerivedKeysFailure = createAction('GET_USED_DERIVED_KEYS_FAILURE');
+export const createAllpaySendTransactionRequest = createAction(
+  'CREATE_ALLPAY_SEND_TRANSACTION_REQUEST'
+);
+export const createAllpaySendTransactionSuccess = createAction(
+  'CREATE_ALLPAY_SEND_TRANSACTION_SUCCESS'
+);
+export const createAllpaySendTransactionFailure = createAction(
+  'CREATE_ALLPAY_SEND_TRANSACTION_FAILURE'
+);
 
-export const getUnusedDerivedKeysRequest = createAction('GET_UNUSED_DERIVED_KEYS_REQUEST');
-export const getUnusedDerivedKeysSuccess = createAction('GET_UNUSED_DERIVED_KEYS_SUCCESS');
-export const getUnusedDerivedKeysFailure = createAction('GET_UNUSED_DERIVED_KEYS_FAILURE');
+export const getUsedAddressesRequest = createAction('GET_USED_ADDRESSES_REQUEST');
+export const getUsedAddressesSuccess = createAction('GET_USED_ADDRESSES_SUCCESS');
+export const getUsedAddressesFailure = createAction('GET_USED_ADDRESSES_FAILURE');
+
+export const getUnusedAddressesRequest = createAction('GET_UNUSED_ADDRESSES_REQUEST');
+export const getUnusedAddressesSuccess = createAction('GET_UNUSED_ADDRESSES_SUCCESS');
+export const getUnusedAddressesFailure = createAction('GET_UNUSED_ADDRESSES_FAILURE');
 
 export const getTransactions = options => async (dispatch, getState, { serviceInjector }) => {
   dispatch(getTransactionsRequest());
@@ -59,18 +58,15 @@ export const getTransactions = options => async (dispatch, getState, { serviceIn
     }
     if (options.diff) {
       const { transactions } = await serviceInjector(WalletService).getTransactions(options);
+      dispatch(getDiffTransactionsSuccess({ transactions }));
       if (transactions.length > 0) {
-        const { balance } = await serviceInjector(WalletService).getBalance();
-        dispatch(getDiffTransactionsSuccess({ transactions }));
-        dispatch(getBalanceSuccess({ balance }));
-      } else {
-        dispatch(getTransactionsSuccess({ transactions }));
+        await dispatch(getBalance());
       }
     } else {
       const { transactions, nextTransactionCursor } = await serviceInjector(
         WalletService
       ).getTransactions(options);
-      dispatch(getBalance());
+      await dispatch(getBalance());
       dispatch(getTransactionsSuccess({ transactions, nextTransactionCursor }));
     }
   } catch (error) {
@@ -79,56 +75,19 @@ export const getTransactions = options => async (dispatch, getState, { serviceIn
   }
 };
 
-export const updateUnconfirmedTransactions = () => async (
+export const updateTransactionsConfirmations = () => async (
   dispatch,
   getState,
   { serviceInjector }
 ) => {
-  dispatch(updateUnconfirmedTransactionsRequest());
+  dispatch(updateTransactionsConfirmationsRequest());
   try {
-    await serviceInjector(WalletService).updateUnconfirmedTransactions();
-    dispatch(updateUnconfirmedTransactionsSuccess());
+    const { updatedTransactions } = await serviceInjector(
+      WalletService
+    ).updateTransactionsConfirmations();
+    dispatch(updateTransactionsConfirmationsSuccess({ updatedTransactions }));
   } catch (error) {
-    dispatch(updateUnconfirmedTransactionsFailure());
-    throw error;
-  }
-};
-
-export const getOutputs = options => async (dispatch, getState, { serviceInjector }) => {
-  dispatch(getOutputsRequest());
-  try {
-    const {
-      wallet: { nextOutputsCursor: startkey },
-    } = getState();
-    if (startkey) {
-      options.startkey = startkey;
-    }
-    if (options.diff) {
-      const { outputs } = await serviceInjector(WalletService).getOutputs(options);
-      if (outputs.length > 0) {
-        const { balance } = await serviceInjector(WalletService).getBalance();
-        dispatch(getOutputsSuccess({ outputs }));
-        dispatch(getBalanceSuccess({ balance }));
-      } else {
-        dispatch(getOutputsSuccess({ outputs }));
-      }
-    } else {
-      const { outputs, nextOutputsCursor } = await serviceInjector(WalletService).getOutputs(
-        options
-      );
-      dispatch(getOutputsSuccess({ outputs, nextOutputsCursor }));
-    }
-  } catch (error) {
-    dispatch(getOutputsFailure());
-    throw error;
-  }
-};
-
-export const getUTXOs = () => async (dispatch, getState, { serviceInjector }) => {
-  dispatch(getUTXOsRequest());
-  try {
-    await serviceInjector(WalletService).getUTXOs();
-  } catch (error) {
+    dispatch(updateTransactionsConfirmationsFailure());
     throw error;
   }
 };
@@ -139,7 +98,7 @@ export const getBalance = () => async (dispatch, getState, { serviceInjector }) 
     const { balance } = await serviceInjector(WalletService).getBalance();
     dispatch(getBalanceSuccess({ balance }));
   } catch (error) {
-    dispatch(getOutputsFailure());
+    dispatch(getBalanceFailure());
     throw error;
   }
 };
@@ -162,18 +121,6 @@ export const getTransactionFee = (receiverAddress, amountInSatoshi, feeRate) => 
   }
 };
 
-export const getTransaction = txid => async (dispatch, getState, { serviceInjector }) => {
-  // dispatch(getTransactionRequest());
-  try {
-    const { tx } = await serviceInjector(WalletService).getTransaction(txid);
-    // dispatch(getTransactionSuccess());
-    return tx;
-  } catch (error) {
-    // dispatch(getTransactionFailure());
-    throw error;
-  }
-};
-
 export const createSendTransaction = (receiverAddress, amountInSatoshi, satoshisPerByte) => async (
   dispatch,
   getState,
@@ -181,46 +128,75 @@ export const createSendTransaction = (receiverAddress, amountInSatoshi, satoshis
 ) => {
   dispatch(createSendTransactionRequest());
   try {
-    const response = await serviceInjector(WalletService).createSendTransaction(
+    const { transaction } = await serviceInjector(WalletService).createSendTransaction(
       receiverAddress,
       amountInSatoshi,
       satoshisPerByte
     );
-    dispatch(createSendTransactionSuccess(response));
-    const { balance } = await serviceInjector(WalletService).getBalance();
-    dispatch(getBalanceSuccess({ balance }));
+    dispatch(createSendTransactionSuccess({ transaction }));
+    await dispatch(getBalance());
   } catch (error) {
     dispatch(createSendTransactionFailure());
     throw error;
   }
 };
 
-export const getUsedDerivedKeys = () => async (dispatch, getState, { serviceInjector }) => {
-  dispatch(getUsedDerivedKeysRequest());
+export const createAllpaySendTransaction = args => async (
+  dispatch,
+  getState,
+  { serviceInjector }
+) => {
+  dispatch(createAllpaySendTransactionRequest());
   try {
-    const { usedDerivedKeys } = await serviceInjector(WalletService).getUsedDerivedKeys();
-    dispatch(getUsedDerivedKeysSuccess({ usedDerivedKeys }));
+    const { inputs, ownOutputs, psbt, addressCommitment, utxoCommitment } = await serviceInjector(
+      WalletService
+    ).createAllpaySendTransaction(args);
+    dispatch(
+      createAllpaySendTransactionSuccess({
+        inputs,
+        ownOutputs,
+        psbt,
+        addressCommitment,
+        utxoCommitment,
+      })
+    );
   } catch (error) {
-    dispatch(getUsedDerivedKeysFailure());
+    dispatch(createAllpaySendTransactionFailure());
     throw error;
   }
 };
 
-export const getUnusedDerivedKeys = () => async (dispatch, getState, { serviceInjector }) => {
-  const {
-    wallet: { unusedDerivedKeys },
-  } = getState();
-  const currentUnusedKeyIndex = unusedDerivedKeys
-    ? unusedDerivedKeys[unusedDerivedKeys.length - 1].indexText
-    : null;
-  dispatch(getUnusedDerivedKeysRequest());
+export const getUsedAddresses = () => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(getUsedAddressesRequest());
   try {
-    const { unusedDerivedKeys } = await serviceInjector(WalletService).getUnusedDerivedKeys({
-      currentUnusedKeyIndex,
-    });
-    dispatch(getUnusedDerivedKeysSuccess({ unusedDerivedKeys }));
+    const { usedAddresses } = await serviceInjector(WalletService).getUsedAddresses();
+    dispatch(getUsedAddressesSuccess({ usedAddresses }));
   } catch (error) {
-    dispatch(getUnusedDerivedKeysFailure());
+    dispatch(getUsedAddressesFailure());
     throw error;
   }
+};
+
+export const getUnusedAddresses = () => async (dispatch, getState, { serviceInjector }) => {
+  const {
+    wallet: { unusedAddresses },
+  } = getState();
+  dispatch(getUnusedAddressesRequest());
+  const excludeAddresses = unusedAddresses.map(unusedAddress => unusedAddress);
+  try {
+    const { unusedAddresses } = await serviceInjector(WalletService).getUnusedAddresses({
+      excludeAddresses,
+    });
+    dispatch(getUnusedAddressesSuccess({ unusedAddresses }));
+  } catch (error) {
+    dispatch(getUnusedAddressesFailure());
+    throw error;
+  }
+};
+
+export const CLEAR_USED_UNUSED_ADDRESS = 'CLEAR_USED_UNUSED_ADDRESS';
+export const clearUsedUnusedAddresses = () => (dispatch, getState, { serviceInjector }) => {
+  dispatch({
+    type: CLEAR_USED_UNUSED_ADDRESS,
+  });
 };

@@ -47,6 +47,7 @@
 }
 .main {
   height: calc(100vh - 89px);
+  padding: 1rem 0;
   overflow-x: auto;
 }
 .main > .container {
@@ -73,12 +74,20 @@
 .debit {
   color: #dc3545 !important;
 }
+.nUTXO {
+  color: #28a745;
+}
 .ui.transparent.label,
 .ui.transparent.labels .label {
   background-color: transparent;
   border-radius: unset;
   padding-top: 0px;
   padding-bottom: 0px;
+}
+.ui.custom.label,
+.ui.custom.labels .label {
+  background-color: transparent;
+  border-radius: unset;
 }
 .ui.plain.label {
   background: none #fff;
@@ -105,7 +114,9 @@
   background: none;
   border: none;
 }
-
+.word-wrap {
+  overflow-wrap: break-word;
+}
 .statusbuttontext {
   position: absolute;
   bottom: 0px !important;
@@ -151,4 +162,60 @@
     left: -20px;
     opacity: 0;
   }
+}
+.ui.secondary.menu {
+  margin-left: 0;
+  margin-right: 0;
+}
+.progress-indicator {
+  position: relative;
+}
+.progress-indicator-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.progress-indicator-step {
+  background-color: #f1f1f1;
+  border-radius: 50%;
+  margin-left: 30px;
+  margin-bottom: 5px;
+  width: 10px;
+  height: 10px;
+}
+.progress-indicator-fill {
+  display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  margin-left: 30px;
+  border-radius: 5px;
+  background-color: #fbbd08;
+  transition: height 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.ui.basic.button.borderless {
+  box-shadow: none;
+}
+.menu .item > a {
+  color: rgba(0, 0, 0, 0.87);
+}
+.menu .item > .active {
+  color: rgba(0, 0, 0, 0.6);
+}
+.embed-data {
+  cursor: pointer;
+  color: #fbbd08;
+}
+.embed-data-json {
+  border: 1px solid rgba(34, 36, 38, 0.15);
+  padding: 1em;
+}
+.progressIndicatorStep {
+  width: 10;
+  height: 10;
+}
+.progressindicatorfill {
+  width: 10;
+  height: 10;
 }

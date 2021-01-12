@@ -8,8 +8,8 @@ class Header extends React.Component {
   render() {
     return (
       <header className='page-header'>
-        <div className='ui secondary labeled icon menu'>
-          <div className='ui container'>
+        <div className='ui container'>
+          <div className='ui secondary labeled icon menu'>
             <div className='header item'>
               <Link to='/' className='' style={{ display: 'block' }}>
                 <img src={images.logo} style={{ display: 'block', width: 150 }} alt='Xoken' />

@@ -1,7 +1,8 @@
-const { app, BrowserWindow, ipcMain, screen } = require('electron');
-const path = require('path');
+const { app, BrowserWindow } = require('electron');
 
-var widthHeight;
+// const path = require('path');
+
+// var widthHeight;
 function createWindow() {
   // Create the browser window.
   let win = new BrowserWindow({
@@ -19,7 +20,7 @@ function createWindow() {
   // and load the index.html of the app.
   // win.loadFile('src/index.html');
   const url = 'http://localhost:3000';
-  //const url = `file://${path.join(__dirname, '/../build/index.html')}`;
+  // const url = `file://${path.join(__dirname, '/../build/index.html')}`;
   win.loadURL(url);
   //win.webContents.send('win', win);
   // Open the DevTools.
@@ -31,7 +32,7 @@ function createWindow() {
 // Some APIs can only be used after this event occurs.
 //app.whenReady().then(createWindow)
 app.on('ready', () => {
-  widthHeight = screen.getPrimaryDisplay().workAreaSize;
+  // widthHeight = screen.getPrimaryDisplay().workAreaSize;
   createWindow();
 });
 // Quit when all windows are closed, except on macOS. There, it's common

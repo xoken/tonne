@@ -1,4 +1,4 @@
-import { wallet } from 'nipkow-sdk';
+import { wallet, allPay } from 'client-sdk';
 
 class WalletService {
   constructor(store) {
@@ -9,24 +9,12 @@ class WalletService {
     return await wallet.getTransactions(options);
   }
 
-  async updateUnconfirmedTransactions(options) {
-    return await wallet.updateUnconfirmedTransactions();
-  }
-
-  async getOutputs(options) {
-    return await wallet.getOutputs(options);
-  }
-
-  async getUTXOs() {
-    return await wallet.getUTXOs();
+  async updateTransactionsConfirmations(options) {
+    return await wallet.updateTransactionsConfirmations();
   }
 
   getTransactionFee(receiverAddress, amountInSatoshi, feeRate) {
     return wallet.getTransactionFee(receiverAddress, amountInSatoshi, feeRate);
-  }
-
-  async getTransaction(txid) {
-    return await wallet.getTransaction(txid);
   }
 
   async getBalance() {
@@ -37,12 +25,16 @@ class WalletService {
     return await wallet.createSendTransaction(receiverAddress, amountInSatoshi, satoshisPerByte);
   }
 
-  async getUsedDerivedKeys() {
-    return await wallet.getUsedDerivedKeys();
+  async createAllpaySendTransaction(args) {
+    return await allPay.createTransaction(args);
   }
 
-  async getUnusedDerivedKeys(options) {
-    return await wallet.getUnusedDerivedKeys(options);
+  async getUsedAddresses() {
+    return await wallet.getUsedAddresses();
+  }
+
+  async getUnusedAddresses(options) {
+    return await wallet.getUnusedAddresses(options);
   }
 }
 

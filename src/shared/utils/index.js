@@ -1,16 +1,4 @@
 export const satoshiToBSV = satoshi => {
-  if (satoshi) return satoshi / 100000000;
-  return 0;
-};
-
-export const unique = (array, col) => [...new Set(array.map(() => col))];
-
-export const groupBy = (arr, col) => {
-  return arr.reduce((finalOutput, currVal) => {
-    if (!finalOutput[currVal[col]]) {
-      finalOutput[currVal[col]] = [];
-    }
-    finalOutput[currVal[col]].push(currVal);
-    return finalOutput;
-  }, {});
+  if (satoshi) return `${satoshi / 100000000} BSV`;
+  return '0';
 };

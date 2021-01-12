@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Accordion, Button, Grid, Header, Icon, Label, Segment } from 'semantic-ui-react';
+import RenderOutput from './RenderOutput';
 import { formatDistanceToNow } from 'date-fns';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
@@ -20,27 +21,31 @@ class RecentTransaction extends React.Component {
   }
 
   async componentDidMount() {
-    const { dispatch } = this.props;
-    await dispatch(walletActions.getTransactions({ limit: 10 }));
-    await dispatch(walletActions.updateUnconfirmedTransactions());
-    this.setState({ lastRefreshed: new Date() });
-    this.timerID = setInterval(
-      () =>
-        this.setState({
-          timeSinceLastRefreshed: new Date(),
-        }),
-      1000
-    );
-    const autoRefreshTimeInSecs = 1 * 60 * 1000;
-    this.autoRefreshTimer = setInterval(() => {
-      this.onRefresh();
-    }, autoRefreshTimeInSecs);
+    const { transactions, dispatch } = this.props;
+    if (transactions.length === 0) {
+      try {
+        await dispatch(walletActions.getTransactions({ limit: 10 }));
+        await dispatch(walletActions.updateTransactionsConfirmations());
+        this.setState({ lastRefreshed: new Date() });
+        this.timerID = setInterval(
+          () =>
+            this.setState({
+              timeSinceLastRefreshed: new Date(),
+            }),
+          1000
+        );
+        const autoRefreshTimeInSecs = 1 * 60 * 1000;
+        this.autoRefreshTimer = setInterval(() => {
+          this.onRefresh();
+        }, autoRefreshTimeInSecs);
+      } catch (error) {}
+    }
   }
 
   onRefresh = async () => {
     const { dispatch } = this.props;
     await dispatch(walletActions.getTransactions({ diff: true }));
-    await dispatch(walletActions.updateUnconfirmedTransactions());
+    await dispatch(walletActions.updateTransactionsConfirmations());
     this.setState({
       lastRefreshed: new Date(),
       timeSinceLastRefreshed: new Date(),
@@ -88,7 +93,6 @@ class RecentTransaction extends React.Component {
         <Accordion fluid exclusive={false}>
           {transactions.map((transaction, index) => {
             const { inputs: txInps, outputs: txOuts } = transaction;
-
             let totalInput = 0;
             let totalOutput = 0;
             let credit = 0;
@@ -115,19 +119,18 @@ class RecentTransaction extends React.Component {
               if (credit > 0 && debit > 0) {
                 return (
                   <>
-                    <span className='monospace debit'>{`-${satoshiToBSV(debit)} BSV`}</span>
+                    <span className='monospace debit'>{`-${satoshiToBSV(debit)}`}</span>
                     <span className='monospace'>{` / `}</span>
-                    <span className='monospace credit'>{`+${satoshiToBSV(credit)} BSV`}</span>
+                    <span className='monospace credit'>{`+${satoshiToBSV(credit)}`}</span>
                   </>
                 );
               } else if (credit > 0) {
-                return <span className='monospace credit'>{`+${satoshiToBSV(credit)} BSV`}</span>;
+                return <span className='monospace credit'>{`+${satoshiToBSV(credit)}`}</span>;
               } else if (debit > 0) {
-                return <span className='monospace debit'>{`-${satoshiToBSV(debit)} BSV`}</span>;
+                return <span className='monospace debit'>{`-${satoshiToBSV(debit)}`}</span>;
               }
               return '';
             };
-
             return (
               <Segment key={index.toString()} className='transaction'>
                 <Accordion.Title
@@ -146,14 +149,18 @@ class RecentTransaction extends React.Component {
                       <Label className='plain'>
                         <i
                           title={
-                            transaction.confirmations > 10
-                              ? 'More than 10 Confirmations'
-                              : `${transaction.confirmations} Confirmations`
+                            transaction.confirmation !== null
+                              ? transaction.confirmation > 10
+                                ? 'More than 10 Confirmations'
+                                : `${transaction.confirmation} Confirmations`
+                              : 'Unconfirmed Transaction'
                           }
                           className={
-                            transaction.confirmations > 10
-                              ? 'green lock icon'
-                              : 'warning unlock alternate icon'
+                            transaction.confirmation !== null
+                              ? transaction.confirmation > 10
+                                ? 'green lock icon'
+                                : 'warning unlock alternate icon'
+                              : 'red unlock alternate icon'
                           }></i>
                       </Label>
                     </Grid.Column>
@@ -163,19 +170,25 @@ class RecentTransaction extends React.Component {
                   <Grid divided columns='two'>
                     <Grid.Row>
                       <Grid.Column>
-                        <Header as='h6' className='monospace'>
+                        <Header as='h5' className='monospace'>
                           Inputs
                         </Header>
                         {txInps.map(input => {
                           return (
                             <Grid key={input.txInputIndex}>
                               <Grid.Column width='10'>
-                                <p className='monospace'>{input.address}</p>
+                                <p className='monospace'>
+                                  <span
+                                    className={input.isNUTXO ? 'nUTXO' : undefined}
+                                    title={input.isNUTXO ? 'Name UTXO' : undefined}>
+                                    {input.address}
+                                  </span>
+                                </p>
                               </Grid.Column>
                               <Grid.Column width='6' textAlign='right'>
                                 <p className='monospace'>
                                   <span className={input.isMine ? 'debit' : ''}>
-                                    {`${satoshiToBSV(input.value)} BSV`}
+                                    {satoshiToBSV(input.value)}
                                   </span>
                                 </p>
                               </Grid.Column>
@@ -184,23 +197,31 @@ class RecentTransaction extends React.Component {
                         })}
                       </Grid.Column>
                       <Grid.Column>
-                        <Header as='h6' className='monospace'>
+                        <Header as='h5' className='monospace'>
                           Outputs
                         </Header>
                         {txOuts.map(output => {
                           return (
-                            <Grid key={output.outputIndex}>
-                              <Grid.Column width='10'>
-                                <p className='monospace'>{output.address}</p>
-                              </Grid.Column>
-                              <Grid.Column width='6' textAlign='right'>
-                                <p className='monospace'>
-                                  <span className={output.isMine ? 'credit' : ''}>
-                                    {`${satoshiToBSV(output.value)} BSV`}
-                                  </span>
-                                </p>
-                              </Grid.Column>
-                            </Grid>
+                            // <Grid key={output.outputIndex}>
+                            // <Grid.Column width='10'>
+                            <RenderOutput
+                              key={output.outputIndex}
+                              addressStyle={output.isNUTXO ? 'nUTXO' : undefined}
+                              address={output.address}
+                              script={output.lockingScript}
+                              title={output.isNUTXO ? 'Name UTXO' : undefined}
+                              valueStyle={output.isMine ? 'credit' : ''}
+                              value={output.value}
+                            />
+                            // </Grid.Column>
+                            // <Grid.Column width='6' textAlign='right'>
+                            // <p className='monospace'>
+                            // <span className={output.isMine ? 'credit' : ''}>
+                            // {satoshiToBSV(output.value)}
+                            // </span>
+                            // </p>
+                            // </Grid.Column>
+                            // </Grid>
                           );
                         })}
                         <div className='ui right aligned grid'>
@@ -208,9 +229,7 @@ class RecentTransaction extends React.Component {
                             <Label className='monospace plain'>
                               {debit > 0 ? 'Total debit:' : 'Total credit:'}
                               <Label.Detail>
-                                {debit > 0
-                                  ? `${satoshiToBSV(outgoing)} BSV`
-                                  : `${satoshiToBSV(credit)} BSV`}
+                                {debit > 0 ? satoshiToBSV(outgoing) : satoshiToBSV(credit)}
                               </Label.Detail>
                             </Label>
                           </div>
@@ -219,9 +238,7 @@ class RecentTransaction extends React.Component {
                           <div className='column'>
                             <Label className='monospace plain'>
                               Fee:
-                              <Label.Detail>
-                                {`${satoshiToBSV(totalInput - totalOutput)} BSV`}
-                              </Label.Detail>
+                              <Label.Detail>{satoshiToBSV(totalInput - totalOutput)}</Label.Detail>
                             </Label>
                           </div>
                         </div>

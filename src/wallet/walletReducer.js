@@ -6,9 +6,9 @@ const INITIAL_STATE = {
   isLoading: false,
   transactions: [],
   nextTransactionCursor: null,
-  balance: null,
-  usedDerivedKeys: null,
-  unusedDerivedKeys: null,
+  balance: 0,
+  usedAddresses: null,
+  unusedAddresses: [],
 };
 
 export default createReducer(
@@ -37,47 +37,57 @@ export default createReducer(
         nextTransactionCursor !== undefined ? nextTransactionCursor : state.nextTransactionCursor,
       isLoading: false,
     }),
-    [actions.getDiffTransactionsSuccess]: (state, { transactions, nextTransactionCursor }) => ({
-      ...state,
-      transactions: [...transactions, ...state.transactions],
-      nextTransactionCursor:
-        nextTransactionCursor !== undefined ? nextTransactionCursor : state.nextTransactionCursor,
-      isLoading: false,
-    }),
     [actions.getTransactionsFailure]: state => ({
       ...state,
       isLoading: false,
     }),
-    [actions.getTransactionRequest]: state => ({
+    [actions.getDiffTransactionsSuccess]: (state, { transactions }) => ({
+      ...state,
+      transactions: [...transactions, ...state.transactions],
+      isLoading: false,
+    }),
+    [actions.updateTransactionsConfirmationsSuccess]: (state, { updatedTransactions }) => ({
+      ...state,
+      transactions: state.transactions.map(transaction => {
+        const isUpdated = updatedTransactions.find(
+          updatedTransaction => updatedTransaction.txId === transaction.txId
+        );
+        if (isUpdated) {
+          return isUpdated;
+        }
+        return transaction;
+      }),
+    }),
+    [actions.createSendTransactionSuccess]: (state, { transaction }) => ({
+      ...state,
+      transactions: [transaction, ...state.transactions],
+    }),
+    [actions.getUsedAddressesRequest]: state => ({
       ...state,
       isLoading: true,
     }),
-    [actions.getUsedDerivedKeysRequest]: state => ({
-      ...state,
-      isLoading: true,
-    }),
-    [actions.getUsedDerivedKeysSuccess]: (state, { usedDerivedKeys }) => ({
+    [actions.getUsedAddressesSuccess]: (state, { usedAddresses }) => ({
       ...state,
       isLoading: false,
-      usedDerivedKeys,
+      usedAddresses,
     }),
-    [actions.getUsedDerivedKeysFailure]: state => ({
+    [actions.getUsedAddressesFailure]: state => ({
       ...state,
       isLoading: true,
     }),
-    [actions.getUnusedDerivedKeysSuccess]: (state, { unusedDerivedKeys }) => ({
+    [actions.getUnusedAddressesSuccess]: (state, { unusedAddresses }) => ({
       ...state,
-      unusedDerivedKeys: state.unusedDerivedKeys
-        ? [...state.unusedDerivedKeys, ...unusedDerivedKeys]
-        : unusedDerivedKeys,
+      unusedAddresses: state.unusedAddresses
+        ? [...state.unusedAddresses, ...unusedAddresses]
+        : unusedAddresses,
+    }),
+    [actions.CLEAR_USED_UNUSED_ADDRESS]: state => ({
+      ...state,
+      usedAddresses: null,
+      unusedAddresses: [],
     }),
     [authActions.logoutSuccess]: state => ({
-      ...state,
-      isLoading: false,
-      balance: 0,
-      transactions: [],
-      nextTransactionCursor: null,
-      addressInfo: null,
+      ...INITIAL_STATE,
     }),
   },
   INITIAL_STATE

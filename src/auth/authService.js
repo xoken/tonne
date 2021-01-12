@@ -1,4 +1,4 @@
-import { wallet } from 'nipkow-sdk';
+import { wallet } from 'client-sdk';
 
 class AuthService {
   constructor(store) {

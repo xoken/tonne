@@ -2,14 +2,14 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Dropdown, Icon, Loader, Modal } from 'semantic-ui-react';
+import { Button, Icon, Loader, Modal } from 'semantic-ui-react';
 import SendTransaction from '../components/SendTransaction';
 import ReceiveTransaction from '../components/ReceiveTransaction';
-import RenameProfile from '../components/RenameProfile';
-import * as authActions from '../../auth/authActions';
-import * as walletSelectors from '../walletSelectors';
-import { satoshiToBSV } from '../../shared/utils';
 import RecentTransaction from '../components/RecentTransaction';
+import { satoshiToBSV } from '../../shared/utils';
+import { wallet } from 'client-sdk';
+import * as walletActions from '../walletActions';
+import * as walletSelectors from '../walletSelectors';
 
 class WalletDashboard extends React.Component {
   constructor(props) {
@@ -17,7 +17,6 @@ class WalletDashboard extends React.Component {
     this.state = {
       sendTransactionModal: false,
       receiveTransactionModal: false,
-      renameProfileModal: false,
     };
   }
 
@@ -27,18 +26,10 @@ class WalletDashboard extends React.Component {
   };
 
   toggleReceiveTransactionModal = () => {
-    const { receiveTransactionModal } = this.state;
-    this.setState({ receiveTransactionModal: !receiveTransactionModal });
-  };
-
-  onRenameProfile = () => {
-    const { renameProfileModal } = this.state;
-    this.setState({ renameProfileModal: !renameProfileModal });
-  };
-
-  onLogout = () => {
     const { dispatch } = this.props;
-    dispatch(authActions.logout());
+    const { receiveTransactionModal } = this.state;
+    if (receiveTransactionModal) dispatch(walletActions.clearUsedUnusedAddresses());
+    this.setState({ receiveTransactionModal: !receiveTransactionModal });
   };
 
   renderSendTransactionModal() {
@@ -73,43 +64,22 @@ class WalletDashboard extends React.Component {
     );
   }
 
-  renderRenameProfileModal() {
-    const { renameProfileModal } = this.state;
-    return (
-      <Modal open={renameProfileModal}>
-        <RenameProfile onClose={this.onRenameProfile} onLogout={this.onLogout} />
-      </Modal>
-    );
-  }
+  runScript = () => {
+    wallet.runScript();
+  };
 
   render() {
-    const { profile, balance } = this.props;
+    const { isLoading, balance } = this.props;
     return (
       <>
+        {/* <Button onClick={this.runScript}>Run</Button> */}
         <div className='ui center aligned segment'>
-          <div className='ui grid'>
-            <div className='column'>
-              <Dropdown
-                button
-                className='circular icon top left right floated profile'
-                icon={null}
-                text={profile ? profile.charAt(0) : ''}
-                additionPosition='top'
-                pointing>
-                <Dropdown.Menu>
-                  <Dropdown.Item text='Rename Profile' onClick={this.onRenameProfile} />
-                  <Dropdown.Divider />
-                  <Dropdown.Item text='Logout' onClick={this.onLogout} />
-                </Dropdown.Menu>
-              </Dropdown>
-            </div>
-          </div>
           <div className='ui center aligned icon header'>
             <Icon name='btc' size='big' alt='BitcoinSV' />
             <div className='content'>
               Your Current Balance is
               <div className='sub header'>
-                {balance ? `${satoshiToBSV(balance)} BSV` : <Loader inline active />}
+                {isLoading ? <Loader inline active /> : satoshiToBSV(balance)}
               </div>
             </div>
           </div>
@@ -125,7 +95,6 @@ class WalletDashboard extends React.Component {
         <RecentTransaction />
         {this.renderSendTransactionModal()}
         {this.renderReceiveTransactionModal()}
-        {this.renderRenameProfileModal()}
       </>
     );
   }
@@ -133,7 +102,6 @@ class WalletDashboard extends React.Component {
 
 WalletDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  profile: PropTypes.string.isRequired,
   balance: PropTypes.number,
 };
 
@@ -142,7 +110,7 @@ WalletDashboard.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  profile: state.auth.profile,
+  isLoading: walletSelectors.isLoading(state),
   balance: walletSelectors.getBalance(state),
 });
 

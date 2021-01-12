@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Segment, Grid, Button } from 'semantic-ui-react';
+import { Grid, Button } from 'semantic-ui-react';
 
 class ExplorerSearch extends React.Component {
   constructor(props) {

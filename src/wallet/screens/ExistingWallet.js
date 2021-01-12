@@ -64,10 +64,9 @@ class ExistingWallet extends React.Component {
   };
 
   letterOnClick = event => {
-    var self = this;
     var splitwords;
     var tempmn;
-    if (this.state.bip39Mnemonic != undefined) {
+    if (this.state.bip39Mnemonic !== undefined) {
       tempmn = this.state.bip39Mnemonic += event.currentTarget.textContent;
       this.setState({
         bip39Mnemonic: tempmn,
@@ -111,13 +110,13 @@ class ExistingWallet extends React.Component {
       tempmnemonic,
       tempmn = '',
       mnemoniccount = 12;
-    if (this.state.suggestions != undefined) {
+    if (this.state.suggestions !== undefined) {
       tempmnemonic = this.state.bip39Mnemonic;
       splitwords = tempmnemonic.split(' ');
       splitwords[splitwords.length - 1] = event.currentTarget.textContent;
       for (var n = 0; n < splitwords.length; n++) {
         tempmn += splitwords[n];
-        if (n != mnemoniccount - 1) {
+        if (n !== mnemoniccount - 1) {
           tempmn += ' ';
         }
       }

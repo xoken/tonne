@@ -284,6 +284,20 @@ table {
 }
 .page-link {
   cursor: pointer !important;
+  position: relative;
+    display: block;
+    padding: .5rem .75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #007bff;
+    background-color: #fff;
+    border: 1px solid #dee2e6;
+}
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: #007bff;
+    border-color: #007bff;
 }
 .emptypagelink {
   position: relative;
@@ -312,12 +326,23 @@ table {
 .dispnone {
   display: none;
 }
+.pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    border-radius: .25rem;
+}
+.justify-content-center {
+    -webkit-box-pack: center !important;
+    -ms-flex-pack: center !important;
+    justify-content: center !important;
+}
 .txbtn {
   display: inline-block;
   font-weight: 400;
   color: white !important;
   text-align: center;
-  margin: 15px;
+  margin: 15px !important;
   width: 150px;
   vertical-align: middle;
   -webkit-user-select: none;
