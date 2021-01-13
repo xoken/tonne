@@ -127,7 +127,7 @@ class ProxyRegistration extends React.Component {
                     <div className='ten wide column'>
                       <div className='ui form'>
                         <div className='field'>
-                          <Button fluid color='yellow' onClick={this.onSelect(proxyProvider)}>
+                          <Button fluid className='coral' onClick={this.onSelect(proxyProvider)}>
                             Select
                           </Button>
                         </div>
@@ -206,7 +206,7 @@ class ProxyRegistration extends React.Component {
               {this.renderRegistrationOption()}
             </Grid.Column>
             <Grid.Column width='4' className='middle aligned'>
-              <Button fluid color='yellow' onClick={this.onRegister}>
+              <Button fluid className='coral' onClick={this.onRegister}>
                 Register
               </Button>
               <button

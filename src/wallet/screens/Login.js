@@ -61,7 +61,7 @@ class Login extends React.Component {
                   </div>
                 )}
               </div>
-              <Button className='txbtn' disabled={error ? true : false}>
+              <Button className='txbtn coral' disabled={error ? true : false}>
                 Continue
               </Button>
             </form>

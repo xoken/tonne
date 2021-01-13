@@ -33,7 +33,7 @@ class WalletPassword extends React.Component {
         return (
           <>
             <div className='form-group'>
-              <Button className='txbtn'>Next</Button>
+              <Button className='txbtn coral'>Next</Button>
             </div>
             <div className='greenalert'>Passwords matched!</div>
           </>

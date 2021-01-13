@@ -63,10 +63,10 @@ class RenameProfile extends React.Component {
                     </div>
                   </div>
                   <center>
-                    <Button color='yellow' onClick={this.onRenameAccount}>
+                    <Button className='coral' onClick={this.onRenameAccount}>
                       Rename
                     </Button>
-                    <Button color='yellow' onClick={this.props.onClose}>
+                    <Button className='coral' onClick={this.props.onClose}>
                       Cancel
                     </Button>
                   </center>

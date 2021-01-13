@@ -291,13 +291,13 @@ class SendTransaction extends React.Component {
           <center>
             <Grid.Column>
               <Button
-                color='yellow'
+                className='coral'
                 onClick={this.onSend}
                 disabled={receiverAddress === '' ? true : false}>
                 Send
               </Button>
 
-              <Button color='yellow' onClick={this.onClose}>
+              <Button className='peach' onClick={this.onClose}>
                 Close
               </Button>
             </Grid.Column>

@@ -105,10 +105,10 @@ class SettingsScreen extends React.Component {
                   />
                 </Form.Field>
                 {this.renderError()}
-                <Button color='yellow' onClick={this.onTestConnection}>
+                <Button className='coral' onClick={this.onTestConnection}>
                   Test Connection
                 </Button>
-                <Button color='yellow' disabled={!isValidSettings} onClick={this.onSubmit}>
+                <Button className='coral' disabled={!isValidSettings} onClick={this.onSubmit}>
                   Save
                 </Button>
               </Form>

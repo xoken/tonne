@@ -77,7 +77,7 @@ class NewWallet extends React.Component {
     var continu;
     if (this.state.continue === true) {
       continu = (
-        <button type='button' className='generalbtns' onClick={this.onContinue}>
+        <button type='button' className='generalbtns coral' onClick={this.onContinue}>
           Continue
         </button>
       );
@@ -89,15 +89,15 @@ class NewWallet extends React.Component {
           <div className='col-md-12'>
             <center>
               <h5 className='generalheadingscolor'>
-                Please write down these words on a piece of paper. This seed will help recover your
-                wallet in the future.
+                Please save this mnemonic securely. You will need this to recover your wallet on a
+                new device.
               </h5>
               <div>
                 <div className='mnemonic' id='mnemonic'></div>
               </div>
               <div id='unmaskhint'></div>
 
-              <button type='button' className='generalbtns' onClick={this.generateMnemonic}>
+              <button type='button' className='generalbtns coral' onClick={this.generateMnemonic}>
                 Generate Mnemonic
               </button>
               <br />

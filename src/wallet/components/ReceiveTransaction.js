@@ -51,7 +51,7 @@ class ReceiveTransaction extends React.Component {
             </div>
             <div className='right floated right aligned six wide column'>
               <Button
-                color='yellow'
+                className='coral'
                 disabled={unusedAddresses.length > 10 ? true : false}
                 onClick={this.onNewUnusedAddress}>
                 Get new Addresses
@@ -64,7 +64,7 @@ class ReceiveTransaction extends React.Component {
               <div className='column'>
                 <div className='ui fluid action input'>
                   <input type='text' className='monospace' readOnly value={unusedAddress} />
-                  <button className='ui yellow button' onClick={this.onCopy(unusedAddress)}>
+                  <button className='ui coral button' onClick={this.onCopy(unusedAddress)}>
                     Copy
                   </button>
                 </div>

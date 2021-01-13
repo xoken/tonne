@@ -6,7 +6,7 @@ import words from '../../shared/constants/wordlist/english';
 import alphabet from '../../shared/constants/alphabet/english';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
-import { Button } from 'semantic-ui-react';
+import { Button, Grid, Segment } from 'semantic-ui-react';
 const crypto = require('crypto');
 
 class ExistingWallet extends React.Component {
@@ -164,60 +164,48 @@ class ExistingWallet extends React.Component {
   render() {
     return (
       <>
-        <div className='row'>
-          <div className='col-md-12'>
-            <div id='mnemonic' className='mnemonic'>
-              {this.state.bip39Mnemonic || ''}
-            </div>
-            <div id='wordsremaining'>(0 of 12)</div>
-          </div>
-        </div>
-        <div className='row'>
-          <div className='col-md-12'>
-            <br />
-            <button className='btn btn-primary' id='backspc' onClick={this.backspaceOnClick}>
-              &#9003;
-            </button>
-          </div>
-        </div>
-        <div className='row'>
-          <div className='col-md-12'>
-            <br />
-            <br />
+        <Grid>
+          <Grid.Row>
+            <Grid.Column>
+              <div id='mnemonic' className='mnemonic'>
+                {this.state.bip39Mnemonic || ''}
+              </div>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column>
+              <div id='wordsremaining'>(0 of 12)</div>
+            </Grid.Column>
+          </Grid.Row>
 
-            <ul id='alphabets'>{this.state.alphabets}</ul>
-          </div>
-        </div>
-
-        <div className='row'>
-          <div className='col-md-12'>
-            <ul id='suggestions'>{this.state.suggestions}</ul>
-          </div>
-        </div>
-        <div className='row'>
-          <div className='col-md-12'>
-            <center>
-              <MnemonicCompleted
-                mncompleted={this.state.mncompleted}
-                continuefunction={this.onContinue}
-              />
-            </center>
-          </div>
-        </div>
-
-        {/* <div className="dispnone"> */}
-        <div>
-          <div>
-            <textarea
-              rows='2'
-              value={this.state.bip39Mnemonic || ''}
-              onChange={event => this.setState({ bip39Mnemonic: event.target.value })}
-            />
-          </div>
-          <button type='button' className='btn btn-primary btn-md' onClick={this.onContinue}>
-            Continue
-          </button>
-        </div>
+          <Grid.Row>
+            <Grid.Column>
+              <Button className='backspace' onClick={this.backspaceOnClick}>
+                &#9003;
+              </Button>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+        <Segment textAlign='center'>
+          <ul id='alphabets'>{this.state.alphabets}</ul>
+        </Segment>
+        <Grid>
+          <Grid.Row>
+            <Grid.Column>
+              <ul id='suggestions'>{this.state.suggestions}</ul>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column>
+              <center>
+                <MnemonicCompleted
+                  mncompleted={this.state.mncompleted}
+                  continuefunction={this.onContinue}
+                />
+              </center>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
       </>
     );
   }
@@ -225,7 +213,7 @@ class ExistingWallet extends React.Component {
 function MnemonicCompleted(props) {
   if (props.mncompleted === true) {
     return (
-      <Button className='txbtn' onClick={props.continuefunction}>
+      <Button className='txbtn coral' onClick={props.continuefunction}>
         Continue
       </Button>
     );

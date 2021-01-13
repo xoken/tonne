@@ -16,15 +16,21 @@ class Header extends React.Component {
               </Link>
             </div>
             <div className='right menu'>
-              <NavLink to='/explorer' activeClassName='active' className='item'>
+              <NavLink
+                to='/explorer'
+                activeClassName='activeheader'
+                className='item headertabitems'>
                 <Icon name='wpexplorer' />
                 Explorer
               </NavLink>
-              <NavLink to='/wallet' activeClassName='active' className='item'>
+              <NavLink to='/wallet' activeClassName='activeheader' className='item headertabitems'>
                 <Icon name='bitcoin' />
                 Wallet
               </NavLink>
-              <NavLink to='/settings' className='ui item'>
+              <NavLink
+                to='/settings'
+                activeClassName='activeheader'
+                className='ui item headertabitems'>
                 <Icon name='setting' />
                 Settings
               </NavLink>

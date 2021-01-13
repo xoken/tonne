@@ -159,7 +159,7 @@ class ConfirmRegistration extends React.Component {
           </div>
           <div className='four wide middle aligned column'>
             <h4 className='ui center aligned header'>{this.renderPurchaseCost()}</h4>
-            <button className='fluid ui yellow button' onClick={this.onSignRelay}>
+            <button className='fluid ui coral button' onClick={this.onSignRelay}>
               Confirm Registration
             </button>
             <button

@@ -7,8 +7,8 @@
   width: 100%;
 }
 .txslnum {
-  background-color: lightgrey;
-  padding: 20px;
+  background-color: #FAFAFA;
+  padding: 10px;
 }
 .nopaddingtop {
   padding-top: 0px !important;
@@ -105,13 +105,13 @@
 }
 .letter {
   text-align: center;
-  background-color: #b3c8bd;
+  background-color: #fbe1e2;
   cursor: pointer;
   display: inline-block;
   padding: 15px;
   border-radius: 5px;
   margin: 10px;
-  color: white;
+  color: #9173a8;
   vertical-align: middle;
   font-size: 18px;
   width: 57px;
@@ -124,7 +124,7 @@
 }
 .wordlist {
   text-align: center;
-  background-color: rgb(235, 188, 88);
+  background-color: #9173a8;
   cursor: pointer;
   display: inline-block;
   padding: 5px 10px 5px 10px;
@@ -143,7 +143,7 @@
 }
 .mnemonic {
   width: 100%;
-  color: #447319;
+  color: gray;
   text-align: center;
   font-size: 20px;
   font-weight: bold;
@@ -272,10 +272,7 @@ table {
   overflow: auto;
   width: auto;
 }
-.backspc {
-  float: right;
-  color: white;
-}
+
 .thborder {
   border-bottom: 1pt solid lightgrey;
 }
@@ -289,15 +286,15 @@ table {
     padding: .5rem .75rem;
     margin-left: -1px;
     line-height: 1.25;
-    color: #007bff;
+    color: #ed7464;
     background-color: #fff;
     border: 1px solid #dee2e6;
 }
 .page-item.active .page-link {
     z-index: 3;
     color: #fff;
-    background-color: #007bff;
-    border-color: #007bff;
+    background-color: #ed7464;
+    border-color: #ed7464;
 }
 .emptypagelink {
   position: relative;
@@ -305,7 +302,7 @@ table {
   padding: 0.5rem 0.75rem;
   margin-left: -1px;
   line-height: 1.25;
-  color: #007bff;
+  color: #ed7464;
   background-color: #fff;
   border: 1px solid #dee2e6;
   cursor: not-allowed;
@@ -377,4 +374,21 @@ table {
 .nosegmentmargin {
   margin-top: 0px !important;
   margin-bottom: 0px !important;
+}
+
+.removesegmentborder{
+  border: 0px !important;
+  box-shadow: none !important;
+}
+
+.removepaddingbottom{
+  padding-bottom: 0px !important;
+}
+
+.paddtopbottom5px{
+  padding-top: 5px !important;
+  padding-bottom: 5px !important;
+}
+.verticaldivider{
+  box-shadow: -2px 0 0 0 rgba(34,36,38,.15);
 }

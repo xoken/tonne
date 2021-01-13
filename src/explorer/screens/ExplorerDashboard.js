@@ -266,11 +266,11 @@ class ExplorerDashboard extends React.Component {
       if (i % 2 === 0) {
         tempColor = 'white';
       } else {
-        tempColor = '#eeeded';
+        tempColor = '#FAFAFA';
       }
       this.resultsrow.push(
-        <Segment.Group horizontal className='nosegmentmargin'>
-          <Segment className='cen'>
+        <Segment.Group horizontal className='nosegmentmargin removesegmentborder'>
+          <Segment className='cen removesegmentborder'>
             <Grid columns={6} verticalAlign='middle'>
               <Grid.Row style={{ backgroundColor: tempColor }}>
                 <Grid.Column>
@@ -313,19 +313,17 @@ class ExplorerDashboard extends React.Component {
           //    </button>
         }
         <div className='opacitywhileload'>
-          <Segment.Group>
-            <Segment>
-              <h4>Summary</h4>
-            </Segment>
-            <Segment className='cen'>{this.summarysection}</Segment>
-            <Segment>
-              <h4>Latest Blocks</h4>
-            </Segment>
-            <Segment>
-              <div className='latestblocks'>{this.resultsrow}</div>
-              <br />
-            </Segment>
-          </Segment.Group>
+          <Segment className='removesegmentborder nosegmentmargin removepaddingbottom'>
+            <h4 className='purplefontcolor'>Summary</h4>
+          </Segment>
+          <Segment className='cen'>{this.summarysection}</Segment>
+          <Segment className='removesegmentborder'>
+            <h4 className='purplefontcolor'>Latest Blocks</h4>
+          </Segment>
+
+          <div className='latestblocks'>{this.resultsrow}</div>
+          <br />
+
           <center>
             <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
           </center>
@@ -350,7 +348,7 @@ class ExplorerDashboard extends React.Component {
                   />
                 </div>
                 <div className='one wide field'>
-                  <Button type='submit' className='explorerbuttoncolor'>
+                  <Button type='submit' className='explorerbuttoncolor coral'>
                     Go
                   </Button>
                 </div>

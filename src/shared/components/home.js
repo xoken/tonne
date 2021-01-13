@@ -10,22 +10,22 @@ export default class Home extends React.Component {
           <div className='ui placeholder segment'>
             <div className='ui two column stackable center aligned grid'>
               <div className='column'>
-                <div className='ui icon header'>
+                <div className='ui icon header purplefontcolor'>
                   <Icon name='wpexplorer' />
                   BSV Block Explorer
                 </div>
-                <p>Explore BSV blocks without limits</p>
-                <Link to='/explorer' className='ui yellow button'>
+                <p class='coralfontcolor'>Explore BSV blocks without limits</p>
+                <Link to='/explorer' className='ui coral button'>
                   Explorer
                 </Link>
               </div>
               <div className='column'>
-                <div className='ui icon header'>
+                <div className='ui icon header purplefontcolor'>
                   <Icon name='bitcoin' />
                   BSV Wallet
                 </div>
-                <p>Send and Receive Coin</p>
-                <Link to='/wallet' className='ui yellow button'>
+                <p class='coralfontcolor'>Send and Receive Coin</p>
+                <Link to='/wallet' className='ui coral button'>
                   Wallet
                 </Link>
               </div>

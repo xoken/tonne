@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { chainAPI } from 'client-sdk';
-import { Button } from 'semantic-ui-react';
+import { Button, Grid } from 'semantic-ui-react';
 
 class Footer extends React.Component {
   constructor(props) {
@@ -62,18 +62,18 @@ class Footer extends React.Component {
                 ? 'page-footer page-footer-displayed'
                 : 'page-footer page-footer-hidden'
             }
-            style={{ backgroundColor: '#fcd04a' }}>
+            style={{ backgroundColor: '#fbe1e2', color: '#9173a8' }}>
             <div className='ui container'>
-              <div className='ui transparent label'>
+              <div className='ui transparent label' style={{ color: '#9173a8' }}>
                 Nexa Host: <div className='detail'>{nexaHost || 'UNKNOWN'}</div>
               </div>
-              <div className='ui transparent label'>
+              <div className='ui transparent label' style={{ color: '#9173a8' }}>
                 Chain: <div className='detail'>{chain}</div>
               </div>
-              <div className='ui transparent label'>
+              <div className='ui transparent label' style={{ color: '#9173a8' }}>
                 BlocksSynced: <div className='detail'>{blocksSynced}</div>
               </div>
-              <div className='ui transparent label'>
+              <div className='ui transparent label' style={{ color: '#9173a8' }}>
                 ChainTip: <div className='detail'>{chainTip}</div>
               </div>
             </div>
@@ -84,11 +84,23 @@ class Footer extends React.Component {
       return (
         <>
           <footer className='page-footer'>
-            <div className='ui container'>
-              <Button onClick={this.onStatusButtonToggle} className='statusbuttontext'>
-                <div>Connection status &gt;&gt;</div>
-              </Button>
-            </div>
+            <Grid className='peach nopadding newpagefooter' columns={3}>
+              <Grid.Row className='nopadding'>
+                <Grid.Column width={5}>
+                  <a href='https://www.xoken.org' className='peach'>
+                    <b>Powered by Xoken Labs</b>
+                  </a>
+                </Grid.Column>
+                <Grid.Column width={6}>
+                  <b>© Xoken Labs Pvt. Ltd., 2021</b>
+                </Grid.Column>
+                <Grid.Column width={5}>
+                  <a href='https://www.xoken.org/contact-us/' className='peach'>
+                    <b>Contact Us</b>
+                  </a>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
           </footer>
         </>
       );
