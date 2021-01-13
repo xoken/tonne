@@ -13,7 +13,8 @@ class ProxyRegistration extends React.Component {
       addressCount: 10,
       unregisteredNames: [],
       showProxyProviders: false,
-      showRegistrationOptions: this.props.outpoint?.name ? false : true,
+      defaultProxy: true,
+      showRegistrationOptions: false,
       name: this.props.outpoint?.name || [],
       proxyProviders: [
         { name: 'Proxy Provider 1', proxyHost: '127.0.0.1', proxyPort: 8000 },
@@ -87,6 +88,7 @@ class ProxyRegistration extends React.Component {
   onSelect = proxyProvider => async () => {
     this.setState({
       proxyProvider: proxyProvider,
+      defaultProxy: false,
     });
   };
 
@@ -142,6 +144,24 @@ class ProxyRegistration extends React.Component {
       });
     }
   }
+  headerRegistrationMessage = () => {
+    const { name, defaultProxy, proxyProvider } = this.state;
+    if (defaultProxy) {
+      return (
+        <>
+          Register {name.length > 0 ? utils.codePointToName(name) : 'name'} with default Allpay
+          service provider.
+        </>
+      );
+    } else {
+      return (
+        <>
+          Register {name.length > 0 ? utils.codePointToName(name) : 'name'} with Allpay service
+          provider {proxyProvider && proxyProvider.name}
+        </>
+      );
+    }
+  };
 
   renderRegistrationOption() {
     const { dispatch } = this.props;
@@ -196,11 +216,7 @@ class ProxyRegistration extends React.Component {
         <Grid>
           <Grid.Row>
             <Grid.Column width='12'>
-              <Header as='h4'>
-                {`Register ${
-                  name.length > 0 ? `"${utils.codePointToName(name)}"` : 'name'
-                } with default proxy provider "${proxyProvider && proxyProvider.name}"`}
-              </Header>
+              <Header as='h4'>{this.headerRegistrationMessage()}</Header>
               {this.renderMessage()}
               {this.renderProxyProviders()}
               {this.renderRegistrationOption()}
@@ -214,7 +230,7 @@ class ProxyRegistration extends React.Component {
                 onClick={() =>
                   this.setState({ showRegistrationOptions: !showRegistrationOptions })
                 }>
-                {`${!showRegistrationOptions ? 'Show' : 'Hide'} Registration Options`}
+                {`${showRegistrationOptions ? 'Show' : 'Hide'} Registration Options`}
               </button>
               <button
                 className='fluid ui basic borderless button'

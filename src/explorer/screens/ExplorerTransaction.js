@@ -144,7 +144,7 @@ class ExplorerTransaction extends React.Component {
               <b>Size</b>
             </Grid.Column>
             <Grid.Column width='7'>
-              <div>{this.rjdecoded.tx.size}</div>
+              <div>{this.rjdecoded.tx.size} bytes</div>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
@@ -152,7 +152,7 @@ class ExplorerTransaction extends React.Component {
               <b>Fees</b>
             </Grid.Column>
             <Grid.Column width='7'>
-              <div>{this.rjdecoded.tx.fees}</div>
+              <div>{this.rjdecoded.tx.fees} sats</div>
             </Grid.Column>
           </Grid.Row>
         </Grid>

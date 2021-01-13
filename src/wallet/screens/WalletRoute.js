@@ -37,40 +37,64 @@ class WalletRoute extends React.Component {
   };
 
   renderHeader() {
-    const { profile } = this.props;
+    const { profile, location } = this.props;
     if (profile) {
       return (
         <div className='ui grid'>
           <div className='column'>
+            <span className='welcometext purplefontcolor'>
+              {profile && location.pathname === '/wallet/dashboard' ? (
+                <b>Welcome, {profile ? profile : ''}</b>
+              ) : (
+                ''
+              )}
+            </span>
             <Dropdown
               button
-              className='circular icon top left right floated profile'
+              className='icon top left right floated coral button'
               icon={null}
-              text={profile ? profile.charAt(0) : ''}
+              text='Options'
               additionPosition='top'
               pointing>
               <Dropdown.Menu>
                 <Dropdown.Item>
-                  <NavLink to={`/wallet/dashboard`} activeClassName='active'>
+                  <NavLink
+                    className='dropdownmenuitems'
+                    to={`/wallet/dashboard`}
+                    activeClassName='active'>
                     Wallet Dashboard
                   </NavLink>
                 </Dropdown.Item>
                 <Dropdown.Item>
-                  <NavLink to={`/wallet/allpay/search`} activeClassName='active'>
+                  <NavLink
+                    className='dropdownmenuitems'
+                    to={`/wallet/allpay/search`}
+                    activeClassName='active'>
                     Buy Allpay Name
                   </NavLink>
                 </Dropdown.Item>
                 <Dropdown.Item>
                   <NavLink
+                    className='dropdownmenuitems'
                     to={`/wallet/allpay/register?progressTotalSteps=3&activeStep=1`}
                     activeClassName='active'>
                     Register with Proxy
                   </NavLink>
                 </Dropdown.Item>
-                <Dropdown.Item text='Rename Profile' onClick={this.toggleRenameProfileModal} />
-                <Dropdown.Item text='Logout' onClick={this.onLogout} />
+                <Dropdown.Item
+                  className='dropdownmenuitems'
+                  text='Rename Profile'
+                  onClick={this.toggleRenameProfileModal}
+                />
+                <Dropdown.Item className='logoutlink' text='Logout' onClick={this.onLogout} />
               </Dropdown.Menu>
             </Dropdown>
+            <NavLink
+              className='buyallpaybutton'
+              activeClassName='buyallpaybuttonactive'
+              to={`/wallet/allpay/search`}>
+              Buy Allpay Name
+            </NavLink>
             {/* <Dropdown
               button
               className='circular icon top left right floated profile'

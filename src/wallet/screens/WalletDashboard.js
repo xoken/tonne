@@ -76,9 +76,9 @@ class WalletDashboard extends React.Component {
         <div className='ui center aligned segment'>
           <div className='ui center aligned icon header'>
             <Icon name='btc' size='big' alt='BitcoinSV' />
-            <div className='content purplefontcolor'>
+            <div className='content'>
               Your Current Balance is
-              <div className='sub header'>
+              <div className='balance purplefontcolor'>
                 {isLoading ? <Loader inline active /> : satoshiToBSV(balance)}
               </div>
             </div>

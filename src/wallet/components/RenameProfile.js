@@ -51,7 +51,7 @@ class RenameProfile extends React.Component {
                 <div className='ui form'>
                   <div className='field'>
                     <label>
-                      Change Current Account's Name : {localStorage.getItem('currentprofile')}
+                      Change Current Profile Name : {localStorage.getItem('currentprofile')}
                     </label>
                     <div className='ui input'>
                       <input

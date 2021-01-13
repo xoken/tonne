@@ -166,7 +166,7 @@ class ExplorerBlockHeight extends React.Component {
               <b>Size</b>
             </Grid.Column>
             <Grid.Column width='12'>
-              <div id='size'>{this.rjdecoded.block.size}</div>
+              <div id='size'>{this.rjdecoded.block.size} bytes</div>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
