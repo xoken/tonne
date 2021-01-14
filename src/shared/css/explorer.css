@@ -392,3 +392,7 @@ table {
 .verticaldivider{
   box-shadow: -2px 0 0 0 rgba(34,36,38,.15);
 }
+
+.paddbottom5px{
+  padding-bottom: 5px !important;
+}

@@ -12,7 +12,7 @@ class Header extends React.Component {
           <div className='ui secondary labeled icon menu'>
             <div className='header item'>
               <Link to='/' className='' style={{ display: 'block' }}>
-                <img src={images.logo} style={{ display: 'block', width: 150 }} alt='Xoken' />
+                <img src={images.logo} style={{ display: 'block', width: 150 }} alt='Tonne' />
               </Link>
             </div>
             <div className='right menu'>

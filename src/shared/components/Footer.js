@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { chainAPI } from 'client-sdk';
 import { Button, Grid } from 'semantic-ui-react';
+import images from '../images';
 
 class Footer extends React.Component {
   constructor(props) {
@@ -88,12 +89,16 @@ class Footer extends React.Component {
               <Grid.Row className='nopadding'>
                 <Grid.Column width={5}>
                   <a href='https://www.xoken.org' className='peach'>
-                    <b>Powered by Xoken Labs</b>
+                    <b>
+                      Powered by{' '}
+                      <img
+                        src={images.xokenFooterLogo}
+                        style={{ width: 63, verticalAlign: 'middle' }}
+                      />
+                    </b>
                   </a>
                 </Grid.Column>
-                <Grid.Column width={6}>
-                  <b>© Xoken Labs Pvt. Ltd., 2021</b>
-                </Grid.Column>
+                <Grid.Column width={6}></Grid.Column>
                 <Grid.Column width={5}>
                   <a href='https://www.xoken.org/contact-us/' className='peach'>
                     <b>Contact Us</b>

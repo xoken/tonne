@@ -55,7 +55,7 @@ class ExplorerTransaction extends React.Component {
       if (txidpar !== '0000000000000000000000000000000000000000000000000000000000000000') {
         return (
           <>
-            <Grid.Row columns={2}>
+            <Grid.Row columns={2} className='paddbottom5px'>
               <Grid.Column width={3}>
                 <b>Address</b>
               </Grid.Column>
@@ -63,7 +63,7 @@ class ExplorerTransaction extends React.Component {
                 {checkforemptyaddress(txaddress)}
               </Grid.Column>
             </Grid.Row>
-            <Grid.Row columns={2}>
+            <Grid.Row columns={2} className='paddtopbottom5px'>
               <Grid.Column width={3}>
                 <b>Outpoint TxID / Index</b>
               </Grid.Column>
@@ -207,7 +207,7 @@ class ExplorerTransaction extends React.Component {
                   this.rjdecoded.tx.tx.txInps[j].outpointTxID,
                   this.rjdecoded.tx.tx.txInps[j].outpointIndex
                 )}
-                <Grid.Row columns={2}>
+                <Grid.Row columns={2} className='paddtopbottom5px'>
                   <Grid.Column width={3}>
                     <b>Satoshis</b>
                   </Grid.Column>
@@ -217,9 +217,7 @@ class ExplorerTransaction extends React.Component {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={1}>
-            <Grid.Column width={16}>
-              <div className='horizontaldivider'></div>
-            </Grid.Column>
+            <Grid.Column width={16}></Grid.Column>
           </Grid.Row>
         </Grid>
       );
@@ -231,7 +229,7 @@ class ExplorerTransaction extends React.Component {
             <Grid.Column width={1}>({z + 1}).</Grid.Column>
             <Grid.Column width={15}>
               <Grid>
-                <Grid.Row columns={2}>
+                <Grid.Row columns={2} className='paddbottom5px'>
                   <Grid.Column width={3}>
                     <b>Address</b>
                   </Grid.Column>
@@ -239,7 +237,7 @@ class ExplorerTransaction extends React.Component {
                     {checkforemptyaddress(this.rjdecoded.tx.tx.txOuts[z].address)}
                   </Grid.Column>
                 </Grid.Row>
-                <Grid.Row columns={2}>
+                <Grid.Row columns={2} className='paddtopbottom5px'>
                   <Grid.Column width={3}>
                     <b>Locking Script</b>
                   </Grid.Column>
@@ -250,7 +248,7 @@ class ExplorerTransaction extends React.Component {
                     {this.rjdecoded.tx.tx.txOuts[z].lockingScript}
                   </Grid.Column>
                 </Grid.Row>
-                <Grid.Row columns={2}>
+                <Grid.Row columns={2} className='paddtopbottom5px'>
                   <Grid.Column width={3}>
                     <b>Satoshis</b>
                   </Grid.Column>
@@ -267,7 +265,6 @@ class ExplorerTransaction extends React.Component {
             <Grid.Row columns={2}>
               <Grid.Column width='1'></Grid.Column>
               <Grid.Column width='15'>
-                <div className='thinnerhorizontaldivider'></div>
                 <b>
                   <h5 className='purplefontcolor'>Spending Information</h5>
                 </b>
@@ -277,7 +274,7 @@ class ExplorerTransaction extends React.Component {
               <Grid.Column width={1}></Grid.Column>
               <Grid.Column width={15}>
                 <Grid>
-                  <Grid.Row columns={2}>
+                  <Grid.Row columns={2} className='paddtopbottom5px'>
                     <Grid.Column width={3}>
                       <b>Spending Block Hash</b>
                     </Grid.Column>
@@ -292,7 +289,7 @@ class ExplorerTransaction extends React.Component {
                       </Link>
                     </Grid.Column>
                   </Grid.Row>
-                  <Grid.Row columns={2}>
+                  <Grid.Row columns={2} className='paddtopbottom5px'>
                     <Grid.Column width={3}>
                       <b>Spending Block Height</b>
                     </Grid.Column>
@@ -307,7 +304,7 @@ class ExplorerTransaction extends React.Component {
                       </Link>
                     </Grid.Column>
                   </Grid.Row>
-                  <Grid.Row columns={2}>
+                  <Grid.Row columns={2} className='paddtopbottom5px'>
                     <Grid.Column width={3}>
                       <b>Spending TxID / Index</b>
                     </Grid.Column>
@@ -326,9 +323,7 @@ class ExplorerTransaction extends React.Component {
               </Grid.Column>
             </Grid.Row>
             <Grid.Row columns={1}>
-              <Grid.Column width={16}>
-                <div className='horizontaldivider'></div>
-              </Grid.Column>
+              <Grid.Column width={16}></Grid.Column>
             </Grid.Row>
           </Grid>
         );
@@ -336,9 +331,7 @@ class ExplorerTransaction extends React.Component {
         this.tempoutputstring.push(
           <Grid>
             <Grid.Row columns={1}>
-              <Grid.Column width={16}>
-                <div className='horizontaldivider'></div>
-              </Grid.Column>
+              <Grid.Column width={16}></Grid.Column>
             </Grid.Row>
           </Grid>
         );
@@ -388,7 +381,7 @@ class ExplorerTransaction extends React.Component {
               <Grid columns={2}>
                 <Grid.Row>
                   <Grid.Column>{this.inputaddress}</Grid.Column>
-                  <Grid.Column>{this.tempoutputstring}</Grid.Column>
+                  <Grid.Column className='verticaldivider'>{this.tempoutputstring}</Grid.Column>
                 </Grid.Row>
               </Grid>
             </Segment>

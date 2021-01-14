@@ -70,7 +70,7 @@ class SettingsScreen extends React.Component {
           <Grid.Row centered columns={2}>
             <Grid.Column>
               <Form success={!hasError} error={hasError}>
-                <h4 className='ui dividing header'>Nipkow Settings</h4>
+                <h4 className='ui dividing header'>Tonne Settings</h4>
                 <Form.Field required>
                   <label>Enter Nexa IP Address or hostname</label>
                   <input

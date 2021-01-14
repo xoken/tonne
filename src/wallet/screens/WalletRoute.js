@@ -44,7 +44,7 @@ class WalletRoute extends React.Component {
           <div className='column'>
             <span className='welcometext purplefontcolor'>
               {profile && location.pathname === '/wallet/dashboard' ? (
-                <b>Welcome, {profile ? profile : ''}</b>
+                <b>{profile ? profile : ''}</b>
               ) : (
                 ''
               )}
@@ -70,7 +70,7 @@ class WalletRoute extends React.Component {
                     className='dropdownmenuitems'
                     to={`/wallet/allpay/search`}
                     activeClassName='active'>
-                    Buy Allpay Name
+                    Buy AllPay Name
                   </NavLink>
                 </Dropdown.Item>
                 <Dropdown.Item>
@@ -78,7 +78,7 @@ class WalletRoute extends React.Component {
                     className='dropdownmenuitems'
                     to={`/wallet/allpay/register?progressTotalSteps=3&activeStep=1`}
                     activeClassName='active'>
-                    Register with Proxy
+                    Register with proxy
                   </NavLink>
                 </Dropdown.Item>
                 <Dropdown.Item
@@ -93,7 +93,7 @@ class WalletRoute extends React.Component {
               className='buyallpaybutton'
               activeClassName='buyallpaybuttonactive'
               to={`/wallet/allpay/search`}>
-              Buy Allpay Name
+              Buy AllPay Name
             </NavLink>
             {/* <Dropdown
               button

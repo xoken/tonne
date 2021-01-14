@@ -149,14 +149,14 @@ class ProxyRegistration extends React.Component {
     if (defaultProxy) {
       return (
         <>
-          Register {name.length > 0 ? utils.codePointToName(name) : 'name'} with default Allpay
+          Register {name.length > 0 ? utils.codePointToName(name) : 'name'} with default AllPay
           service provider.
         </>
       );
     } else {
       return (
         <>
-          Register {name.length > 0 ? utils.codePointToName(name) : 'name'} with Allpay service
+          Register {name.length > 0 ? utils.codePointToName(name) : 'name'} with AllPay service
           provider {proxyProvider && proxyProvider.name}
         </>
       );
