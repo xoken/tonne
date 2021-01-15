@@ -38,24 +38,14 @@ class SearchBuyName extends React.Component {
     this.setState({ searchResults: undefined, isError: false, message: '' });
     const { queryName } = this.state;
     if (queryName) {
-      // if (queryName.includes('/') || queryName.includes('\\')) {
-      // this.setState({ isError: true, message: '\\ , / characters are not allowed' });
-      // } else {
       try {
         const { dispatch } = this.props;
-        // const data = { host: '3.238.95.71', port: 9189, name: [97], isProducer: true };
         const data = { host: '127.0.0.1', port: 9189, name: [115], isProducer: false };
         await dispatch(allpayActions.buyName(data));
         this.props.history.push('/wallet/allpay/confirm-purchase');
-        // [97, 112, 47]
-        // const { isAvailable, name, uri, protocol } = await dispatch(
-        //   allpayActions.getResellerURI([].concat(utils.getCodePoint(queryName)))
-        // );
-        // this.setState({ searchResults: [{ isAvailable, name, uri, protocol }] });
       } catch (error) {
         this.setState({ isError: true, message: error.message });
       }
-      // }
     }
   };
 
@@ -68,13 +58,8 @@ class SearchBuyName extends React.Component {
       } else {
         try {
           const { dispatch } = this.props;
-          // const data = { host: '3.238.95.71', port: 9189, name: [115], isProducer: false };
-          // const data = { host: '127.0.0.1', port: 9189, name: [115], isProducer: false };
-          // await dispatch(allpayActions.buyName(data));
-          // this.props.history.push('/wallet/allpay/confirm-purchase');
-          // [97, 112, 47]
           const { isAvailable, name, uri, protocol } = await dispatch(
-            allpayActions.getResellerURI([].concat(utils.getCodePoint(queryName)))
+            allpayActions.getResellerURI([97, 112, 47].concat(utils.getCodePoint(queryName)))
           );
           this.setState({ searchResults: [{ isAvailable, name, uri, protocol }] });
         } catch (error) {

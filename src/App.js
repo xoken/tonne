@@ -4,6 +4,7 @@ import { createBrowserHistory } from 'history';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import { Container } from 'semantic-ui-react';
 import ExplorerHome from './explorer/screens/ExplorerHome';
+import TwitterAuthSuccess from './auth/twitterAuthSuccess';
 import Home from './shared/components/home';
 import NoMatch from './shared/components/noMatch';
 import SettingsScreen from './settings/screens/SettingsScreen';
@@ -47,6 +48,9 @@ class App extends React.Component {
                 </Route>
                 <Route exact path='/settings'>
                   <SettingsScreen />
+                </Route>
+                <Route exact path='/auth/success'>
+                  <TwitterAuthSuccess />
                 </Route>
                 <Route path='*'>
                   <NoMatch />

@@ -37,17 +37,12 @@ class SettingsService {
   }
 
   async setDefaultConfig() {
-    // const nexaHost = 'sb2.xoken.org';
-    // const nexaPort = 9091;
-    // const userName = 'ExplorerUser';
-    // const password = 'MjYxNjM5NjQyMjU0NzMxMjQyNw';
-    // const nexaHost = '3.238.95.71';
-    const nexaHost = '127.0.0.1';
-    const nexaPort = 9091;
-    // const userName = 'harish';
-    // const password = 'MTMzNDg4MzMyODgxNjI1ODkzNQ';
-    const userName = 'admin';
-    const password = 'MTgzNTkzODY4MzE0Mjg1MTA5MT';
+    const {
+      REACT_APP_NEXA_HOST: nexaHost,
+      REACT_APP_NEXA_PORT: nexaPort,
+      REACT_APP_NEXA_USERNAME: userName,
+      REACT_APP_NEXA_PASSWORD: password,
+    } = process.env;
     const { sessionKey } = await this.setConfig(nexaHost, nexaPort, userName, password);
     return { nexaHost, nexaPort, userName, password, sessionKey };
   }
