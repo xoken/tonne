@@ -6,7 +6,7 @@ import { VerticalAnimatedSwitch } from '../shared/components/Animations';
 import TwitterAuthentication from './screens/TwitterAuthentication';
 
 export const claimTwitterHandlePaths = {
-  twitterAuth: '/claim-twitter-handle/auth',
+  twitterAuth: '/claim-twitter-handle/auth/twitter',
 };
 
 export const claimTwitterHandleFlows = {
