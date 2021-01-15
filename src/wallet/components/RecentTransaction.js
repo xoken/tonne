@@ -139,7 +139,7 @@ class RecentTransaction extends React.Component {
                   onClick={this.onTransactionTitleClick}>
                   <Grid>
                     <Grid.Column width={10}>
-                      <Icon name='dropdown' />
+                      <Icon name='dropdown' className='purplefontcolor' />
                       <span className='monospace'>{transaction.txId}</span>
                     </Grid.Column>
                     <Grid.Column width={5} textAlign='right'>
@@ -170,7 +170,7 @@ class RecentTransaction extends React.Component {
                   <Grid divided columns='two'>
                     <Grid.Row>
                       <Grid.Column>
-                        <Header as='h5' className='monospace'>
+                        <Header as='h5' className='monospace purplefontcolor'>
                           Inputs
                         </Header>
                         {txInps.map(input => {
@@ -197,7 +197,7 @@ class RecentTransaction extends React.Component {
                         })}
                       </Grid.Column>
                       <Grid.Column>
-                        <Header as='h5' className='monospace'>
+                        <Header as='h5' className='monospace purplefontcolor'>
                           Outputs
                         </Header>
                         {txOuts.map(output => {
@@ -260,7 +260,7 @@ class RecentTransaction extends React.Component {
     if (nextTransactionCursor) {
       return (
         <Segment basic textAlign='center'>
-          <Button color='yellow' onClick={this.onNextPage}>
+          <Button className='coral' onClick={this.onNextPage}>
             Next Page
           </Button>
         </Segment>
@@ -274,7 +274,7 @@ class RecentTransaction extends React.Component {
       <>
         <div className='ui grid'>
           <div className='left floated six wide middle aligned column'>
-            <h3>Recent Transactions</h3>
+            <h3 className='purplefontcolor'>Recent Transactions</h3>
           </div>
           <div className='right floated right aligned six wide column'>
             {this.renderLastRefresh()}

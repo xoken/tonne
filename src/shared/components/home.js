@@ -1,6 +1,7 @@
 import React from 'react';
 import { Grid, GridColumn, Icon } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
+import images from '../images';
 
 export default class Home extends React.Component {
   render() {
@@ -10,22 +11,28 @@ export default class Home extends React.Component {
           <div className='ui placeholder segment'>
             <div className='ui two column stackable center aligned grid'>
               <div className='column'>
-                <div className='ui icon header'>
-                  <Icon name='wpexplorer' />
-                  BSV Block Explorer
+                <div className='ui icon header purplefontcolor'>
+                  <Icon name='bitcoin' style={{ transform: 'rotate(-14deg)' }} />
+                  Bitcoin SV Block Explorer
                 </div>
-                <p>Explore BSV blocks without limits</p>
-                <Link to='/explorer' className='ui yellow button'>
+                <Link to='/explorer' className='ui coral button'>
                   Explorer
                 </Link>
               </div>
               <div className='column'>
-                <div className='ui icon header'>
-                  <Icon name='bitcoin' />
-                  BSV Wallet
+                <div className='ui icon header purplefontcolor'>
+                  <img
+                    src={images.wallet}
+                    style={{
+                      display: 'block',
+                      height: 53,
+                      width: 'auto',
+                    }}
+                    className='icon'
+                  />
+                  Bitcoin SV Wallet
                 </div>
-                <p>Send and Receive Coin</p>
-                <Link to='/wallet' className='ui yellow button'>
+                <Link to='/wallet' className='ui coral button'>
                   Wallet
                 </Link>
               </div>

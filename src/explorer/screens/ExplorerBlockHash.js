@@ -166,7 +166,7 @@ class ExplorerBlockHeight extends React.Component {
               <b>Size</b>
             </Grid.Column>
             <Grid.Column width='12'>
-              <div id='size'>{this.rjdecoded.block.size}</div>
+              <div id='size'>{this.rjdecoded.block.size} bytes</div>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
@@ -485,12 +485,12 @@ class ExplorerBlockHeight extends React.Component {
         break;
       }
       if (k % 2 === 0) {
-        tempColor = 'white';
+        tempColor = '#FAFAFA';
       } else {
-        tempColor = '#eeeded';
+        tempColor = 'white';
       }
       this.txsection.push(
-        <Segment.Group className='nosegmentmargin'>
+        <Segment.Group className='nosegmentmargin removesegmentborder'>
           <Segment style={{ backgroundColor: tempColor }}>
             <Grid columns={1}>
               <Grid.Row>
@@ -578,15 +578,15 @@ class ExplorerBlockHeight extends React.Component {
     return (
       <>
         <Segment className='noborder'>
-          <Link className='ui button explorerbuttoncolor' to={'/explorer/' + this.backheight}>
+          <Link className='ui button backspace' to={'/explorer/' + this.backheight}>
             Back
           </Link>
         </Segment>
         <div className='opacitywhileload'>
-          <Segment.Group>
+          <Segment.Group className='removesegmentborder'>
             <Segment>
               <h4>
-                Block #
+                <span className='purplefontcolor'>Block #</span>
                 <Link to={'/explorer/blockheight/' + this.blocktitle + '/""'}>
                   {this.blocktitle}
                 </Link>
@@ -596,67 +596,66 @@ class ExplorerBlockHeight extends React.Component {
               </div>
             </Segment>
             <Segment>
-              <h4>Summary</h4>
+              <h4 className='purplefontcolor'>Summary</h4>
             </Segment>
-            <Segment>
-              <Segment.Group horizontal>
-                <Segment>
-                  <Grid columns={2} divided>
-                    <Grid.Row>
-                      <Grid.Column>{this.summarysect1}</Grid.Column>
 
-                      <Grid.Column>{this.summarysect2}</Grid.Column>
-                    </Grid.Row>
-                  </Grid>
-                  <Grid columns={1}>
-                    <Grid.Row>
-                      <Grid.Column>{this.txsection}</Grid.Column>
-                    </Grid.Row>
+            <Segment.Group horizontal>
+              <Segment>
+                <Grid columns={2} divided>
+                  <Grid.Row>
+                    <Grid.Column>{this.summarysect1}</Grid.Column>
 
-                    <Grid.Row>
-                      <Grid.Column className='cen'>
-                        <nav aria-label='transactions navigation'>
-                          <ul className='pagination justify-content-center' id='pagination'>
-                            {this.pagescontainer}
-                          </ul>
-                        </nav>
-                        <form onSubmit={this.pagebutton}>
-                          <div className='ui form'>
-                            <div className='inline fields'>
-                              <div className='five wide field'></div>
-                              <div className='two wide field'>
-                                <h5>Enter page number</h5>
-                              </div>
-                              <div className='three wide field'>
-                                <input
-                                  className='pagenuminput'
-                                  size='5'
-                                  type='text'
-                                  onChange={event =>
-                                    this.setState({
-                                      enteredpagenumber: event.target.value.replace(/\s/g, ''),
-                                    })
-                                  }
-                                />
-                              </div>
-                              <div className='one wide field'>
-                                <Button
-                                  className='explorerbuttoncolor'
-                                  type='submit'
-                                  id='pagebutton'>
-                                  Go
-                                </Button>
-                              </div>
-                              <div className='five wide field'></div>
+                    <Grid.Column>{this.summarysect2}</Grid.Column>
+                  </Grid.Row>
+                </Grid>
+                <Grid columns={1}>
+                  <Grid.Row>
+                    <Grid.Column>{this.txsection}</Grid.Column>
+                  </Grid.Row>
+
+                  <Grid.Row>
+                    <Grid.Column className='cen'>
+                      <nav aria-label='transactions navigation'>
+                        <ul className='pagination justify-content-center' id='pagination'>
+                          {this.pagescontainer}
+                        </ul>
+                      </nav>
+                      <form onSubmit={this.pagebutton}>
+                        <div className='ui form'>
+                          <div className='inline fields'>
+                            <div className='five wide field'></div>
+                            <div className='two wide field'>
+                              <h5>Enter page number</h5>
                             </div>
+                            <div className='three wide field'>
+                              <input
+                                className='pagenuminput'
+                                size='5'
+                                type='text'
+                                onChange={event =>
+                                  this.setState({
+                                    enteredpagenumber: event.target.value.replace(/\s/g, ''),
+                                  })
+                                }
+                              />
+                            </div>
+                            <div className='one wide field'>
+                              <Button
+                                className='explorerbuttoncolor coral'
+                                type='submit'
+                                id='pagebutton'>
+                                Go
+                              </Button>
+                            </div>
+                            <div className='five wide field'></div>
                           </div>
-                        </form>
-                      </Grid.Column>
-                    </Grid.Row>
-                  </Grid>
-                </Segment>
-              </Segment.Group>
-            </Segment>
+                        </div>
+                      </form>
+                    </Grid.Column>
+                  </Grid.Row>
+                </Grid>
+              </Segment>
+            </Segment.Group>
           </Segment.Group>
         </div>
       </>

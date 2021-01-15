@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Form, Grid, Header, Input } from 'semantic-ui-react';
+import { Button, Form, Grid, Header, Input, Checkbox } from 'semantic-ui-react';
 import * as allpayActions from '../allpayActions';
 import { wallet, utils } from 'client-sdk';
 
@@ -13,7 +13,8 @@ class ProxyRegistration extends React.Component {
       addressCount: 10,
       unregisteredNames: [],
       showProxyProviders: false,
-      showRegistrationOptions: this.props.outpoint?.name ? false : true,
+      defaultProxy: true,
+      showRegistrationOptions: false,
       name: this.props.outpoint?.name || [],
       proxyProviders: [
         { name: 'Proxy Provider 1', proxyHost: '127.0.0.1', proxyPort: 8000 },
@@ -34,7 +35,6 @@ class ProxyRegistration extends React.Component {
     if (progressTotalSteps && activeStep) {
       dispatch(
         allpayActions.updateScreenProps({
-          title: 'Register Name',
           progressTotalSteps: Number(progressTotalSteps),
           activeStep: Number(activeStep),
         })
@@ -42,7 +42,6 @@ class ProxyRegistration extends React.Component {
     } else {
       dispatch(
         allpayActions.updateScreenProps({
-          title: 'Register Name',
           activeStep: 4,
         })
       );
@@ -87,6 +86,7 @@ class ProxyRegistration extends React.Component {
   onSelect = proxyProvider => async () => {
     this.setState({
       proxyProvider: proxyProvider,
+      defaultProxy: false,
     });
   };
 
@@ -127,7 +127,7 @@ class ProxyRegistration extends React.Component {
                     <div className='ten wide column'>
                       <div className='ui form'>
                         <div className='field'>
-                          <Button fluid color='yellow' onClick={this.onSelect(proxyProvider)}>
+                          <Button fluid className='coral' onClick={this.onSelect(proxyProvider)}>
                             Select
                           </Button>
                         </div>
@@ -142,6 +142,24 @@ class ProxyRegistration extends React.Component {
       });
     }
   }
+  headerRegistrationMessage = () => {
+    const { name, defaultProxy, proxyProvider } = this.state;
+    if (defaultProxy) {
+      return (
+        <>
+          Register {name.length > 0 ? utils.codePointToName(name) : 'name'} with default AllPay
+          service provider.
+        </>
+      );
+    } else {
+      return (
+        <>
+          Register {name.length > 0 ? utils.codePointToName(name) : 'name'} with AllPay service
+          provider {proxyProvider && proxyProvider.name}
+        </>
+      );
+    }
+  };
 
   renderRegistrationOption() {
     const { dispatch } = this.props;
@@ -195,32 +213,39 @@ class ProxyRegistration extends React.Component {
       <>
         <Grid>
           <Grid.Row>
-            <Grid.Column width='12'>
-              <Header as='h4'>
-                {`Register ${
-                  name.length > 0 ? `"${utils.codePointToName(name)}"` : 'name'
-                } with default proxy provider "${proxyProvider && proxyProvider.name}"`}
-              </Header>
+            <Grid.Column width='16' textAlign='center'>
+              <Header as='h4'>{this.headerRegistrationMessage()}</Header>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row className={showRegistrationOptions ? '' : 'paddtopbottom0px'}>
+            <Grid.Column>
               {this.renderMessage()}
               {this.renderProxyProviders()}
               {this.renderRegistrationOption()}
             </Grid.Column>
-            <Grid.Column width='4' className='middle aligned'>
-              <Button fluid color='yellow' onClick={this.onRegister}>
+          </Grid.Row>
+        </Grid>
+        <Grid>
+          <Grid.Row>
+            <Grid.Column width='16' textAlign='center'>
+              <Checkbox
+                toggle
+                label={`${showRegistrationOptions ? 'Hide' : 'Show'} Advanced Options`}
+                onClick={() =>
+                  this.setState({
+                    showRegistrationOptions: !showRegistrationOptions,
+                    showProxyProviders: !showProxyProviders,
+                  })
+                }
+                checked={showProxyProviders}
+              />
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column width='16' textAlign='center'>
+              <Button className='coral' onClick={this.onRegister}>
                 Register
               </Button>
-              <button
-                className='fluid ui basic borderless button'
-                onClick={() =>
-                  this.setState({ showRegistrationOptions: !showRegistrationOptions })
-                }>
-                {`${!showRegistrationOptions ? 'Show' : 'Hide'} Registration Options`}
-              </button>
-              <button
-                className='fluid ui basic borderless button'
-                onClick={() => this.setState({ showProxyProviders: !showProxyProviders })}>
-                {`${!showProxyProviders ? 'Show' : 'Hide'} Proxy Providers`}
-              </button>
             </Grid.Column>
           </Grid.Row>
         </Grid>

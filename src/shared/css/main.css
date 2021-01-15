@@ -122,11 +122,25 @@
   bottom: 0px !important;
   vertical-align: top;
   left: 0px;
-  background-color: #fcd04a !important;
+  background-color: #fbe1e2 !important;
   height: 22px;
   padding: 0px 5px 0px 5px !important;
   z-index: 999;
-  color: black !important;
+  color: #9173a8 !important;
+}
+
+.newpagefooter{
+  position: absolute;
+  bottom: 0px !important;
+  vertical-align: top;
+  left: 0px;
+  padding: 0px 5px 0px 5px !important;
+  z-index: 999;
+  text-align: center;
+  min-width: 100% !important;
+  height: 22px;
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
 }
 
 .page-footer {
@@ -197,11 +211,14 @@
 .ui.basic.button.borderless {
   box-shadow: none;
 }
-.menu .item > a {
-  color: rgba(0, 0, 0, 0.87);
+.headertabitems {
+  color: #9173a8 !important;
+  box-shadow:1px 1px 3px lightgrey !important;
+  border-radius: 2px !important;
+  z-index: 999;
 }
-.menu .item > .active {
-  color: rgba(0, 0, 0, 0.6);
+.activeheader {
+  background-color: #fbe1e2 !important;
 }
 .embed-data {
   cursor: pointer;
@@ -218,4 +235,86 @@
 .progressindicatorfill {
   width: 10;
   height: 10;
+}
+.coral{
+  background-color: #ed7464 !important;
+  color: white !important;
+}
+
+.coralinverted {
+    box-shadow: 0 0 0 2px #ed7464 inset!important;
+}
+.purplefontcolor{
+  color: #9173a8 !important;
+}
+.peachfontcolor{
+  color:#fbe1e2 !important;
+}
+.purple{
+  background-color: #9173a8 !important;
+  color: white !important;
+}
+.peach{
+  background-color: #fbe1e2 !important;
+  color: #9173a8 !important;
+}
+.page-header{
+  background-color: none !important
+}
+.backspace {
+  background-color: #fbe1e2 !important;
+  color:#9173a8 !important;
+  border-radius: 2px !important;
+  box-shadow: 2px 2px 5px !important;
+}
+.uneditableinput{
+  border:1px #888 solid;
+  position: relative;
+  white-space: nowrap;
+  display: inline;
+  border-right-width: 0px;
+  line-height: 45px;
+  font-weight: bold;
+}
+.searchname{
+  border:1px #888 solid !important;
+  border-left-width: 0px !important;
+  border-radius: 0px !important;
+  padding-left: 0px !important;
+
+}
+.searchname > input{
+  border:1px #888 solid !important;
+  border-radius: 0px !important;
+}
+.buyallpaybutton{
+  background-color: #ed7464;
+  color:white;
+  padding:8px 10px 8px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  position: relative;
+  float: right;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.buyallpaybutton:hover{
+  color:white;
+}
+.buyallpaybuttonactive{
+  display: none !important;
+}
+.dropdownmenuitems{
+  color: #9173a8 !important;
+}
+.logoutlink{
+  color:#dc3545 !important;
+}
+.welcometext{
+  padding:10px 0px 10px 0px;
+  font-weight: bold;
+  position: relative;
+  bottom: -10px !important;
+  font-size: 22px;
 }

@@ -15,7 +15,7 @@ export default function ExplorerHome() {
     <>
       <ExplorerSearch />
       <div id='searchnegative'>
-        <div className='backspc' id='back'></div>
+        <div className='backspace' id='back'></div>
         <Switch>
           <Route path={`${path}/blockheight/:blockheight/:txid`}>
             <ExplorerBlockHeight />

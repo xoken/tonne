@@ -36,7 +36,7 @@ class WalletDashboard extends React.Component {
     const { sendTransactionModal } = this.state;
     return (
       <Modal open={sendTransactionModal}>
-        <Modal.Header>Send Transactions</Modal.Header>
+        <Modal.Header className='purplefontcolor'>Send Transactions</Modal.Header>
         <Modal.Content>
           <Modal.Description>
             <SendTransaction onClose={this.toggleSendTransactionModal} />
@@ -51,14 +51,14 @@ class WalletDashboard extends React.Component {
     return (
       <Modal className='receive-modal' open={receiveTransactionModal}>
         <i className='close icon' onClick={this.toggleReceiveTransactionModal}></i>
-        <Modal.Header>My Addresses</Modal.Header>
+        <Modal.Header className='purplefontcolor'>My Addresses</Modal.Header>
         <Modal.Content>
           <Modal.Description>
             <ReceiveTransaction onClose={this.toggleReceiveTransactionModal} />
           </Modal.Description>
         </Modal.Content>
         <Modal.Actions>
-          <Button content='Close' onClick={this.toggleReceiveTransactionModal} />
+          <Button className='peach' content='Close' onClick={this.toggleReceiveTransactionModal} />
         </Modal.Actions>
       </Modal>
     );
@@ -78,16 +78,16 @@ class WalletDashboard extends React.Component {
             <Icon name='btc' size='big' alt='BitcoinSV' />
             <div className='content'>
               Your Current Balance is
-              <div className='sub header'>
+              <div className='balance purplefontcolor'>
                 {isLoading ? <Loader inline active /> : satoshiToBSV(balance)}
               </div>
             </div>
           </div>
           <div className='inline'>
-            <Button color='yellow' onClick={this.toggleSendTransactionModal}>
+            <Button className='coral' onClick={this.toggleSendTransactionModal}>
               Send
             </Button>
-            <Button color='yellow' onClick={this.toggleReceiveTransactionModal}>
+            <Button className='coral' onClick={this.toggleReceiveTransactionModal}>
               Receive
             </Button>
           </div>

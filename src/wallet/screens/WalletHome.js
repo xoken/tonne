@@ -35,7 +35,7 @@ class WalletHome extends React.Component {
                         <List.Item
                           key={index}
                           onClick={this.onSelectProfile(name)}
-                          className='ui inverted yellow button custommargin'>
+                          className='ui coralinverted button custommargin'>
                           <List.Content>
                             <List.Header>{name}</List.Header>
                           </List.Content>
@@ -50,7 +50,7 @@ class WalletHome extends React.Component {
                   <Grid.Column>
                     <Header>I already have a seed phrase</Header>
                     <p>Import your existing wallet using a 12 word seed phrase</p>
-                    <Link to='/wallet/existing' className='ui yellow button'>
+                    <Link to='/wallet/existing' className='ui coral button'>
                       Existing Wallet
                     </Link>
                   </Grid.Column>
@@ -60,7 +60,7 @@ class WalletHome extends React.Component {
                   <Grid.Column>
                     <Header>Yes, let's get set up!</Header>
                     <p>This will create a new wallet and seed phrase</p>
-                    <Link to='/wallet/new' className='ui yellow button'>
+                    <Link to='/wallet/new' className='ui coral button'>
                       Create a Wallet
                     </Link>
                   </Grid.Column>

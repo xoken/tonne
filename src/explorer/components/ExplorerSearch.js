@@ -47,7 +47,7 @@ class ExplorerSearch extends React.Component {
                     />
                   </div>
                   <div className='one wide field'>
-                    <Button type='submit' className='explorerbuttoncolor'>
+                    <Button type='submit' className='coral'>
                       Search
                     </Button>
                   </div>

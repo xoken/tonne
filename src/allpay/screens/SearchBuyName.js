@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Popup } from 'semantic-ui-react';
+import { Popup, Input } from 'semantic-ui-react';
 import { utils } from 'client-sdk';
 import NameRow from '../components/NameRow';
 import * as allpayActions from '../allpayActions';
@@ -21,7 +21,7 @@ class SearchBuyName extends React.Component {
     const { dispatch } = this.props;
     dispatch(
       allpayActions.updateScreenProps({
-        title: 'Buy Allpay name',
+        title: 'Buy AllPay name',
         activeStep: 1,
         progressTotalSteps: 6,
       })
@@ -135,12 +135,11 @@ class SearchBuyName extends React.Component {
           <div className='ten wide column centered row'>
             <div className='column'>
               <div className='ui fluid action labeled large input'>
-                <Popup
-                  trigger={<div className='ui yellow label'>ap/</div>}
-                  content='AllPay default namespace'
-                  inverted
-                />
+                <div className='uneditableinput'>
+                  <span className='purplefontcolor'>aa/</span>
+                </div>
                 <input
+                  className='searchname'
                   type='text'
                   placeholder='Enter a name you want to purchase'
                   onChange={event =>
@@ -153,10 +152,11 @@ class SearchBuyName extends React.Component {
                   }
                   onKeyPress={this.onKeyPress}
                 />
-                <button className='ui yellow button' onClick={this.onSearch}>
+
+                <button className='ui coral button' onClick={this.onSearch}>
                   Search
                 </button>
-                <button className='ui yellow button' onClick={this.onSetRoot}>
+                <button className='ui peach button' onClick={this.onSetRoot}>
                   Set root
                 </button>
               </div>

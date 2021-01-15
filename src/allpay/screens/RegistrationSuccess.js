@@ -29,7 +29,7 @@ class RegistrationSuccess extends React.Component {
 
   renderActionButton() {
     return (
-      <Button color='yellow' onClick={this.onExit}>
+      <Button className='coral' onClick={this.onExit}>
         Close
       </Button>
     );

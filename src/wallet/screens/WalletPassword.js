@@ -33,7 +33,7 @@ class WalletPassword extends React.Component {
         return (
           <>
             <div className='form-group'>
-              <Button className='txbtn'>Next</Button>
+              <Button className='txbtn coral'>Next</Button>
             </div>
             <div className='greenalert'>Passwords matched!</div>
           </>
@@ -60,58 +60,64 @@ class WalletPassword extends React.Component {
   render() {
     const { password, confirmPassword } = this.state;
     return (
-      <div className='row'>
-        <div className='col-md-12'>
-          <center>
-            <h5>Choose a password to encrypt your wallet keys.</h5>
-            <h5 className='generalheadingscolor'>
-              Include alphabets, numbers and special characters in your password.
-            </h5>
-          </center>
-          <form onSubmit={this.handleNext}>
-            <Grid centered>
-              <Grid.Row>
-                <Grid.Column width={2} verticalAlign='middle'>
-                  <label>Password</label>
-                </Grid.Column>
-                <Grid.Column width={10}>
-                  <Input
-                    fluid
-                    type='password'
-                    id='password'
-                    className='form-control'
-                    placeholder='Password'
-                    value={password}
-                    onChange={event => this.setState({ password: event.target.value })}
-                  />
-                </Grid.Column>
-              </Grid.Row>
-              <Grid.Row>
-                <Grid.Column width={2} verticalAlign='middle'>
-                  <label>Confirm Password</label>
-                </Grid.Column>
-                <Grid.Column width={10}>
-                  <Input
-                    fluid
-                    type='password'
-                    id='confirmPassword'
-                    className='form-control'
-                    placeholder='Confirm Password'
-                    value={confirmPassword}
-                    onChange={event => this.setState({ confirmPassword: event.target.value })}
-                  />
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
-            <br />
-            <center>
-              {this.renderPasswordMatchStatus()}
-              <br />
-              {this.renderPasswordStrength()}
-            </center>
-          </form>
-        </div>
-      </div>
+      <Grid verticalAlign='middle' style={{ height: '100%' }}>
+        <Grid.Row>
+          <Grid.Column>
+            <div className='row'>
+              <div className='col-md-12'>
+                <center>
+                  <h5>Choose a password to encrypt your wallet keys.</h5>
+                  <h5 className='generalheadingscolor'>
+                    Include alphabets, numbers and special characters in your password.
+                  </h5>
+                </center>
+                <form onSubmit={this.handleNext}>
+                  <Grid centered>
+                    <Grid.Row>
+                      <Grid.Column width={2} verticalAlign='middle'>
+                        <label>Password</label>
+                      </Grid.Column>
+                      <Grid.Column width={10}>
+                        <Input
+                          fluid
+                          type='password'
+                          id='password'
+                          className='form-control'
+                          placeholder='Password'
+                          value={password}
+                          onChange={event => this.setState({ password: event.target.value })}
+                        />
+                      </Grid.Column>
+                    </Grid.Row>
+                    <Grid.Row>
+                      <Grid.Column width={2} verticalAlign='middle'>
+                        <label>Confirm Password</label>
+                      </Grid.Column>
+                      <Grid.Column width={10}>
+                        <Input
+                          fluid
+                          type='password'
+                          id='confirmPassword'
+                          className='form-control'
+                          placeholder='Confirm Password'
+                          value={confirmPassword}
+                          onChange={event => this.setState({ confirmPassword: event.target.value })}
+                        />
+                      </Grid.Column>
+                    </Grid.Row>
+                  </Grid>
+                  <br />
+                  <center>
+                    {this.renderPasswordMatchStatus()}
+                    <br />
+                    {this.renderPasswordStrength()}
+                  </center>
+                </form>
+              </div>
+            </div>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     );
   }
 }

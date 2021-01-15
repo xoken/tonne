@@ -46,13 +46,13 @@ class NameRegistration extends React.Component {
   renderActionButton() {
     if (this.state.registerNameWithProxy) {
       return (
-        <Button color='yellow' onClick={this.onContinue}>
+        <Button className='coral' onClick={this.onContinue}>
           Continue
         </Button>
       );
     } else {
       return (
-        <Button color='yellow' onClick={this.onExit}>
+        <Button className='coral' onClick={this.onExit}>
           Exit
         </Button>
       );
