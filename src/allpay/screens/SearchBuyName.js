@@ -21,7 +21,7 @@ class SearchBuyName extends React.Component {
     const { dispatch } = this.props;
     dispatch(
       allpayActions.updateScreenProps({
-        title: 'Buy Allpay name',
+        title: 'Buy AllPay name',
         activeStep: 1,
         progressTotalSteps: 6,
       })
@@ -136,7 +136,7 @@ class SearchBuyName extends React.Component {
             <div className='column'>
               <div className='ui fluid action labeled large input'>
                 <div className='uneditableinput'>
-                  <span className='purplefontcolor'>AA/</span>
+                  <span className='purplefontcolor'>aa/</span>
                 </div>
                 <input
                   className='searchname'

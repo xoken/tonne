@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
+import { Grid } from 'semantic-ui-react';
 var globmnorig = '';
 var globmndupl = '';
 
@@ -84,28 +85,30 @@ class NewWallet extends React.Component {
 
     return (
       <>
-        <div className='row'>
-          <div className='col-md-12'>
-            <center>
-              <h5 className='generalheadingscolor'>
-                Please save this mnemonic securely. You will need this to recover your wallet on a
-                new device.
-              </h5>
-              <div>
-                <div className='mnemonic' id='mnemonic'></div>
-              </div>
-              <div id='unmaskhint'></div>
+        <Grid verticalAlign='middle' style={{ height: '100%' }}>
+          <Grid.Row>
+            <Grid.Column width={16}>
+              <center>
+                <h5 className='generalheadingscolor'>
+                  Please save this mnemonic securely. You will need this to recover your wallet on a
+                  new device.
+                </h5>
+                <div>
+                  <div className='mnemonic' id='mnemonic'></div>
+                </div>
+                <div id='unmaskhint'></div>
 
-              <button type='button' className='generalbtns coral' onClick={this.generateMnemonic}>
-                Generate Mnemonic
-              </button>
-              <br />
-              {continu}
+                <button type='button' className='generalbtns coral' onClick={this.generateMnemonic}>
+                  Generate Mnemonic
+                </button>
+                <br />
+                {continu}
 
-              <p></p>
-            </center>
-          </div>
-        </div>
+                <p></p>
+              </center>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
       </>
     );
   }

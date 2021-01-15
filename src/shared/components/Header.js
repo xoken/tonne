@@ -20,11 +20,19 @@ class Header extends React.Component {
                 to='/explorer'
                 activeClassName='activeheader'
                 className='item headertabitems'>
-                <Icon name='wpexplorer' />
+                <Icon name='bitcoin' style={{ transform: 'rotate(-14deg)' }} />
                 Explorer
               </NavLink>
               <NavLink to='/wallet' activeClassName='activeheader' className='item headertabitems'>
-                <Icon name='bitcoin' />
+                <img
+                  src={images.wallet}
+                  style={{
+                    display: 'block',
+                    height: 23,
+                    width: 'auto',
+                  }}
+                  className='icon'
+                />
                 Wallet
               </NavLink>
               <NavLink

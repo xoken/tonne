@@ -164,7 +164,7 @@ class ExistingWallet extends React.Component {
   render() {
     return (
       <>
-        <Grid>
+        <Grid style={{ marginTop: '30px' }}>
           <Grid.Row>
             <Grid.Column>
               <div id='mnemonic' className='mnemonic'>

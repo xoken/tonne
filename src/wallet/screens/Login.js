@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
-import { Button, Input } from 'semantic-ui-react';
+import { Button, Input, Grid } from 'semantic-ui-react';
 
 class Login extends React.Component {
   constructor(props) {
@@ -34,40 +34,47 @@ class Login extends React.Component {
   render() {
     const { password, error } = this.state;
     return (
-      <div className='row'>
-        <div className='col-md-12'>
-          <center>
-            <form onSubmit={this.handleContinue}>
-              <div className='form-group'>
-                <label>
-                  Your wallet is encrypted with a password. Please enter your password to unlock it.
-                </label>
-                <Input
-                  type='password'
-                  className='form-control passinputwidth'
-                  id='password'
-                  placeholder='Password'
-                  value={password}
-                  onChange={event =>
-                    this.setState({
-                      password: event.target.value,
-                      error: '',
-                    })
-                  }
-                />
-                {error && (
-                  <div className='invalid-feedback' style={{ display: 'block' }}>
-                    {error}
-                  </div>
-                )}
+      <Grid verticalAlign='middle' style={{ height: '100%' }}>
+        <Grid.Row>
+          <Grid.Column>
+            <div className='row' style={{ verticalAlign: 'middle' }}>
+              <div>
+                <center>
+                  <form onSubmit={this.handleContinue}>
+                    <div className='form-group'>
+                      <label>
+                        Your wallet is encrypted with a password. Please enter your password to
+                        unlock it.
+                      </label>
+                      <Input
+                        type='password'
+                        className='form-control passinputwidth'
+                        id='password'
+                        placeholder='Password'
+                        value={password}
+                        onChange={event =>
+                          this.setState({
+                            password: event.target.value,
+                            error: '',
+                          })
+                        }
+                      />
+                      {error && (
+                        <div className='invalid-feedback' style={{ display: 'block' }}>
+                          {error}
+                        </div>
+                      )}
+                    </div>
+                    <Button className='txbtn coral' disabled={error ? true : false}>
+                      Continue
+                    </Button>
+                  </form>
+                </center>
               </div>
-              <Button className='txbtn coral' disabled={error ? true : false}>
-                Continue
-              </Button>
-            </form>
-          </center>
-        </div>
-      </div>
+            </div>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     );
   }
 }

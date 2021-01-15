@@ -12,7 +12,7 @@ export default class Home extends React.Component {
             <div className='ui two column stackable center aligned grid'>
               <div className='column'>
                 <div className='ui icon header purplefontcolor'>
-                  <Icon name='bitcoin' />
+                  <Icon name='bitcoin' style={{ transform: 'rotate(-14deg)' }} />
                   Bitcoin SV Block Explorer
                 </div>
                 <Link to='/explorer' className='ui coral button'>

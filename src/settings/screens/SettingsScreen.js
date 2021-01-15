@@ -1,7 +1,7 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Grid, Form, Button, Message } from 'semantic-ui-react';
+import { Grid, Form, Button, Message, Segment } from 'semantic-ui-react';
 import * as settingsActions from '../settingsActions';
 
 class SettingsScreen extends React.Component {
@@ -65,10 +65,10 @@ class SettingsScreen extends React.Component {
   render() {
     const { nexaHost, nexaPort, userName, password, hasError, isValidSettings } = this.state;
     return (
-      <div className='ui segment'>
-        <Grid centered>
-          <Grid.Row centered columns={2}>
-            <Grid.Column>
+      <Grid verticalAlign='middle' style={{ height: '100%' }} centered>
+        <Grid.Row columns={2}>
+          <Grid.Column>
+            <Segment>
               <Form success={!hasError} error={hasError}>
                 <h4 className='ui dividing header'>Tonne Settings</h4>
                 <Form.Field required>
@@ -112,10 +112,10 @@ class SettingsScreen extends React.Component {
                   Save
                 </Button>
               </Form>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </div>
+            </Segment>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     );
   }
 }
