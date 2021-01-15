@@ -12,19 +12,33 @@ class Header extends React.Component {
           <div className='ui secondary labeled icon menu'>
             <div className='header item'>
               <Link to='/' className='' style={{ display: 'block' }}>
-                <img src={images.logo} style={{ display: 'block', width: 150 }} alt='Xoken' />
+                <img src={images.logo} style={{ display: 'block', width: 150 }} alt='Tonne' />
               </Link>
             </div>
             <div className='right menu'>
-              <NavLink to='/explorer' activeClassName='active' className='item'>
-                <Icon name='wpexplorer' />
+              <NavLink
+                to='/explorer'
+                activeClassName='activeheader'
+                className='item headertabitems'>
+                <Icon name='bitcoin' style={{ transform: 'rotate(-14deg)' }} />
                 Explorer
               </NavLink>
-              <NavLink to='/wallet' activeClassName='active' className='item'>
-                <Icon name='bitcoin' />
+              <NavLink to='/wallet' activeClassName='activeheader' className='item headertabitems'>
+                <img
+                  src={images.wallet}
+                  style={{
+                    display: 'block',
+                    height: 23,
+                    width: 'auto',
+                  }}
+                  className='icon'
+                />
                 Wallet
               </NavLink>
-              <NavLink to='/settings' className='ui item'>
+              <NavLink
+                to='/settings'
+                activeClassName='activeheader'
+                className='ui item headertabitems'>
                 <Icon name='setting' />
                 Settings
               </NavLink>

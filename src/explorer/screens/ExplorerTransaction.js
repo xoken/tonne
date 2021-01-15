@@ -55,7 +55,7 @@ class ExplorerTransaction extends React.Component {
       if (txidpar !== '0000000000000000000000000000000000000000000000000000000000000000') {
         return (
           <>
-            <Grid.Row columns={2}>
+            <Grid.Row columns={2} className='paddbottom5px'>
               <Grid.Column width={3}>
                 <b>Address</b>
               </Grid.Column>
@@ -63,7 +63,7 @@ class ExplorerTransaction extends React.Component {
                 {checkforemptyaddress(txaddress)}
               </Grid.Column>
             </Grid.Row>
-            <Grid.Row columns={2}>
+            <Grid.Row columns={2} className='paddtopbottom5px'>
               <Grid.Column width={3}>
                 <b>Outpoint TxID / Index</b>
               </Grid.Column>
@@ -97,18 +97,16 @@ class ExplorerTransaction extends React.Component {
               <b>Block</b>
             </Grid.Column>
             <Grid.Column width='13'>
-              (#
+              <span id='blockhash'>
+                <Link to={'/explorer/blockhash/' + this.rjdecoded.tx.blockHash + '/""'}>
+                  {this.rjdecoded.tx.blockHash}
+                </Link>
+              </span>{' '}
+              &nbsp; (#
               <Link to={'/explorer/blockheight/' + this.rjdecoded.tx.blockHeight + '/""'}>
                 {this.rjdecoded.tx.blockHeight}
               </Link>
               )
-              <div id='blockhash'>
-                Block Hash:
-                <br />
-                <Link to={'/explorer/blockhash/' + this.rjdecoded.tx.blockHash + '/""'}>
-                  {this.rjdecoded.tx.blockHash}
-                </Link>
-              </div>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
@@ -146,7 +144,7 @@ class ExplorerTransaction extends React.Component {
               <b>Size</b>
             </Grid.Column>
             <Grid.Column width='7'>
-              <div>{this.rjdecoded.tx.size}</div>
+              <div>{this.rjdecoded.tx.size} bytes</div>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
@@ -154,7 +152,7 @@ class ExplorerTransaction extends React.Component {
               <b>Fees</b>
             </Grid.Column>
             <Grid.Column width='7'>
-              <div>{this.rjdecoded.tx.fees}</div>
+              <div>{this.rjdecoded.tx.fees} sats</div>
             </Grid.Column>
           </Grid.Row>
         </Grid>
@@ -165,15 +163,15 @@ class ExplorerTransaction extends React.Component {
       outps = Object.keys(this.rjdecoded.tx.tx.txOuts).length;
 
     if (inps > 1) {
-      this.inputs = `${inps} inputs`;
+      this.inputs = `Inputs (${inps})`;
     } else {
-      this.inputs = `${inps} input`;
+      this.inputs = `Input (${inps})`;
     }
 
     if (outps > 1) {
-      this.outputs = `${outps} outputs`;
+      this.outputs = `Outputs (${outps})`;
     } else {
-      this.outputs = `${outps} output`;
+      this.outputs = `Output (${outps})`;
     }
 
     this.txid = this.rjdecoded.tx.txId;
@@ -182,7 +180,7 @@ class ExplorerTransaction extends React.Component {
         <Grid.Row columns={1}>
           <Grid.Column width='1'></Grid.Column>
           <Grid.Column width='15'>
-            <b>Inputs:</b>
+            <h4 className='purplefontcolor'>{this.inputs}</h4>
           </Grid.Column>
         </Grid.Row>
       </Grid>
@@ -192,7 +190,7 @@ class ExplorerTransaction extends React.Component {
         <Grid.Row columns={1}>
           <Grid.Column width='1'></Grid.Column>
           <Grid.Column width='15'>
-            <b>Outputs:</b>
+            <h4 className='purplefontcolor'>{this.outputs}</h4>
           </Grid.Column>
         </Grid.Row>
       </Grid>
@@ -209,7 +207,7 @@ class ExplorerTransaction extends React.Component {
                   this.rjdecoded.tx.tx.txInps[j].outpointTxID,
                   this.rjdecoded.tx.tx.txInps[j].outpointIndex
                 )}
-                <Grid.Row columns={2}>
+                <Grid.Row columns={2} className='paddtopbottom5px'>
                   <Grid.Column width={3}>
                     <b>Satoshis</b>
                   </Grid.Column>
@@ -219,9 +217,7 @@ class ExplorerTransaction extends React.Component {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={1}>
-            <Grid.Column width={16}>
-              <div className='horizontaldivider'></div>
-            </Grid.Column>
+            <Grid.Column width={16}></Grid.Column>
           </Grid.Row>
         </Grid>
       );
@@ -233,7 +229,7 @@ class ExplorerTransaction extends React.Component {
             <Grid.Column width={1}>({z + 1}).</Grid.Column>
             <Grid.Column width={15}>
               <Grid>
-                <Grid.Row columns={2}>
+                <Grid.Row columns={2} className='paddbottom5px'>
                   <Grid.Column width={3}>
                     <b>Address</b>
                   </Grid.Column>
@@ -241,7 +237,7 @@ class ExplorerTransaction extends React.Component {
                     {checkforemptyaddress(this.rjdecoded.tx.tx.txOuts[z].address)}
                   </Grid.Column>
                 </Grid.Row>
-                <Grid.Row columns={2}>
+                <Grid.Row columns={2} className='paddtopbottom5px'>
                   <Grid.Column width={3}>
                     <b>Locking Script</b>
                   </Grid.Column>
@@ -252,7 +248,7 @@ class ExplorerTransaction extends React.Component {
                     {this.rjdecoded.tx.tx.txOuts[z].lockingScript}
                   </Grid.Column>
                 </Grid.Row>
-                <Grid.Row columns={2}>
+                <Grid.Row columns={2} className='paddtopbottom5px'>
                   <Grid.Column width={3}>
                     <b>Satoshis</b>
                   </Grid.Column>
@@ -269,9 +265,8 @@ class ExplorerTransaction extends React.Component {
             <Grid.Row columns={2}>
               <Grid.Column width='1'></Grid.Column>
               <Grid.Column width='15'>
-                <div className='thinnerhorizontaldivider'></div>
                 <b>
-                  <h5>Spending Information</h5>
+                  <h5 className='purplefontcolor'>Spending Information</h5>
                 </b>
               </Grid.Column>
             </Grid.Row>
@@ -279,7 +274,7 @@ class ExplorerTransaction extends React.Component {
               <Grid.Column width={1}></Grid.Column>
               <Grid.Column width={15}>
                 <Grid>
-                  <Grid.Row columns={2}>
+                  <Grid.Row columns={2} className='paddtopbottom5px'>
                     <Grid.Column width={3}>
                       <b>Spending Block Hash</b>
                     </Grid.Column>
@@ -294,7 +289,7 @@ class ExplorerTransaction extends React.Component {
                       </Link>
                     </Grid.Column>
                   </Grid.Row>
-                  <Grid.Row columns={2}>
+                  <Grid.Row columns={2} className='paddtopbottom5px'>
                     <Grid.Column width={3}>
                       <b>Spending Block Height</b>
                     </Grid.Column>
@@ -309,7 +304,7 @@ class ExplorerTransaction extends React.Component {
                       </Link>
                     </Grid.Column>
                   </Grid.Row>
-                  <Grid.Row columns={2}>
+                  <Grid.Row columns={2} className='paddtopbottom5px'>
                     <Grid.Column width={3}>
                       <b>Spending TxID / Index</b>
                     </Grid.Column>
@@ -328,9 +323,7 @@ class ExplorerTransaction extends React.Component {
               </Grid.Column>
             </Grid.Row>
             <Grid.Row columns={1}>
-              <Grid.Column width={16}>
-                <div className='horizontaldivider'></div>
-              </Grid.Column>
+              <Grid.Column width={16}></Grid.Column>
             </Grid.Row>
           </Grid>
         );
@@ -338,9 +331,7 @@ class ExplorerTransaction extends React.Component {
         this.tempoutputstring.push(
           <Grid>
             <Grid.Row columns={1}>
-              <Grid.Column width={16}>
-                <div className='horizontaldivider'></div>
-              </Grid.Column>
+              <Grid.Column width={16}></Grid.Column>
             </Grid.Row>
           </Grid>
         );
@@ -362,23 +353,23 @@ class ExplorerTransaction extends React.Component {
       <>
         <Segment className='noborder'>
           <Link
-            className='ui button explorerbuttoncolor'
+            className='ui button backspace'
             to={'/explorer/blockheight/' + this.backblockHeight + '/' + this.backtxIndex}>
             Back
           </Link>
         </Segment>
         <div className='opacitywhileload'>
-          <Segment.Group>
+          <Segment.Group className='removesegmentborder'>
             <Segment>
               <h4>
-                Transaction &nbsp;
+                <span className='purplefontcolor'>Transaction</span> &nbsp;
                 <Link to={'/explorer/transaction/' + this.txid}>{this.txid}</Link>
               </h4>
             </Segment>
             <Segment>
-              <h4>Summary</h4>
+              <h4 className='purplefontcolor'>Summary</h4>
             </Segment>
-            <Segment>
+            <Segment className='removesegmentborder'>
               <Grid columns={2} divided>
                 <Grid.Row>
                   <Grid.Column width='12'>{this.summarysect1}</Grid.Column>
@@ -387,17 +378,10 @@ class ExplorerTransaction extends React.Component {
               </Grid>
             </Segment>
             <Segment>
-              <h4>
-                <div>
-                  {this.inputs}, {this.outputs}
-                </div>
-              </h4>
-            </Segment>
-            <Segment>
               <Grid columns={2}>
                 <Grid.Row>
                   <Grid.Column>{this.inputaddress}</Grid.Column>
-                  <Grid.Column>{this.tempoutputstring}</Grid.Column>
+                  <Grid.Column className='verticaldivider'>{this.tempoutputstring}</Grid.Column>
                 </Grid.Row>
               </Grid>
             </Segment>

@@ -71,22 +71,44 @@ class ExplorerAddress extends React.Component {
                 </h4>
               </Grid.Column>
             </Grid.Row>
-            <Grid.Row columns={1} className='nopaddingtop'>
+            <Grid.Row columns={1} className=''>
               <Grid.Column>
                 <Grid>
                   <Grid.Row columns={1}>
+                    <Grid.Column width='16'>
+                      <b>Satoshis: </b>
+                      {this.addressCache[i].value}
+                    </Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row className='nopaddingtop'>
+                    <Grid.Column width='16'>
+                      <b>Block:</b>{' '}
+                      <span className='tdwordbreak'>
+                        <Link to={'/explorer/blockhash/' + this.addressCache[i].blockHash + '/""'}>
+                          {this.addressCache[i].blockHash}
+                        </Link>
+                      </span>
+                      {'   '}&nbsp; (#
+                      <Link
+                        to={'/explorer/blockheight/' + this.addressCache[i].blockHeight + '/""'}>
+                        {this.addressCache[i].blockHeight}
+                      </Link>
+                      )
+                    </Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row columns={1} className='nopaddingtop'>
                     <Grid.Column style={{ padding: '0px' }}>
-                      <Segment>
+                      <Segment className='nopaddingtop removesegmentborder'>
                         <Grid>
-                          <Grid.Row columns={2} divided>
+                          <Grid.Row columns={2}>
                             <Grid.Column>
                               <Grid>
                                 <Grid.Row columns={1} className='cen'>
                                   <Grid.Column>
-                                    <h5>Inputs</h5>
+                                    <h5 className='purplefontcolor'>Inputs</h5>
                                   </Grid.Column>
                                 </Grid.Row>
-                                <Grid.Row columns={1}>
+                                <Grid.Row columns={1} className='nopaddingtop'>
                                   <Grid.Column
                                     width='16'
                                     style={{
@@ -100,14 +122,14 @@ class ExplorerAddress extends React.Component {
                                 </Grid.Row>
                               </Grid>
                             </Grid.Column>
-                            <Grid.Column>
+                            <Grid.Column className='verticaldivider'>
                               <Grid>
                                 <Grid.Row columns={1} className='cen'>
                                   <Grid.Column>
-                                    <h5>Outputs</h5>
+                                    <h5 className='purplefontcolor'>Outputs</h5>
                                   </Grid.Column>
                                 </Grid.Row>
-                                <Grid.Row columns={1}>
+                                <Grid.Row columns={1} className='nopaddingtop'>
                                   <Grid.Column
                                     style={{
                                       maxHeight: '1350px',
@@ -123,25 +145,6 @@ class ExplorerAddress extends React.Component {
                           </Grid.Row>
                         </Grid>
                       </Segment>
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row columns={3}>
-                    <Grid.Column width='3'>
-                      <b>Satoshis: </b>
-                      {this.addressCache[i].value}
-                    </Grid.Column>
-                    <Grid.Column width='2'>
-                      <b>Block Height: </b>
-                      <Link
-                        to={'/explorer/blockheight/' + this.addressCache[i].blockHeight + '/""'}>
-                        {this.addressCache[i].blockHeight}
-                      </Link>
-                    </Grid.Column>
-                    <Grid.Column className='tdwordbreak' width='11'>
-                      <b>Block Hash: </b>
-                      <Link to={'/explorer/blockhash/' + this.addressCache[i].blockHash + '/""'}>
-                        {this.addressCache[i].blockHash}
-                      </Link>
                     </Grid.Column>
                   </Grid.Row>
                 </Grid>
@@ -181,7 +184,7 @@ class ExplorerAddress extends React.Component {
               <Grid.Column width={1}>({b + 1}).</Grid.Column>
               <Grid.Column width={15}>
                 <Grid>
-                  <Grid.Row columns={2}>
+                  <Grid.Row columns={2} className='paddtopbottom5px'>
                     <Grid.Column width={3}>
                       <b>Address</b>
                     </Grid.Column>
@@ -189,7 +192,7 @@ class ExplorerAddress extends React.Component {
                       {checkforemptyaddress(output.tx.txOuts[b].address)}
                     </Grid.Column>
                   </Grid.Row>
-                  <Grid.Row columns={2}>
+                  <Grid.Row columns={2} className='paddtopbottom5px'>
                     <Grid.Column width={3}>
                       <b>Satoshis</b>
                     </Grid.Column>
@@ -204,9 +207,7 @@ class ExplorerAddress extends React.Component {
           outputsjsx.push(
             <Grid>
               <Grid.Row columns={1}>
-                <Grid.Column width={16}>
-                  <div className='horizontaldivider'></div>
-                </Grid.Column>
+                <Grid.Column width={16}></Grid.Column>
               </Grid.Row>
             </Grid>
           );
@@ -244,7 +245,7 @@ class ExplorerAddress extends React.Component {
       if (outpointindex >= 0) {
         return (
           <>
-            <Grid.Row columns={2}>
+            <Grid.Row columns={2} className='paddtopbottom5px'>
               <Grid.Column width={3}>
                 <b>Outpoint Index</b>
               </Grid.Column>
@@ -263,10 +264,10 @@ class ExplorerAddress extends React.Component {
             <Grid.Column width={1}>({a + 1}). </Grid.Column>
             <Grid.Column width={15}>
               <Grid>
-                <Grid.Row columns={2}>
+                <Grid.Row columns={2} className='paddtopbottom5px'>
                   {checkforinvalidaddress(input.tx.txInps[a].address)}
                 </Grid.Row>
-                <Grid.Row columns={2}>
+                <Grid.Row columns={2} className='paddtopbottom5px'>
                   <Grid.Column width={3}>
                     <b>Satoshis</b>
                   </Grid.Column>
@@ -282,9 +283,7 @@ class ExplorerAddress extends React.Component {
         inputsjsx.push(
           <Grid>
             <Grid.Row columns={1}>
-              <Grid.Column width={16}>
-                <div className='horizontaldivider'></div>
-              </Grid.Column>
+              <Grid.Column width={16}></Grid.Column>
             </Grid.Row>
           </Grid>
         );
@@ -515,20 +514,20 @@ class ExplorerAddress extends React.Component {
     return (
       <>
         <Segment className='noborder'>
-          <Button onClick={this.onBack} className='explorerbuttoncolor'>
+          <Button onClick={this.onBack} className='backspace'>
             Back
           </Button>
         </Segment>
         <div className='opacitywhileload'>
-          <Segment.Group>
+          <Segment.Group className='removesegmentborder'>
             <Segment>
               <h4>
-                Address &nbsp;
+                <span className='purplefontcolor'>Address</span> &nbsp;
                 <Link to={'/explorer/address/' + this.address}>{this.address}</Link>
               </h4>
             </Segment>
             <Segment>
-              <h4>
+              <h4 className='purplefontcolor'>
                 <div id='nooftransactions'></div>Transactions
               </h4>
             </Segment>

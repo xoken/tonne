@@ -41,7 +41,7 @@ export default class NameRow extends React.Component {
                           <div className='field'>
                             <Button
                               fluid
-                              color='yellow'
+                              className='coral'
                               onClick={this.props.onBuy({
                                 name: utils.getCodePoint(name),
                                 isProducer: this.state.resellerRight,

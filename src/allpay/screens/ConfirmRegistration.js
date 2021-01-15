@@ -20,7 +20,7 @@ class ConfirmRegistration extends React.Component {
     const { dispatch } = this.props;
     dispatch(
       allpayActions.updateScreenProps({
-        title: 'Confirm Allpay Name Registration',
+        title: 'Confirm AllPay Name Registration',
         activeStep: 5,
       })
     );
@@ -133,7 +133,7 @@ class ConfirmRegistration extends React.Component {
             <div className='ui list'>
               <div className='item'>
                 <div className='ui large custom label'>
-                  Allpay Name:
+                  AllPay Name:
                   <div className='detail'>{utils.codePointToName(name)}</div>
                 </div>
               </div>
@@ -159,7 +159,7 @@ class ConfirmRegistration extends React.Component {
           </div>
           <div className='four wide middle aligned column'>
             <h4 className='ui center aligned header'>{this.renderPurchaseCost()}</h4>
-            <button className='fluid ui yellow button' onClick={this.onSignRelay}>
+            <button className='fluid ui coral button' onClick={this.onSignRelay}>
               Confirm Registration
             </button>
             <button
