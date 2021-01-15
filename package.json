@@ -5,6 +5,7 @@
   "dependencies": {
     "client-sdk": "file:./../client-sdk",
     "date-fns": "^2.16.1",
+    "http-proxy-middleware": "^1.0.6",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-redux": "^7.2.2",

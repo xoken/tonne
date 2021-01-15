@@ -11,6 +11,7 @@ import SettingsScreen from './settings/screens/SettingsScreen';
 import WalletRoute from './wallet/screens/WalletRoute';
 import Header from './shared/components/Header';
 import Footer from './shared/components/Footer';
+import ClaimTwitterHandleContainer from './claimTwitterHandle/claimTwitterHandleContainer';
 import * as settingsActions from './settings/settingsActions';
 
 class App extends React.Component {
@@ -51,6 +52,9 @@ class App extends React.Component {
                 </Route>
                 <Route exact path='/auth/success'>
                   <TwitterAuthSuccess />
+                </Route>
+                <Route path='/claim-twitter-handle'>
+                  <ClaimTwitterHandleContainer />
                 </Route>
                 <Route path='*'>
                   <NoMatch />

@@ -8,7 +8,7 @@ export default class Home extends React.Component {
       <Grid verticalAlign='middle' style={{ height: '100%' }}>
         <GridColumn>
           <div className='ui placeholder segment'>
-            <div className='ui two column stackable center aligned grid'>
+            <div className='ui three column stackable center aligned grid'>
               <div className='column'>
                 <div className='ui icon header'>
                   <Icon name='wpexplorer' />
@@ -27,6 +27,16 @@ export default class Home extends React.Component {
                 <p>Send and Receive Coin</p>
                 <Link to='/wallet' className='ui yellow button'>
                   Wallet
+                </Link>
+              </div>
+              <div className='column'>
+                <div className='ui icon header'>
+                  <Icon name='bitcoin' />
+                  On-Chain Name
+                </div>
+                <p>Claim Twitter Handle</p>
+                <Link to='/claim-twitter-handle/auth/twitter' className='ui yellow button'>
+                  Claim Twitter Handle
                 </Link>
               </div>
             </div>
