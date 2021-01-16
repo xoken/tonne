@@ -152,10 +152,17 @@ class ExistingWallet extends React.Component {
   };
 
   onContinue = () => {
-    const { dispatch } = this.props;
+    const { dispatch, continueLocation, dashboardLocation } = this.props;
     const { bip39Mnemonic } = this.state;
     dispatch(authActions.setMnemonic(bip39Mnemonic));
-    this.props.history.push('/wallet/password');
+    if (continueLocation) {
+      this.props.history.push({
+        pathname: continueLocation,
+        state: { dashboardLocation: dashboardLocation },
+      });
+    } else {
+      this.props.history.push('/wallet/password');
+    }
   };
 
   componentDidMount() {
