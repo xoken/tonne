@@ -120,8 +120,8 @@ class WalletSetup extends React.Component {
             <center>
               <h3 className='purplefontcolor'>You need a Tonne wallet to proceed</h3>
             </center>
-            <Segment placeholder>
-              <Grid columns={1}>
+            <Segment placeholder textAlign='center'>
+              <Grid columns={3}>
                 <Grid.Row>
                   <Grid.Column>
                     <b>
@@ -140,10 +140,8 @@ class WalletSetup extends React.Component {
                         }
                       />
                     </b>
-                    {this.renderImportWalletButton()}
                   </Grid.Column>
-                </Grid.Row>
-                <Grid.Row>
+
                   <Grid.Column>
                     <b>
                       <Radio
@@ -161,10 +159,8 @@ class WalletSetup extends React.Component {
                         }
                       />
                     </b>
-                    {this.renderCreateWalletButton()}
                   </Grid.Column>
-                </Grid.Row>
-                <Grid.Row>
+
                   <Grid.Column>
                     <b>
                       <Radio
@@ -182,6 +178,12 @@ class WalletSetup extends React.Component {
                         }
                       />
                     </b>
+                  </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                  <Grid.Column width={16}>
+                    {this.renderImportWalletButton()}
+                    {this.renderCreateWalletButton()}
                     {this.renderLoginToProfileButton()}
                   </Grid.Column>
                 </Grid.Row>
