@@ -37,12 +37,11 @@ export default class Home extends React.Component {
                 </Link>
               </div>
               <div className='column'>
-                <div className='ui icon header'>
-                  <Icon name='bitcoin' />
+                <div className='ui icon header purplefontcolor'>
+                  <Icon name='chain' />
                   On-Chain Name
                 </div>
-                <p>Claim Twitter Handle</p>
-                <Link to='/claim-twitter-handle/auth/twitter' className='ui yellow button'>
+                <Link to='/claim-twitter-handle/auth/twitter' className='ui coral button'>
                   Claim Twitter Handle
                 </Link>
               </div>

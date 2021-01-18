@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { NavLink, Route, Switch, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dropdown, Modal } from 'semantic-ui-react';
-import ExistingWallet from './ExistingWallet';
+import ImportWallet from './ImportWallet';
 import Login from './Login';
 import NewWallet from './NewWallet';
 import NoMatch from '../../shared/components/noMatch';
@@ -213,7 +213,7 @@ class WalletRoute extends React.Component {
         {this.renderHeader()}
         <Switch>
           <PublicRoute path={`${path}/existing`}>
-            <ExistingWallet />
+            <ImportWallet />
           </PublicRoute>{' '}
           <PublicRoute path={`${path}/new`}>
             <NewWallet />

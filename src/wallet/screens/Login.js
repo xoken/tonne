@@ -18,13 +18,17 @@ class Login extends React.Component {
       dispatch,
       location: { search },
     } = this.props;
-    const { password } = this.state;
+    const { password, dashboardLocation } = this.state;
     if (password) {
       const queryParams = new URLSearchParams(search);
       const profileId = queryParams.get('profile');
       try {
         await dispatch(authActions.login(profileId, password));
-        this.props.history.push('/wallet/dashboard');
+        if (dashboardLocation) {
+          this.props.history.push(dashboardLocation);
+        } else {
+          this.props.history.push('/wallet/dashboard');
+        }
       } catch (error) {
         this.setState({ error });
       }

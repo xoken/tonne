@@ -11,11 +11,11 @@ class ClaimTwitterHandleContainer extends Component {
     console.log(this.props);
     return (
       <>
-        <div className='ui grid'>
+        <div className='ui grid' verticalAlign='middle' style={{ height: '100%' }}>
           <div className='one wide column'>
             <ProgressIndicator steps={progressTotalSteps} activeStep={progressStep} />
           </div>
-          <div className='fifteen wide column'>
+          <div className='fifteen wide column' verticalAlign='middle' style={{ height: '100%' }}>
             <ClaimTwitterHandleRoutes />
           </div>
         </div>

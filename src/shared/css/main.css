@@ -247,6 +247,9 @@
 .purplefontcolor{
   color: #9173a8 !important;
 }
+.purplefontcolor > label{
+  color: #9173a8 !important;
+}
 .peachfontcolor{
   color:#fbe1e2 !important;
 }
@@ -266,6 +269,9 @@
   color:#9173a8 !important;
   border-radius: 2px !important;
   box-shadow: 2px 2px 5px !important;
+  position: relative;
+  display: inline-block !important;
+text-align: left !important;
 }
 .uneditableinput{
   border:1px #888 solid;

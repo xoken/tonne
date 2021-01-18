@@ -9,7 +9,7 @@ import * as authSelectors from '../../auth/authSelectors';
 import { Button, Grid, Segment } from 'semantic-ui-react';
 const crypto = require('crypto');
 
-class ExistingWallet extends React.Component {
+class ImportWallet extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -152,10 +152,17 @@ class ExistingWallet extends React.Component {
   };
 
   onContinue = () => {
-    const { dispatch } = this.props;
+    const { dispatch, continueLocation, dashboardLocation } = this.props;
     const { bip39Mnemonic } = this.state;
     dispatch(authActions.setMnemonic(bip39Mnemonic));
-    this.props.history.push('/wallet/password');
+    if (continueLocation) {
+      this.props.history.push({
+        pathname: continueLocation,
+        state: { dashboardLocation: dashboardLocation },
+      });
+    } else {
+      this.props.history.push('/wallet/password');
+    }
   };
 
   componentDidMount() {
@@ -221,15 +228,15 @@ function MnemonicCompleted(props) {
     return <i></i>;
   }
 }
-ExistingWallet.propTypes = {
+ImportWallet.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
 };
 
-ExistingWallet.defaultProps = {};
+ImportWallet.defaultProps = {};
 
 const mapStateToProps = state => ({
   isLoading: authSelectors.isLoading(state),
 });
 
-export default withRouter(connect(mapStateToProps)(ExistingWallet));
+export default withRouter(connect(mapStateToProps)(ImportWallet));
