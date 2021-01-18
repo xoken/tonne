@@ -10,7 +10,7 @@ export default class TwitterAuthentication extends React.Component {
     return (
       <div>
         <p>Twitter Auth</p>
-        <Link to='/claim-twitter-handle/home' className='ui coral button'>
+        <Link to='/claim-twitter-handle/wallet-setup' className='ui coral button'>
           home
         </Link>
       </div>

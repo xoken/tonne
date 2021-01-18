@@ -35,7 +35,7 @@ const ClaimTwitterHandleComponent = props => {
         render={() => <TwitterAuthentication />}
       />
       <Route exact path={claimTwitterHandlePaths.walletSetup} render={() => <WalletSetup />} />
-      <Route exact path={claimTwitterHandlePaths.ImportWallet} render={() => <ImportWallet />} />
+      <Route exact path={claimTwitterHandlePaths.importWallet} render={() => <ImportWallet />} />
       <Route
         exact
         path={claimTwitterHandlePaths.walletPassword}
