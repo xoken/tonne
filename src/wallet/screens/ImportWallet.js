@@ -9,7 +9,7 @@ import * as authSelectors from '../../auth/authSelectors';
 import { Button, Grid, Segment } from 'semantic-ui-react';
 const crypto = require('crypto');
 
-class ExistingWallet extends React.Component {
+class ImportWallet extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -228,15 +228,15 @@ function MnemonicCompleted(props) {
     return <i></i>;
   }
 }
-ExistingWallet.propTypes = {
+ImportWallet.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,
 };
 
-ExistingWallet.defaultProps = {};
+ImportWallet.defaultProps = {};
 
 const mapStateToProps = state => ({
   isLoading: authSelectors.isLoading(state),
 });
 
-export default withRouter(connect(mapStateToProps)(ExistingWallet));
+export default withRouter(connect(mapStateToProps)(ImportWallet));

@@ -4,8 +4,8 @@ import { Route, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { VerticalAnimatedSwitch } from '../shared/components/Animations';
 import TwitterAuthentication from './screens/TwitterAuthentication';
-import ExistingWallet from '../wallet/screens/ExistingWallet';
-import TwHome from './screens/TwHome';
+import ImportWallet from '../wallet/screens/ImportWallet';
+import WalletSetup from './screens/WalletSetup';
 import WalletPassword from '../wallet/screens/WalletPassword';
 import NewWallet from '../wallet/screens/NewWallet';
 import Login from '../wallet/screens/Login';
@@ -13,12 +13,12 @@ import WalletDashboard from '../wallet/screens/WalletDashboard';
 
 export const claimTwitterHandlePaths = {
   twitterAuth: '/claim-twitter-handle/auth/twitter',
-  twHome: '/claim-twitter-handle/home',
-  existingWallet: '/claim-twitter-handle/existingWallet',
-  walletPassword: '/claim-twitter-handle/walletPassword',
-  newWallet: '/claim-twitter-handle/newWallet',
+  walletSetup: '/claim-twitter-handle/wallet-setup',
+  importWallet: '/claim-twitter-handle/import-Wallet',
+  walletPassword: '/claim-twitter-handle/new-password',
+  createWallet: '/claim-twitter-handle/create-wallet',
   login: '/claim-twitter-handle/login',
-  walletDashboard: '/claim-twitter-handle/walletDashboard',
+  walletDashboard: '/claim-twitter-handle/wallet-dashboard',
 };
 
 export const claimTwitterHandleFlows = {
@@ -34,18 +34,14 @@ const ClaimTwitterHandleComponent = props => {
         path={claimTwitterHandlePaths.twitterAuth}
         render={() => <TwitterAuthentication />}
       />
-      <Route exact path={claimTwitterHandlePaths.twHome} render={() => <TwHome />} />
-      <Route
-        exact
-        path={claimTwitterHandlePaths.existingWallet}
-        render={() => <ExistingWallet />}
-      />
+      <Route exact path={claimTwitterHandlePaths.walletSetup} render={() => <WalletSetup />} />
+      <Route exact path={claimTwitterHandlePaths.ImportWallet} render={() => <ImportWallet />} />
       <Route
         exact
         path={claimTwitterHandlePaths.walletPassword}
         render={() => <WalletPassword />}
       />
-      <Route exact path={claimTwitterHandlePaths.newWallet} render={() => <NewWallet />} />
+      <Route exact path={claimTwitterHandlePaths.createWallet} render={() => <NewWallet />} />
       <Route exact path={claimTwitterHandlePaths.login} render={() => <Login />} />
       <Route
         exact

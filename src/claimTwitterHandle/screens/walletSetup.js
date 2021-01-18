@@ -3,12 +3,12 @@ import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import NewWallet from '../../wallet/screens/NewWallet';
-import ExistingWallet from '../../wallet/screens/ExistingWallet';
+import ImportWallet from '../../wallet/screens/ImportWallet';
 import { Divider, Grid, GridColumn, Header, List, Loader, Segment, Radio } from 'semantic-ui-react';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
 
-class TwHome extends React.Component {
+class WalletSetup extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -35,9 +35,9 @@ class TwHome extends React.Component {
         <Grid className='paddtopbottom25px' textAlign='left'>
           <Grid.Row>
             <Grid.Column>
-              <ExistingWallet
+              <ImportWallet
                 continueLocation='/claim-twitter-handle/login'
-                dashboardLocation='/claim-twitter-handle/walletDashboard'
+                dashboardLocation='/claim-twitter-handle/wallet-dashboard'
               />
             </Grid.Column>
           </Grid.Row>
@@ -53,8 +53,8 @@ class TwHome extends React.Component {
           <Grid.Row>
             <Grid.Column>
               <NewWallet
-                continueLocation='/claim-twitter-handle/walletPassword'
-                dashboardLocation='/claim-twitter-handle/walletDashboard'
+                continueLocation='/claim-twitter-handle/new-password'
+                dashboardLocation='/claim-twitter-handle/wallet-dashboard'
               />
             </Grid.Column>
           </Grid.Row>
@@ -209,4 +209,4 @@ const mapStateToProps = state => ({
   profiles: authSelectors.getProfiles(state),
 });
 
-export default withRouter(connect(mapStateToProps)(TwHome));
+export default withRouter(connect(mapStateToProps)(WalletSetup));
