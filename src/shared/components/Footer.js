@@ -24,9 +24,9 @@ class Footer extends React.Component {
   }
 
   async getChainInfo() {
-    const { nexaHost } = this.props;
+    const { nexaURL } = this.props;
     try {
-      if (nexaHost) {
+      if (nexaURL) {
         const { chainInfo } = await chainAPI.getChainInfo();
         if (chainInfo) {
           const { chain, chainTip, blocksSynced } = chainInfo;
@@ -43,13 +43,13 @@ class Footer extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.nexaHost !== prevProps.nexaHost) {
+    if (this.props.nexaURL !== prevProps.nexaURL) {
       this.getChainInfo();
     }
   }
 
   onStatusButtonHover = () => {
-    const { nexaHost } = this.props;
+    const { nexaURL } = this.props;
     const { statusButton, blocksSynced, chain, chainTip } = this.state;
     if (statusButton) {
       return (
@@ -66,7 +66,7 @@ class Footer extends React.Component {
             style={{ backgroundColor: '#fbe1e2', color: '#9173a8' }}>
             <div className='ui container'>
               <div className='ui transparent label' style={{ color: '#9173a8' }}>
-                Nexa Host: <div className='detail'>{nexaHost || 'UNKNOWN'}</div>
+                Nexa Host: <div className='detail'>{nexaURL || 'UNKNOWN'}</div>
               </div>
               <div className='ui transparent label' style={{ color: '#9173a8' }}>
                 Chain: <div className='detail'>{chain}</div>
@@ -126,7 +126,7 @@ class Footer extends React.Component {
 }
 
 const mapStateToProps = state => ({
-  nexaHost: state.settings.nexaHost,
+  nexaURL: state.settings.nexaURL,
 });
 
 export default connect(mapStateToProps)(Footer);

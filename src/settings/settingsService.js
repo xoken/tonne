@@ -1,31 +1,16 @@
-import { httpClient, authAPI } from 'client-sdk';
+import { wallet, httpClient, authAPI } from 'client-sdk';
 
 class SettingsService {
   constructor(store) {
     this.store = store;
   }
 
-  async changeConfig(nexaHost, nexaPort, userName, password) {
-    return await this.setConfig(nexaHost, nexaPort, userName, password);
+  async changeConfig(nexaURL, userName, password) {
+    return await this._setConfig(nexaURL, userName, password);
   }
 
-  async setConfig(nexaHost, nexaPort, userName, password) {
-    httpClient.init(nexaHost, nexaPort);
-    const {
-      auth: { sessionKey },
-    } = await authAPI.login(userName, password);
-    if (sessionKey) {
-      localStorage.setItem('userName', userName);
-      localStorage.setItem('password', password);
-      localStorage.setItem('sessionKey', sessionKey);
-      return { sessionKey };
-    } else {
-      throw new Error('Incorrect settings');
-    }
-  }
-
-  async testConfig(nexaHost, nexaPort, userName, password) {
-    httpClient.init(nexaHost, nexaPort);
+  async testConfig(nexaURL, userName, password) {
+    httpClient.init(nexaURL);
     const {
       auth: { sessionKey },
     } = await authAPI.login(userName, password);
@@ -36,19 +21,35 @@ class SettingsService {
     }
   }
 
-  async setDefaultConfig() {
-    const {
-      REACT_APP_NEXA_HOST: nexaHost,
-      REACT_APP_NEXA_PORT: nexaPort,
-      REACT_APP_NEXA_USERNAME: userName,
-      REACT_APP_NEXA_PASSWORD: password,
-    } = process.env;
-    const { sessionKey } = await this.setConfig(nexaHost, nexaPort, userName, password);
-    return { nexaHost, nexaPort, userName, password, sessionKey };
+  async _setConfig({ nexaURL, userName, password, network }) {
+    try {
+      const { sessionKey } = await wallet.init({ nexaURL, userName, password, network });
+      if (sessionKey) {
+        localStorage.setItem('userName', userName);
+        localStorage.setItem('password', password);
+        localStorage.setItem('sessionKey', sessionKey);
+        return { sessionKey };
+      } else {
+        throw new Error('Incorrect settings');
+      }
+    } catch (error) {
+      throw error;
+    }
   }
 
-  initHttp(nexaHost, nexaPort) {
-    httpClient.init(nexaHost, nexaPort);
+  async setConfig() {
+    const {
+      REACT_APP_NEXA_URL: nexaURL,
+      REACT_APP_NEXA_USERNAME: userName,
+      REACT_APP_NEXA_PASSWORD: password,
+      REACT_APP_NETWORK: network,
+    } = process.env;
+    try {
+      const { sessionKey } = await this._setConfig({ nexaURL, userName, password, network });
+      return { nexaURL, userName, password, sessionKey };
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

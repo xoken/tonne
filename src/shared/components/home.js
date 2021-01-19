@@ -36,7 +36,7 @@ export default class Home extends React.Component {
                   Wallet
                 </Link>
               </div>
-              <div className='column'>
+              {/* <div className='column'>
                 <div className='ui icon header purplefontcolor'>
                   <Icon name='chain' />
                   On-Chain Name
@@ -44,7 +44,7 @@ export default class Home extends React.Component {
                 <Link to='/claim-twitter-handle/auth/twitter' className='ui coral button'>
                   Claim Twitter Handle
                 </Link>
-              </div>
+              </div> */}
             </div>
           </div>
         </GridColumn>

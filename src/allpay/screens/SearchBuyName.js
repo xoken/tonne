@@ -141,9 +141,9 @@ class SearchBuyName extends React.Component {
                 <button className='ui coral button' onClick={this.onSearch}>
                   Search
                 </button>
-                <button className='ui peach button' onClick={this.onSetRoot}>
+                {/* <button className='ui peach button' onClick={this.onSetRoot}>
                   Set root
-                </button>
+                </button> */}
               </div>
             </div>
           </div>

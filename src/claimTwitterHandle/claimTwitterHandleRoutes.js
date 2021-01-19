@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { VerticalAnimatedSwitch } from '../shared/components/Animations';
 import TwitterAuthentication from './screens/TwitterAuthentication';
 import ImportWallet from '../wallet/screens/ImportWallet';
-import WalletSetup from './screens/WalletSetup';
+import WalletSetup from './screens/walletSetup';
 import WalletPassword from '../wallet/screens/WalletPassword';
 import NewWallet from '../wallet/screens/NewWallet';
 import Login from '../wallet/screens/Login';
@@ -26,7 +26,6 @@ export const claimTwitterHandleFlows = {
 };
 
 const ClaimTwitterHandleComponent = props => {
-  console.log(props);
   return (
     <div style={{ paddingLeft: 10 }} verticalAlign='middle' style={{ height: '100%' }}>
       <Route

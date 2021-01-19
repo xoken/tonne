@@ -43,8 +43,6 @@ class WalletRoute extends React.Component {
           const queryParams = new URLSearchParams(event.data);
           const twitterHandle = queryParams.get('twitter_handle');
           const followerCount = queryParams.get('followers_count');
-          console.log(twitterHandle);
-          console.log(followerCount);
           this.checkBuy(twitterHandle);
           popup.close();
         }
@@ -88,14 +86,10 @@ class WalletRoute extends React.Component {
 
       try {
         if (popup.location.hostname.includes('localhost')) {
-          console.log(popup.location);
-          console.log(popup.location.search);
           if (popup.location.search) {
             const query = new URLSearchParams(popup.location.search);
             const oauthToken = query.get('oauth_token');
             const oauthVerifier = query.get('oauth_verifier');
-            console.log(oauthVerifier);
-            console.log(oauthToken);
             // closeDialog();
           } else {
             // closeDialog();

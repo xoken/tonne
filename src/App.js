@@ -18,11 +18,14 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.history = createBrowserHistory();
-    const { sessionKey, dispatch } = this.props;
-    if (!sessionKey) {
-      dispatch(settingsActions.setDefaultConfig());
-    } else {
-      dispatch(settingsActions.initHttp());
+  }
+
+  componentDidMount() {
+    const { dispatch } = this.props;
+    try {
+      dispatch(settingsActions.setConfig());
+    } catch (error) {
+      console.log(error);
     }
   }
 

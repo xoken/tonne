@@ -5,7 +5,6 @@
   "dependencies": {
     "client-sdk": "file:./../client-sdk",
     "date-fns": "^2.16.1",
-    "http-proxy-middleware": "^1.0.6",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-redux": "^7.2.2",
@@ -25,7 +24,7 @@
     "@testing-library/user-event": "^12.1.10",
     "electron": "^11.1.1",
     "electron-packager": "^15.2.0",
-    "env-cmd": "^10.1.0",
+    "http-proxy-middleware": "^1.0.6",
     "prettier": "2.2.1",
     "react-scripts": "3.4.4",
     "reactotron-react-js": "^3.3.7",
@@ -35,8 +34,6 @@
   "main": "src/electron-starter.js",
   "scripts": {
     "start": "react-scripts start",
-    "start:development": "env-cmd -f .env.development react-scripts start",
-    "start:staging": "env-cmd -f .env.staging react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",

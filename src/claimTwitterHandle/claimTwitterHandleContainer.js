@@ -8,7 +8,6 @@ import { ClaimTwitterHandleRoutes } from './claimTwitterHandleRoutes';
 class ClaimTwitterHandleContainer extends Component {
   render() {
     const { progressStep, progressTotalSteps, title } = this.props;
-    console.log(this.props);
     return (
       <>
         <div className='ui grid' verticalAlign='middle' style={{ height: '100%' }}>

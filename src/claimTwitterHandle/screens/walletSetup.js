@@ -111,8 +111,6 @@ class WalletSetup extends React.Component {
 
   renderContent() {
     const { checkedRadio } = this.state;
-    console.log(checkedRadio);
-
     return (
       <Grid verticalAlign='middle' style={{ height: '100%' }}>
         <Grid.Row>

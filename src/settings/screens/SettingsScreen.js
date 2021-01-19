@@ -8,8 +8,7 @@ class SettingsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      nexaHost: '',
-      nexaPort: '',
+      nexaURL: '',
       userName: '',
       password: '',
       hasError: false,
@@ -20,13 +19,12 @@ class SettingsScreen extends React.Component {
 
   onSubmit = async () => {
     const { dispatch } = this.props;
-    const { nexaHost, nexaPort, userName, password } = this.state;
-    if (nexaHost && nexaPort && userName && password) {
+    const { nexaURL, userName, password } = this.state;
+    if (nexaURL && userName && password) {
       try {
-        await dispatch(settingsActions.changeConfig(nexaHost, nexaPort, userName, password));
+        await dispatch(settingsActions.changeConfig(nexaURL, userName, password));
         this.setState({ hasError: false, message: 'Success! New settings applied' });
       } catch (error) {
-        dispatch(settingsActions.initHttp());
         this.setState({ hasError: true, message: error.message });
       }
     } else {
@@ -36,18 +34,16 @@ class SettingsScreen extends React.Component {
 
   onTestConnection = async () => {
     const { dispatch } = this.props;
-    const { nexaHost, nexaPort, userName, password } = this.state;
-    if (nexaHost && nexaPort && userName && password) {
+    const { nexaURL, userName, password } = this.state;
+    if (nexaURL && userName && password) {
       try {
-        await dispatch(settingsActions.testConfig(nexaHost, nexaPort, userName, password));
-        dispatch(settingsActions.initHttp());
+        await dispatch(settingsActions.testConfig(nexaURL, userName, password));
         this.setState({
           hasError: false,
           isValidSettings: true,
           message: 'Connection test successful! Click the Save button to save your settings',
         });
       } catch (error) {
-        dispatch(settingsActions.initHttp());
         this.setState({ hasError: true, message: error.message });
       }
     } else {
@@ -63,7 +59,7 @@ class SettingsScreen extends React.Component {
   }
 
   render() {
-    const { nexaHost, nexaPort, userName, password, hasError, isValidSettings } = this.state;
+    const { nexaURL, userName, password, hasError, isValidSettings } = this.state;
     return (
       <Grid verticalAlign='middle' style={{ height: '100%' }} centered>
         <Grid.Row columns={2}>
@@ -72,19 +68,11 @@ class SettingsScreen extends React.Component {
               <Form success={!hasError} error={hasError}>
                 <h4 className='ui dividing header'>Tonne Settings</h4>
                 <Form.Field required>
-                  <label>Enter Nexa IP Address or hostname</label>
+                  <label>Enter Nexa URL</label>
                   <input
-                    placeholder='0.0.0.0 or www.example.com'
-                    value={nexaHost}
-                    onChange={event => this.setState({ nexaHost: event.target.value })}
-                  />
-                </Form.Field>
-                <Form.Field required>
-                  <label>Enter Port Number</label>
-                  <input
-                    placeholder='0000'
-                    value={nexaPort}
-                    onChange={event => this.setState({ nexaPort: event.target.value })}
+                    placeholder='example.com'
+                    value={nexaURL}
+                    onChange={event => this.setState({ nexaURL: event.target.value })}
                   />
                 </Form.Field>
                 <Form.Field required>

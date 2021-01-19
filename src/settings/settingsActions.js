@@ -1,29 +1,28 @@
 import { createAction } from 'redux-act';
 import SettingsService from './settingsService';
 
-export const setDefaultConfigRequest = createAction('SET_DEFAULT_CONFIG_REQUEST');
-export const setDefaultConfigSuccess = createAction('SET_DEFAULT_CONFIG_SUCCESS');
-export const setDefaultConfigFailure = createAction('SET_DEFAULT_CONFIG_FAILURE');
+export const setConfigRequest = createAction('SET_CONFIG_REQUEST');
+export const setConfigSuccess = createAction('SET_CONFIG_SUCCESS');
+export const setConfigFailure = createAction('SET_CONFIG_FAILURE');
 
 export const changeConfigRequest = createAction('CHANGE_CONFIG_REQUEST');
 export const changeConfigSuccess = createAction('CHANGE_CONFIG_SUCCESS');
 export const changeConfigFailure = createAction('CHANGE_CONFIG_FAILURE');
 
-export const changeConfig = (nexaHost, nexaPort, userName, password) => async (
+export const changeConfig = (nexaURL, userName, password) => async (
   dispatch,
   getState,
   { serviceInjector }
 ) => {
   dispatch(changeConfigRequest());
   try {
-    if (nexaHost && nexaPort && userName && password) {
+    if (nexaURL && userName && password) {
       const { sessionKey } = await serviceInjector(SettingsService).changeConfig(
-        nexaHost,
-        nexaPort,
+        nexaURL,
         userName,
         password
       );
-      dispatch(changeConfigSuccess({ nexaHost, nexaPort, userName, password, sessionKey }));
+      dispatch(changeConfigSuccess({ nexaURL, userName, password, sessionKey }));
     } else {
       throw new Error('Incorrect settings');
     }
@@ -32,19 +31,14 @@ export const changeConfig = (nexaHost, nexaPort, userName, password) => async (
   }
 };
 
-export const testConfig = (nexaHost, nexaPort, userName, password) => async (
+export const testConfig = (nexaURL, userName, password) => async (
   dispatch,
   getState,
   { serviceInjector }
 ) => {
   try {
-    if (nexaHost && nexaPort && userName && password) {
-      return await serviceInjector(SettingsService).testConfig(
-        nexaHost,
-        nexaPort,
-        userName,
-        password
-      );
+    if (nexaURL && userName && password) {
+      return await serviceInjector(SettingsService).testConfig(nexaURL, userName, password);
     } else {
       throw new Error('Incorrect settings');
     }
@@ -53,32 +47,20 @@ export const testConfig = (nexaHost, nexaPort, userName, password) => async (
   }
 };
 
-export const setDefaultConfig = () => async (dispatch, getState, { serviceInjector }) => {
-  dispatch(setDefaultConfigRequest());
+export const setConfig = () => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(setConfigRequest());
   try {
-    const { nexaHost, nexaPort, userName, password, sessionKey } = await serviceInjector(
+    const { nexaURL, userName, password, sessionKey } = await serviceInjector(
       SettingsService
-    ).setDefaultConfig();
+    ).setConfig();
     dispatch(
-      setDefaultConfigSuccess({
-        nexaHost,
-        nexaPort,
+      setConfigSuccess({
+        nexaURL,
         userName,
         password,
         sessionKey,
       })
     );
-  } catch (error) {
-    throw error;
-  }
-};
-
-export const initHttp = () => async (dispatch, getState, { serviceInjector }) => {
-  const {
-    settings: { nexaHost, nexaPort },
-  } = getState();
-  try {
-    await serviceInjector(SettingsService).initHttp(nexaHost, nexaPort);
   } catch (error) {
     throw error;
   }
