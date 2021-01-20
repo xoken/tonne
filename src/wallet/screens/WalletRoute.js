@@ -186,7 +186,7 @@ class WalletRoute extends React.Component {
     const { renameProfileModal } = this.state;
     return (
       <Modal open={renameProfileModal}>
-        <RenameProfile onClose={this.toggleRenameProfileModal} onLogout={this.onLogout} />
+        <RenameProfile onClose={this.toggleRenameProfileModal} />
       </Modal>
     );
   }

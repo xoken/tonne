@@ -93,10 +93,10 @@ export const updateProfileName = (currentProfileName, newProfileName) => async (
       newProfileName
     );
     dispatch(updateProfileNameSuccess({ profile }));
-    return false;
+    return true;
   } catch (error) {
     dispatch(updateProfileNameFailure());
-    return true;
+    throw error;
   }
 };
 

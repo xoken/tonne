@@ -44,7 +44,7 @@ export const buyName = data => async (dispatch, getState, { serviceInjector }) =
   }
 };
 
-export const registerName = ({ proxyHost, proxyPort, name, addressCount }) => async (
+export const registerName = ({ proxyURI, name, addressCount }) => async (
   dispatch,
   getState,
   { serviceInjector }
@@ -52,8 +52,7 @@ export const registerName = ({ proxyHost, proxyPort, name, addressCount }) => as
   dispatch(registerNameRequest());
   try {
     const { psbt, inputs, ownOutputs } = await serviceInjector(AllpayService).registerName({
-      proxyHost,
-      proxyPort,
+      proxyURI,
       name,
       addressCount,
     });

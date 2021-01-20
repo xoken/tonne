@@ -34,21 +34,6 @@ class SearchBuyName extends React.Component {
     }
   };
 
-  onSetRoot = async () => {
-    this.setState({ searchResults: undefined, isError: false, message: '' });
-    const { queryName } = this.state;
-    if (queryName) {
-      try {
-        const { dispatch } = this.props;
-        const data = { host: '3.238.95.71', port: 9189, name: [115], isProducer: false };
-        await dispatch(allpayActions.buyName(data));
-        this.props.history.push('/wallet/allpay/confirm-purchase');
-      } catch (error) {
-        this.setState({ isError: true, message: error.message });
-      }
-    }
-  };
-
   onSearch = async () => {
     this.setState({ searchResults: undefined, isError: false, message: '' });
     const { queryName } = this.state;
@@ -141,9 +126,6 @@ class SearchBuyName extends React.Component {
                 <button className='ui coral button' onClick={this.onSearch}>
                   Search
                 </button>
-                {/* <button className='ui peach button' onClick={this.onSetRoot}>
-                  Set root
-                </button> */}
               </div>
             </div>
           </div>

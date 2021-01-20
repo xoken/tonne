@@ -16,11 +16,7 @@ class ProxyRegistration extends React.Component {
       defaultProxy: true,
       showRegistrationOptions: false,
       name: this.props.outpoint?.name || [],
-      proxyProviders: [
-        { name: 'Proxy Provider 1', proxyHost: '127.0.0.1', proxyPort: 8000 },
-        { name: 'Proxy Provider 2', proxyHost: '127.0.0.1', proxyPort: 8000 },
-        { name: 'Proxy Provider 3', proxyHost: '127.0.0.1', proxyPort: 8000 },
-      ],
+      proxyProviders: [{ name: 'Proxy Provider 1', proxyURI: 'https://127.0.0.1:9098/v1' }],
     };
   }
 
@@ -59,7 +55,7 @@ class ProxyRegistration extends React.Component {
 
   onRegister = async () => {
     const {
-      proxyProvider: { proxyHost, proxyPort },
+      proxyProvider: { proxyURI },
       name,
       addressCount,
     } = this.state;
@@ -68,8 +64,7 @@ class ProxyRegistration extends React.Component {
       try {
         await dispatch(
           allpayActions.registerName({
-            proxyHost,
-            proxyPort,
+            proxyURI,
             name: utils.codePointToName(name),
             addressCount,
           })
