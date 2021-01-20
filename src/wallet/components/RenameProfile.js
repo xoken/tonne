@@ -19,7 +19,7 @@ class RenameProfile extends React.Component {
     const { newProfilename } = this.state;
     try {
       await dispatch(authActions.updateProfileName(profile, newProfilename));
-      this.setState({ message: 'Success! Your Profile has been renamed.' });
+      this.setState({ isError: false, message: 'Success! Your Profile has been renamed.' });
       setTimeout(() => {
         this.props.onClose();
         dispatch(authActions.logoutSuccess());
