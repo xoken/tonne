@@ -40,7 +40,7 @@ class SearchBuyName extends React.Component {
     if (queryName) {
       try {
         const { dispatch } = this.props;
-        const data = { host: '127.0.0.1', port: 9189, name: [115], isProducer: false };
+        const data = { host: '3.238.95.71', port: 9189, name: [115], isProducer: false };
         await dispatch(allpayActions.buyName(data));
         this.props.history.push('/wallet/allpay/confirm-purchase');
       } catch (error) {
@@ -59,7 +59,7 @@ class SearchBuyName extends React.Component {
         try {
           const { dispatch } = this.props;
           const { isAvailable, name, uri, protocol } = await dispatch(
-            allpayActions.getResellerURI([97, 112, 47].concat(utils.getCodePoint(queryName)))
+            allpayActions.getResellerURI([97, 97, 47].concat(utils.getCodePoint(queryName)))
           );
           this.setState({ searchResults: [{ isAvailable, name, uri, protocol }] });
         } catch (error) {

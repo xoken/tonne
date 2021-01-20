@@ -129,7 +129,7 @@
   color: #9173a8 !important;
 }
 
-.newpagefooter{
+.newpagefooter {
   position: absolute;
   bottom: 0px !important;
   vertical-align: top;
@@ -213,7 +213,7 @@
 }
 .headertabitems {
   color: #9173a8 !important;
-  box-shadow:1px 1px 3px lightgrey !important;
+  box-shadow: 1px 1px 3px lightgrey !important;
   border-radius: 2px !important;
   z-index: 999;
 }
@@ -236,45 +236,45 @@
   width: 10;
   height: 10;
 }
-.coral{
+.coral {
   background-color: #ed7464 !important;
   color: white !important;
 }
 
 .coralinverted {
-    box-shadow: 0 0 0 2px #ed7464 inset!important;
+  box-shadow: 0 0 0 2px #ed7464 inset !important;
 }
-.purplefontcolor{
+.purplefontcolor {
   color: #9173a8 !important;
 }
-.purplefontcolor > label{
+.purplefontcolor > label {
   color: #9173a8 !important;
 }
-.peachfontcolor{
-  color:#fbe1e2 !important;
+.peachfontcolor {
+  color: #fbe1e2 !important;
 }
-.purple{
+.purple {
   background-color: #9173a8 !important;
   color: white !important;
 }
-.peach{
+.peach {
   background-color: #fbe1e2 !important;
   color: #9173a8 !important;
 }
-.page-header{
-  background-color: none !important
+.page-header {
+  background-color: none !important;
 }
 .backspace {
   background-color: #fbe1e2 !important;
-  color:#9173a8 !important;
+  color: #9173a8 !important;
   border-radius: 2px !important;
   box-shadow: 2px 2px 5px !important;
   position: relative;
   display: inline-block !important;
-text-align: left !important;
+  text-align: left !important;
 }
-.uneditableinput{
-  border:1px #888 solid;
+.uneditableinput {
+  border: 1px #888 solid;
   position: relative;
   white-space: nowrap;
   display: inline;
@@ -282,21 +282,20 @@ text-align: left !important;
   line-height: 45px;
   font-weight: bold;
 }
-.searchname{
-  border:1px #888 solid !important;
+.searchname {
+  border: 1px #888 solid !important;
   border-left-width: 0px !important;
   border-radius: 0px !important;
   padding-left: 0px !important;
-
 }
-.searchname > input{
-  border:1px #888 solid !important;
+.searchname > input {
+  border: 1px #888 solid !important;
   border-radius: 0px !important;
 }
-.buyallpaybutton{
+.buyallpaybutton {
   background-color: #ed7464;
-  color:white;
-  padding:8px 10px 8px 10px;
+  color: white;
+  padding: 8px 10px 8px 10px;
   border-radius: 4px;
   font-weight: bold;
   position: relative;
@@ -305,20 +304,24 @@ text-align: left !important;
   margin-right: 10px;
 }
 
-.buyallpaybutton:hover{
-  color:white;
+.buyallpaybutton:hover {
+  color: white;
 }
-.buyallpaybuttonactive{
+.buyallpaybuttonactive {
   display: none !important;
 }
-.dropdownmenuitems{
-  color: #9173a8 !important;
+.ui.dropdown .menu > .item a,
+.ui.dropdown .menu > .item span {
+  color: #9173a8;
 }
-.logoutlink{
-  color:#dc3545 !important;
+.ui.dropdown .menu > .item .active {
+  color: grey;
 }
-.welcometext{
-  padding:10px 0px 10px 0px;
+.logoutlink {
+  color: #dc3545 !important;
+}
+.welcometext {
+  padding: 10px 0px 10px 0px;
   font-weight: bold;
   position: relative;
   bottom: -10px !important;

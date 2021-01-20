@@ -15,14 +15,10 @@ class WalletPassword extends React.Component {
   handleNext = async event => {
     event.preventDefault();
     const { dispatch } = this.props;
-    const { password, dashboardLocation } = this.state;
+    const { password } = this.state;
     try {
       await dispatch(authActions.createProfile(password));
-      if (dashboardLocation) {
-        this.props.history.push(dashboardLocation);
-      } else {
-        this.props.history.push('/wallet/dashboard');
-      }
+      this.props.history.push('/wallet/dashboard');
     } catch (error) {
       console.log(error);
     }

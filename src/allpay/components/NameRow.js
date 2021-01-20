@@ -14,8 +14,6 @@ export default class NameRow extends React.Component {
 
   render() {
     const { isAvailable, name: codePoints, uri, protocol } = this.props.data;
-    const host = '3.238.95.71';
-    const port = 9189;
     const name = utils.codePointToName(codePoints);
     return (
       <div className='ten wide column centered row'>
@@ -45,19 +43,19 @@ export default class NameRow extends React.Component {
                               onClick={this.props.onBuy({
                                 name: utils.getCodePoint(name),
                                 isProducer: this.state.resellerRight,
-                                host,
-                                port,
+                                uri,
+                                protocol,
                               })}>
                               Buy
                             </Button>
                           </div>
-                          <div className='field'>
+                          {/* <div className='field'>
                             <Checkbox
                               label='Add reseller Rights'
                               onChange={this.toggle}
                               checked={this.state.resellerRight}
                             />
-                          </div>
+                          </div> */}
                         </div>
                       </div>
                     </div>

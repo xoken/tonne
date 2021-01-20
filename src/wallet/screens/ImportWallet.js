@@ -213,6 +213,18 @@ class ImportWallet extends React.Component {
             </Grid.Column>
           </Grid.Row>
         </Grid>
+        <div>
+          <div>
+            <textarea
+              rows='2'
+              value={this.state.bip39Mnemonic || ''}
+              onChange={event => this.setState({ bip39Mnemonic: event.target.value })}
+            />
+          </div>
+          <button type='button' className='btn btn-primary btn-md' onClick={this.onContinue}>
+            Continue
+          </button>
+        </div>
       </>
     );
   }

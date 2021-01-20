@@ -118,13 +118,7 @@ class WalletRoute extends React.Component {
       return (
         <div className='ui grid'>
           <div className='column'>
-            <span className='welcometext purplefontcolor'>
-              {profile && location.pathname === '/wallet/dashboard' ? (
-                <b>{profile ? profile : ''}</b>
-              ) : (
-                ''
-              )}
-            </span>
+            <span className='welcometext purplefontcolor'>{profile}</span>
             <Dropdown
               button
               className='icon top left right floated coral button'
@@ -141,7 +135,7 @@ class WalletRoute extends React.Component {
                     Wallet Dashboard
                   </NavLink>
                 </Dropdown.Item>
-                <Dropdown.Item>
+                {/* <Dropdown.Item>
                   <NavLink
                     className='dropdownmenuitems'
                     to={`/wallet/allpay/search`}
@@ -156,10 +150,7 @@ class WalletRoute extends React.Component {
                     activeClassName='active'>
                     Register with proxy
                   </NavLink>
-                </Dropdown.Item>
-                <Dropdown.Item text='Claim Twitter Handle' onClick={this.onClaimTwitterHandle} />
-                <Dropdown.Item text='Rename Profile' onClick={this.toggleRenameProfileModal} />
-                <Dropdown.Item text='Logout' onClick={this.onLogout} />
+                </Dropdown.Item> */}
                 <Dropdown.Item
                   className='dropdownmenuitems'
                   text='Rename Profile'

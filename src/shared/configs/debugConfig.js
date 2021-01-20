@@ -1,5 +1,5 @@
 const DEBUG_CONFIG = {
-  useReactotron: process.env.NODE_ENV !== 'production',
+  useReactotron: true,
 };
 
 export default DEBUG_CONFIG;

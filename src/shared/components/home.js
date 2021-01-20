@@ -1,5 +1,5 @@
 import React from 'react';
-import { Grid, GridColumn, Icon } from 'semantic-ui-react';
+import { Button, Grid, GridColumn, Icon } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import images from '../images';
 
@@ -36,15 +36,15 @@ export default class Home extends React.Component {
                   Wallet
                 </Link>
               </div>
-              {/* <div className='column'>
+              <div className='column'>
                 <div className='ui icon header purplefontcolor'>
                   <Icon name='chain' />
                   On-Chain Name
                 </div>
-                <Link to='/claim-twitter-handle/auth/twitter' className='ui coral button'>
+                <Button to='/claim-twitter-handle/auth/twitter' className='ui coral button'>
                   Claim Twitter Handle
-                </Link>
-              </div> */}
+                </Button>
+              </div>
             </div>
           </div>
         </GridColumn>

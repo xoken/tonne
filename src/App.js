@@ -18,9 +18,6 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.history = createBrowserHistory();
-  }
-
-  componentDidMount() {
     const { dispatch } = this.props;
     try {
       dispatch(settingsActions.setConfig());
