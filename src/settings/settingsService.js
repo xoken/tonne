@@ -5,12 +5,12 @@ class SettingsService {
     this.store = store;
   }
 
-  async changeConfig(nexaURL, userName, password) {
-    return await this._setConfig(nexaURL, userName, password);
+  async changeConfig(nexaURI, userName, password) {
+    return await this._setConfig(nexaURI, userName, password);
   }
 
-  async testConfig(nexaURL, userName, password) {
-    httpClient.init(nexaURL);
+  async testConfig(nexaURI, userName, password) {
+    httpClient.init(nexaURI);
     const {
       auth: { sessionKey },
     } = await authAPI.login(userName, password);
@@ -21,9 +21,9 @@ class SettingsService {
     }
   }
 
-  async _setConfig({ nexaURL, userName, password, network }) {
+  async _setConfig({ nexaURI, userName, password, network }) {
     try {
-      const { sessionKey } = await wallet.init({ nexaURL, userName, password, network });
+      const { sessionKey } = await wallet.init({ nexaURI, userName, password, network });
       if (sessionKey) {
         localStorage.setItem('userName', userName);
         localStorage.setItem('password', password);
@@ -39,14 +39,14 @@ class SettingsService {
 
   async setConfig() {
     const {
-      REACT_APP_NEXA_URL: nexaURL,
+      REACT_APP_NEXA_URI: nexaURI,
       REACT_APP_NEXA_USERNAME: userName,
       REACT_APP_NEXA_PASSWORD: password,
       REACT_APP_NETWORK: network,
     } = process.env;
     try {
-      const { sessionKey } = await this._setConfig({ nexaURL, userName, password, network });
-      return { nexaURL, userName, password, sessionKey };
+      const { sessionKey } = await this._setConfig({ nexaURI, userName, password, network });
+      return { nexaURI, userName, password, sessionKey };
     } catch (error) {
       throw error;
     }

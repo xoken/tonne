@@ -8,7 +8,7 @@ class SettingsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      nexaURL: '',
+      nexaURI: '',
       userName: '',
       password: '',
       hasError: false,
@@ -19,10 +19,10 @@ class SettingsScreen extends React.Component {
 
   onSubmit = async () => {
     const { dispatch } = this.props;
-    const { nexaURL, userName, password } = this.state;
-    if (nexaURL && userName && password) {
+    const { nexaURI, userName, password } = this.state;
+    if (nexaURI && userName && password) {
       try {
-        await dispatch(settingsActions.changeConfig(nexaURL, userName, password));
+        await dispatch(settingsActions.changeConfig(nexaURI, userName, password));
         this.setState({ hasError: false, message: 'Success! New settings applied' });
       } catch (error) {
         this.setState({ hasError: true, message: error.message });
@@ -34,10 +34,10 @@ class SettingsScreen extends React.Component {
 
   onTestConnection = async () => {
     const { dispatch } = this.props;
-    const { nexaURL, userName, password } = this.state;
-    if (nexaURL && userName && password) {
+    const { nexaURI, userName, password } = this.state;
+    if (nexaURI && userName && password) {
       try {
-        await dispatch(settingsActions.testConfig(nexaURL, userName, password));
+        await dispatch(settingsActions.testConfig(nexaURI, userName, password));
         this.setState({
           hasError: false,
           isValidSettings: true,
@@ -59,7 +59,7 @@ class SettingsScreen extends React.Component {
   }
 
   render() {
-    const { nexaURL, userName, password, hasError, isValidSettings } = this.state;
+    const { nexaURI, userName, password, hasError, isValidSettings } = this.state;
     return (
       <Grid verticalAlign='middle' style={{ height: '100%' }} centered>
         <Grid.Row columns={2}>
@@ -71,8 +71,8 @@ class SettingsScreen extends React.Component {
                   <label>Enter Nexa URL</label>
                   <input
                     placeholder='example.com'
-                    value={nexaURL}
-                    onChange={event => this.setState({ nexaURL: event.target.value })}
+                    value={nexaURI}
+                    onChange={event => this.setState({ nexaURI: event.target.value })}
                   />
                 </Form.Field>
                 <Form.Field required>
