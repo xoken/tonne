@@ -262,7 +262,7 @@
   color: #9173a8 !important;
 }
 .page-header {
-  background-color: none !important;
+  background: none;
 }
 .backspace {
   background-color: #fbe1e2 !important;

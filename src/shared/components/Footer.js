@@ -16,17 +16,17 @@ class Footer extends React.Component {
   }
 
   componentDidMount() {
-    this.getChainInfo();
-    const autoRefreshTimeInSecs = 1 * 60 * 1000;
-    this.autoRefresh = setInterval(() => {
-      this.getChainInfo();
-    }, autoRefreshTimeInSecs);
+    // this.getChainInfo();
+    // const autoRefreshTimeInSecs = 1 * 60 * 1000;
+    // this.autoRefresh = setInterval(() => {
+    //   this.getChainInfo();
+    // }, autoRefreshTimeInSecs);
   }
 
   async getChainInfo() {
-    const { nexaURL } = this.props;
+    const { nexaURI } = this.props;
     try {
-      if (nexaURL) {
+      if (nexaURI) {
         const { chainInfo } = await chainAPI.getChainInfo();
         if (chainInfo) {
           const { chain, chainTip, blocksSynced } = chainInfo;
@@ -43,13 +43,13 @@ class Footer extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.nexaURL !== prevProps.nexaURL) {
-      this.getChainInfo();
-    }
+    // if (this.props.nexaURI !== prevProps.nexaURI) {
+    //   this.getChainInfo();
+    // }
   }
 
-  onStatusButtonHover = () => {
-    const { nexaURL } = this.props;
+  renderFooter() {
+    const { nexaURI } = this.props;
     const { statusButton, blocksSynced, chain, chainTip } = this.state;
     if (statusButton) {
       return (
@@ -66,7 +66,7 @@ class Footer extends React.Component {
             style={{ backgroundColor: '#fbe1e2', color: '#9173a8' }}>
             <div className='ui container'>
               <div className='ui transparent label' style={{ color: '#9173a8' }}>
-                Nexa Host: <div className='detail'>{nexaURL || 'UNKNOWN'}</div>
+                Nexa Host: <div className='detail'>{nexaURI || 'UNKNOWN'}</div>
               </div>
               <div className='ui transparent label' style={{ color: '#9173a8' }}>
                 Chain: <div className='detail'>{chain}</div>
@@ -84,8 +84,8 @@ class Footer extends React.Component {
     } else {
       return (
         <>
-          <footer className='page-footer'>
-            <Grid className='peach nopadding newpagefooter' columns={3}>
+          <footer className='page-footer peach'>
+            <Grid className='nopadding newpagefooter' columns={3}>
               <Grid.Row className='nopadding'>
                 <Grid.Column width={5}>
                   <a href='https://www.xoken.org' className='peach'>
@@ -110,23 +110,23 @@ class Footer extends React.Component {
         </>
       );
     }
-  };
+  }
 
   onStatusButtonToggle = () => {
     this.setState({ statusButton: !this.state.statusButton });
   };
 
   render() {
-    return <>{this.onStatusButtonHover()}</>;
+    return <>{this.renderFooter()}</>;
   }
 
   componentWillUnmount() {
-    clearInterval(this.autoRefresh);
+    // clearInterval(this.autoRefresh);
   }
 }
 
 const mapStateToProps = state => ({
-  nexaURL: state.settings.nexaURL,
+  nexaURI: state.settings.nexaURI,
 });
 
 export default connect(mapStateToProps)(Footer);
