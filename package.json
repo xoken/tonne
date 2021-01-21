@@ -1,10 +1,10 @@
 {
-  "name": "nipkow",
+  "name": "tonne",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "client-sdk": "file:./../client-sdk",
     "date-fns": "^2.16.1",
+    "allegory-allpay-sdk": "file:./../allegory-allpay-sdk",
     "react": "^17.0.1",
     "react-dom": "^17.0.1",
     "react-redux": "^7.2.2",

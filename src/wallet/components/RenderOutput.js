@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { satoshiToBSV } from '../../shared/utils';
 import { Grid } from 'semantic-ui-react';
-import { allegory } from 'client-sdk';
+import { allegory } from 'allegory-allpay-sdk';
 
 class RenderOutput extends React.Component {
   constructor(props) {

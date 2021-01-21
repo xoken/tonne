@@ -1,4 +1,4 @@
-import { allPay } from 'client-sdk';
+import { allPay } from 'allegory-allpay-sdk';
 
 class AllpayService {
   constructor(store) {
