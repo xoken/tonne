@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Popup, Input } from 'semantic-ui-react';
-import { utils } from 'client-sdk';
+import { utils } from 'allegory-allpay-sdk';
 import NameRow from '../components/NameRow';
 import * as allpayActions from '../allpayActions';
 

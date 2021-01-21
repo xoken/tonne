@@ -1,4 +1,4 @@
-import { httpClient, authAPI } from 'client-sdk';
+import { httpClient, authAPI } from 'allegory-allpay-sdk';
 
 class SettingsService {
   constructor(store) {
