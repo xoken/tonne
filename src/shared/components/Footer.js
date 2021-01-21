@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { chainAPI } from 'client-sdk';
+import { Link } from 'react-router-dom';
 import { Button, Grid } from 'semantic-ui-react';
 import images from '../images';
 
@@ -98,7 +99,12 @@ class Footer extends React.Component {
                     </b>
                   </a>
                 </Grid.Column>
-                <Grid.Column width={6}></Grid.Column>
+                <Grid.Column width={6}>
+                  {' '}
+                  <Link to='/download' className='peach'>
+                    <b>Download Tonne App</b>
+                  </Link>
+                </Grid.Column>
                 <Grid.Column width={5}>
                   <a href='https://www.xoken.org/contact-us/' className='peach'>
                     <b>Contact Us</b>
