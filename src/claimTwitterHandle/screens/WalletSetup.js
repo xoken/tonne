@@ -24,7 +24,6 @@ class WalletSetup extends React.Component {
   }
 
   onSelectProfile = profile => () => {
-    localStorage.setItem('currentprofile', profile);
     this.props.history.push(`/wallet/login?profile=${profile}`);
   };
 

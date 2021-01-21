@@ -22,7 +22,6 @@ class ExplorerSearch extends React.Component {
           this.props.history.push(`/explorer/transaction/${this.state.searchterm}`);
         }
       } else {
-        console.log(this.props.history + 'this.props.history');
         this.props.history.push(`/explorer/404`);
       }
     }

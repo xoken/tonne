@@ -212,13 +212,10 @@ class ExplorerBlockHeight extends React.Component {
     this.blockhash = this.rjdecoded.block.hash;
 
     if (this.props.match.params.txid !== undefined && this.props.match.params.txid !== '""') {
-      console.log(this.props.match.params.txid);
       this.selected = Math.ceil(
         (parseInt(this.props.match.params.txid, 10) + 1) / this.transactionsperpage
       );
-      console.log(this.selected + 'selected back');
       this.currentbatchnum = Math.ceil(this.selected / this.fixedarrlength);
-      console.log(this.currentbatchnum + 'this.currentbatchnum back');
 
       this.numberofpages = Math.ceil(this.numberoftransactions / this.transactionsperpage);
 

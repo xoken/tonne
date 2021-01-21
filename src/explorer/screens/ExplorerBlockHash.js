@@ -81,7 +81,6 @@ class ExplorerBlockHeight extends React.Component {
   };
 
   printresults = async () => {
-    console.log(this.rjdecoded.block.height + 'this.rjdecoded.block.height');
     this.backheight = this.rjdecoded.block.height;
     this.currentblockhash = this.rjdecoded.block.hash;
     this.numberoftransactions = this.rjdecoded.block.txCount;
@@ -212,13 +211,10 @@ class ExplorerBlockHeight extends React.Component {
     this.blockhash = this.rjdecoded.block.hash;
 
     if (this.props.match.params.txid !== undefined && this.props.match.params.txid !== '""') {
-      console.log(this.props.match.params.txid);
       this.selected = Math.ceil(
         (parseInt(this.props.match.params.txid, 10) + 1) / this.transactionsperpage
       );
-      console.log(this.selected + 'selected back');
       this.currentbatchnum = Math.ceil(this.selected / this.fixedarrlength);
-      console.log(this.currentbatchnum + 'this.currentbatchnum back');
 
       this.numberofpages = Math.ceil(this.numberoftransactions / this.transactionsperpage);
 
@@ -544,7 +540,6 @@ class ExplorerBlockHeight extends React.Component {
   txcaching = () => {
     if (Object.keys(this.rjdecoded.txids).length > 0) {
       var tempindex;
-      console.log(this.txcache.length + 'this.txcache.length');
       if (this.txcache.length === 0) {
         tempindex = 0;
       } else {

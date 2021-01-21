@@ -37,8 +37,6 @@ class ExplorerTransaction extends React.Component {
       if (this.props.match.params.txid !== undefined) {
         this.props.history.push(`/explorer/404`);
       }
-      console.log(this.props.match.params.txid + 'this.props.match.params.txid');
-      console.log(this.props.txid + 'this.props.txid');
     } else {
       this.printresults();
     }

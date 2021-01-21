@@ -18,9 +18,16 @@ class App extends React.Component {
   constructor(props) {
     super(props);
     this.history = createBrowserHistory();
+    this.state = {
+      isLoaded: false,
+    };
+  }
+
+  async componentDidMount() {
     const { dispatch } = this.props;
     try {
-      dispatch(settingsActions.setConfig());
+      const isLoaded = await dispatch(settingsActions.setConfig());
+      this.setState({ isLoaded });
     } catch (error) {
       console.log(error);
     }
@@ -31,46 +38,50 @@ class App extends React.Component {
   };
 
   render() {
-    return (
-      <>
-        <HashRouter>
-          <Header />
-          <main className='main'>
-            <Container>
-              <Switch>
-                <Route path='/wallet'>
-                  <WalletRoute />
-                </Route>
-                <Route path='/explorer'>
-                  <ExplorerHome history={this.history} />
-                </Route>
-                <Route exact path='/'>
-                  <Home />
-                </Route>
-                <Route exact path='/settings'>
-                  <SettingsScreen />
-                </Route>
-                <Route exact path='/auth/success'>
-                  <TwitterAuthSuccess />
-                </Route>
-                <Route path='/claim-twitter-handle'>
-                  <ClaimTwitterHandleContainer />
-                </Route>
-                <Route path='*'>
-                  <NoMatch />
-                </Route>
-              </Switch>
-            </Container>
-          </main>
-          <Footer />
-        </HashRouter>
-      </>
-    );
+    if (this.state.isLoaded) {
+      return (
+        <>
+          <HashRouter>
+            <Header />
+            <main className='main'>
+              <Container>
+                <Switch>
+                  <Route path='/wallet'>
+                    <WalletRoute />
+                  </Route>
+                  <Route path='/explorer'>
+                    <ExplorerHome history={this.history} />
+                  </Route>
+                  <Route exact path='/'>
+                    <Home />
+                  </Route>
+                  <Route exact path='/settings'>
+                    <SettingsScreen />
+                  </Route>
+                  <Route exact path='/auth/success'>
+                    <TwitterAuthSuccess />
+                  </Route>
+                  <Route path='/claim-twitter-handle'>
+                    <ClaimTwitterHandleContainer />
+                  </Route>
+                  <Route path='*'>
+                    <NoMatch />
+                  </Route>
+                </Switch>
+              </Container>
+            </main>
+            <Footer />
+          </HashRouter>
+        </>
+      );
+    } else {
+      return null;
+    }
   }
 }
 
 const mapStateToProps = state => ({
-  sessionKey: state.settings.sessionKey,
+  token: state.settings.token,
 });
 
 export default connect(mapStateToProps)(App);

@@ -5,24 +5,24 @@ const INITIAL_STATE = {
   nexaURI: '',
   userName: '',
   password: '',
-  sessionKey: '',
+  token: '',
 };
 
 export default createReducer(
   {
-    [actions.changeConfigSuccess]: (state, { nexaURI, userName, password, sessionKey }) => ({
+    [actions.changeConfigSuccess]: (state, { nexaURI, userName, password, token }) => ({
       ...state,
       nexaURI,
       userName,
       password,
-      sessionKey,
+      token,
     }),
-    [actions.setConfigSuccess]: (state, { nexaURI, userName, password, sessionKey }) => ({
+    [actions.setConfigSuccess]: (state, { nexaURI, userName, password, token }) => ({
       ...state,
       nexaURI,
       userName,
       password,
-      sessionKey,
+      token,
     }),
   },
   INITIAL_STATE

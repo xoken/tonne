@@ -54,6 +54,17 @@ class SearchBuyName extends React.Component {
     }
   };
 
+  onSetRoot = async () => {
+    try {
+      const { dispatch } = this.props;
+      const data = { uri: process.env.REACT_APP_RESELLER_URI, name: [115], isProducer: false };
+      await dispatch(allpayActions.buyName(data));
+      this.props.history.push('/wallet/allpay/confirm-purchase');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   onBuy = data => async () => {
     const { dispatch } = this.props;
     try {
@@ -126,6 +137,11 @@ class SearchBuyName extends React.Component {
                 <button className='ui coral button' onClick={this.onSearch}>
                   Search
                 </button>
+                {process.env.REACT_APP_ENVIRONMENT === 'development' && (
+                  <button className='ui coral button' onClick={this.onSetRoot}>
+                    Set Root
+                  </button>
+                )}
               </div>
             </div>
           </div>

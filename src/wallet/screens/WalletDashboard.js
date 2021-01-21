@@ -72,7 +72,9 @@ class WalletDashboard extends React.Component {
     const { isLoading, balance } = this.props;
     return (
       <>
-        {/* <Button onClick={this.runScript}>Run</Button> */}
+        {process.env.REACT_APP_ENVIRONMENT === 'development' && (
+          <Button onClick={this.runScript}>Run</Button>
+        )}
         <div className='ui center aligned segment'>
           <div className='ui center aligned icon header'>
             <Icon name='btc' size='big' alt='BitcoinSV' />

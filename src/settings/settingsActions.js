@@ -17,12 +17,12 @@ export const changeConfig = (nexaURI, userName, password) => async (
   dispatch(changeConfigRequest());
   try {
     if (nexaURI && userName && password) {
-      const { sessionKey } = await serviceInjector(SettingsService).changeConfig(
+      const { token } = await serviceInjector(SettingsService).changeConfig(
         nexaURI,
         userName,
         password
       );
-      dispatch(changeConfigSuccess({ nexaURI, userName, password, sessionKey }));
+      dispatch(changeConfigSuccess({ nexaURI, userName, password, token }));
     } else {
       throw new Error('Incorrect settings');
     }
@@ -50,7 +50,7 @@ export const testConfig = (nexaURI, userName, password) => async (
 export const setConfig = () => async (dispatch, getState, { serviceInjector }) => {
   dispatch(setConfigRequest());
   try {
-    const { nexaURI, userName, password, sessionKey } = await serviceInjector(
+    const { nexaURI, userName, password, token } = await serviceInjector(
       SettingsService
     ).setConfig();
     dispatch(
@@ -58,10 +58,12 @@ export const setConfig = () => async (dispatch, getState, { serviceInjector }) =
         nexaURI,
         userName,
         password,
-        sessionKey,
+        token,
       })
     );
+    return true;
   } catch (error) {
+    dispatch(setConfigFailure());
     throw error;
   }
 };

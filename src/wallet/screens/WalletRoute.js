@@ -6,7 +6,6 @@ import { Dropdown, Modal } from 'semantic-ui-react';
 import ImportWallet from './ImportWallet';
 import Login from './Login';
 import NewWallet from './NewWallet';
-import NoMatch from '../../shared/components/noMatch';
 import PrivateRoute from '../../shared/components/privateRoute';
 import PublicRoute from '../../shared/components/publicRoute';
 import SendTransaction from '../components/SendTransaction';
@@ -31,14 +30,14 @@ class WalletRoute extends React.Component {
   onClaimTwitterHandle = () => {
     // toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no,
     const popup = window.open(
-      'http://127.0.0.1:5000/v1/auth/twitter',
+      'http://localhost:5000/v1/auth/twitter',
       'twitter-auth-window',
       'width=500, height=500, top=0, left=0'
     );
     window.addEventListener(
       'message',
       event => {
-        if (event.origin !== 'http://127.0.0.1:3000') return;
+        if (event.origin !== 'http://localhost:3000') return;
         if (event.source.name === 'twitter-auth-window') {
           const queryParams = new URLSearchParams(event.data);
           const twitterHandle = queryParams.get('twitter_handle');
@@ -58,7 +57,7 @@ class WalletRoute extends React.Component {
       const { name, uri, protocol, isProducer } = await dispatch(
         allpayActions.getResellerURI([97, 112, 47].concat(utils.getCodePoint(twitterHandle)))
       );
-      const host = '127.0.0.1';
+      const host = 'localhost';
       const port = 9189;
       const data = {
         name,
@@ -224,9 +223,6 @@ class WalletRoute extends React.Component {
           <PublicRoute exact path={path}>
             <WalletHome />
           </PublicRoute>
-          <Route path='*'>
-            <NoMatch />
-          </Route>
         </Switch>
         {this.renderRenameProfileModal()}
       </>

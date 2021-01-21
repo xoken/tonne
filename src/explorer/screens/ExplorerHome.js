@@ -7,7 +7,6 @@ import ExplorerTransaction from './ExplorerTransaction';
 import ExplorerDashboard from './ExplorerDashboard';
 import ExplorerSearch from '../components/ExplorerSearch';
 import NoResultsFound from './NoResultsFound';
-import NoMatch from '../../shared/components/noMatch';
 
 export default function ExplorerHome() {
   const { path } = useRouteMatch();
@@ -37,9 +36,6 @@ export default function ExplorerHome() {
           </Route>
           <Route exact path={`${path}`}>
             <ExplorerDashboard />
-          </Route>
-          <Route path='*'>
-            <NoMatch />
           </Route>
         </Switch>
       </div>

@@ -11,7 +11,7 @@ class TwitterAuthSuccess extends React.Component {
     const {
       location: { search },
     } = this.props;
-    window.opener.postMessage(search, 'http://127.0.0.1:3000');
+    window.opener.postMessage(search, 'http://localhost:3000');
   }
 
   render() {

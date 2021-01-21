@@ -35,13 +35,13 @@ class Header extends React.Component {
                 />
                 Wallet
               </NavLink>
-              <NavLink
+              {/* <NavLink
                 to='/settings'
                 activeClassName='activeheader'
                 className='ui item headertabitems'>
                 <Icon name='setting' />
                 Settings
-              </NavLink>
+              </NavLink> */}
             </div>
           </div>
         </div>

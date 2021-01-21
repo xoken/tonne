@@ -16,7 +16,7 @@ class ProxyRegistration extends React.Component {
       defaultProxy: true,
       showRegistrationOptions: false,
       name: this.props.outpoint?.name || [],
-      proxyProviders: [{ name: 'Proxy Provider 1', proxyURI: 'https://127.0.0.1:9098/v1' }],
+      proxyProviders: [{ name: 'Xoken Proxy Provider', proxyURI: process.env.REACT_APP_PROXY_URI }],
     };
   }
 
