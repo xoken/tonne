@@ -21,13 +21,10 @@ class SettingsService {
     }
   }
 
-  async _setConfig({ nexaURI, userName, password, nexaToken, network }) {
+  async _setConfig({ nexaURI, nexaToken, network }) {
     try {
-      const { token } = await wallet.init({ nexaURI, userName, password, nexaToken, network });
+      const { token } = await wallet.init({ nexaURI, nexaToken, network });
       if (token) {
-        // localStorage.setItem('userName', userName);
-        // localStorage.setItem('password', password);
-        // localStorage.setItem('token', token);
         return { token };
       } else {
         throw new Error('Incorrect settings');
@@ -40,14 +37,12 @@ class SettingsService {
   async setConfig() {
     const {
       REACT_APP_NEXA_URI: nexaURI,
-      REACT_APP_NEXA_USERNAME: userName,
-      REACT_APP_NEXA_PASSWORD: password,
       REACT_APP_NEXA_TOKEN: nexaToken,
       REACT_APP_NETWORK: network,
     } = process.env;
     try {
-      const { token } = await this._setConfig({ nexaURI, userName, password, nexaToken, network });
-      return { nexaURI, userName, password, token };
+      const { token } = await this._setConfig({ nexaURI, nexaToken, network });
+      return { nexaURI, token };
     } catch (error) {
       throw error;
     }

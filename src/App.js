@@ -4,7 +4,7 @@ import { createBrowserHistory } from 'history';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 import { Container } from 'semantic-ui-react';
 import ExplorerHome from './explorer/screens/ExplorerHome';
-import Download from './download/screens/Download';
+import Downloads from './downloads/screens/Downloads';
 import TwitterAuthSuccess from './auth/twitterAuthSuccess';
 import Home from './shared/components/home';
 import NoMatch from './shared/components/noMatch';
@@ -65,8 +65,8 @@ class App extends React.Component {
                   <Route path='/claim-twitter-handle'>
                     <ClaimTwitterHandleContainer />
                   </Route>
-                  <Route path='/download'>
-                    <Download />
+                  <Route path='/downloads'>
+                    <Downloads />
                   </Route>
                   <Route path='*'>
                     <NoMatch />

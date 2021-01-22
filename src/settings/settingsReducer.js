@@ -17,11 +17,9 @@ export default createReducer(
       password,
       token,
     }),
-    [actions.setConfigSuccess]: (state, { nexaURI, userName, password, token }) => ({
+    [actions.setConfigSuccess]: (state, { nexaURI, token }) => ({
       ...state,
       nexaURI,
-      userName,
-      password,
       token,
     }),
   },

@@ -136,7 +136,6 @@
   left: 0px;
   padding: 0px 5px 0px 5px !important;
   z-index: 999;
-  text-align: center;
   min-width: 100% !important;
   height: 22px;
   margin-top: 0px !important;
@@ -145,6 +144,7 @@
 
 .page-footer {
   text-align: center;
+  font-weight: bold;
   height: 22px;
 }
 .page-footer-displayed {

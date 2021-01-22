@@ -50,14 +50,10 @@ export const testConfig = (nexaURI, userName, password) => async (
 export const setConfig = () => async (dispatch, getState, { serviceInjector }) => {
   dispatch(setConfigRequest());
   try {
-    const { nexaURI, userName, password, token } = await serviceInjector(
-      SettingsService
-    ).setConfig();
+    const { nexaURI, token } = await serviceInjector(SettingsService).setConfig();
     dispatch(
       setConfigSuccess({
         nexaURI,
-        userName,
-        password,
         token,
       })
     );

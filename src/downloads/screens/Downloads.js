@@ -1,7 +1,7 @@
 import React from 'react';
 import { Segment, Grid, Button, Icon, Header } from 'semantic-ui-react';
 
-export default function Download() {
+export default function Downloads() {
   return (
     <>
       <center>

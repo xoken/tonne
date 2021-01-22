@@ -90,24 +90,23 @@ class Footer extends React.Component {
               <Grid.Row className='nopadding'>
                 <Grid.Column width={5}>
                   <a href='https://www.xoken.org' className='peach'>
-                    <b>
-                      Powered by{' '}
-                      <img
-                        src={images.xokenFooterLogo}
-                        style={{ width: 63, verticalAlign: 'middle' }}
-                      />
-                    </b>
+                    Powered by{' '}
+                    <img
+                      src={images.xokenFooterLogo}
+                      style={{ width: 63, verticalAlign: 'middle' }}
+                    />
                   </a>
                 </Grid.Column>
                 <Grid.Column width={6}>
-                  {' '}
-                  <Link to='/download' className='peach'>
-                    <b>Download Tonne App</b>
-                  </Link>
+                  {process.env.REACT_APP_CLIENT === 'browser' && (
+                    <Link to='/downloads' className='peach'>
+                      Download Tonne App
+                    </Link>
+                  )}
                 </Grid.Column>
                 <Grid.Column width={5}>
                   <a href='https://www.xoken.org/contact-us/' className='peach'>
-                    <b>Contact Us</b>
+                    Contact Us
                   </a>
                 </Grid.Column>
               </Grid.Row>
