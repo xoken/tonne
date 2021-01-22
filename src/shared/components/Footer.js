@@ -98,11 +98,12 @@ class Footer extends React.Component {
                   </a>
                 </Grid.Column>
                 <Grid.Column width={6}>
-                  {process.env.REACT_APP_CLIENT === 'browser' && (
-                    <Link to='/downloads' className='peach'>
-                      Download Tonne App
-                    </Link>
-                  )}
+                  {process.env.REACT_APP_CLIENT === 'browser' &&
+                    process.env.REACT_APP_ENVIRONMENT === 'development' && (
+                      <Link to='/downloads' className='peach'>
+                        Download Tonne App
+                      </Link>
+                    )}
                 </Grid.Column>
                 <Grid.Column width={5}>
                   <a href='https://www.xoken.org/contact-us/' className='peach'>

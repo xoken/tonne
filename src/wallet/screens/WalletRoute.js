@@ -16,8 +16,6 @@ import AllpayContainer from '../../allpay/allpayContainer';
 import RenameProfile from '../components/RenameProfile';
 import PartiallySignTransaction from '../../allpay/screens/PartiallySignTransaction';
 import * as authActions from '../../auth/authActions';
-import * as allpayActions from '../../allpay/allpayActions';
-import { utils } from 'allegory-allpay-sdk';
 
 class WalletRoute extends React.Component {
   constructor(props) {
@@ -25,80 +23,6 @@ class WalletRoute extends React.Component {
     this.state = {
       renameProfileModal: false,
     };
-  }
-
-  onClaimTwitterHandle = () => {
-    // toolbar=no, location=no, directories=no, status=no, menubar=no, scrollbars=no, resizable=no, copyhistory=no,
-    const popup = window.open(
-      'http://localhost:5000/v1/auth/twitter',
-      'twitter-auth-window',
-      'width=500, height=500, top=0, left=0'
-    );
-    window.addEventListener(
-      'message',
-      event => {
-        if (event.origin !== 'http://localhost:3000') return;
-        if (event.source.name === 'twitter-auth-window') {
-          const queryParams = new URLSearchParams(event.data);
-          const twitterHandle = queryParams.get('twitter_handle');
-          const followerCount = queryParams.get('followers_count');
-          this.checkBuy(twitterHandle);
-          popup.close();
-        }
-      },
-      false
-    );
-    // this.polling(popup);
-  };
-
-  async checkBuy(twitterHandle) {
-    try {
-      const { dispatch } = this.props;
-      const { name, uri, protocol, isProducer } = await dispatch(
-        allpayActions.getResellerURI([97, 112, 47].concat(utils.getCodePoint(twitterHandle)))
-      );
-      const host = 'localhost';
-      const port = 9189;
-      const data = {
-        name,
-        isProducer: false,
-        host,
-        port,
-      };
-      await dispatch(allpayActions.buyName(data));
-      this.props.history.push('/wallet/allpay/confirm-purchase');
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
-  polling(popup) {
-    const polling = setInterval(() => {
-      if (!popup || popup.closed || popup.closed === undefined) {
-        clearInterval(polling);
-      }
-
-      const closeDialog = () => {
-        clearInterval(polling);
-        popup.close();
-      };
-
-      try {
-        if (popup.location.hostname.includes('localhost')) {
-          if (popup.location.search) {
-            const query = new URLSearchParams(popup.location.search);
-            const oauthToken = query.get('oauth_token');
-            const oauthVerifier = query.get('oauth_verifier');
-            // closeDialog();
-          } else {
-            // closeDialog();
-            console.log('OAuth redirect has occurred but no query parameters were found');
-          }
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }, 500);
   }
 
   onLogout = () => {

@@ -1,10 +1,10 @@
 import React from 'react';
-import { Link, withRouter } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import NewWallet from '../../wallet/screens/NewWallet';
 import ImportWallet from '../../wallet/screens/ImportWallet';
-import { Divider, Grid, GridColumn, Header, List, Loader, Segment, Radio } from 'semantic-ui-react';
+import { Grid, List, Loader, Segment, Radio } from 'semantic-ui-react';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
 
@@ -24,7 +24,7 @@ class WalletSetup extends React.Component {
   }
 
   onSelectProfile = profile => () => {
-    this.props.history.push(`/wallet/login?profile=${profile}`);
+    // this.props.history.push(`/wallet/login?profile=${profile}`);
   };
 
   renderImportWalletButton = () => {
@@ -44,6 +44,7 @@ class WalletSetup extends React.Component {
       );
     }
   };
+
   renderCreateWalletButton = () => {
     const { createWalletChecked } = this.state;
     if (createWalletChecked) {

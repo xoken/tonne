@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import { Route, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { VerticalAnimatedSwitch } from '../shared/components/Animations';
-import TwitterAuthentication from './screens/TwitterAuthentication';
 import ImportWallet from '../wallet/screens/ImportWallet';
 import WalletSetup from './screens/WalletSetup';
 import WalletPassword from '../wallet/screens/WalletPassword';
@@ -12,7 +11,6 @@ import Login from '../wallet/screens/Login';
 import WalletDashboard from '../wallet/screens/WalletDashboard';
 
 export const claimTwitterHandlePaths = {
-  twitterAuth: '/claim-twitter-handle/auth/twitter',
   walletSetup: '/claim-twitter-handle/wallet-setup',
   importWallet: '/claim-twitter-handle/import-Wallet',
   walletPassword: '/claim-twitter-handle/new-password',
@@ -22,17 +20,12 @@ export const claimTwitterHandlePaths = {
 };
 
 export const claimTwitterHandleFlows = {
-  'claim-twitter-handle': [claimTwitterHandlePaths.twitterAuth],
+  'claim-twitter-handle': [claimTwitterHandlePaths.walletSetup],
 };
 
 const ClaimTwitterHandleComponent = props => {
   return (
     <div style={{ paddingLeft: 10 }} verticalAlign='middle' style={{ height: '100%' }}>
-      <Route
-        exact
-        path={claimTwitterHandlePaths.twitterAuth}
-        render={() => <TwitterAuthentication />}
-      />
       <Route exact path={claimTwitterHandlePaths.walletSetup} render={() => <WalletSetup />} />
       <Route exact path={claimTwitterHandlePaths.importWallet} render={() => <ImportWallet />} />
       <Route

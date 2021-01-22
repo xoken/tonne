@@ -1,9 +1,18 @@
 import React from 'react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { Button, Grid, GridColumn, Icon } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
+import * as claimTwitterHandleActions from '../../claimTwitterHandle/claimTwitterHandleActions';
 import images from '../images';
 
-export default class Home extends React.Component {
+class Home extends React.Component {
+  onClaimTwitterHandle = () => {
+    const { dispatch, history } = this.props;
+    dispatch(claimTwitterHandleActions.doTwitterAuth(history));
+  };
+
   render() {
     return (
       <Grid verticalAlign='middle' style={{ height: '100%' }}>
@@ -42,7 +51,10 @@ export default class Home extends React.Component {
                     <Icon name='twitter' />
                     On-Chain Name
                   </div>
-                  <Button to='/claim-twitter-handle/auth/twitter' className='ui coral button'>
+                  <Button
+                    to='/claim-twitter-handle/auth/twitter'
+                    className='ui coral button'
+                    onClick={this.onClaimTwitterHandle}>
                     Claim Twitter Handle
                   </Button>
                 </div>
@@ -54,3 +66,13 @@ export default class Home extends React.Component {
     );
   }
 }
+
+Home.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+};
+
+Home.defaultProps = {};
+
+const mapStateToProps = state => ({});
+
+export default withRouter(connect(mapStateToProps)(Home));
