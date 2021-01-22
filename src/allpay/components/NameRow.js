@@ -1,6 +1,6 @@
 import React from 'react';
 import { Button, Checkbox } from 'semantic-ui-react';
-import { utils } from 'client-sdk';
+import { utils } from 'allegory-allpay-sdk';
 
 export default class NameRow extends React.Component {
   constructor(props) {

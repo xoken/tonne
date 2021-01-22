@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { chainAPI } from 'client-sdk';
+import { chainAPI } from 'allegory-allpay-sdk';
 import { Link } from 'react-router-dom';
 import { Button, Grid } from 'semantic-ui-react';
 import images from '../images';

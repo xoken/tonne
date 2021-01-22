@@ -4,19 +4,19 @@ pipeline {
 
     stage('Prepare') {
       steps {
-        sh 'mkdir -p nipkow'
-        dir(path: 'nipkow') {
-          git( credentialsId: 'github', url: 'https://github.com/xoken/nipkow' , branch: 'master')
+        sh 'mkdir -p tonne'
+        dir(path: 'tonne') {
+          git( credentialsId: 'github', url: 'https://github.com/xoken/tonne' , branch: 'master')
         }
       }
     }
 
     stage('Build') {
       steps {
-        dir(path: 'nipkow') {
-          sh 'cd lib/nipkow-sdk && npm install'
+        dir(path: 'tonne') {
+          sh 'cd lib/allegory-allpay-sdk && npm install'
         }
-        dir(path: 'nipkow') {
+        dir(path: 'tonne') {
           sh 'npm install'
         }
       }
@@ -27,12 +27,12 @@ pipeline {
         script {
           if ((env.BRANCH_NAME).startsWith("release")) {
             echo '****** Starting Linux Build ******'
-            dir(path: 'nipkow') {
+            dir(path: 'tonne') {
               sh 'npm run build'
               sh 'npx electron-packager .'
-              sh 'zip -r nipkow-"$(basename $(git symbolic-ref HEAD))"-linux-x64.zip nipkow-linux-x64/'
+              sh 'zip -r tonne-"$(basename $(git symbolic-ref HEAD))"-linux-x64.zip tonne-linux-x64/'
             }
-            archiveArtifacts(artifacts: 'nipkow/nipkow-*.zip', followSymlinks: true)
+            archiveArtifacts(artifacts: 'tonne/tonne-*.zip', followSymlinks: true)
           } else {
             echo 'skipping Docker release packaging..'
           }

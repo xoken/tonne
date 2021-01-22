@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { utils } from 'client-sdk';
+import { utils } from 'allegory-allpay-sdk';
 import { satoshiToBSV } from '../../shared/utils';
 import RenderTransaction from '../components/RenderTransaction';
 import * as allpayActions from '../allpayActions';

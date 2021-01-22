@@ -205,7 +205,7 @@
   left: 0;
   margin-left: 30px;
   border-radius: 5px;
-  background-color: #fbbd08;
+  background-color: #9173a8;
   transition: height 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .ui.basic.button.borderless {
@@ -229,12 +229,12 @@
   padding: 1em;
 }
 .progressIndicatorStep {
-  width: 10;
-  height: 10;
+  width: 10px;
+  height: 10px;
 }
-.progressindicatorfill {
-  width: 10;
-  height: 10;
+.progressIndicatorFill {
+  width: 10px;
+  height: 10px;
 }
 .coral {
   background-color: #ed7464 !important;

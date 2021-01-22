@@ -1,4 +1,4 @@
-import { wallet } from 'client-sdk';
+import { wallet } from 'allegory-allpay-sdk';
 
 class AuthService {
   constructor(store) {

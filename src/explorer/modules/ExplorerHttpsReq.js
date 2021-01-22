@@ -1,4 +1,4 @@
-import { addressAPI, blockAPI, chainAPI, transactionAPI } from 'client-sdk';
+import { addressAPI, blockAPI, chainAPI, transactionAPI } from 'allegory-allpay-sdk';
 
 export default class ExplorerHttpsReq {
   static async httpsreq(...reqparameter) {

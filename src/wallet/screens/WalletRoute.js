@@ -17,7 +17,7 @@ import RenameProfile from '../components/RenameProfile';
 import PartiallySignTransaction from '../../allpay/screens/PartiallySignTransaction';
 import * as authActions from '../../auth/authActions';
 import * as allpayActions from '../../allpay/allpayActions';
-import { utils } from 'client-sdk';
+import { utils } from 'allegory-allpay-sdk';
 
 class WalletRoute extends React.Component {
   constructor(props) {
