@@ -43,7 +43,12 @@ class ExplorerAddress extends React.Component {
       this.arrayoftxs.length = 0;
       var temparray = [];
       for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
-        temparray[v] = this.rjdecoded.outputs[v].outputTxHash;
+        if (this.rjdecoded.outputs[v].spendInfo) {
+          temparray.push(this.rjdecoded.outputs[v].spendInfo.spendingTxId);
+          temparray.push(this.rjdecoded.outputs[v].outputTxHash);
+        } else {
+          temparray.push(this.rjdecoded.outputs[v].outputTxHash);
+        }
       }
       this.arrayoftxs = Array.of(temparray);
       this.rjdecodedtx = await ExplorerHttpsReq.httpsreq('getTransactionsByTxIDs', this.arrayoftxs);
