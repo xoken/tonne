@@ -259,7 +259,7 @@ class ExplorerBlockHeight extends React.Component {
       this.state.selectnum > 0 &&
       /^\d+$/.test(this.state.enteredpagenumber)
     ) {
-      this.selected = this.state.selectnum;
+      this.selected = parseInt(this.state.selectnum);
       this.currentbatchnum = Math.ceil(this.selected / this.fixedarrlength);
       if (this.txcache[(this.selected - 1) * this.transactionsperpage + 1] !== undefined) {
         var tempindex;
@@ -292,7 +292,7 @@ class ExplorerBlockHeight extends React.Component {
   };
 
   addlistener = event => {
-    this.selected = event.target.value;
+    this.selected = parseInt(event.target.value);
     this.printpagination();
     this.transactionprinting();
   };

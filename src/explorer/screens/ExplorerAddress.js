@@ -52,6 +52,7 @@ class ExplorerAddress extends React.Component {
       }
       this.arrayoftxs = Array.of(temparray);
       this.rjdecodedtx = await ExplorerHttpsReq.httpsreq('getTransactionsByTxIDs', this.arrayoftxs);
+
       this.pagearrayinit();
     }
   };
@@ -69,8 +70,8 @@ class ExplorerAddress extends React.Component {
               <Grid.Column className='txslnum'>
                 <h4>
                   #({i + 1})&nbsp;
-                  <Link to={'/explorer/transaction/' + this.addressCache[i].outputTxHash}>
-                    {this.addressCache[i].outputTxHash}
+                  <Link to={'/explorer/transaction/' + this.addressCache[i].txId}>
+                    {this.addressCache[i].txId}
                   </Link>
                 </h4>
               </Grid.Column>
@@ -318,6 +319,7 @@ class ExplorerAddress extends React.Component {
       this.batches = Math.ceil(this.totalpagesavailable / this.fixedpagearrlength);
       this.currentbatchnum = Math.ceil(this.selected / this.fixedpagearrlength);
       this.printpagination();
+
       this.printresults();
     } else {
       //
@@ -328,13 +330,13 @@ class ExplorerAddress extends React.Component {
     if (Object.keys(this.rjdecoded.outputs).length > 0) {
       this.arrayoftxs.length = 0;
       var temparray = [];
-      for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
-        temparray[v] = this.rjdecoded.outputs[v].outputTxHash;
+      for (var v = 0; v < Object.keys(this.rjdecodedtx.txs).length; v++) {
+        temparray[v] = this.rjdecodedtx.txs[v].txId;
       }
       this.arrayoftxs = Array.of(temparray);
 
-      for (var i = 0; i < Object.keys(this.rjdecoded.outputs).length; i++) {
-        this.addressCache[this.cachecounter] = this.rjdecoded.outputs[i];
+      for (var i = 0; i < Object.keys(this.rjdecodedtx.txs).length; i++) {
+        this.addressCache[this.cachecounter] = this.rjdecodedtx.txs[i];
         this.txCache[this.cachecounter] = this.rjdecodedtx.txs[i];
         this.cachecounter += 1;
       }
@@ -419,7 +421,7 @@ class ExplorerAddress extends React.Component {
   };
 
   addlistener = event => {
-    this.selected = event.target.value;
+    this.selected = parseInt(event.target.value);
     this.printpagination();
     this.printresults();
   };
@@ -455,17 +457,24 @@ class ExplorerAddress extends React.Component {
           100,
           this.nextcursor
         );
+        if (Object.keys(this.rjdecoded.outputs).length > 0) {
+          this.arrayoftxs.length = 0;
+          var temparray = [];
+          for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
+            if (this.rjdecoded.outputs[v].spendInfo) {
+              temparray.push(this.rjdecoded.outputs[v].spendInfo.spendingTxId);
+              temparray.push(this.rjdecoded.outputs[v].outputTxHash);
+            } else {
+              temparray.push(this.rjdecoded.outputs[v].outputTxHash);
+            }
+          }
 
-        this.arrayoftxs.length = 0;
-        var temparray = [];
-        for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
-          temparray[v] = this.rjdecoded.outputs[v].outputTxHash;
+          this.arrayoftxs = Array.of(temparray);
+          this.rjdecodedtx = await ExplorerHttpsReq.httpsreq(
+            'getTransactionsByTxIDs',
+            this.arrayoftxs
+          );
         }
-        this.arrayoftxs = Array.of(temparray);
-        this.rjdecodedtx = await ExplorerHttpsReq.httpsreq(
-          'getTransactionsByTxIDs',
-          this.arrayoftxs
-        );
         this.adddataupdatepagearray();
       } else {
         this.currentbatchnum += 1;
