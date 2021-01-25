@@ -327,3 +327,12 @@
   bottom: -10px !important;
   font-size: 22px;
 }
+.ui.header:first-child {
+  margin-top: 0;
+}
+.ui.header.generalheadingscolor {
+  color: grey;
+}
+/* .ui.button {
+  margin-right: 0;
+} */

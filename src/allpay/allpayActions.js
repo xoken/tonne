@@ -87,7 +87,7 @@ export const signRelayTransaction = data => async (dispatch, getState, { service
   }
 };
 
-export const updateProgressStep = createAction('UPDATE_PROGRESS_STEP');
+export const updateProgressStep = createAction('ALLPAY_UPDATE_PROGRESS_STEP');
 export const updateProgress = payload => dispatch => {
   dispatch(updateProgressStep(payload));
 };

@@ -1,15 +1,15 @@
 import React from 'react';
-import PropTypes from 'prop-types';
-import { NavLink, Route, Switch, withRouter } from 'react-router-dom';
+import { withRouter, NavLink, Route, Switch } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Dropdown, Modal } from 'semantic-ui-react';
-import ImportWallet from './ImportWallet';
-import Login from './Login';
-import NewWallet from './NewWallet';
+import LoginScreen from './LoginScreen';
+import ImportWalletScreen from './ImportWalletScreen';
+import NewWalletScreen from './NewWalletScreen';
 import PrivateRoute from '../../shared/components/privateRoute';
 import PublicRoute from '../../shared/components/publicRoute';
+import NoMatch from '../../shared/components/noMatch';
 import SendTransaction from '../components/SendTransaction';
-import WalletPassword from './WalletPassword';
+import WalletPasswordScreen from './WalletPasswordScreen';
 import WalletHome from './WalletHome';
 import WalletDashboard from './WalletDashboard';
 import AllpayContainer from '../../allpay/allpayContainer';
@@ -36,12 +36,12 @@ class WalletRoute extends React.Component {
   };
 
   renderHeader() {
-    const { profile, location } = this.props;
+    const { profile } = this.props;
     if (profile) {
       return (
         <div className='ui grid'>
           <div className='column'>
-            <span className='welcometext purplefontcolor'>{profile}</span>
+            <span className='welcometext purplefontcolor'>{profile.screenName}</span>
             <Dropdown
               button
               className='icon top left right floated coral button'
@@ -121,16 +121,16 @@ class WalletRoute extends React.Component {
         {this.renderHeader()}
         <Switch>
           <PublicRoute path={`${path}/existing`}>
-            <ImportWallet />
+            <ImportWalletScreen />
           </PublicRoute>{' '}
           <PublicRoute path={`${path}/new`}>
-            <NewWallet />
+            <NewWalletScreen />
           </PublicRoute>
           <PublicRoute path={`${path}/login`}>
-            <Login />
+            <LoginScreen />
           </PublicRoute>
           <PublicRoute path={`${path}/password`}>
-            <WalletPassword />
+            <WalletPasswordScreen />
           </PublicRoute>
           <PrivateRoute path={`${path}/dashboard`}>
             <WalletDashboard />
@@ -147,6 +147,9 @@ class WalletRoute extends React.Component {
           <PublicRoute exact path={path}>
             <WalletHome />
           </PublicRoute>
+          <Route path='*'>
+            <NoMatch />
+          </Route>
         </Switch>
         {this.renderRenameProfileModal()}
       </>
@@ -154,9 +157,7 @@ class WalletRoute extends React.Component {
   }
 }
 
-WalletRoute.propTypes = {
-  profile: PropTypes.string,
-};
+WalletRoute.propTypes = {};
 
 WalletRoute.defaultProps = {};
 

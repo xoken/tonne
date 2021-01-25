@@ -33,11 +33,13 @@ export default createReducer(
     }),
     [actions.loginSuccess]: (state, { profile }) => ({
       ...state,
+      bip39Mnemonic: null,
       isLoading: false,
       profile,
     }),
     [actions.loginFailure]: state => ({
       ...state,
+      bip39Mnemonic: null,
       isLoading: false,
     }),
     [actions.logoutSuccess]: state => ({

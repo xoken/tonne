@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { createBrowserHistory } from 'history';
-import { HashRouter, Route, Switch } from 'react-router-dom';
+import { withRouter, Route, Switch } from 'react-router-dom';
 import { Container } from 'semantic-ui-react';
 import ExplorerHome from './explorer/screens/ExplorerHome';
 import Downloads from './downloads/screens/Downloads';
@@ -18,7 +17,6 @@ import * as settingsActions from './settings/settingsActions';
 class App extends React.Component {
   constructor(props) {
     super(props);
-    this.history = createBrowserHistory();
     this.state = {
       isLoaded: false,
     };
@@ -34,48 +32,42 @@ class App extends React.Component {
     }
   }
 
-  onBack = () => {
-    this.history.goBack();
-  };
-
   render() {
     if (this.state.isLoaded) {
       return (
         <>
-          <HashRouter>
-            <Header />
-            <main className='main'>
-              <Container>
-                <Switch>
-                  <Route path='/wallet'>
-                    <WalletRoute />
-                  </Route>
-                  <Route path='/explorer'>
-                    <ExplorerHome history={this.history} />
-                  </Route>
-                  <Route exact path='/'>
-                    <Home />
-                  </Route>
-                  <Route exact path='/settings'>
-                    <SettingsScreen />
-                  </Route>
-                  <Route path='/downloads'>
-                    <Downloads />
-                  </Route>
-                  <Route exact path='/auth/success'>
-                    <TwitterAuthSuccess />
-                  </Route>
-                  <Route path='/claim-twitter-handle'>
-                    <ClaimTwitterHandleContainer />
-                  </Route>
-                  <Route path='*'>
-                    <NoMatch />
-                  </Route>
-                </Switch>
-              </Container>
-            </main>
-            <Footer />
-          </HashRouter>
+          {this.props.location.pathname !== '/auth/success' && <Header />}
+          <main className='main'>
+            <Container>
+              <Switch>
+                <Route path='/wallet'>
+                  <WalletRoute />
+                </Route>
+                <Route path='/explorer'>
+                  <ExplorerHome />
+                </Route>
+                <Route exact path='/'>
+                  <Home />
+                </Route>
+                <Route exact path='/settings'>
+                  <SettingsScreen />
+                </Route>
+                <Route path='/downloads'>
+                  <Downloads />
+                </Route>
+                <Route exact path='/auth/success'>
+                  <TwitterAuthSuccess />
+                </Route>
+                <Route path='/claim-twitter-handle'>
+                  <ClaimTwitterHandleContainer />
+                </Route>
+                <Route path='*'>
+                  <NoMatch />
+                </Route>
+              </Switch>
+            </Container>
+          </main>
+          {this.props.location.pathname !== '/auth/success' && <Footer />}
         </>
       );
     } else {
@@ -88,4 +80,4 @@ const mapStateToProps = state => ({
   token: state.settings.token,
 });
 
-export default connect(mapStateToProps)(App);
+export default withRouter(connect(mapStateToProps)(App));

@@ -25,6 +25,7 @@ class Header extends React.Component {
               </NavLink>
               <NavLink to='/wallet' activeClassName='activeheader' className='item headertabitems'>
                 <img
+                  alt='Bitcoin SV Wallet'
                   src={images.wallet}
                   style={{
                     display: 'block',

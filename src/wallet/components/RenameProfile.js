@@ -15,10 +15,13 @@ class RenameProfile extends React.Component {
   }
 
   onRenameProfile = async () => {
-    const { profile, dispatch } = this.props;
+    const {
+      profile: { screenName },
+      dispatch,
+    } = this.props;
     const { newProfilename } = this.state;
     try {
-      await dispatch(authActions.updateProfileName(profile, newProfilename));
+      await dispatch(authActions.updateProfileName(screenName, newProfilename));
       this.setState({ isError: false, message: 'Success! Your Profile has been renamed.' });
       setTimeout(() => {
         this.props.onClose();
@@ -43,6 +46,9 @@ class RenameProfile extends React.Component {
 
   render() {
     const { newProfilename } = this.state;
+    const {
+      profile: { screenName },
+    } = this.props;
     return (
       <>
         <Modal.Header>Rename Current Profile</Modal.Header>
@@ -52,7 +58,7 @@ class RenameProfile extends React.Component {
               <Grid.Column textAlign='center' width={8}>
                 <div className='ui form'>
                   <div className='field'>
-                    <label>Change Current Profile Name : {this.props.profile}</label>
+                    <label>Change Current Profile Name : {screenName}</label>
                     <div className='ui input'>
                       <input
                         type='text'
@@ -82,7 +88,9 @@ class RenameProfile extends React.Component {
 }
 
 RenameProfile.propTypes = {
-  profile: PropTypes.string,
+  profile: PropTypes.shape({
+    screenName: PropTypes.string.isRequired,
+  }).isRequired,
 };
 
 RenameProfile.defaultProps = {};

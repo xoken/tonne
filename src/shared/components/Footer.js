@@ -92,6 +92,7 @@ class Footer extends React.Component {
                   <a href='https://www.xoken.org' className='peach'>
                     Powered by{' '}
                     <img
+                      alt='Xoken Labs'
                       src={images.xokenFooterLogo}
                       style={{ width: 63, verticalAlign: 'middle' }}
                     />

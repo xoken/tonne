@@ -2,7 +2,8 @@ import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { Divider, Grid, GridColumn, Header, List, Loader, Segment } from 'semantic-ui-react';
+import { Divider, Grid, GridColumn, Header, Loader, Segment } from 'semantic-ui-react';
+import Profiles from '../components/Profiles';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
 
@@ -26,22 +27,7 @@ class WalletHome extends React.Component {
               {profiles && profiles.length > 0 && (
                 <Grid.Column verticalAlign='middle'>
                   <Header>Login to Existing Profile</Header>
-                  <List selection verticalAlign='middle'>
-                    {profiles.map((profile, index) => {
-                      const { name } = profile;
-                      /* FIX ME - Use only semantic css*/
-                      return (
-                        <List.Item
-                          key={index}
-                          onClick={this.onSelectProfile(name)}
-                          className='ui coralinverted button custommargin'>
-                          <List.Content>
-                            <List.Header>{name}</List.Header>
-                          </List.Content>
-                        </List.Item>
-                      );
-                    })}
-                  </List>
+                  <Profiles profiles={profiles} onSelect={this.onSelectProfile} />
                 </Grid.Column>
               )}
               <Grid.Column>

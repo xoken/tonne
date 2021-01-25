@@ -2,11 +2,11 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import { Button, Grid, Segment } from 'semantic-ui-react';
 import words from '../../shared/constants/wordlist/english';
 import alphabet from '../../shared/constants/alphabet/english';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
-import { Button, Grid, Segment } from 'semantic-ui-react';
 const crypto = require('crypto');
 
 class ImportWallet extends React.Component {
@@ -14,26 +14,25 @@ class ImportWallet extends React.Component {
     super(props);
     this.state = {
       bip39Mnemonic: '',
+      suggestions: [],
+      alphabets: [],
     };
-    this.state = { alphabets: [] };
-    this.state = { suggestions: [] };
-    this.state = { mncompleted: false };
-    this.letterOnClick = this.letterOnClick.bind(this);
-    this.wordOnClick = this.wordOnClick.bind(this);
-    this.backspaceOnClick = this.backspaceOnClick.bind(this);
+    this.alphabetarray = alphabet;
+    this.data = undefined;
+    this.randomnumber = undefined;
+    this.temp = undefined;
+    this.rindex = undefined;
+    this.counter = 0;
+    this.alphabetul = [];
+    this.mixedalphabets = [];
   }
-  alphabetarray = alphabet;
-  data;
-  randomnumber;
-  temp;
-  rindex;
-  counter = 0;
-  alphabetul = [];
-  self = this;
-  mixedalphabets = [];
+
+  componentDidMount() {
+    this.mix();
+  }
 
   mix = () => {
-    var index = this.alphabetarray.length - 1;
+    let index = this.alphabetarray.length - 1;
     for (var i = 0; i < this.alphabetarray.length; i++) {
       if (this.counter === this.alphabetarray.length * 20) {
         for (var u = 0; u < this.alphabetarray.length; u++) {
@@ -64,10 +63,11 @@ class ImportWallet extends React.Component {
   };
 
   letterOnClick = event => {
+    const { bip39Mnemonic } = this.state;
     var splitwords;
     var tempmn;
-    if (this.state.bip39Mnemonic !== undefined) {
-      tempmn = this.state.bip39Mnemonic += event.currentTarget.textContent;
+    if (bip39Mnemonic !== undefined) {
+      tempmn = bip39Mnemonic + event.currentTarget.textContent;
       this.setState({
         bip39Mnemonic: tempmn,
       });
@@ -126,16 +126,11 @@ class ImportWallet extends React.Component {
       splitwords[splitwords.length - 1] = event.currentTarget.textContent;
       tempmn = splitwords[0] + ' ';
     }
-    this.setState({ bip39Mnemonic: tempmn });
-    this.setState({ suggestions: '' });
+    this.setState({ bip39Mnemonic: tempmn, suggestions: '' });
     document.getElementById('wordsremaining').textContent = '(' + splitwords.length + ' of 12)';
-    if (splitwords.length === 12) {
-      this.setState({ mncompleted: true });
-    }
   };
 
   backspaceOnClick = () => {
-    this.setState({ mncompleted: false });
     if (this.state.bip39Mnemonic.length !== 0) {
       var splitwords,
         tempmn = this.state.bip39Mnemonic.substring(0, this.state.bip39Mnemonic.length - 1);
@@ -152,96 +147,88 @@ class ImportWallet extends React.Component {
   };
 
   onContinue = () => {
-    const { dispatch, continueLocation, dashboardLocation } = this.props;
+    const { onContinue } = this.props;
+    const { dispatch } = this.props;
     const { bip39Mnemonic } = this.state;
     dispatch(authActions.setMnemonic(bip39Mnemonic));
-    if (continueLocation) {
-      this.props.history.push({
-        pathname: continueLocation,
-        state: { dashboardLocation: dashboardLocation },
-      });
-    } else {
-      this.props.history.push('/wallet/password');
-    }
+    onContinue();
   };
 
-  componentDidMount() {
-    this.mix();
+  renderSuggestions() {
+    if (this.state.suggestions.length > 0) {
+      return (
+        <Grid.Row>
+          <Grid.Column>
+            <ul id='suggestions'>{this.state.suggestions}</ul>
+          </Grid.Column>
+        </Grid.Row>
+      );
+    }
   }
+
+  renderContinue() {
+    const { bip39Mnemonic, suggestions } = this.state;
+    if (bip39Mnemonic.split(' ').length === 12 && suggestions.length === 0) {
+      return (
+        <Grid.Row>
+          <Grid.Column textAlign='center'>
+            <Button className='coral' onClick={this.onContinue}>
+              Continue
+            </Button>
+          </Grid.Column>
+        </Grid.Row>
+      );
+    }
+    return null;
+  }
+
   render() {
     return (
-      <>
-        <Grid style={{ marginTop: '30px' }}>
-          <Grid.Row>
-            <Grid.Column>
-              <div id='mnemonic' className='mnemonic'>
-                {this.state.bip39Mnemonic || ''}
-              </div>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <div id='wordsremaining'>(0 of 12)</div>
-            </Grid.Column>
-          </Grid.Row>
-
-          <Grid.Row>
-            <Grid.Column>
-              <Button className='backspace' onClick={this.backspaceOnClick}>
-                &#9003;
-              </Button>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-        <Segment textAlign='center'>
-          <ul id='alphabets'>{this.state.alphabets}</ul>
-        </Segment>
-        <Grid>
-          <Grid.Row>
-            <Grid.Column>
-              <ul id='suggestions'>{this.state.suggestions}</ul>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <center>
-                <MnemonicCompleted
-                  mncompleted={this.state.mncompleted}
-                  continuefunction={this.onContinue}
-                />
-              </center>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-        {process.env.REACT_APP_ENVIRONMENT === 'development' && (
-          <div>
-            <div>
-              <textarea
-                rows='2'
-                value={this.state.bip39Mnemonic || ''}
-                onChange={event => this.setState({ bip39Mnemonic: event.target.value })}
-              />
+      <Grid>
+        <Grid.Row>
+          <Grid.Column>
+            <div id='mnemonic' className='mnemonic'>
+              {this.state.bip39Mnemonic}
             </div>
-            <button type='button' className='btn btn-primary btn-md' onClick={this.onContinue}>
-              Continue
-            </button>
-          </div>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column floated='left' width='2'>
+            <Button className='backspace' onClick={this.backspaceOnClick}>
+              &#9003;
+            </Button>
+          </Grid.Column>
+          <Grid.Column floated='right' width='2' verticalAlign='middle'>
+            <div id='wordsremaining'>(0 of 12)</div>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column>
+            <Segment textAlign='center'>
+              <ul id='alphabets'>{this.state.alphabets}</ul>
+            </Segment>
+          </Grid.Column>
+        </Grid.Row>
+        {this.renderSuggestions()}
+        {this.renderContinue()}
+        {process.env.REACT_APP_ENVIRONMENT === 'development' && (
+          <>
+            <Grid.Row>
+              <Grid.Column>
+                <textarea
+                  rows='2'
+                  value={this.state.bip39Mnemonic}
+                  onChange={event => this.setState({ bip39Mnemonic: event.target.value })}
+                />
+              </Grid.Column>
+            </Grid.Row>
+          </>
         )}
-      </>
+      </Grid>
     );
   }
 }
-function MnemonicCompleted(props) {
-  if (props.mncompleted === true) {
-    return (
-      <Button className='txbtn coral' onClick={props.continuefunction}>
-        Continue
-      </Button>
-    );
-  } else {
-    return <i></i>;
-  }
-}
+
 ImportWallet.propTypes = {
   dispatch: PropTypes.func.isRequired,
   isLoading: PropTypes.bool.isRequired,

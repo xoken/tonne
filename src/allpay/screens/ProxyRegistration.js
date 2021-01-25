@@ -203,7 +203,7 @@ class ProxyRegistration extends React.Component {
   }
 
   render() {
-    const { name, proxyProvider, showRegistrationOptions, showProxyProviders } = this.state;
+    const { showRegistrationOptions, showProxyProviders } = this.state;
     return (
       <>
         <Grid>

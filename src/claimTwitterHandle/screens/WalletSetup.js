@@ -2,9 +2,10 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import NewWallet from '../../wallet/screens/NewWallet';
-import ImportWallet from '../../wallet/screens/ImportWallet';
-import { Grid, List, Loader, Segment, Radio } from 'semantic-ui-react';
+import { Form, Grid, Loader, Radio } from 'semantic-ui-react';
+import ImportWallet from '../../wallet/components/ImportWallet';
+import NewWallet from '../../wallet/components/NewWallet';
+import Profiles from '../../wallet/components/Profiles';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
 
@@ -12,10 +13,7 @@ class WalletSetup extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      importWalletChecked: false,
-      createWalletChecked: false,
-      loginToExistingProfile: false,
-      checkedRadio: '',
+      selectedOption: undefined,
     };
   }
   async componentDidMount() {
@@ -23,172 +21,87 @@ class WalletSetup extends React.Component {
     await dispatch(authActions.getProfiles());
   }
 
+  onHandleChange = (_, { value }) => {
+    this.setState({
+      selectedOption: value,
+    });
+  };
+
   onSelectProfile = profile => () => {
-    // this.props.history.push(`/wallet/login?profile=${profile}`);
+    this.props.history.push(`/claim-twitter-handle/wallet-setup-two?profile=${profile}`);
   };
 
-  renderImportWalletButton = () => {
-    const { importWalletChecked } = this.state;
-    if (importWalletChecked) {
-      return (
-        <Grid className='paddtopbottom25px' textAlign='left'>
-          <Grid.Row>
-            <Grid.Column>
-              <ImportWallet
-                continueLocation='/claim-twitter-handle/login'
-                dashboardLocation='/claim-twitter-handle/wallet-dashboard'
-              />
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      );
+  onContinue = () => {
+    this.props.history.push(`/claim-twitter-handle/wallet-setup-two`);
+  };
+
+  renderImportWallet() {
+    const { selectedOption } = this.state;
+    if (selectedOption === 'import') {
+      return <ImportWallet onContinue={this.onContinue} />;
     }
-  };
+    return null;
+  }
 
-  renderCreateWalletButton = () => {
-    const { createWalletChecked } = this.state;
-    if (createWalletChecked) {
-      return (
-        <Grid className='paddtopbottom25px'>
-          <Grid.Row>
-            <Grid.Column>
-              <NewWallet
-                continueLocation='/claim-twitter-handle/new-password'
-                dashboardLocation='/claim-twitter-handle/wallet-dashboard'
-              />
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      );
+  renderCreateWallet() {
+    const { selectedOption } = this.state;
+    if (selectedOption === 'new') {
+      return <NewWallet onContinue={this.onContinue} />;
     }
-  };
+    return null;
+  }
 
-  renderLoginToProfileButton = () => {
+  renderExistingProfile() {
     const { profiles } = this.props;
-    const { loginToExistingProfile } = this.state;
-    if (loginToExistingProfile) {
-      if (profiles && profiles.length > 0) {
-        return (
-          <>
-            <Grid className='paddtopbottom25px'>
-              <Grid.Row>
-                <Grid.Column verticalAlign='middle'>
-                  <List selection verticalAlign='middle'>
-                    {profiles.map((profile, index) => {
-                      const { name } = profile;
-                      return (
-                        <List.Item
-                          key={index}
-                          onClick={this.onSelectProfile(name)}
-                          className='ui coralinverted button custommargin'>
-                          <List.Content>
-                            <List.Header>{name}</List.Header>
-                          </List.Content>
-                        </List.Item>
-                      );
-                    })}
-                  </List>
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
-          </>
-        );
-      } else {
-        return (
-          <>
-            <Grid className='paddtopbottom25px'>
-              <Grid.Row>
-                <Grid.Column textAlign='center'>
-                  <b class='purplefontcolor'>You have not imported any profiles yet.</b>
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
-          </>
-        );
-      }
+    const { selectedOption } = this.state;
+    if (selectedOption === 'existing') {
+      return <Profiles profiles={profiles} onSelect={this.onSelectProfile} />;
     }
-  };
+    return null;
+  }
 
   renderContent() {
-    const { checkedRadio } = this.state;
     return (
-      <Grid verticalAlign='middle' style={{ height: '100%' }}>
+      <Grid>
         <Grid.Row>
           <Grid.Column>
-            <center>
-              <h3 className='purplefontcolor'>You need a Tonne wallet to proceed</h3>
-            </center>
-            <Segment placeholder textAlign='center'>
-              <Grid columns={3}>
-                <Grid.Row>
-                  <Grid.Column>
-                    <b>
-                      <Radio
-                        className='purplefontcolor'
-                        label='I already have a wallet'
-                        checked={checkedRadio === 'import' ? true : false}
-                        value='import'
-                        onChange={event =>
-                          this.setState({
-                            checkedRadio: 'import',
-                            importWalletChecked: true,
-                            createWalletChecked: false,
-                            loginToExistingProfile: false,
-                          })
-                        }
-                      />
-                    </b>
-                  </Grid.Column>
-
-                  <Grid.Column>
-                    <b>
-                      <Radio
-                        className='purplefontcolor'
-                        label='Create a wallet'
-                        checked={checkedRadio === 'create' ? true : false}
-                        value='create'
-                        onChange={event =>
-                          this.setState({
-                            checkedRadio: 'create',
-                            importWalletChecked: false,
-                            createWalletChecked: true,
-                            loginToExistingProfile: false,
-                          })
-                        }
-                      />
-                    </b>
-                  </Grid.Column>
-
-                  <Grid.Column>
-                    <b>
-                      <Radio
-                        className='purplefontcolor'
-                        label='Login to imported profile'
-                        checked={checkedRadio === 'login' ? true : false}
-                        value='login'
-                        onChange={event =>
-                          this.setState({
-                            checkedRadio: 'login',
-                            importWalletChecked: false,
-                            createWalletChecked: false,
-                            loginToExistingProfile: true,
-                          })
-                        }
-                      />
-                    </b>
-                  </Grid.Column>
-                </Grid.Row>
-                <Grid.Row>
-                  <Grid.Column width={16}>
-                    {this.renderImportWalletButton()}
-                    {this.renderCreateWalletButton()}
-                    {this.renderLoginToProfileButton()}
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
-            </Segment>
+            <Form>
+              <Form.Field>
+                Hello {this.props.screenName}, You need a BSV wallet to proceed
+              </Form.Field>
+              <Form.Field>
+                <Radio
+                  label='I already have a seed phrase'
+                  name='radioGroup'
+                  value='import'
+                  checked={this.state.selectedOption === 'import'}
+                  onChange={this.onHandleChange}
+                />
+              </Form.Field>
+              <Form.Field>
+                <Radio
+                  label='Create a new wallet and seed phrase'
+                  name='radioGroup'
+                  value='new'
+                  checked={this.state.selectedOption === 'new'}
+                  onChange={this.onHandleChange}
+                />
+              </Form.Field>
+              <Form.Field>
+                <Radio
+                  label='Login to existing wallet profile'
+                  name='radioGroup'
+                  value='existing'
+                  checked={this.state.selectedOption === 'existing'}
+                  onChange={this.onHandleChange}
+                />
+              </Form.Field>
+            </Form>
           </Grid.Column>
         </Grid.Row>
+        {this.renderImportWallet()}
+        {this.renderCreateWallet()}
+        {this.renderExistingProfile()}
       </Grid>
     );
   }
@@ -198,13 +111,15 @@ class WalletSetup extends React.Component {
     if (isLoading) {
       return <Loader active size='massive' />;
     } else if (profile) {
-      return <Redirect to='/wallet/dashboard' />;
+      return <Redirect to='/wallet' />;
+    } else {
+      return this.renderContent();
     }
-    return <>{this.renderContent()}</>;
   }
 }
 const mapStateToProps = state => ({
   isLoading: authSelectors.isLoading(state),
+  screenName: state.twitter.screenName,
   profile: authSelectors.getProfile(state),
   profiles: authSelectors.getProfiles(state),
 });

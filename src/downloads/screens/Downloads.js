@@ -4,9 +4,9 @@ import { Segment, Grid, Button, Icon, Header } from 'semantic-ui-react';
 export default function Downloads() {
   return (
     <>
-      <center>
-        <h3 className='purplefontcolor'>Download Tonne Desktop App</h3>
-      </center>
+      <Header as='h3' className='purplefontcolor'>
+        Download Tonne Desktop App
+      </Header>
       <Segment placeholder style={{ height: '93%' }}>
         <Grid centered columns={3} verticalAlign='middle' style={{ height: '100%' }}>
           <Grid.Row>

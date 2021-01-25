@@ -3,15 +3,11 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 
 class TwitterAuthSuccess extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     const {
       location: { search },
     } = this.props;
-    window.opener.postMessage(search, 'http://localhost:3000');
+    window.opener.postMessage(search, window.location.origin);
   }
 
   render() {

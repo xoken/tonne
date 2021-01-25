@@ -31,6 +31,7 @@ class Home extends React.Component {
               <div className='column'>
                 <div className='ui icon header purplefontcolor'>
                   <img
+                    alt='Bitcoin SV Wallet'
                     src={images.wallet}
                     style={{
                       display: 'block',
@@ -45,20 +46,18 @@ class Home extends React.Component {
                   Wallet
                 </Link>
               </div>
-              {process.env.REACT_APP_ENVIRONMENT === 'development' && (
-                <div className='column'>
-                  <div className='ui icon header purplefontcolor'>
-                    <Icon name='twitter' />
-                    On-Chain Name
-                  </div>
-                  <Button
-                    to='/claim-twitter-handle/auth/twitter'
-                    className='ui coral button'
-                    onClick={this.onClaimTwitterHandle}>
-                    Claim Twitter Handle
-                  </Button>
+              <div className='column'>
+                <div className='ui icon header purplefontcolor'>
+                  <Icon name='twitter' />
+                  On-Chain Name
                 </div>
-              )}
+                <Button
+                  to='/claim-twitter-handle/auth/twitter'
+                  className='ui coral button'
+                  onClick={this.onClaimTwitterHandle}>
+                  Claim Twitter Handle
+                </Button>
+              </div>
             </div>
           </div>
         </GridColumn>
