@@ -19,7 +19,8 @@ class SendTransaction extends React.Component {
       isAllpayName: false,
       isError: false,
       sliderValue: 1,
-      maxSliderValue: Math.floor(Math.log(10000000) / Math.log(1.05)),
+      // maxSliderValue: Math.floor(Math.log(1000000000) / Math.log(1.05)),
+      maxSliderValue: 20,
       sliderDisabled: true,
     };
   }
@@ -63,7 +64,7 @@ class SendTransaction extends React.Component {
             message: '',
             transactionFee: 50000000,
             maxSliderValue: sliderValue,
-            feeRate: Math.floor(Math.pow(1.05, sliderValue)),
+            feeRate: parseInt(sliderValue),
           });
         } else {
           this.setState({
@@ -139,80 +140,46 @@ class SendTransaction extends React.Component {
     const { dispatch } = this.props;
     const sliderVal = event.target.value;
     const { receiverAddress, amountInSatoshi } = this.state;
-    const tempFeeRate = Math.floor(Math.pow(1.05, sliderVal));
-    if (tempFeeRate <= 1) {
-      if (Number(amountInSatoshi) > 0) {
-        try {
-          const transactionFee = await dispatch(
-            walletActions.getTransactionFee(receiverAddress, amountInSatoshi, 1)
-          );
+    const tempFeeRate = parseInt(sliderVal);
+
+    this.setState({
+      feeRate: tempFeeRate,
+      sliderValue: sliderVal,
+    });
+
+    if (Number(amountInSatoshi) > 0) {
+      try {
+        const transactionFee = await dispatch(
+          walletActions.getTransactionFee(receiverAddress, amountInSatoshi, tempFeeRate)
+        );
+        if (Number(transactionFee) >= 50000000) {
           this.setState({
             isError: false,
             message: '',
-            feeRate: 1,
-            sliderValue: sliderVal,
-            transactionFee: transactionFee,
+            transactionFee: 50000000,
+            //  sliderDisabled: true,
+            maxSliderValue: sliderVal,
+            //sliderValue: feeRate
           });
-        } catch (error) {
-          this.setState({ isError: true, message: error.message });
+        } else {
+          this.setState({
+            isError: false,
+            message: '',
+            //  sliderDisabled: false,
+            transactionFee,
+          });
         }
-      } else {
-        this.setState({
-          isError: false,
-          message: '',
-          transactionFee: 0,
-        });
+      } catch (error) {
+        this.setState({ isError: true, message: error.message });
       }
-    }
-    // else if (tempFeeRate >= 1000000000) {
-    //   this.setState({
-    //     feeRate: 1000000000,
-    //     sliderValue: event.target.value
-    //   });
-    // }
-    else {
+    } else {
       this.setState({
-        feeRate: Math.floor(Math.pow(1.05, sliderVal)),
-        sliderValue: sliderVal,
+        isError: false,
+        message: '',
+        transactionFee: 0,
       });
-
-      if (Number(amountInSatoshi) > 0) {
-        try {
-          const transactionFee = await dispatch(
-            walletActions.getTransactionFee(
-              receiverAddress,
-              amountInSatoshi,
-              Math.floor(Math.pow(1.05, Number(sliderVal)))
-            )
-          );
-          if (Number(transactionFee) >= 50000000) {
-            this.setState({
-              isError: false,
-              message: '',
-              transactionFee: 50000000,
-              //  sliderDisabled: true,
-              maxSliderValue: sliderVal,
-              //sliderValue: feeRate
-            });
-          } else {
-            this.setState({
-              isError: false,
-              message: '',
-              //  sliderDisabled: false,
-              transactionFee,
-            });
-          }
-        } catch (error) {
-          this.setState({ isError: true, message: error.message });
-        }
-      } else {
-        this.setState({
-          isError: false,
-          message: '',
-          transactionFee: 0,
-        });
-      }
     }
+    // }
   };
 
   render() {
