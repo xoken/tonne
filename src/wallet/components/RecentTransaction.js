@@ -278,7 +278,14 @@ class RecentTransaction extends React.Component {
           </div>
           <div className='right floated right aligned six wide column'>
             {this.renderLastRefresh()}
-            <Button style={{ marginRight: '0px' }} basic circular icon onClick={this.onRefresh}>
+            <Button
+              circular
+              icon
+              style={{
+                marginRight: '0px',
+              }}
+              className='peach'
+              onClick={this.onRefresh}>
               <Icon name='refresh' />
             </Button>
           </div>

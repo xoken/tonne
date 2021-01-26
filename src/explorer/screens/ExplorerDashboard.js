@@ -126,7 +126,7 @@ class ExplorerDashboard extends React.Component {
       this.state.selectnum > 0 &&
       /^\d+$/.test(this.state.selectnum)
     ) {
-      this.selected = this.state.selectnum;
+      this.selected = parseInt(this.state.selectnum);
       this.updateheightlist();
       this.callsec();
       if (this.selected <= this.pagearrlength - 2) {
@@ -148,7 +148,7 @@ class ExplorerDashboard extends React.Component {
   };
 
   addlistener = event => {
-    this.selected = event.target.value;
+    this.selected = parseInt(event.target.value);
     this.updateheightlist();
     this.updatepagearray();
     this.callsec();
