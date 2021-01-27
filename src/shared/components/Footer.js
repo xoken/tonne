@@ -88,7 +88,7 @@ class Footer extends React.Component {
           <footer className='page-footer peach'>
             <Grid className='nopadding newpagefooter' columns={3}>
               <Grid.Row className='nopadding'>
-                <Grid.Column width={5}>
+                <Grid.Column width={5} style={{ whiteSpace: 'nowrap' }}>
                   <a href='https://www.xoken.org' className='peach'>
                     Powered by{' '}
                     <img
@@ -98,7 +98,7 @@ class Footer extends React.Component {
                     />
                   </a>
                 </Grid.Column>
-                <Grid.Column width={6}>
+                <Grid.Column width={6} style={{ whiteSpace: 'nowrap' }}>
                   {process.env.REACT_APP_CLIENT === 'browser' &&
                     process.env.REACT_APP_ENVIRONMENT === 'development' && (
                       <Link to='/downloads' className='peach'>
@@ -106,7 +106,7 @@ class Footer extends React.Component {
                       </Link>
                     )}
                 </Grid.Column>
-                <Grid.Column width={5}>
+                <Grid.Column width={5} style={{ whiteSpace: 'nowrap' }}>
                   <a href='https://www.xoken.org/contact-us/' className='peach'>
                     Contact Us
                   </a>
