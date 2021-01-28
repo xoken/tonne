@@ -4,7 +4,7 @@ import { Segment, Grid, Button, Icon, Header } from 'semantic-ui-react';
 export default function Downloads() {
   return (
     <>
-      <Header as='h3' className='purplefontcolor'>
+      <Header as='h3' className='purplefontcolor' textAlign='center'>
         Download Tonne Desktop App
       </Header>
       <Segment placeholder style={{ height: '93%' }}>

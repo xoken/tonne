@@ -1,10 +1,30 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { NavLink, Link } from 'react-router-dom';
-import { Icon } from 'semantic-ui-react';
+import { Icon, Dropdown } from 'semantic-ui-react';
 import images from '../images';
 
 class Header extends React.Component {
+  renderNetworkToggle() {
+    const { REACT_APP_CLIENT, REACT_APP_NETWORK } = process.env;
+    if (REACT_APP_CLIENT === 'browser') {
+      if (REACT_APP_NETWORK === 'testnet') {
+        return (
+          <Dropdown.Item>
+            <a href='https://tonne.app'>Switch to Mainnet</a>
+          </Dropdown.Item>
+        );
+      } else if (REACT_APP_NETWORK === 'bitcoinSV') {
+        return (
+          <Dropdown.Item>
+            <a href='https://test.tonne.app'>Switch to Testnet</a>
+          </Dropdown.Item>
+        );
+      }
+    }
+    return null;
+  }
+
   render() {
     return (
       <header className='page-header'>
@@ -43,6 +63,33 @@ class Header extends React.Component {
                 <Icon name='setting' />
                 Settings
               </NavLink> */}
+
+              <Dropdown
+                button
+                className='icon purplefontcolor'
+                icon='bars'
+                style={{
+                  backgroundColor: 'white',
+                  height: 'auto',
+                  marginTop: 'auto',
+                  marginBottom: 'auto',
+                  zIndex: 999,
+                  fontSize: '25px',
+                }}>
+                <Dropdown.Menu
+                  style={{
+                    backgroundColor: 'white',
+                    fontSize: '14px',
+                  }}>
+                  {this.renderNetworkToggle()}
+                  <Dropdown.Item>
+                    <a href='https://www.xoken.org/contact-us/'>Contact Us</a>
+                  </Dropdown.Item>
+                  <Dropdown.Item>
+                    <Link to='/downloads'>Download App</Link>
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </div>
           </div>
         </div>
