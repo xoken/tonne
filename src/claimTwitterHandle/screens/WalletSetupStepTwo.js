@@ -55,7 +55,6 @@ class WalletSetupStepTwo extends React.Component {
 
   renderContent() {
     const {
-      dispatch,
       location: { search },
     } = this.props;
     const queryParams = new URLSearchParams(search);
