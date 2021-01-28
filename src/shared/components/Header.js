@@ -5,37 +5,25 @@ import { Icon, Menu, Dropdown } from 'semantic-ui-react';
 import images from '../images';
 
 class Header extends React.Component {
-  onSwitchNetworkToggle = () => {
-    if (process.env.REACT_APP_CLIENT === 'browser') {
-      if (process.env.REACT_APP_NETWORK === 'testnet') {
+  renderNetworkToggle() {
+    const { REACT_APP_CLIENT, REACT_APP_NETWORK } = process.env;
+    if (REACT_APP_CLIENT === 'browser') {
+      if (REACT_APP_NETWORK === 'testnet') {
         return (
           <Dropdown.Item>
             <a href='https://tonne.app'>Switch to Mainnet</a>
           </Dropdown.Item>
         );
-      } else {
+      } else if (REACT_APP_NETWORK === 'bitcoinSV') {
         return (
           <Dropdown.Item>
             <a href='https://test.tonne.app'>Switch to Testnet</a>
           </Dropdown.Item>
         );
       }
-    } else {
-      if (process.env.REACT_APP_NETWORK === 'testnet') {
-        return (
-          <Dropdown.Item>
-            <Link className='ui'>Switch to Mainnet</Link>
-          </Dropdown.Item>
-        );
-      } else {
-        return (
-          <Dropdown.Item>
-            <Link className='ui'>Switch to Testnet</Link>
-          </Dropdown.Item>
-        );
-      }
     }
-  };
+    return null;
+  }
 
   render() {
     return (
@@ -93,8 +81,7 @@ class Header extends React.Component {
                     backgroundColor: 'white',
                     fontSize: '14px',
                   }}>
-                  {this.onSwitchNetworkToggle()}
-
+                  {this.renderNetworkToggle()}
                   <Dropdown.Item>
                     <a href='https://www.xoken.org/contact-us/'>Contact Us</a>
                   </Dropdown.Item>
