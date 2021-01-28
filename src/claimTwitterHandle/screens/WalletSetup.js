@@ -2,7 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { Form, Grid, Loader, Radio, Card, Icon, Image, Divider, Button } from 'semantic-ui-react';
+import { Form, Grid, Loader, Radio, Card, Image, Divider, Button } from 'semantic-ui-react';
 import ImportWallet from '../../wallet/components/ImportWallet';
 import NewWallet from '../../wallet/components/NewWallet';
 import Profiles from '../../wallet/components/Profiles';
@@ -79,6 +79,7 @@ class WalletSetup extends React.Component {
       </>
     );
   };
+
   listFollowers = () => {
     const { followersListToggle } = this.state;
     let followersList = ['', '', '', '', '', '', '', '', '', '', ''];
@@ -101,13 +102,16 @@ class WalletSetup extends React.Component {
       );
     }
   };
+
   onFollowersListToggle = () => {
     const { followersListToggle } = this.state;
     this.setState({ followersListToggle: !followersListToggle });
   };
+
   leftButtonOfCarousal = () => {
     this.horizontalScrollRef.current.scrollLeft -= 150;
   };
+
   rightButtonOfCarousal = () => {
     this.horizontalScrollRef.current.scrollLeft += 150;
   };

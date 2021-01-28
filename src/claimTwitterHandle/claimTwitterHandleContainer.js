@@ -42,7 +42,9 @@ class ClaimTwitterHandleContainer extends Component {
         </Grid>
 
         <div className='ui grid'>
-          <div className='one wide column'></div>
+          <div className='one wide column'>
+            <ProgressIndicator steps={progressTotalSteps} activeStep={progressStep} />
+          </div>
           <div className='fifteen wide column'>
             <ClaimTwitterHandleRoutes />
           </div>

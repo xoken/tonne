@@ -7,7 +7,7 @@ const INITIAL_STATE = {
     title: null,
     progressTotalSteps: 7,
   },
-  screenName: 'test',
+  screenName: '',
   followersCount: undefined,
 };
 
