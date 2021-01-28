@@ -50,16 +50,16 @@ pipeline {
             //   sh 'zip -r tonne-"$(basename $(git symbolic-ref HEAD))"-linux-x64.zip tonne-linux-x64/'
             // }
 
-            echo '****** Starting Regtest Web Build ******'
-            dir(path: 'tonne') {
-              sh 'npm run build:regtest'
-              sh 'zip -r tonne-"$(basename $(git symbolic-ref HEAD))"-web-regtest.zip tonne-web-regtest/'
-            }
-            archiveArtifacts(artifacts: 'tonne/tonne-*.zip', followSymlinks: true)
+            // echo '****** Starting Regtest Web Build ******'
+            // dir(path: 'tonne') {
+            //   sh 'npm run build:regtest'
+            //   sh 'zip -r tonne-"$(basename $(git symbolic-ref HEAD))"-web-regtest.zip tonne-web-regtest/'
+            // }
+            // archiveArtifacts(artifacts: 'tonne/tonne-*.zip', followSymlinks: true)
 
             echo '****** Starting Testnet Web Build ******'
             dir(path: 'tonne') {
-              sh 'npm run build:testnet'
+              sh 'npm run build'
               sh 'zip -r tonne-"$(basename $(git symbolic-ref HEAD))"-web-testnet.zip tonne-web-testnet/'
             }
             archiveArtifacts(artifacts: 'tonne/tonne-*.zip', followSymlinks: true)
