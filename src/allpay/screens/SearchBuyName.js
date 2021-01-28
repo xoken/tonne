@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Popup, Input } from 'semantic-ui-react';
 import { utils } from 'allegory-allpay-sdk';
 import NameRow from '../components/NameRow';
 import * as allpayActions from '../allpayActions';
@@ -34,31 +33,6 @@ class SearchBuyName extends React.Component {
     }
   };
 
-  onSetRoot = async () => {
-    this.setState({ searchResults: undefined, isError: false, message: '' });
-    const { queryName } = this.state;
-    if (queryName) {
-      // if (queryName.includes('/') || queryName.includes('\\')) {
-      // this.setState({ isError: true, message: '\\ , / characters are not allowed' });
-      // } else {
-      try {
-        const { dispatch } = this.props;
-        // const data = { host: '3.238.95.71', port: 9189, name: [97], isProducer: true };
-        const data = { host: '127.0.0.1', port: 9189, name: [115], isProducer: false };
-        await dispatch(allpayActions.buyName(data));
-        this.props.history.push('/wallet/allpay/confirm-purchase');
-        // [97, 112, 47]
-        // const { isAvailable, name, uri, protocol } = await dispatch(
-        //   allpayActions.getResellerURI([].concat(utils.getCodePoint(queryName)))
-        // );
-        // this.setState({ searchResults: [{ isAvailable, name, uri, protocol }] });
-      } catch (error) {
-        this.setState({ isError: true, message: error.message });
-      }
-      // }
-    }
-  };
-
   onSearch = async () => {
     this.setState({ searchResults: undefined, isError: false, message: '' });
     const { queryName } = this.state;
@@ -68,19 +42,25 @@ class SearchBuyName extends React.Component {
       } else {
         try {
           const { dispatch } = this.props;
-          // const data = { host: '3.238.95.71', port: 9189, name: [115], isProducer: false };
-          // const data = { host: '127.0.0.1', port: 9189, name: [115], isProducer: false };
-          // await dispatch(allpayActions.buyName(data));
-          // this.props.history.push('/wallet/allpay/confirm-purchase');
-          // [97, 112, 47]
           const { isAvailable, name, uri, protocol } = await dispatch(
-            allpayActions.getResellerURI([].concat(utils.getCodePoint(queryName)))
+            allpayActions.getResellerURI([97, 97, 47].concat(utils.getCodePoint(queryName)))
           );
           this.setState({ searchResults: [{ isAvailable, name, uri, protocol }] });
         } catch (error) {
           this.setState({ isError: true, message: error.message });
         }
       }
+    }
+  };
+
+  onSetRoot = async () => {
+    try {
+      const { dispatch } = this.props;
+      const data = { uri: process.env.REACT_APP_RESELLER_URI, name: [115], isProducer: false };
+      await dispatch(allpayActions.buyName(data));
+      this.props.history.push('/wallet/allpay/confirm-purchase');
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -156,9 +136,11 @@ class SearchBuyName extends React.Component {
                 <button className='ui coral button' onClick={this.onSearch}>
                   Search
                 </button>
-                <button className='ui peach button' onClick={this.onSetRoot}>
-                  Set root
-                </button>
+                {process.env.REACT_APP_ENVIRONMENT === 'development' && (
+                  <button className='ui coral button' onClick={this.onSetRoot}>
+                    Set Root
+                  </button>
+                )}
               </div>
             </div>
           </div>

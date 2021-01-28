@@ -1,59 +1,51 @@
-import { httpClient, authAPI } from 'allegory-allpay-sdk';
+import { wallet, httpClient, authAPI } from 'allegory-allpay-sdk';
 
 class SettingsService {
   constructor(store) {
     this.store = store;
   }
 
-  async changeConfig(nexaHost, nexaPort, userName, password) {
-    return await this.setConfig(nexaHost, nexaPort, userName, password);
+  async changeConfig(nexaURI, userName, password) {
+    return await this._setConfig(nexaURI, userName, password);
   }
 
-  async setConfig(nexaHost, nexaPort, userName, password) {
-    httpClient.init(nexaHost, nexaPort);
+  async testConfig(nexaURI, userName, password) {
+    httpClient.init(nexaURI);
     const {
-      auth: { sessionKey },
+      auth: { token },
     } = await authAPI.login(userName, password);
-    if (sessionKey) {
-      localStorage.setItem('userName', userName);
-      localStorage.setItem('password', password);
-      localStorage.setItem('sessionKey', sessionKey);
-      return { sessionKey };
-    } else {
-      throw new Error('Incorrect settings');
-    }
-  }
-
-  async testConfig(nexaHost, nexaPort, userName, password) {
-    httpClient.init(nexaHost, nexaPort);
-    const {
-      auth: { sessionKey },
-    } = await authAPI.login(userName, password);
-    if (sessionKey) {
+    if (token) {
       return true;
     } else {
       throw new Error('Incorrect settings');
     }
   }
 
-  async setDefaultConfig() {
-    // const nexaHost = 'sb2.xoken.org';
-    // const nexaPort = 9091;
-    // const userName = 'ExplorerUser';
-    // const password = 'MjYxNjM5NjQyMjU0NzMxMjQyNw';
-    // const nexaHost = '3.238.95.71';
-    const nexaHost = '127.0.0.1';
-    const nexaPort = 9091;
-    // const userName = 'harish';
-    // const password = 'MTMzNDg4MzMyODgxNjI1ODkzNQ';
-    const userName = 'admin';
-    const password = 'MTgzNTkzODY4MzE0Mjg1MTA5MT';
-    const { sessionKey } = await this.setConfig(nexaHost, nexaPort, userName, password);
-    return { nexaHost, nexaPort, userName, password, sessionKey };
+  async _setConfig({ nexaURI, nexaToken, network }) {
+    try {
+      const { token } = await wallet.init({ nexaURI, nexaToken, network });
+      if (token) {
+        return { token };
+      } else {
+        throw new Error('Incorrect settings');
+      }
+    } catch (error) {
+      throw error;
+    }
   }
 
-  initHttp(nexaHost, nexaPort) {
-    httpClient.init(nexaHost, nexaPort);
+  async setConfig() {
+    const {
+      REACT_APP_NEXA_URI: nexaURI,
+      REACT_APP_NEXA_TOKEN: nexaToken,
+      REACT_APP_NETWORK: network,
+    } = process.env;
+    try {
+      const { token } = await this._setConfig({ nexaURI, nexaToken, network });
+      return { nexaURI, token };
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

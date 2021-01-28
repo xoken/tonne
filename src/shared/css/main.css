@@ -129,14 +129,13 @@
   color: #9173a8 !important;
 }
 
-.newpagefooter{
+.newpagefooter {
   position: absolute;
   bottom: 0px !important;
   vertical-align: top;
   left: 0px;
   padding: 0px 5px 0px 5px !important;
   z-index: 999;
-  text-align: center;
   min-width: 100% !important;
   height: 22px;
   margin-top: 0px !important;
@@ -145,6 +144,7 @@
 
 .page-footer {
   text-align: center;
+  font-weight: bold;
   height: 22px;
 }
 .page-footer-displayed {
@@ -205,7 +205,7 @@
   left: 0;
   margin-left: 30px;
   border-radius: 5px;
-  background-color: #fbbd08;
+  background-color: #9173a8;
   transition: height 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .ui.basic.button.borderless {
@@ -213,7 +213,7 @@
 }
 .headertabitems {
   color: #9173a8 !important;
-  box-shadow:1px 1px 3px lightgrey !important;
+  box-shadow: 1px 1px 3px lightgrey !important;
   border-radius: 2px !important;
   z-index: 999;
 }
@@ -229,46 +229,52 @@
   padding: 1em;
 }
 .progressIndicatorStep {
-  width: 10;
-  height: 10;
+  width: 10px;
+  height: 10px;
 }
-.progressindicatorfill {
-  width: 10;
-  height: 10;
+.progressIndicatorFill {
+  width: 10px;
+  height: 10px;
 }
-.coral{
+.coral {
   background-color: #ed7464 !important;
   color: white !important;
 }
 
 .coralinverted {
-    box-shadow: 0 0 0 2px #ed7464 inset!important;
+  box-shadow: 0 0 0 2px #ed7464 inset !important;
 }
-.purplefontcolor{
+.purplefontcolor {
   color: #9173a8 !important;
 }
-.peachfontcolor{
-  color:#fbe1e2 !important;
+.purplefontcolor > label {
+  color: #9173a8 !important;
 }
-.purple{
+.peachfontcolor {
+  color: #fbe1e2 !important;
+}
+.purple {
   background-color: #9173a8 !important;
   color: white !important;
 }
-.peach{
+.peach {
   background-color: #fbe1e2 !important;
   color: #9173a8 !important;
 }
-.page-header{
-  background-color: none !important
+.page-header {
+  background: none;
 }
 .backspace {
   background-color: #fbe1e2 !important;
-  color:#9173a8 !important;
+  color: #9173a8 !important;
   border-radius: 2px !important;
   box-shadow: 2px 2px 5px !important;
+  position: relative;
+  display: inline-block !important;
+  text-align: left !important;
 }
-.uneditableinput{
-  border:1px #888 solid;
+.uneditableinput {
+  border: 1px #888 solid;
   position: relative;
   white-space: nowrap;
   display: inline;
@@ -276,21 +282,20 @@
   line-height: 45px;
   font-weight: bold;
 }
-.searchname{
-  border:1px #888 solid !important;
+.searchname {
+  border: 1px #888 solid !important;
   border-left-width: 0px !important;
   border-radius: 0px !important;
   padding-left: 0px !important;
-
 }
-.searchname > input{
-  border:1px #888 solid !important;
+.searchname > input {
+  border: 1px #888 solid !important;
   border-radius: 0px !important;
 }
-.buyallpaybutton{
+.buyallpaybutton {
   background-color: #ed7464;
-  color:white;
-  padding:8px 10px 8px 10px;
+  color: white;
+  padding: 8px 10px 8px 10px;
   border-radius: 4px;
   font-weight: bold;
   position: relative;
@@ -299,22 +304,41 @@
   margin-right: 10px;
 }
 
-.buyallpaybutton:hover{
-  color:white;
+.buyallpaybutton:hover {
+  color: white;
 }
-.buyallpaybuttonactive{
+.buyallpaybuttonactive {
   display: none !important;
 }
-.dropdownmenuitems{
-  color: #9173a8 !important;
+.ui.dropdown .menu > .item a,
+.ui.dropdown .menu > .item span {
+  color: #9173a8;
 }
-.logoutlink{
-  color:#dc3545 !important;
+.ui.dropdown .menu > .item .active {
+  color: grey;
 }
-.welcometext{
-  padding:10px 0px 10px 0px;
+.logoutlink {
+  color: #dc3545 !important;
+}
+.welcometext {
+  padding: 10px 0px 10px 0px;
   font-weight: bold;
   position: relative;
   bottom: -10px !important;
   font-size: 22px;
+}
+.ui.header:first-child {
+  margin-top: 0;
+}
+.ui.header.generalheadingscolor {
+  color: grey;
+}
+/* .ui.button {
+  margin-right: 0;
+} */
+.indicator {
+  display: inline-block;
+}
+.indicator:first-letter {
+  text-transform: capitalize;
 }

@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
-import { Grid } from 'semantic-ui-react';
+import { Button, Grid, Header } from 'semantic-ui-react';
 var globmnorig = '';
 var globmndupl = '';
 
@@ -12,21 +12,15 @@ class NewWallet extends React.Component {
   constructor(props) {
     super(props);
     this.state = { continue: false };
+    this.morigfull = '';
+    this.mnorig = [];
+    this.mndupl = [];
   }
-
-  morigfull = '';
-  mnorig = [];
-  mndupl = [];
-  self = this;
 
   generateMnemonic = () => {
     const { dispatch } = this.props;
     dispatch(authActions.generateMnemonic());
     this.setState({ continue: true });
-  };
-
-  onContinue = () => {
-    this.props.history.push('/wallet/password');
   };
 
   addmnwordlistener = () => {
@@ -41,14 +35,29 @@ class NewWallet extends React.Component {
     }
   };
 
+  onContinue = () => {
+    const { onContinue } = this.props;
+    onContinue();
+  };
+
+  renderContinue() {
+    if (this.state.continue) {
+      return (
+        <Grid.Row>
+          <Grid.Column textAlign='center'>
+            <Button className='coral' onClick={this.onContinue}>
+              Continue
+            </Button>
+          </Grid.Column>
+        </Grid.Row>
+      );
+    }
+  }
   printmn = () => {
     document.getElementById('mnemonic').innerHTML = this.morigfull;
-    document.getElementById('unmaskhint').innerHTML =
-      '<h6>Hint: Move your mouse pointer over the masked words to unmask them</h6>';
   };
 
   render() {
-    console.log(this.props.bip39Mnemonic);
     this.morigfull = '';
     this.mnorig.length = 0;
     this.mndupl.length = 0;
@@ -75,42 +84,38 @@ class NewWallet extends React.Component {
         this.addmnwordlistener();
       }
     }
-    var continu;
-    if (this.state.continue === true) {
-      continu = (
-        <button type='button' className='generalbtns coral' onClick={this.onContinue}>
-          Continue
-        </button>
-      );
-    }
 
     return (
-      <>
-        <Grid verticalAlign='middle' style={{ height: '100%' }}>
-          <Grid.Row>
-            <Grid.Column width={16}>
-              <center>
-                <h5 className='generalheadingscolor'>
-                  Please save this mnemonic securely. You will need this to recover your wallet on a
-                  new device.
-                </h5>
-                <div>
-                  <div className='mnemonic' id='mnemonic'></div>
-                </div>
-                <div id='unmaskhint'></div>
-
-                <button type='button' className='generalbtns coral' onClick={this.generateMnemonic}>
-                  Generate Mnemonic
-                </button>
-                <br />
-                {continu}
-
-                <p></p>
-              </center>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </>
+      <Grid>
+        <Grid.Row>
+          <Grid.Column>
+            <Header as='h5' className='generalheadingscolor' textAlign='center'>
+              Please save this mnemonic securely. You will need this to recover your wallet on a new
+              device.
+            </Header>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column>
+            <div className='mnemonic' id='mnemonic'></div>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column>
+            <Header as='h6' id='unmaskhint' textAlign='center'>
+              Hint: Move your mouse pointer over the masked words to unmask them
+            </Header>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column textAlign='center'>
+            <Button className='coral' onClick={this.generateMnemonic}>
+              Generate Mnemonic
+            </Button>
+          </Grid.Column>
+        </Grid.Row>
+        {this.renderContinue()}
+      </Grid>
     );
   }
 }

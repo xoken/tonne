@@ -3,27 +3,15 @@ import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Button, Icon } from 'semantic-ui-react';
-import { decrementFlow, resetAllpay } from '../allpayActions';
 
 class Navbar extends Component {
-  closeAllpay() {
-    const { dispatch, history } = this.props;
-    dispatch(resetAllpay());
-    history.push('/wallet/dashboard');
-  }
   render() {
-    const { title, dispatch, history } = this.props;
+    const { title } = this.props;
     return (
       <>
         <div className='ui secondary menu'>
           <div className='item'>
-            <Button
-              basic
-              circular
-              icon
-              onClick={() => {
-                dispatch(decrementFlow(history));
-              }}>
+            <Button basic circular icon onClick={this.props.onBack}>
               <Icon name='arrow up' />
             </Button>
           </div>
@@ -36,9 +24,9 @@ class Navbar extends Component {
                 basic
                 circular
                 icon
-                onClick={() => {
-                  this.closeAllpay();
-                }}>
+                onClick={
+                  this.props.onClose;
+                }>
                 <Icon name='close' />
               </Button>
             </div>

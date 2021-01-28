@@ -1,15 +1,24 @@
 import React from 'react';
-import { Grid, GridColumn, Icon } from 'semantic-ui-react';
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { Button, Grid, GridColumn, Icon } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
+import * as claimTwitterHandleActions from '../../claimTwitterHandle/claimTwitterHandleActions';
 import images from '../images';
 
-export default class Home extends React.Component {
+class Home extends React.Component {
+  onClaimTwitterHandle = () => {
+    const { dispatch, history } = this.props;
+    dispatch(claimTwitterHandleActions.doTwitterAuth(history));
+  };
+
   render() {
     return (
       <Grid verticalAlign='middle' style={{ height: '100%' }}>
         <GridColumn>
           <div className='ui placeholder segment'>
-            <div className='ui two column stackable center aligned grid'>
+            <div className='ui three column stackable center aligned grid'>
               <div className='column'>
                 <div className='ui icon header purplefontcolor'>
                   <Icon name='bitcoin' style={{ transform: 'rotate(-14deg)' }} />
@@ -22,6 +31,7 @@ export default class Home extends React.Component {
               <div className='column'>
                 <div className='ui icon header purplefontcolor'>
                   <img
+                    alt='Bitcoin SV Wallet'
                     src={images.wallet}
                     style={{
                       display: 'block',
@@ -36,6 +46,20 @@ export default class Home extends React.Component {
                   Wallet
                 </Link>
               </div>
+              {process.env.REACT_APP_ENVIRONMENT === 'development' && (
+                <div className='column'>
+                  <div className='ui icon header purplefontcolor'>
+                    <Icon name='twitter' />
+                    On-Chain Name
+                  </div>
+                  <Button
+                    to='/claim-twitter-handle/auth/twitter'
+                    className='ui coral button'
+                    onClick={this.onClaimTwitterHandle}>
+                    Claim Twitter Handle
+                  </Button>
+                </div>
+              )}
             </div>
           </div>
         </GridColumn>
@@ -43,3 +67,13 @@ export default class Home extends React.Component {
     );
   }
 }
+
+Home.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+};
+
+Home.defaultProps = {};
+
+const mapStateToProps = state => ({});
+
+export default withRouter(connect(mapStateToProps)(Home));

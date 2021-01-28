@@ -43,10 +43,16 @@ class ExplorerAddress extends React.Component {
       this.arrayoftxs.length = 0;
       var temparray = [];
       for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
-        temparray[v] = this.rjdecoded.outputs[v].outputTxHash;
+        if (this.rjdecoded.outputs[v].spendInfo) {
+          temparray.push(this.rjdecoded.outputs[v].spendInfo.spendingTxId);
+          temparray.push(this.rjdecoded.outputs[v].outputTxHash);
+        } else {
+          temparray.push(this.rjdecoded.outputs[v].outputTxHash);
+        }
       }
       this.arrayoftxs = Array.of(temparray);
       this.rjdecodedtx = await ExplorerHttpsReq.httpsreq('getTransactionsByTxIDs', this.arrayoftxs);
+
       this.pagearrayinit();
     }
   };
@@ -55,7 +61,6 @@ class ExplorerAddress extends React.Component {
     this.txlist.length = 0;
     var printbreaker = 1;
     var txnumber = (this.selected - 1) * this.outputsperpage;
-    console.log(this.selected + 'this.selected');
 
     for (var i = txnumber; i < this.addressCache.length; i++) {
       this.txlist.push(
@@ -65,8 +70,8 @@ class ExplorerAddress extends React.Component {
               <Grid.Column className='txslnum'>
                 <h4>
                   #({i + 1})&nbsp;
-                  <Link to={'/explorer/transaction/' + this.addressCache[i].outputTxHash}>
-                    {this.addressCache[i].outputTxHash}
+                  <Link to={'/explorer/transaction/' + this.addressCache[i].txId}>
+                    {this.addressCache[i].txId}
                   </Link>
                 </h4>
               </Grid.Column>
@@ -297,7 +302,6 @@ class ExplorerAddress extends React.Component {
     this.txCache.length = 0;
     this.cachecounter = 0;
     this.caching();
-    console.log(this.addressCache.length + 'this.addressCache.length');
     if (this.addressCache.length > 0) {
       var tempindex = 1;
       if (this.addressCache.length > this.outputsperpage) {
@@ -315,6 +319,7 @@ class ExplorerAddress extends React.Component {
       this.batches = Math.ceil(this.totalpagesavailable / this.fixedpagearrlength);
       this.currentbatchnum = Math.ceil(this.selected / this.fixedpagearrlength);
       this.printpagination();
+
       this.printresults();
     } else {
       //
@@ -325,13 +330,13 @@ class ExplorerAddress extends React.Component {
     if (Object.keys(this.rjdecoded.outputs).length > 0) {
       this.arrayoftxs.length = 0;
       var temparray = [];
-      for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
-        temparray[v] = this.rjdecoded.outputs[v].outputTxHash;
+      for (var v = 0; v < Object.keys(this.rjdecodedtx.txs).length; v++) {
+        temparray[v] = this.rjdecodedtx.txs[v].txId;
       }
       this.arrayoftxs = Array.of(temparray);
 
-      for (var i = 0; i < Object.keys(this.rjdecoded.outputs).length; i++) {
-        this.addressCache[this.cachecounter] = this.rjdecoded.outputs[i];
+      for (var i = 0; i < Object.keys(this.rjdecodedtx.txs).length; i++) {
+        this.addressCache[this.cachecounter] = this.rjdecodedtx.txs[i];
         this.txCache[this.cachecounter] = this.rjdecodedtx.txs[i];
         this.cachecounter += 1;
       }
@@ -339,9 +344,6 @@ class ExplorerAddress extends React.Component {
     } else {
       this.nextcursor = null;
     }
-    console.log(this.addressCache.length + 'addressCache.length');
-    console.log(this.arrayoftxs.length + 'this.arrayoftxs.length');
-    console.log(this.txCache.length + 'this.txCache.length');
   };
 
   adddataupdatepagearray = () => {
@@ -419,9 +421,7 @@ class ExplorerAddress extends React.Component {
   };
 
   addlistener = event => {
-    this.selected = event.target.value;
-    console.log(this.selected + 'this.selected addlistener');
-    console.log(event.target.value + 'event.target.value addlistener');
+    this.selected = parseInt(event.target.value);
     this.printpagination();
     this.printresults();
   };
@@ -433,7 +433,6 @@ class ExplorerAddress extends React.Component {
 
       for (var t = 0; t < this.fixedpagearrlength; t++) {
         this.pagearray[t] = ltindex;
-        console.log(this.pagearray[t] + 'this.pagearray[t]');
         ltindex += 1;
       }
 
@@ -448,9 +447,6 @@ class ExplorerAddress extends React.Component {
       this.pagearray[this.pagearray.length - 1] !== this.totalpagesavailable ||
       this.nextcursor != null
     ) {
-      console.log('right arrow clicked');
-      //  console.log(this.pagearray[this.pagearray.length-1]+"this.pagearray[this.pagearray.length-1]");
-      console.log(this.totalpagesavailable + 'totalpagesavailable');
       this.currentbatchnum = Math.ceil(this.pagearray[0] / this.fixedpagearrlength);
       if (
         this.pagearray[this.pagearray.length - 1] === this.totalpagesavailable &&
@@ -461,20 +457,26 @@ class ExplorerAddress extends React.Component {
           100,
           this.nextcursor
         );
+        if (Object.keys(this.rjdecoded.outputs).length > 0) {
+          this.arrayoftxs.length = 0;
+          var temparray = [];
+          for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
+            if (this.rjdecoded.outputs[v].spendInfo) {
+              temparray.push(this.rjdecoded.outputs[v].spendInfo.spendingTxId);
+              temparray.push(this.rjdecoded.outputs[v].outputTxHash);
+            } else {
+              temparray.push(this.rjdecoded.outputs[v].outputTxHash);
+            }
+          }
 
-        this.arrayoftxs.length = 0;
-        var temparray = [];
-        for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
-          temparray[v] = this.rjdecoded.outputs[v].outputTxHash;
+          this.arrayoftxs = Array.of(temparray);
+          this.rjdecodedtx = await ExplorerHttpsReq.httpsreq(
+            'getTransactionsByTxIDs',
+            this.arrayoftxs
+          );
         }
-        this.arrayoftxs = Array.of(temparray);
-        this.rjdecodedtx = await ExplorerHttpsReq.httpsreq(
-          'getTransactionsByTxIDs',
-          this.arrayoftxs
-        );
         this.adddataupdatepagearray();
       } else {
-        console.log('elseblock');
         this.currentbatchnum += 1;
         var tindex = this.pagearray[this.pagearray.length - 1];
 
@@ -489,7 +491,6 @@ class ExplorerAddress extends React.Component {
         for (var t = 0; t < this.pagearrlength; t++) {
           tindex += 1;
           this.pagearray[t] = tindex;
-          console.log(this.pagearray[t] + 'this.pagearray[t]');
         }
         this.printpagination();
       }

@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { Button, Grid, Message, Modal } from 'semantic-ui-react';
 import * as authActions from '../../auth/authActions';
@@ -7,40 +8,47 @@ class RenameProfile extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      newname: '',
-      updateError: false,
+      newProfilename: '',
+      isError: false,
+      message: '',
     };
   }
 
-  onRenameAccount = async () => {
-    const { dispatch } = this.props;
-    const { newname } = this.state;
+  onRenameProfile = async () => {
+    const {
+      profile: { screenName },
+      dispatch,
+    } = this.props;
+    const { newProfilename } = this.state;
     try {
-      const message = await dispatch(
-        authActions.updateProfileName(localStorage.getItem('currentprofile'), newname)
-      );
-      this.setState({ updateError: message });
-      if (!message) {
-        this.props.logout();
-      }
+      await dispatch(authActions.updateProfileName(screenName, newProfilename));
+      this.setState({ isError: false, message: 'Success! Your Profile has been renamed.' });
+      setTimeout(() => {
+        this.props.onClose();
+        dispatch(authActions.logoutSuccess());
+      }, 1000);
     } catch (error) {
-      this.setState({ updateError: false });
+      this.setState({ isError: true, message: error.message });
     }
   };
 
-  printMessage = () => {
-    const { updateError } = this.state;
-    if (updateError) {
+  renderMessage() {
+    const { isError, message } = this.state;
+    if (message) {
       return (
-        <Message negative>
-          <Message.Header>Sorry. We could not rename your profile</Message.Header>
+        <Message negative={isError}>
+          <Message.Header>{message}</Message.Header>
         </Message>
       );
     }
-  };
+    return null;
+  }
 
   render() {
-    const { newname } = this.state;
+    const { newProfilename } = this.state;
+    const {
+      profile: { screenName },
+    } = this.props;
     return (
       <>
         <Modal.Header>Rename Current Profile</Modal.Header>
@@ -50,29 +58,25 @@ class RenameProfile extends React.Component {
               <Grid.Column textAlign='center' width={8}>
                 <div className='ui form'>
                   <div className='field'>
-                    <label>
-                      Change Current Profile Name : {localStorage.getItem('currentprofile')}
-                    </label>
+                    <label>Change Current Profile Name : {screenName}</label>
                     <div className='ui input'>
                       <input
                         type='text'
                         placeholder='New profile name'
-                        value={newname}
-                        onChange={event => this.setState({ newname: event.target.value })}
+                        value={newProfilename}
+                        onChange={event => this.setState({ newProfilename: event.target.value })}
                       />
                     </div>
                   </div>
-                  <center>
-                    <Button className='coral' onClick={this.onRenameAccount}>
+                  <div className='field'>
+                    <Button className='coral' onClick={this.onRenameProfile}>
                       Rename
                     </Button>
                     <Button className='coral' onClick={this.props.onClose}>
                       Cancel
                     </Button>
-                  </center>
-                  <Grid.Column textAlign='center' width={16}>
-                    {this.printMessage}
-                  </Grid.Column>
+                  </div>
+                  {this.renderMessage()}
                 </div>
               </Grid.Column>
             </Grid>
@@ -83,6 +87,16 @@ class RenameProfile extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({});
+RenameProfile.propTypes = {
+  profile: PropTypes.shape({
+    screenName: PropTypes.string.isRequired,
+  }).isRequired,
+};
+
+RenameProfile.defaultProps = {};
+
+const mapStateToProps = state => ({
+  profile: state.auth.profile,
+});
 
 export default connect(mapStateToProps)(RenameProfile);

@@ -32,7 +32,6 @@ class ExplorerDashboard extends React.Component {
       !isNaN(this.props.match.params.blockheight)
     ) {
       this.blockhei = this.props.match.params.blockheight;
-      console.log(this.blockhei + 'this.blockhei');
     }
     this.rjdecoded = await ExplorerHttpsReq.httpsreq('getChainInfo');
     if (this.rjdecoded !== undefined) {
@@ -48,7 +47,6 @@ class ExplorerDashboard extends React.Component {
       if (this.selected === 0) {
         this.selected = 1;
       }
-      console.log(this.selected + 'this.selected');
       if (this.selected <= this.pagearrlength - 2) {
         this.index = 1;
       } else if (this.selected >= this.numberofpages - (this.pagearrlength - 2)) {
@@ -59,10 +57,8 @@ class ExplorerDashboard extends React.Component {
 
   summary = () => {
     this.syncedblocksheight = this.rjdecoded.chainInfo.blocksSynced;
-    console.log('summary' + this.syncedblocksheight);
     this.numberofpages = Math.ceil(this.syncedblocksheight / 20);
     this.pagearray = [1, 2, 3, 4, 5, 6, 7, '-', this.numberofpages];
-    console.log('summary' + this.pagearray);
     this.summarysection.push(
       <>
         <Grid>
@@ -105,7 +101,6 @@ class ExplorerDashboard extends React.Component {
         </Grid>
       </>
     );
-    console.table(this.summarysection);
     this.blockheiinit();
     this.updatepagearray();
     this.updateheightlist();
@@ -131,10 +126,9 @@ class ExplorerDashboard extends React.Component {
       this.state.selectnum > 0 &&
       /^\d+$/.test(this.state.selectnum)
     ) {
-      this.selected = this.state.selectnum;
+      this.selected = parseInt(this.state.selectnum);
       this.updateheightlist();
       this.callsec();
-      console.log(this.selected);
       if (this.selected <= this.pagearrlength - 2) {
         this.index = 1;
       } else if (this.selected >= this.numberofpages - (this.pagearrlength - 2)) {
@@ -154,7 +148,7 @@ class ExplorerDashboard extends React.Component {
   };
 
   addlistener = event => {
-    this.selected = event.target.value;
+    this.selected = parseInt(event.target.value);
     this.updateheightlist();
     this.updatepagearray();
     this.callsec();

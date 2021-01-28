@@ -74,7 +74,7 @@ export const createProfile = password => async (dispatch, getState, { serviceInj
     } = getState();
     const { profile } = await serviceInjector(AuthService).createProfile(bip39Mnemonic, password);
     dispatch(createProfileSuccess());
-    await dispatch(login(profile, password));
+    await dispatch(login(profile.screenName, password));
   } catch (error) {
     dispatch(createProfileFailure());
     throw error;
@@ -93,10 +93,10 @@ export const updateProfileName = (currentProfileName, newProfileName) => async (
       newProfileName
     );
     dispatch(updateProfileNameSuccess({ profile }));
-    return false;
+    return true;
   } catch (error) {
     dispatch(updateProfileNameFailure());
-    return true;
+    throw error;
   }
 };
 

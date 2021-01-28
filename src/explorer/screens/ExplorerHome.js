@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Switch, useRouteMatch } from 'react-router-dom';
+import NoMatch from '../../shared/components/noMatch';
 import ExplorerAddress from './ExplorerAddress';
 import ExplorerBlockHeight from './ExplorerBlockHeight';
 import ExplorerBlockHash from './ExplorerBlockHash';
@@ -7,7 +8,6 @@ import ExplorerTransaction from './ExplorerTransaction';
 import ExplorerDashboard from './ExplorerDashboard';
 import ExplorerSearch from '../components/ExplorerSearch';
 import NoResultsFound from './NoResultsFound';
-import NoMatch from '../../shared/components/noMatch';
 
 export default function ExplorerHome() {
   const { path } = useRouteMatch();
@@ -15,7 +15,6 @@ export default function ExplorerHome() {
     <>
       <ExplorerSearch />
       <div id='searchnegative'>
-        <div className='backspace' id='back'></div>
         <Switch>
           <Route path={`${path}/blockheight/:blockheight/:txid`}>
             <ExplorerBlockHeight />
@@ -35,7 +34,7 @@ export default function ExplorerHome() {
           <Route path={`${path}/:blockheight`}>
             <ExplorerDashboard />
           </Route>
-          <Route exact path={`${path}`}>
+          <Route exact path={path}>
             <ExplorerDashboard />
           </Route>
           <Route path='*'>

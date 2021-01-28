@@ -2,16 +2,28 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import ProgressIndicator from './components/ProgressIndicator';
+import Navbar from '../shared/components/Navbar';
+import ProgressIndicator from '../shared/components/ProgressIndicator';
 import { AllpayRoutes } from './allpayRoutes';
-import Navbar from './components/Navbar';
+import { decrementFlow, resetAllpay } from './allpayActions';
 
 class AllpayContainer extends Component {
+  closeAllpay() {
+    const { dispatch, history } = this.props;
+    dispatch(resetAllpay());
+    history.push('/wallet/dashboard');
+  }
+
+  onBack = () => {
+    const { dispatch, history } = this.props;
+    dispatch(decrementFlow(history));
+  };
+
   render() {
     const { progressStep, progressTotalSteps, title } = this.props;
     return (
       <>
-        <Navbar title={title || ''} />
+        <Navbar title={title || ''} onBack={this.onBack} />
         <div className='ui grid'>
           <div className='one wide column'>
             <ProgressIndicator steps={progressTotalSteps} activeStep={progressStep} />
