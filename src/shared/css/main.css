@@ -336,3 +336,9 @@
 /* .ui.button {
   margin-right: 0;
 } */
+.indicator {
+  display: inline-block;
+}
+.indicator:first-letter {
+  text-transform: capitalize;
+}

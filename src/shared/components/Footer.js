@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { chainAPI } from 'allegory-allpay-sdk';
-import { Link } from 'react-router-dom';
 import { Button, Grid } from 'semantic-ui-react';
 import images from '../images';
 
@@ -98,18 +97,10 @@ class Footer extends React.Component {
                     />
                   </a>
                 </Grid.Column>
-                <Grid.Column width={6} style={{ whiteSpace: 'nowrap' }}>
-                  {process.env.REACT_APP_CLIENT === 'browser' &&
-                    process.env.REACT_APP_ENVIRONMENT === 'development' && (
-                      <Link to='/downloads' className='peach'>
-                        Download Tonne App
-                      </Link>
-                    )}
-                </Grid.Column>
+                <Grid.Column width={6}></Grid.Column>
                 <Grid.Column width={5} style={{ whiteSpace: 'nowrap' }}>
-                  <a href='https://www.xoken.org/contact-us/' className='peach'>
-                    Contact Us
-                  </a>
+                  Connected to{' '}
+                  <span className='indicator peach'>{`${process.env.REACT_APP_NETWORK}`}</span>
                 </Grid.Column>
               </Grid.Row>
             </Grid>
