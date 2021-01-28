@@ -60,7 +60,7 @@ pipeline {
             echo '****** Starting Testnet Web Build ******'
             dir(path: 'tonne') {
               sh 'npm run build'
-              sh 'zip -r tonne-web-testnet.zip ./tonne-web-testnet/'
+              sh 'zip -r tonne-web-testnet.zip build'
             }
             archiveArtifacts(artifacts: 'tonne/tonne-*.zip', followSymlinks: true)
           // } else {

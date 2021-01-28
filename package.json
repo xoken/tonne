@@ -35,7 +35,7 @@
   "main": "src/electron-starter.js",
   "scripts": {
     "start": "env-cmd -e regtest react-scripts start",
-    "build": "env-cmd -e testnet react-scripts build && mv build tonne-web-testnet",
+    "build": "env-cmd -e testnet react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "electron": "electron ."
