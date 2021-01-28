@@ -1,10 +1,42 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { NavLink, Link } from 'react-router-dom';
-import { Icon } from 'semantic-ui-react';
+import { Icon, Menu, Dropdown } from 'semantic-ui-react';
 import images from '../images';
 
 class Header extends React.Component {
+  onSwitchNetworkToggle = () => {
+    if (process.env.REACT_APP_CLIENT === 'browser') {
+      if (process.env.REACT_APP_NETWORK === 'testnet') {
+        return (
+          <Dropdown.Item>
+            <a href='https://tonne.app'>Switch to Mainnet</a>
+          </Dropdown.Item>
+        );
+      } else {
+        return (
+          <Dropdown.Item>
+            <a href='https://test.tonne.app'>Switch to Testnet</a>
+          </Dropdown.Item>
+        );
+      }
+    } else {
+      if (process.env.REACT_APP_NETWORK === 'testnet') {
+        return (
+          <Dropdown.Item>
+            <Link className='ui'>Switch to Mainnet</Link>
+          </Dropdown.Item>
+        );
+      } else {
+        return (
+          <Dropdown.Item>
+            <Link className='ui'>Switch to Testnet</Link>
+          </Dropdown.Item>
+        );
+      }
+    }
+  };
+
   render() {
     return (
       <header className='page-header'>
@@ -43,6 +75,34 @@ class Header extends React.Component {
                 <Icon name='setting' />
                 Settings
               </NavLink> */}
+
+              <Dropdown
+                button
+                className='icon purplefontcolor'
+                icon='bars'
+                style={{
+                  backgroundColor: 'white',
+                  height: 'auto',
+                  marginTop: 'auto',
+                  marginBottom: 'auto',
+                  zIndex: 999,
+                  fontSize: '25px',
+                }}>
+                <Dropdown.Menu
+                  style={{
+                    backgroundColor: 'white',
+                    fontSize: '14px',
+                  }}>
+                  {this.onSwitchNetworkToggle()}
+
+                  <Dropdown.Item>
+                    <a href='https://www.xoken.org/contact-us/'>Contact Us</a>
+                  </Dropdown.Item>
+                  <Dropdown.Item>
+                    <Link to='/downloads'>Download App</Link>
+                  </Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
             </div>
           </div>
         </div>
