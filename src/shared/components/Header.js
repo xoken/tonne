@@ -21,6 +21,20 @@ class Header extends React.Component {
           </Dropdown.Item>
         );
       }
+    } else {
+      if (REACT_APP_NETWORK === 'testnet') {
+        return (
+          <Dropdown.Item>
+            <Link className='ui'>Switch to Mainnet</Link>
+          </Dropdown.Item>
+        );
+      } else if (REACT_APP_NETWORK === 'bitcoinSV') {
+        return (
+          <Dropdown.Item>
+            <Link className='ui'>Switch to Testnet</Link>
+          </Dropdown.Item>
+        );
+      }
     }
     return null;
   }

@@ -97,7 +97,7 @@ class Footer extends React.Component {
                     />
                   </a>
                 </Grid.Column>
-                <Grid.Column width={6} style={{ whiteSpace: 'nowrap' }}></Grid.Column>
+                <Grid.Column width={6}></Grid.Column>
                 <Grid.Column width={5} style={{ whiteSpace: 'nowrap' }}>
                   Connected to{' '}
                   <span className='indicator peach'>{`${process.env.REACT_APP_NETWORK}`}</span>
