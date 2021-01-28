@@ -342,7 +342,3 @@
 .indicator:first-letter {
   text-transform: capitalize;
 }
-
-.switchNetworkColor {
-  color: #9173a8 !important;
-}
