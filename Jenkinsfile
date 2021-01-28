@@ -4,14 +4,14 @@ pipeline {
 
     stage('Prepare') {
       steps {
-        sh 'mkdir -p tonne'
-        dir(path: 'tonne') {
-          git( credentialsId: 'github', url: 'https://github.com/xoken/tonne' , branch: 'master')
-        }
-
         sh 'mkdir -p allegory-allpay-sdk'
         dir(path: 'allegory-allpay-sdk') {
           git( credentialsId: 'github', url: 'https://github.com/xoken/allegory-allpay-sdk' , branch: 'master')
+        }
+
+        sh 'mkdir -p tonne'
+        dir(path: 'tonne') {
+          git( credentialsId: 'github', url: 'https://github.com/xoken/tonne' , branch: "${env.BRANCH_NAME}")
         }
       }
     }
@@ -50,17 +50,23 @@ pipeline {
             //   sh 'zip -r tonne-"$(basename $(git symbolic-ref HEAD))"-linux-x64.zip tonne-linux-x64/'
             // }
 
-            // echo '****** Starting Regtest Web Build ******'
-            // dir(path: 'tonne') {
-            //   sh 'npm run build:regtest'
-            //   sh 'zip -r tonne-"$(basename $(git symbolic-ref HEAD))"-web-regtest.zip tonne-web-regtest/'
-            // }
-            // archiveArtifacts(artifacts: 'tonne/tonne-*.zip', followSymlinks: true)
+            echo '****** Starting Regtest Web Build ******'
+            dir(path: 'tonne') {
+              sh 'npm run build:regtest'
+              sh 'mv build tonne-web-regtest'
+              sh 'git log -n 1 >> commit.log'
+              sh 'mv commit.log tonne-web-regtest'
+              sh 'zip -r tonne-"$(basename $(git symbolic-ref HEAD))"-web-regtest.zip tonne-web-regtest'
+            }
+            archiveArtifacts(artifacts: 'tonne/tonne-*.zip', followSymlinks: true)
 
             echo '****** Starting Testnet Web Build ******'
             dir(path: 'tonne') {
-              sh 'npm run build'
-              sh 'zip -r tonne-web-testnet.zip build'
+              sh 'npm run build:testnet'
+              sh 'mv build tonne-web-testnet'
+              sh 'git log -n 1 >> commit.log'
+              sh 'mv commit.log tonne-web-testnet'
+              sh 'zip -r tonne-"$(basename $(git symbolic-ref HEAD))"-web-testnet.zip tonne-web-testnet'
             }
             archiveArtifacts(artifacts: 'tonne/tonne-*.zip', followSymlinks: true)
           // } else {
