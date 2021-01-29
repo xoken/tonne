@@ -8,6 +8,7 @@ import NewWallet from '../../wallet/components/NewWallet';
 import Profiles from '../../wallet/components/Profiles';
 import images from '../../shared/images';
 import * as authActions from '../../auth/authActions';
+import * as claimTwitterHandleActions from '../../claimTwitterHandle/claimTwitterHandleActions';
 import * as authSelectors from '../../auth/authSelectors';
 
 class WalletSetup extends React.Component {
@@ -23,6 +24,7 @@ class WalletSetup extends React.Component {
   async componentDidMount() {
     const { dispatch } = this.props;
     await dispatch(authActions.getProfiles());
+    await dispatch(claimTwitterHandleActions.getPurchasedFollowers({ prefix: [97, 97, 47] }));
   }
 
   onHandleChange = (_, { value }) => {
@@ -122,21 +124,26 @@ class WalletSetup extends React.Component {
         <Grid>
           <Grid.Row>
             <Grid.Column>
-              <center>
-                <h3 className='purplefontcolor'>
-                  Hello {this.props.screenName}, you need a BSV wallet to proceed
-                </h3>
-              </center>
+              <h3 className='purplefontcolor'>
+                Hello {this.props.screenName}, you need a BSV wallet to proceed
+              </h3>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row style={{ backgroundColor: '#fafafa' }}>
+          <Grid.Row
+            style={
+              {
+                // backgroundColor: '#fafafa'
+              }
+            }>
             <Grid.Column>
               <Form
-                style={{
-                  width: 'max-content',
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                }}>
+                style={
+                  {
+                    // width: 'max-content',
+                    // marginLeft: 'auto',
+                    // marginRight: 'auto',
+                  }
+                }>
                 <Form.Field>
                   <Radio
                     label='I already have a seed phrase'
@@ -171,6 +178,7 @@ class WalletSetup extends React.Component {
           {this.renderCreateWallet()}
           {this.renderExistingProfile()}
         </Grid>
+        {/*
         <center>
           <h4 className='purplefontcolor' style={{ marginTop: '60px' }}>
             2000 of your followers on Bitcoin
@@ -209,6 +217,7 @@ class WalletSetup extends React.Component {
             &gt;
           </Button>
         </center>
+        */}
       </>
     );
   }
@@ -229,6 +238,7 @@ const mapStateToProps = state => ({
   screenName: state.twitter.screenName,
   profile: authSelectors.getProfile(state),
   profiles: authSelectors.getProfiles(state),
+  purchasedTwitterHandles: state.twitter.purchasedTwitterHandles,
 });
 
 export default withRouter(connect(mapStateToProps)(WalletSetup));

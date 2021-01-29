@@ -7,16 +7,28 @@ const INITIAL_STATE = {
     title: null,
     progressTotalSteps: 7,
   },
-  screenName: '',
+  screenName: undefined,
   followersCount: undefined,
+  oauthToken: undefined,
+  oauthTokenSecret: undefined,
+  purchasedTwitterHandles: [],
 };
 
 export default createReducer(
   {
-    [actions.updateTwitterInfo]: (state, { screenName, followersCount }) => ({
+    [actions.updateTwitterInfo]: (
+      state,
+      { screenName, followersCount, oauthToken, oauthTokenSecret }
+    ) => ({
       ...state,
       screenName,
       followersCount,
+      oauthToken,
+      oauthTokenSecret,
+    }),
+    [actions.getPurchasedFollowersSuccess]: (state, { purchasedTwitterHandles }) => ({
+      ...state,
+      purchasedTwitterHandles,
     }),
     [actions.UPDATE_SCREEN_PROPS]: (state, payload) => ({
       ...state,
@@ -28,11 +40,8 @@ export default createReducer(
     [actions.RESET_FLOW]: () => ({
       ...INITIAL_STATE,
     }),
-    [actions.SET_NAME]: (state, { name }) => ({
+    [actions.SET_NAME]: state => ({
       ...state,
-      outpoint: {
-        name,
-      },
     }),
   },
   INITIAL_STATE

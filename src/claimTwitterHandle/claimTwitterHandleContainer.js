@@ -13,16 +13,10 @@ class ClaimTwitterHandleContainer extends Component {
     return (
       <>
         <Navbar title={title || ''} />
-        <Grid>
-          <Grid.Row verticalAlign='middle' className='nopaddingbottom'>
-            <Grid.Column centered width={1}>
-              <ProgressIndicator steps={progressTotalSteps} activeStep={progressStep} />
-            </Grid.Column>
+        {/*<Grid>
+          <Grid.Row verticalAlign='middle'>
             <Grid.Column floated='right' textAlign='right' width={5}>
               <Card style={{ boxShadow: 'none' }}>
-                {
-                  //<Image src='profileImage.png' size='small' circular centered />
-                }
                 <Card.Content>
                   <Card.Header style={{ whiteSpace: 'nowrap' }}>
                     <Icon name='twitter' size='large' style={{ color: '#00acee' }} />
@@ -33,14 +27,13 @@ class ClaimTwitterHandleContainer extends Component {
               </Card>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row className='nopadding'>
-            <Grid.Column centered width={1}></Grid.Column>
-            <Grid.Column centered width={15}>
+          <Grid.Row>
+            <Grid.Column width={1}></Grid.Column>
+            <Grid.Column width={15}>
               <Divider />
             </Grid.Column>
           </Grid.Row>
-        </Grid>
-
+        </Grid>*/}
         <div className='ui grid'>
           <div className='one wide column'>
             <ProgressIndicator steps={progressTotalSteps} activeStep={progressStep} />
