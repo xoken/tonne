@@ -8,7 +8,7 @@ import * as claimTwitterHandleActions from '../claimTwitterHandleActions';
 import * as allpayActions from '../../allpay/allpayActions';
 import * as walletActions from '../../wallet/walletActions';
 
-class WalletSetupStepTwo extends React.Component {
+class WalletPasswordScreen extends React.Component {
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch(
@@ -75,4 +75,4 @@ const mapStateToProps = state => ({
   screenName: state.twitter.screenName,
 });
 
-export default withRouter(connect(mapStateToProps)(WalletSetupStepTwo));
+export default withRouter(connect(mapStateToProps)(WalletPasswordScreen));

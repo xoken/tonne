@@ -43,11 +43,11 @@ class WalletSetup extends React.Component {
   };
 
   onSelectProfile = profile => () => {
-    this.props.history.push(`/claim-twitter-handle/wallet-setup-two?profile=${profile}`);
+    this.props.history.push(`/claim-twitter-handle/wallet-password-setup?profile=${profile}`);
   };
 
   onContinue = () => {
-    this.props.history.push(`/claim-twitter-handle/wallet-setup-two`);
+    this.props.history.push(`/claim-twitter-handle/wallet-password-setup`);
   };
 
   renderImportWallet() {

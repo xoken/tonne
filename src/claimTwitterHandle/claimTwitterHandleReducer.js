@@ -9,7 +9,15 @@ const INITIAL_STATE = {
   },
   oauthToken: undefined,
   oauthTokenSecret: undefined,
-  user: undefined,
+  user: {
+    followers_count: 6,
+    name: 'Shubendra',
+    profile_image_url:
+      'http://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png',
+    profile_image_url_https:
+      'https://abs.twimg.com/sticky/default_profile_images/default_profile_normal.png',
+    screen_name: 'shubendrak1',
+  },
   purchasedTwitterFollowers: [],
 };
 
