@@ -35,22 +35,22 @@ class ExplorerSearch extends React.Component {
             <form onSubmit={this.onSearchClick}>
               <div className='ui form'>
                 <div className='inline fields'>
-                  <div className='three wide field'></div>
-                  <div className='nine wide field'>
+                  <div
+                    className='ten wide field'
+                    style={{ marginLeft: 'auto', marginRight: 'auto' }}>
                     <input
                       type='text'
                       placeholder='TXID / Address / BlockHeight / BlockHash'
+                      className='searchBoxAndButtons'
                       onChange={event =>
                         this.setState({ searchterm: event.target.value.replace(/\s/g, '') })
                       }
                     />
-                  </div>
-                  <div className='one wide field'>
-                    <Button type='submit' className='coral'>
+
+                    <Button type='submit' className='coral searchBoxAndButtons'>
                       Search
                     </Button>
                   </div>
-                  <div className='three wide field'></div>
                 </div>
               </div>
             </form>

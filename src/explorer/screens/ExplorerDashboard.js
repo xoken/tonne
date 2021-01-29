@@ -61,7 +61,7 @@ class ExplorerDashboard extends React.Component {
     this.pagearray = [1, 2, 3, 4, 5, 6, 7, '-', this.numberofpages];
     this.summarysection.push(
       <>
-        <Grid>
+        <Grid stackable>
           <Grid.Row columns={4}>
             <Grid.Column>
               <b>Chainwork : </b>
@@ -69,13 +69,13 @@ class ExplorerDashboard extends React.Component {
             </Grid.Column>
             <Grid.Column>
               <b>Blocks Synced : </b>
-              <Link to={'/explorer/blockheight/' + this.rjdecoded.chainInfo.blocksSynced + '/""'}>
+              <Link to={'/explorer/blockheight/' + this.rjdecoded.chainInfo.blocksSynced}>
                 {this.rjdecoded.chainInfo.blocksSynced}
               </Link>
             </Grid.Column>
             <Grid.Column>
               <b>Chain Tip : </b>
-              <Link to={'/explorer/blockheight/' + this.rjdecoded.chainInfo.chainTip + '/""'}>
+              <Link to={'/explorer/blockheight/' + this.rjdecoded.chainInfo.chainTip}>
                 {this.rjdecoded.chainInfo.chainTip}
               </Link>
             </Grid.Column>
@@ -87,13 +87,13 @@ class ExplorerDashboard extends React.Component {
           <Grid.Row columns={2}>
             <Grid.Column>
               <b>Synced Block Hash</b>
-              <Link to={'/explorer/blockhash/' + this.rjdecoded.chainInfo.syncedBlockHash + '/""'}>
+              <Link to={'/explorer/blockhash/' + this.rjdecoded.chainInfo.syncedBlockHash}>
                 <div className='wordbreak'>{this.rjdecoded.chainInfo.syncedBlockHash}</div>
               </Link>
             </Grid.Column>
             <Grid.Column>
               <b>Chain Tip Hash</b>
-              <Link to={'/explorer/blockhash/' + this.rjdecoded.chainInfo.chainTipHash + '/""'}>
+              <Link to={'/explorer/blockhash/' + this.rjdecoded.chainInfo.chainTipHash}>
                 <div className='wordbreak'>{this.rjdecoded.chainInfo.chainTipHash}</div>
               </Link>
             </Grid.Column>
@@ -224,7 +224,10 @@ class ExplorerDashboard extends React.Component {
   printresults = () => {
     this.resultsrow.length = 0;
     this.resultsrow.push(
-      <Segment.Group horizontal className='nosegmentmargin'>
+      <Segment.Group
+        horizontal
+        className='nosegmentmargin'
+        style={{ overflow: 'auto', minWidth: '800px' }}>
         <Segment className='cen'>
           <Grid columns={6}>
             <Grid.Row>
@@ -263,12 +266,15 @@ class ExplorerDashboard extends React.Component {
         tempColor = '#FAFAFA';
       }
       this.resultsrow.push(
-        <Segment.Group horizontal className='nosegmentmargin removesegmentborder'>
+        <Segment.Group
+          horizontal
+          className='nosegmentmargin removesegmentborder'
+          style={{ overflow: 'auto', minWidth: '800px' }}>
           <Segment className='cen removesegmentborder'>
             <Grid columns={6} verticalAlign='middle'>
               <Grid.Row style={{ backgroundColor: tempColor }}>
                 <Grid.Column>
-                  <Link to={'/explorer/blockheight/' + this.rjdecoded.blocks[i].height + '/""'}>
+                  <Link to={'/explorer/blockheight/' + this.rjdecoded.blocks[i].height}>
                     {this.rjdecoded.blocks[i].height}
                   </Link>
                 </Grid.Column>
@@ -306,11 +312,13 @@ class ExplorerDashboard extends React.Component {
           //  Back
           //    </button>
         }
-        <div className='opacitywhileload'>
+        <div className='opacitywhileload' style={{ minWidth: '100%' }}>
           <Segment className='removesegmentborder nosegmentmargin removepaddingbottom'>
             <h4 className='purplefontcolor'>Summary</h4>
           </Segment>
-          <Segment className='cen'>{this.summarysection}</Segment>
+          <Segment className='cen' style={{ overflow: 'auto' }}>
+            <div>{this.summarysection}</div>
+          </Segment>
           <Segment className='removesegmentborder'>
             <h4 className='purplefontcolor'>Latest Blocks</h4>
           </Segment>
@@ -331,7 +339,7 @@ class ExplorerDashboard extends React.Component {
                 </div>
                 <div className='three wide field'>
                   <input
-                    className='pagenuminput'
+                    className='pagenuminput searchBoxAndButtons'
                     size='5'
                     type='text'
                     onChange={event =>
@@ -342,7 +350,7 @@ class ExplorerDashboard extends React.Component {
                   />
                 </div>
                 <div className='one wide field'>
-                  <Button type='submit' className='explorerbuttoncolor coral'>
+                  <Button type='submit' className='explorerbuttoncolor coral searchBoxAndButtons'>
                     Go
                   </Button>
                 </div>

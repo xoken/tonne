@@ -96,7 +96,7 @@ class ExplorerBlockHeight extends React.Component {
             </Grid.Column>
             <Grid.Column width='12'>
               <Link
-                to={'/explorer/blockhash/' + this.rjdecoded.block.header.prevBlock + '/""'}
+                to={'/explorer/blockhash/' + this.rjdecoded.block.header.prevBlock}
                 id='previousblock'>
                 {this.rjdecoded.block.header.prevBlock}
               </Link>
@@ -145,9 +145,7 @@ class ExplorerBlockHeight extends React.Component {
               <b>Next Block</b>
             </Grid.Column>
             <Grid.Column width='12'>
-              <Link
-                to={'/explorer/blockhash/' + this.rjdecoded.block.nextBlockHash + '/""'}
-                id='nextblock'>
+              <Link to={'/explorer/blockhash/' + this.rjdecoded.block.nextBlockHash} id='nextblock'>
                 {this.rjdecoded.block.nextBlockHash}
               </Link>
             </Grid.Column>
@@ -210,10 +208,17 @@ class ExplorerBlockHeight extends React.Component {
     this.blocktitle = this.rjdecoded.block.height;
     this.blockhash = this.rjdecoded.block.hash;
 
-    if (this.props.match.params.txid !== undefined && this.props.match.params.txid !== '""') {
-      this.selected = Math.ceil(
-        (parseInt(this.props.match.params.txid, 10) + 1) / this.transactionsperpage
-      );
+    if (this.props.match.params.txid) {
+      if (parseInt(this.props.match.params.txid, 10) === 0) {
+        this.selected = Math.ceil(
+          (parseInt(this.props.match.params.txid, 10) + 1) / this.transactionsperpage
+        );
+      } else {
+        this.selected = Math.ceil(
+          parseInt(this.props.match.params.txid, 10) / this.transactionsperpage
+        );
+      }
+
       this.currentbatchnum = Math.ceil(this.selected / this.fixedarrlength);
 
       this.numberofpages = Math.ceil(this.numberoftransactions / this.transactionsperpage);
@@ -486,11 +491,13 @@ class ExplorerBlockHeight extends React.Component {
         tempColor = 'white';
       }
       this.txsection.push(
-        <Segment.Group className='nosegmentmargin removesegmentborder'>
+        <Segment.Group
+          className='nosegmentmargin removesegmentborder'
+          style={{ width: '800px', overflow: 'auto' }}>
           <Segment style={{ backgroundColor: tempColor }}>
             <Grid columns={1}>
               <Grid.Row>
-                <Grid.Column>
+                <Grid.Column width={16}>
                   ({this.txnumber + printbreaker})&nbsp;
                   <Link to={'/explorer/transaction/' + this.txcache[k]}>{this.txcache[k]}</Link>
                 </Grid.Column>
@@ -582,12 +589,12 @@ class ExplorerBlockHeight extends React.Component {
             <Segment>
               <h4>
                 <span className='purplefontcolor'>Block #</span>
-                <Link to={'/explorer/blockheight/' + this.blocktitle + '/""'}>
-                  {this.blocktitle}
-                </Link>
+                <Link to={'/explorer/blockheight/' + this.blocktitle}>{this.blocktitle}</Link>
               </h4>
               <div>
-                <Link to={'/explorer/blockhash/' + this.blockhash + '/""'}>{this.blockhash}</Link>
+                <Link to={'/explorer/blockhash/' + this.blockhash} className='word-wrap'>
+                  {this.blockhash}
+                </Link>
               </div>
             </Segment>
             <Segment>
@@ -596,7 +603,7 @@ class ExplorerBlockHeight extends React.Component {
 
             <Segment.Group horizontal>
               <Segment>
-                <Grid columns={2} divided>
+                <Grid columns={2} divided stackable>
                   <Grid.Row>
                     <Grid.Column>{this.summarysect1}</Grid.Column>
 
@@ -604,7 +611,7 @@ class ExplorerBlockHeight extends React.Component {
                   </Grid.Row>
                 </Grid>
                 <Grid columns={1}>
-                  <Grid.Row>
+                  <Grid.Row style={{ width: '800px', overflow: 'auto' }}>
                     <Grid.Column>{this.txsection}</Grid.Column>
                   </Grid.Row>
 
@@ -624,7 +631,7 @@ class ExplorerBlockHeight extends React.Component {
                             </div>
                             <div className='three wide field'>
                               <input
-                                className='pagenuminput'
+                                className='pagenuminput searchBoxAndButtons'
                                 size='5'
                                 type='text'
                                 onChange={event =>
@@ -636,7 +643,7 @@ class ExplorerBlockHeight extends React.Component {
                             </div>
                             <div className='one wide field'>
                               <Button
-                                className='explorerbuttoncolor coral'
+                                className='explorerbuttoncolor coral searchBoxAndButtons'
                                 type='submit'
                                 id='pagebutton'>
                                 Go

@@ -86,21 +86,30 @@ class Footer extends React.Component {
         <>
           <footer className='page-footer peach'>
             <Grid className='nopadding newpagefooter' columns={3}>
-              <Grid.Row className='nopadding'>
-                <Grid.Column width={5} style={{ whiteSpace: 'nowrap' }}>
-                  <a href='https://www.xoken.org' className='peach'>
-                    Powered by{' '}
-                    <img
-                      alt='Xoken Labs'
-                      src={images.xokenFooterLogo}
-                      style={{ width: 63, verticalAlign: 'middle' }}
-                    />
-                  </a>
-                </Grid.Column>
-                <Grid.Column width={6}></Grid.Column>
-                <Grid.Column width={5} style={{ whiteSpace: 'nowrap' }}>
-                  Connected to{' '}
-                  <span className='indicator peach'>{`${process.env.REACT_APP_NETWORK}`}</span>
+              <Grid.Row className='nopadding peach'>
+                <Grid.Column
+                  width={16}
+                  style={{ whiteSpace: 'nowrap', marginLeft: 'auto', marginRight: 'auto' }}>
+                  <span
+                    style={{
+                      float: 'left',
+                    }}>
+                    <a href='https://www.xoken.org' className='peach'>
+                      Powered by{' '}
+                      <img
+                        alt='Xoken Labs'
+                        src={images.xokenFooterLogo}
+                        style={{ width: 63, verticalAlign: 'middle' }}
+                      />
+                    </a>
+                  </span>
+                  <span
+                    style={{
+                      float: 'right',
+                    }}>
+                    Network:{' '}
+                    <span className='indicator peach'>{`${process.env.REACT_APP_NETWORK}`}</span>
+                  </span>
                 </Grid.Column>
               </Grid.Row>
             </Grid>

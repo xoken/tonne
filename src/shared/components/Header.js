@@ -46,18 +46,21 @@ class Header extends React.Component {
           <div className='ui secondary labeled icon menu'>
             <div className='header item'>
               <Link to='/' className='' style={{ display: 'block' }}>
-                <img src={images.logo} style={{ display: 'block', width: 150 }} alt='Tonne' />
+                <img src={images.logo} className='headerLogo' alt='Tonne' />
               </Link>
             </div>
             <div className='right menu'>
               <NavLink
                 to='/explorer'
                 activeClassName='activeheader'
-                className='item headertabitems'>
+                className='item headertabitems headerExplorer'>
                 <Icon name='bitcoin' style={{ transform: 'rotate(-14deg)' }} />
                 Explorer
               </NavLink>
-              <NavLink to='/wallet' activeClassName='activeheader' className='item headertabitems'>
+              <NavLink
+                to='/wallet'
+                activeClassName='activeheader'
+                className='item headertabitems headerWallet'>
                 <img
                   alt='Bitcoin SV Wallet'
                   src={images.wallet}
@@ -81,15 +84,9 @@ class Header extends React.Component {
               <Dropdown
                 button
                 className='icon purplefontcolor'
+                pointing='top right'
                 icon='bars'
-                style={{
-                  backgroundColor: 'white',
-                  height: 'auto',
-                  marginTop: 'auto',
-                  marginBottom: 'auto',
-                  zIndex: 999,
-                  fontSize: '25px',
-                }}>
+                className='menuDropdown'>
                 <Dropdown.Menu
                   style={{
                     backgroundColor: 'white',
