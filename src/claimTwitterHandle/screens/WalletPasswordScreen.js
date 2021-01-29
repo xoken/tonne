@@ -21,16 +21,18 @@ class WalletPasswordScreen extends React.Component {
 
   onSuccess = async () => {
     try {
-      const { screenName } = this.props;
-      if (screenName) {
-        if (screenName.includes('/') || screenName.includes('\\')) {
+      const {
+        user: { screen_name },
+      } = this.props;
+      if (screen_name) {
+        if (screen_name.includes('/') || screen_name.includes('\\')) {
           console.log('\\ , / characters are not allowed');
         } else {
           try {
             const { dispatch } = this.props;
             await dispatch(walletActions.getTransactions({ limit: 10 }));
             const { isAvailable, name, uri } = await dispatch(
-              allpayActions.getResellerURI([116, 119, 47].concat(utils.getCodePoint(screenName)))
+              allpayActions.getResellerURI([116, 119, 47].concat(utils.getCodePoint(screen_name)))
             );
             if (isAvailable) {
               const data = {
@@ -72,7 +74,7 @@ class WalletPasswordScreen extends React.Component {
   }
 }
 const mapStateToProps = state => ({
-  screenName: state.twitter.screenName,
+  user: state.twitter.user,
 });
 
 export default withRouter(connect(mapStateToProps)(WalletPasswordScreen));

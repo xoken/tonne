@@ -248,7 +248,6 @@ class WalletSetup extends React.Component {
 }
 const mapStateToProps = state => ({
   isLoading: authSelectors.isLoading(state),
-  screenName: state.twitter.screenName,
   profile: authSelectors.getProfile(state),
   profiles: authSelectors.getProfiles(state),
   user: state.twitter.user,
