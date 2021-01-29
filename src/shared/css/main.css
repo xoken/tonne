@@ -336,6 +336,9 @@
 /* .ui.button {
   margin-right: 0;
 } */
+.ui.card.twitter-card {
+  box-shadow: none;
+}
 .indicator {
   display: inline-block;
 }

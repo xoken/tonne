@@ -5,8 +5,8 @@ class ClaimTwitterHandleService {
     this.store = store;
   }
 
-  async getTwitterFollowers(screenName, oauthToken, oauthTokenSecret) {
-    return await authAPI.getTwitterFollowers(screenName, oauthToken, oauthTokenSecret);
+  async getTwitterFollowers(oauthToken, oauthTokenSecret) {
+    return await authAPI.getTwitterFollowers(oauthToken, oauthTokenSecret);
   }
 
   async getPurchasedNames(args) {

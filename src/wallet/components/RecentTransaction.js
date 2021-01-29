@@ -173,9 +173,9 @@ class RecentTransaction extends React.Component {
                         <Header as='h5' className='monospace purplefontcolor'>
                           Inputs
                         </Header>
-                        {txInps.map(input => {
+                        {txInps.map((input, index) => {
                           return (
-                            <Grid key={input.txInputIndex}>
+                            <Grid key={index.toString()}>
                               <Grid.Column width='10'>
                                 <p className='monospace'>
                                   <span
@@ -200,12 +200,12 @@ class RecentTransaction extends React.Component {
                         <Header as='h5' className='monospace purplefontcolor'>
                           Outputs
                         </Header>
-                        {txOuts.map(output => {
+                        {txOuts.map((output, index) => {
                           return (
                             // <Grid key={output.outputIndex}>
                             // <Grid.Column width='10'>
                             <RenderOutput
-                              key={output.outputIndex}
+                              key={index.toString()}
                               addressStyle={output.isNUTXO ? 'nUTXO' : undefined}
                               address={output.address}
                               script={output.lockingScript}

@@ -15,17 +15,16 @@ export const doTwitterAuth = history => async (dispatch, getState, { serviceInje
     'width=500, height=500, top=0, left=0'
   );
   //   this.polling(popup);
-  const messageHandler = event => {
+  const messageHandler = async event => {
     if (event.origin !== window.location.origin) return;
     if (event.source.name === 'twitter-auth-window') {
       const queryParams = new URLSearchParams(event.data);
-      const screenName = queryParams.get('screen_name');
-      const followersCount = queryParams.get('followers_count');
       const oauthToken = queryParams.get('oauth_token');
       const oauthTokenSecret = queryParams.get('oauth_token_secret');
       popup.close();
       window.removeEventListener('message', messageHandler);
-      dispatch(updateTwitterInfo({ screenName, followersCount, oauthToken, oauthTokenSecret }));
+      dispatch(updateTwitterInfo({ oauthToken, oauthTokenSecret }));
+      await dispatch(getPurchasedFollowers({ prefix: [97, 97, 47] }));
       history.push('/claim-twitter-handle/wallet-setup');
     }
   };
@@ -36,22 +35,24 @@ export const getPurchasedFollowers = args => async (dispatch, getState, { servic
   dispatch(getPurchasedFollowersRequest());
   try {
     const {
-      twitter: { screenName, oauthToken, oauthTokenSecret },
+      twitter: { oauthToken, oauthTokenSecret },
     } = getState();
-    const { followers } = await serviceInjector(ClaimTwitterHandleService).getTwitterFollowers(
-      screenName,
-      oauthToken,
-      oauthTokenSecret
-    );
+    const { user, followers } = await serviceInjector(
+      ClaimTwitterHandleService
+    ).getTwitterFollowers(oauthToken, oauthTokenSecret);
     const { purchasedNames } = await serviceInjector(ClaimTwitterHandleService).getPurchasedNames(
       args
     );
     const uniqPurchasedNames = [...new Set(purchasedNames)];
     const nameWithoutPrefix = uniqPurchasedNames.map(name => name.slice(3));
-    const purchasedTwitterHandles = nameWithoutPrefix.filter(element =>
-      followers.includes(element)
-    );
-    dispatch(getPurchasedFollowersSuccess({ purchasedTwitterHandles }));
+    const purchasedTwitterFollowers = followers.filter(follower => {
+      const isPurchased = nameWithoutPrefix.find(name => follower.screen_name === name);
+      if (isPurchased) {
+        return false;
+      }
+      return true;
+    });
+    dispatch(getPurchasedFollowersSuccess({ user, purchasedTwitterFollowers }));
   } catch (error) {
     dispatch(getPurchasedFollowersFailure());
     throw error;
