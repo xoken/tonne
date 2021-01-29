@@ -47,6 +47,7 @@ class WalletSetupStepTwo extends React.Component {
         }
       } else {
         console.log('Twitter handle not found');
+        this.props.history.push('/wallet');
       }
     } catch (error) {
       console.log(error);

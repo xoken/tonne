@@ -48,9 +48,9 @@ export const getPurchasedFollowers = args => async (dispatch, getState, { servic
     const purchasedTwitterFollowers = followers.filter(follower => {
       const isPurchased = nameWithoutPrefix.find(name => follower.screen_name === name);
       if (isPurchased) {
-        return false;
+        return true;
       }
-      return true;
+      return false;
     });
     dispatch(getPurchasedFollowersSuccess({ user, purchasedTwitterFollowers }));
   } catch (error) {

@@ -188,7 +188,7 @@ class WalletSetup extends React.Component {
         <Segment>
           <Grid>
             <Grid.Row>
-              <Grid.Column te>
+              <Grid.Column>
                 <Form
                   style={{
                     width: 'max-content',

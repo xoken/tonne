@@ -9,8 +9,12 @@ import images from '../images';
 
 class Home extends React.Component {
   onClaimTwitterHandle = () => {
-    const { dispatch, history } = this.props;
-    dispatch(claimTwitterHandleActions.doTwitterAuth(history));
+    const { dispatch, history, user } = this.props;
+    if (user) {
+      history.push('/claim-twitter-handle/wallet-setup');
+    } else {
+      dispatch(claimTwitterHandleActions.doTwitterAuth(history));
+    }
   };
 
   render() {
@@ -72,6 +76,8 @@ Home.propTypes = {
 
 Home.defaultProps = {};
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  user: state.twitter.user,
+});
 
 export default withRouter(connect(mapStateToProps)(Home));
