@@ -127,7 +127,7 @@
   height: 22px;
   padding: 0px 5px 0px 5px !important;
   z-index: 999;
-  color: #9173a8 !important;
+  color: #8700ae !important;
 }
 
 .newpagefooter {
@@ -135,6 +135,7 @@
   bottom: 0px !important;
   vertical-align: top;
   left: 0px;
+  right:0px;
   padding: 0px 5px 0px 5px !important;
   z-index: 999;
   min-width: 100% !important;
@@ -206,14 +207,14 @@
   left: 0;
   margin-left: 30px;
   border-radius: 5px;
-  background-color: #9173a8;
+  background-color: #8700ae;
   transition: height 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .ui.basic.button.borderless {
   box-shadow: none;
 }
 .headertabitems {
-  color: #9173a8 !important;
+  color: #8700ae !important;
   box-shadow: 1px 1px 3px lightgrey !important;
   border-radius: 2px !important;
   z-index: 999;
@@ -247,28 +248,28 @@
   box-shadow: 0 0 0 2px #ed7464 inset !important;
 }
 .purplefontcolor {
-  color: #9173a8 !important;
+  color: #8700ae !important;
 }
 .purplefontcolor > label {
-  color: #9173a8 !important;
+  color: #8700ae !important;
 }
 .peachfontcolor {
   color: #fbe1e2 !important;
 }
 .purple {
-  background-color: #9173a8 !important;
+  background-color: #8700ae !important;
   color: white !important;
 }
 .peach {
   background-color: #fbe1e2 !important;
-  color: #9173a8 !important;
+  color: #8700ae !important;
 }
 .page-header {
   background: none;
 }
 .backspace {
   background-color: #fbe1e2 !important;
-  color: #9173a8 !important;
+  color: #8700ae !important;
   border-radius: 2px !important;
   box-shadow: 2px 2px 5px !important;
   position: relative;
@@ -314,7 +315,7 @@
 }
 .ui.dropdown .menu > .item a,
 .ui.dropdown .menu > .item span {
-  color: #9173a8;
+  color: #8700ae;
 }
 .ui.dropdown .menu > .item .active {
   color: grey;
@@ -398,4 +399,39 @@
 .homeMainSection{
   padding-top: 40px !important;
   padding-bottom: 40px !important;
+}
+.marginLeftRightNone{
+  margin-left:0px !important;
+  margin-right:0px !important;
+}
+.menuDropDownItems{
+  text-align: left !important;
+  display: block !important;
+  margin-left:0px !important;
+  margin-right:0px !important;
+}
+.menuDropDownItems:hover{
+  background-color: #fafafa !important;
+}
+.marginTopBottom0px{
+  margin-top: 0px !important;
+  margin-bottom:0px !important;
+}
+.walletHomeDividerHorizontal{
+  display: none;
+}
+.walletHomeDividerVertical{
+  display: block;
+}
+
+@media screen and (max-width: 767px) {
+  .walletHomeDividerHorizontal{
+    display: block;
+  }
+  .walletHomeDividerVertical{
+    display: none;
+  }
+  .negativeMarginBottom{
+    margin-bottom: -14px !important;
+  }
 }

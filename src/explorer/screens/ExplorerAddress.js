@@ -67,10 +67,10 @@ class ExplorerAddress extends React.Component {
         <>
           <Grid>
             <Grid.Row columns={1} className=' txslnum'>
-              <Grid.Column computer={1} tablet={1} mobile={1}>
+              <Grid.Column computer={1} tablet={1} mobile={2}>
                 <h4>#({i + 1})</h4>
               </Grid.Column>
-              <Grid.Column computer={15} tablet={15} mobile={15}>
+              <Grid.Column computer={15} tablet={15} mobile={14}>
                 <h4>
                   <Link
                     to={'/explorer/transaction/' + this.addressCache[i].txId}
@@ -111,7 +111,7 @@ class ExplorerAddress extends React.Component {
                   <Grid.Row columns={1} className='nopaddingtop'>
                     <Grid.Column style={{ padding: '0px' }}>
                       <Segment className='nopaddingtop removesegmentborder'>
-                        <Grid>
+                        <Grid stackable>
                           <Grid.Row columns={2}>
                             <Grid.Column>
                               <Grid>
@@ -195,24 +195,24 @@ class ExplorerAddress extends React.Component {
             <Grid.Row columns={2}>
               <Grid.Column width={2}>({b + 1}).</Grid.Column>
               <Grid.Column width={14}>
-                <Grid stackable>
+                <Grid>
                   <Grid.Row columns={2} className='paddtopbottom5px'>
-                    <Grid.Column computer={3} mobile={6} style={{ marginTop: '10px' }}>
+                    <Grid.Column computer={3} mobile={5} style={{ marginTop: '10px' }}>
                       <b>Address</b>
                     </Grid.Column>
                     <Grid.Column
                       className='tdwordbreak'
                       computer={13}
-                      mobile={10}
+                      mobile={11}
                       style={{ marginTop: '10px' }}>
                       {checkforemptyaddress(output.tx.txOuts[b].address)}
                     </Grid.Column>
                   </Grid.Row>
                   <Grid.Row columns={2} className='paddtopbottom5px'>
-                    <Grid.Column computer={3} mobile={6}>
+                    <Grid.Column computer={3} mobile={5}>
                       <b>Satoshis</b>
                     </Grid.Column>
-                    <Grid.Column computer={13} mobile={10}>
+                    <Grid.Column computer={13} mobile={11}>
                       {output.tx.txOuts[b].value}
                     </Grid.Column>
                   </Grid.Row>
@@ -243,13 +243,13 @@ class ExplorerAddress extends React.Component {
       if (txaddress) {
         return (
           <>
-            <Grid.Column computer={3} mobile={6} style={{ marginTop: '10px' }}>
+            <Grid.Column computer={3} mobile={5} style={{ marginTop: '10px' }}>
               <b>Address</b>
             </Grid.Column>
             <Grid.Column
               className='tdwordbreak'
               computer={13}
-              mobile={10}
+              mobile={11}
               style={{ marginTop: '10px' }}>
               <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>{' '}
             </Grid.Column>
@@ -270,10 +270,10 @@ class ExplorerAddress extends React.Component {
         return (
           <>
             <Grid.Row columns={2} className='paddtopbottom5px'>
-              <Grid.Column computer={3} mobile={6}>
+              <Grid.Column computer={3} mobile={5}>
                 <b>Outpoint Index</b>
               </Grid.Column>
-              <Grid.Column computer={13} mobile={10}>
+              <Grid.Column computer={13} mobile={11}>
                 {outpointindex}
               </Grid.Column>
             </Grid.Row>
@@ -289,15 +289,15 @@ class ExplorerAddress extends React.Component {
           <Grid.Row columns={2}>
             <Grid.Column width={2}>({a + 1}).</Grid.Column>
             <Grid.Column width={14}>
-              <Grid stackable>
+              <Grid>
                 <Grid.Row columns={2} className='paddtopbottom5px'>
                   {checkforinvalidaddress(input.tx.txInps[a].address)}
                 </Grid.Row>
                 <Grid.Row columns={2} className='paddtopbottom5px'>
-                  <Grid.Column computer={3} mobile={6}>
+                  <Grid.Column computer={3} mobile={5}>
                     <b>Satoshis</b>
                   </Grid.Column>
-                  <Grid.Column computer={13} mobile={10}>
+                  <Grid.Column computer={13} mobile={11}>
                     {input.tx.txInps[a].value}
                   </Grid.Column>
                 </Grid.Row>

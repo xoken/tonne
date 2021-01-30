@@ -36,7 +36,7 @@ class RenameProfile extends React.Component {
     const { isError, message } = this.state;
     if (message) {
       return (
-        <Message negative={isError}>
+        <Message className='peach' negative={isError}>
           <Message.Header>{message}</Message.Header>
         </Message>
       );
@@ -51,14 +51,17 @@ class RenameProfile extends React.Component {
     } = this.props;
     return (
       <>
-        <Modal.Header>Rename Current Profile</Modal.Header>
+        <Modal.Header className='purplefontcolor'>Rename Current Profile</Modal.Header>
         <Modal.Content>
           <Modal.Description>
             <Grid centered>
               <Grid.Column textAlign='center' width={8}>
                 <div className='ui form'>
                   <div className='field'>
-                    <label>Change Current Profile Name : {screenName}</label>
+                    <label>
+                      Change Current Profile Name :{' '}
+                      <span className='purplefontcolor'>{screenName}</span>
+                    </label>
                     <div className='ui input'>
                       <input
                         type='text'

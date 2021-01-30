@@ -61,7 +61,65 @@ class ExplorerDashboard extends React.Component {
     this.pagearray = [1, 2, 3, 4, 5, 6, 7, '-', this.numberofpages];
     this.summarysection.push(
       <>
-        <Grid stackable>
+        <Grid className='dashboardSummaryForMobile'>
+          <Grid.Row columns={2}>
+            <Grid.Column className='alignLeftOnMobile' computer={4} mobile={5}>
+              <b>Chainwork</b>
+            </Grid.Column>
+            <Grid.Column className='alignLeftOnMobile' computer={12} mobile={11}>
+              {this.rjdecoded.chainInfo.chainwork}
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column className='alignLeftOnMobile' computer={4} mobile={5}>
+              <b>Blocks Synced</b>
+            </Grid.Column>
+            <Grid.Column className='alignLeftOnMobile' computer={12} mobile={11}>
+              <Link to={'/explorer/blockheight/' + this.rjdecoded.chainInfo.blocksSynced}>
+                {this.rjdecoded.chainInfo.blocksSynced}
+              </Link>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column className='alignLeftOnMobile' computer={4} mobile={5}>
+              <b>Chain Tip</b>
+            </Grid.Column>
+            <Grid.Column className='alignLeftOnMobile' computer={12} mobile={11}>
+              <Link to={'/explorer/blockheight/' + this.rjdecoded.chainInfo.chainTip}>
+                {this.rjdecoded.chainInfo.chainTip}
+              </Link>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column className='alignLeftOnMobile' computer={4} mobile={5}>
+              <b>Chain</b>
+            </Grid.Column>
+            <Grid.Column className='alignLeftOnMobile' computer={12} mobile={11}>
+              {this.rjdecoded.chainInfo.chain}
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column className='alignLeftOnMobile' computer={4} mobile={5}>
+              <b>Synced Block Hash</b>
+            </Grid.Column>
+            <Grid.Column className='alignLeftOnMobile' computer={12} mobile={11}>
+              <Link to={'/explorer/blockhash/' + this.rjdecoded.chainInfo.syncedBlockHash}>
+                <div className='wordbreak'>{this.rjdecoded.chainInfo.syncedBlockHash}</div>
+              </Link>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column className='alignLeftOnMobile' computer={4} mobile={5}>
+              <b>Chain Tip Hash</b>
+            </Grid.Column>
+            <Grid.Column className='alignLeftOnMobile' computer={12} mobile={11}>
+              <Link to={'/explorer/blockhash/' + this.rjdecoded.chainInfo.chainTipHash}>
+                <div className='wordbreak'>{this.rjdecoded.chainInfo.chainTipHash}</div>
+              </Link>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+        <Grid className='dashboardSummaryForOtherScreens'>
           <Grid.Row columns={4}>
             <Grid.Column>
               <b>Chainwork : </b>
@@ -259,7 +317,8 @@ class ExplorerDashboard extends React.Component {
     for (var i = this.size - 1; i >= 0; i--) {
       this.date = new Date(this.rjdecoded.blocks[i].header.blockTimestamp * 1000);
       todaysdate = Date.now() - this.rjdecoded.blocks[i].header.blockTimestamp * 1000;
-      age = new Date(todaysdate);
+      age = todaysdate / 1000 / 60 / 60 / 24;
+      console.log(age);
       if (i % 2 === 0) {
         tempColor = 'white';
       } else {
@@ -283,9 +342,7 @@ class ExplorerDashboard extends React.Component {
                   <br />
                   {this.date.getHours()}:{this.date.getMinutes()}:{this.date.getSeconds()}
                 </Grid.Column>
-                <Grid.Column>
-                  {age.getHours()}:{age.getMinutes()}:{age.getSeconds()}
-                </Grid.Column>
+                <Grid.Column>{age.toFixed(2)} Days</Grid.Column>
                 <Grid.Column>{this.rjdecoded.blocks[i].header.blockVersion} </Grid.Column>
                 <Grid.Column>{this.rjdecoded.blocks[i].txCount} </Grid.Column>
                 <Grid.Column>{this.rjdecoded.blocks[i].size} </Grid.Column>

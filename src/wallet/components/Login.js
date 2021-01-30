@@ -40,7 +40,9 @@ class Login extends React.Component {
           <Grid.Column textAlign='center'>
             <Form onSubmit={this.handleContinue}>
               <Form.Field>
-                Your wallet is encrypted with a password. Please enter your password to unlock it.
+                <h4 className='purplefontcolor'>
+                  Your wallet is encrypted with a password. Please enter your password to unlock it.
+                </h4>
               </Form.Field>
               <Form.Field>
                 <Input

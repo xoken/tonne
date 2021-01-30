@@ -23,10 +23,10 @@ class Home extends React.Component {
                 <div className='homeMainSection'>
                   <div className='ui icon header purplefontcolor'>
                     <Icon name='bitcoin' style={{ transform: 'rotate(-14deg)' }} />
-                    Bitcoin SV Block Explorer
+                    Bitcoin SV Blockchain
                   </div>
                   <Link to='/explorer' className='ui coral button'>
-                    Explorer
+                    Explore
                   </Link>
                 </div>
               </div>
@@ -40,13 +40,14 @@ class Home extends React.Component {
                         display: 'block',
                         height: 53,
                         width: 'auto',
+                        borderRadius: '100px',
                       }}
                       className='icon'
                     />
                     Bitcoin SV Wallet
                   </div>
                   <Link to='/wallet' className='ui coral button'>
-                    Wallet
+                    Send / Receive
                   </Link>
                 </div>
               </div>
@@ -64,13 +65,13 @@ class Home extends React.Component {
                           width: 'auto',
                         }}
                       />
-                      On-Chain Name
+                      Twitter handle
                     </div>
                     <Link
                       to='/claim-twitter-handle/auth/twitter'
                       className='ui coral button'
                       onClick={this.onClaimTwitterHandle}>
-                      Claim Twitter Handle
+                      Claim on-chain
                     </Link>
                   </div>
                 </div>
