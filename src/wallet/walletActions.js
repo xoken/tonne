@@ -97,6 +97,7 @@ export const getBalance = () => async (dispatch, getState, { serviceInjector }) 
   try {
     const { balance } = await serviceInjector(WalletService).getBalance();
     dispatch(getBalanceSuccess({ balance }));
+    return { balance };
   } catch (error) {
     dispatch(getBalanceFailure());
     throw error;
@@ -188,6 +189,7 @@ export const getUnusedAddresses = () => async (dispatch, getState, { serviceInje
       excludeAddresses,
     });
     dispatch(getUnusedAddressesSuccess({ unusedAddresses }));
+    return { unusedAddresses };
   } catch (error) {
     dispatch(getUnusedAddressesFailure());
     throw error;

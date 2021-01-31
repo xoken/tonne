@@ -65,7 +65,7 @@ class WalletDashboard extends React.Component {
   }
 
   runScript = () => {
-    this.props.history.push('/claim-twitter-handle/wallet-setup-two');
+    this.props.history.push('/claim-twitter-handle/wallet-password-setup');
     wallet.runScript();
   };
 

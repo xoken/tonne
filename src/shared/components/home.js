@@ -9,8 +9,12 @@ import images from '../images';
 
 class Home extends React.Component {
   onClaimTwitterHandle = () => {
-    const { dispatch, history } = this.props;
-    dispatch(claimTwitterHandleActions.doTwitterAuth(history));
+    const { dispatch, history, user } = this.props;
+    if (user) {
+      history.push('/claim-twitter-handle/wallet-setup');
+    } else {
+      dispatch(claimTwitterHandleActions.doTwitterAuth(history));
+    }
   };
 
   render() {
@@ -51,31 +55,26 @@ class Home extends React.Component {
                   </Link>
                 </div>
               </div>
-              {process.env.REACT_APP_ENVIRONMENT === 'development' && (
-                <div className='column'>
-                  <div className='homeMainSection'>
-                    <div className='ui icon header purplefontcolor'>
-                      <img
-                        src={images.twitterLogo}
-                        className='icon'
-                        style={{
-                          display: 'block',
-                          height: 53,
-                          borderRadius: '100px',
-                          width: 'auto',
-                        }}
-                      />
-                      Twitter handle
-                    </div>
-                    <Link
-                      to='/claim-twitter-handle/auth/twitter'
-                      className='ui coral button'
-                      onClick={this.onClaimTwitterHandle}>
-                      Claim on-chain
-                    </Link>
+              <div className='column'>
+                <div className='homeMainSection'>
+                  <div className='ui icon header purplefontcolor'>
+                    <img
+                      src={images.twitterLogo}
+                      className='icon'
+                      style={{
+                        display: 'block',
+                        height: 53,
+                        borderRadius: '100px',
+                        width: 'auto',
+                      }}
+                    />
+                    Twitter handle
                   </div>
+                  <Button className='ui coral button' onClick={this.onClaimTwitterHandle}>
+                    Claim on-chain
+                  </Button>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </GridColumn>
@@ -90,6 +89,8 @@ Home.propTypes = {
 
 Home.defaultProps = {};
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  user: state.twitter.user,
+});
 
 export default withRouter(connect(mapStateToProps)(Home));

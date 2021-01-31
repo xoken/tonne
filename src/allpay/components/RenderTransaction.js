@@ -135,8 +135,6 @@ class RenderTransaction extends React.Component {
                       ownOutput => ownOutput.address === output.address
                     );
                     return (
-                      // <Grid key={String(index)}>
-                      // <Grid.Column width='10'>
                       <RenderOutput
                         key={String(index)}
                         addressStyle={isMine && isMine.type === 'nUTXO' ? 'nUTXO' : undefined}
@@ -146,15 +144,6 @@ class RenderTransaction extends React.Component {
                         valueStyle={isMine ? 'credit' : ''}
                         value={output.value}
                       />
-                      // </Grid.Column>
-                      // <Grid.Column width='6' textAlign='right'>
-                      // <p className='monospace'>
-                      // <span className={isMine ? 'credit' : ''}>
-                      // {satoshiToBSV(output.value)}
-                      // </span>
-                      // </p>
-                      // </Grid.Column>
-                      // </Grid>
                     );
                   })}
                   <div className='ui right aligned grid'>

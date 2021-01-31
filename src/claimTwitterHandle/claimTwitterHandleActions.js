@@ -1,28 +1,77 @@
 import { createAction } from 'redux-act';
 import { claimTwitterHandleFlows } from './claimTwitterHandleRoutes';
+import ClaimTwitterHandleService from './claimTwitterHandleService';
 
 export const updateTwitterInfo = createAction('UPDATE_TWITTER_INFO');
 
+export const getPurchasedFollowersRequest = createAction('GET_PURCHASED_FOLLOWERS_REQUEST');
+export const getPurchasedFollowersSuccess = createAction('GET_PURCHASED_FOLLOWERS_SUCCESS');
+export const getPurchasedFollowersFailure = createAction('GET_PURCHASED_FOLLOWERS_FAILURE');
+
+export const getCoinRequest = createAction('GET_COIN_REQUEST');
+export const getCoinSuccess = createAction('GET_COIN_SUCCESS');
+export const getCoinFailure = createAction('GET_COIN_FAILURE');
+
 export const doTwitterAuth = history => async (dispatch, getState, { serviceInjector }) => {
   const popup = window.open(
-    '/v1/auth/twitter',
+    '/api/v1/auth/twitter',
     'twitter-auth-window',
     'width=500, height=500, top=0, left=0'
   );
   //   this.polling(popup);
-  const messageHandler = event => {
+  const messageHandler = async event => {
     if (event.origin !== window.location.origin) return;
     if (event.source.name === 'twitter-auth-window') {
       const queryParams = new URLSearchParams(event.data);
-      const screenName = queryParams.get('screen_name');
-      const followersCount = queryParams.get('followers_count');
+      const oauthToken = queryParams.get('oauth_token');
+      const oauthTokenSecret = queryParams.get('oauth_token_secret');
       popup.close();
       window.removeEventListener('message', messageHandler);
-      dispatch(updateTwitterInfo({ screenName, followersCount }));
+      dispatch(updateTwitterInfo({ oauthToken, oauthTokenSecret }));
+      await dispatch(getPurchasedFollowers({ prefix: [97, 97, 47] }));
       history.push('/claim-twitter-handle/wallet-setup');
     }
   };
   window.addEventListener('message', messageHandler, false);
+};
+
+export const getPurchasedFollowers = args => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(getPurchasedFollowersRequest());
+  try {
+    const {
+      twitter: { oauthToken, oauthTokenSecret },
+    } = getState();
+    const { user, followers } = await serviceInjector(
+      ClaimTwitterHandleService
+    ).getTwitterFollowers(oauthToken, oauthTokenSecret);
+    const { purchasedNames } = await serviceInjector(ClaimTwitterHandleService).getPurchasedNames(
+      args
+    );
+    const uniqPurchasedNames = [...new Set(purchasedNames)];
+    const nameWithoutPrefix = uniqPurchasedNames.map(name => name.slice(3));
+    const purchasedTwitterFollowers = followers.filter(follower => {
+      const isPurchased = nameWithoutPrefix.find(name => follower.screen_name === name);
+      if (isPurchased) {
+        return true;
+      }
+      return false;
+    });
+    dispatch(getPurchasedFollowersSuccess({ user, purchasedTwitterFollowers }));
+  } catch (error) {
+    dispatch(getPurchasedFollowersFailure());
+    throw error;
+  }
+};
+
+export const getCoin = args => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(getCoinRequest());
+  try {
+    const data = await serviceInjector(ClaimTwitterHandleService).getCoin(args);
+    console.log(data);
+  } catch (error) {
+    dispatch(getCoinFailure());
+    throw error;
+  }
 };
 
 // export const polling = popup => {

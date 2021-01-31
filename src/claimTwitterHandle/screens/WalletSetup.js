@@ -2,11 +2,21 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router-dom';
-import { Form, Grid, Loader, Radio, Card, Image, Divider, Button } from 'semantic-ui-react';
+import {
+  Button,
+  Card,
+  Divider,
+  Form,
+  Grid,
+  Header,
+  Image,
+  Loader,
+  Radio,
+  Segment,
+} from 'semantic-ui-react';
 import ImportWallet from '../../wallet/components/ImportWallet';
 import NewWallet from '../../wallet/components/NewWallet';
 import Profiles from '../../wallet/components/Profiles';
-import images from '../../shared/images';
 import * as authActions from '../../auth/authActions';
 import * as authSelectors from '../../auth/authSelectors';
 
@@ -17,9 +27,9 @@ class WalletSetup extends React.Component {
 
     this.state = {
       selectedOption: undefined,
-      followersListToggle: false,
     };
   }
+
   async componentDidMount() {
     const { dispatch } = this.props;
     await dispatch(authActions.getProfiles());
@@ -32,11 +42,11 @@ class WalletSetup extends React.Component {
   };
 
   onSelectProfile = profile => () => {
-    this.props.history.push(`/claim-twitter-handle/wallet-setup-two?profile=${profile}`);
+    this.props.history.push(`/claim-twitter-handle/wallet-password-setup?profile=${profile}`);
   };
 
   onContinue = () => {
-    this.props.history.push(`/claim-twitter-handle/wallet-setup-two`);
+    this.props.history.push(`/claim-twitter-handle/wallet-password-setup`);
   };
 
   renderImportWallet() {
@@ -59,54 +69,81 @@ class WalletSetup extends React.Component {
     const { profiles } = this.props;
     const { selectedOption } = this.state;
     if (selectedOption === 'existing') {
-      return <Profiles profiles={profiles} onSelect={this.onSelectProfile} />;
+      return (
+        <Grid>
+          <Grid.Row centered>
+            <Grid.Column width='4' textAlign='center'>
+              <Segment>
+                <Profiles profiles={profiles} onSelect={this.onSelectProfile} />
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      );
     }
     return null;
   }
 
-  listAllFollowers = () => {
-    let followersList = ['', '', '', '', '', '', '', '', '', '', ''];
-    return (
-      <>
-        {followersList.map((follower, index) => {
-          return (
-            <span style={{ padding: '15px 25px 15px 25px', wordBreak: 'break-all' }}>
-              <Image src={images.bsv} circular centered avatar />
-              <span>@userHandle</span>
-            </span>
-          );
-        })}
-      </>
-    );
-  };
-
-  listFollowers = () => {
-    const { followersListToggle } = this.state;
-    let followersList = ['', '', '', '', '', '', '', '', '', '', ''];
-    if (followersListToggle) {
+  renderPurchasedTwitterFollowers() {
+    const { purchasedTwitterFollowers } = this.props;
+    if (purchasedTwitterFollowers.length > 0) {
       return (
-        <>
-          <Card>
-            <Card.Content extra style={{ overflow: 'auto', height: '250px' }}>
-              {followersList.map((follower, index) => {
-                return (
-                  <>
-                    <Image src={images.bsv} size='mini' circular centered />
-                    <Divider hidden />
-                  </>
-                );
-              })}
-            </Card.Content>
-          </Card>
-        </>
+        <Grid>
+          <Grid.Row>
+            <Grid.Column>
+              <Header as='h4' textAlign='center' className='purplefontcolor'>
+                {purchasedTwitterFollowers.length} of your followers on BitcoinSV
+              </Header>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row centered>
+            <Grid.Column textAlign='center'>
+              <Button
+                className='peach'
+                onClick={this.leftButtonOfCarousal}
+                style={{
+                  marginRight: '10px',
+                  fontSize: '22px',
+                  padding: '8px 20px 8px 20px',
+                }}>
+                &lt;
+              </Button>
+
+              <div
+                ref={this.horizontalScrollRef}
+                style={{
+                  overflow: 'auto',
+                  width: '375px',
+                  minWidth: '250px',
+                  textAlign: 'center',
+                  whiteSpace: 'nowrap',
+                  scrollbarWidth: 'none',
+                  display: 'inline-flex',
+                  scrollBehavior: 'smooth',
+                }}>
+                {purchasedTwitterFollowers.map((follower, index) => {
+                  return (
+                    <div key={String(index)} style={{ padding: '15px 25px 15px 25px' }}>
+                      <Image src={follower.profile_image_url_https} avatar />
+                      <span>{`tw/${follower.screen_name}`}</span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              <Button
+                className='peach'
+                onClick={this.rightButtonOfCarousal}
+                style={{ marginLeft: '10px', fontSize: '22px', padding: '8px 20px 8px 20px' }}>
+                &gt;
+              </Button>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
       );
     }
-  };
-
-  onFollowersListToggle = () => {
-    const { followersListToggle } = this.state;
-    this.setState({ followersListToggle: !followersListToggle });
-  };
+    return null;
+  }
 
   leftButtonOfCarousal = () => {
     this.horizontalScrollRef.current.scrollLeft -= 150;
@@ -117,108 +154,92 @@ class WalletSetup extends React.Component {
   };
 
   renderContent() {
+    const {
+      user: { screen_name, name, profile_image_url_https },
+    } = this.props;
     return (
       <>
         <Grid>
           <Grid.Row>
-            <Grid.Column>
-              <center>
-                <h3 className='purplefontcolor'>
-                  Hello {this.props.screenName}, you need a BSV wallet to proceed
-                </h3>
-              </center>
+            <Grid.Column width={5} floated='right' textAlign='right'>
+              <Card className='twitter-card'>
+                <Card.Content>
+                  <Card.Header>
+                    <Image src={profile_image_url_https} avatar />
+                    <span>{screen_name}</span>
+                  </Card.Header>
+                  <Card.Meta>{name}</Card.Meta>
+                </Card.Content>
+              </Card>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row style={{ backgroundColor: '#fafafa' }}>
-            <Grid.Column>
-              <Form
-                style={{
-                  width: 'max-content',
-                  marginLeft: 'auto',
-                  marginRight: 'auto',
-                }}>
-                <Form.Field>
-                  <Radio
-                    label='I already have a seed phrase'
-                    name='radioGroup'
-                    value='import'
-                    checked={this.state.selectedOption === 'import'}
-                    onChange={this.onHandleChange}
-                  />
-                </Form.Field>
-                <Form.Field>
-                  <Radio
-                    label='Create a new wallet and seed phrase'
-                    name='radioGroup'
-                    value='new'
-                    checked={this.state.selectedOption === 'new'}
-                    onChange={this.onHandleChange}
-                  />
-                </Form.Field>
-                <Form.Field>
-                  <Radio
-                    label='Login to existing wallet profile'
-                    name='radioGroup'
-                    value='existing'
-                    checked={this.state.selectedOption === 'existing'}
-                    onChange={this.onHandleChange}
-                  />
-                </Form.Field>
-              </Form>
-            </Grid.Column>
-          </Grid.Row>
-          {this.renderImportWallet()}
-          {this.renderCreateWallet()}
-          {this.renderExistingProfile()}
         </Grid>
-        <center>
-          <h4 className='purplefontcolor' style={{ marginTop: '60px' }}>
-            2000 of your followers on Bitcoin
-          </h4>
-          <Button
-            className='peach'
-            onClick={this.leftButtonOfCarousal}
-            style={{
-              marginRight: '10px',
-              fontSize: '22px',
-              padding: '8px 20px 8px 20px',
-            }}>
-            &lt;
-          </Button>
-
-          <span
-            ref={this.horizontalScrollRef}
-            style={{
-              overflow: 'auto',
-              width: '375px',
-              minWidth: '250px',
-              textAlign: 'center',
-              whiteSpace: 'nowrap',
-              height: '50px',
-              scrollbarWidth: 'none',
-              display: 'inline-flex',
-              scrollBehavior: 'smooth',
-            }}>
-            {this.listAllFollowers()}
-          </span>
-
-          <Button
-            className='peach'
-            onClick={this.rightButtonOfCarousal}
-            style={{ marginLeft: '10px', fontSize: '22px', padding: '8px 20px 8px 20px' }}>
-            &gt;
-          </Button>
-        </center>
+        <Divider />
+        <Grid>
+          <Grid.Row>
+            <Grid.Column>
+              <Header as='h3' textAlign='center' className='purplefontcolor'>
+                Hello {screen_name}, you need a BSV wallet to proceed
+              </Header>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+        <Segment>
+          <Grid>
+            <Grid.Row>
+              <Grid.Column>
+                <Form
+                  style={{
+                    width: 'max-content',
+                    marginLeft: 'auto',
+                    marginRight: 'auto',
+                  }}>
+                  <Form.Field>
+                    <Radio
+                      label='I already have a seed phrase'
+                      name='radioGroup'
+                      value='import'
+                      checked={this.state.selectedOption === 'import'}
+                      onChange={this.onHandleChange}
+                    />
+                  </Form.Field>
+                  <Form.Field>
+                    <Radio
+                      label='Create a new wallet and seed phrase'
+                      name='radioGroup'
+                      value='new'
+                      checked={this.state.selectedOption === 'new'}
+                      onChange={this.onHandleChange}
+                    />
+                  </Form.Field>
+                  <Form.Field>
+                    <Radio
+                      label='Login to existing wallet profile'
+                      name='radioGroup'
+                      value='existing'
+                      checked={this.state.selectedOption === 'existing'}
+                      onChange={this.onHandleChange}
+                    />
+                  </Form.Field>
+                </Form>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </Segment>
+        {this.renderImportWallet()}
+        {this.renderCreateWallet()}
+        {this.renderExistingProfile()}
+        {this.renderPurchasedTwitterFollowers()}
       </>
     );
   }
 
   render() {
-    const { isLoading, profile } = this.props;
+    const { isLoading, profile, user } = this.props;
     if (isLoading) {
       return <Loader active size='massive' />;
-    } else if (profile) {
-      return <Redirect to='/wallet' />;
+    } else if (!user) {
+      return <Redirect to='/' />;
     } else {
       return this.renderContent();
     }
@@ -226,9 +247,10 @@ class WalletSetup extends React.Component {
 }
 const mapStateToProps = state => ({
   isLoading: authSelectors.isLoading(state),
-  screenName: state.twitter.screenName,
   profile: authSelectors.getProfile(state),
   profiles: authSelectors.getProfiles(state),
+  user: state.twitter.user,
+  purchasedTwitterFollowers: state.twitter.purchasedTwitterFollowers,
 });
 
 export default withRouter(connect(mapStateToProps)(WalletSetup));

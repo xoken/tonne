@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import NoMatch from '../shared/components/noMatch';
 import { VerticalAnimatedSwitch } from '../shared/components/Animations';
 import WalletSetup from './screens/WalletSetup';
-import WalletSetupStepTwo from './screens/WalletSetupStepTwo';
+import WalletPasswordScreen from './screens/WalletPasswordScreen';
+import TwitterAuthHome from './screens/TwitterAuthHome';
 import ConfirmNamePurchase from '../allpay/screens/ConfirmNamePurchase';
 import NameRegistration from '../allpay/screens/NameRegistration';
 import ProxyRegistration from '../allpay/screens/ProxyRegistration';
@@ -14,7 +15,8 @@ import RegistrationSuccess from '../allpay/screens/RegistrationSuccess';
 
 export const claimTwitterHandlePaths = {
   walletSetup: '/claim-twitter-handle/wallet-setup',
-  walletSetupStepTwo: '/claim-twitter-handle/wallet-setup-two',
+  walletPasswordSetup: '/claim-twitter-handle/wallet-password-setup',
+  twitterAuthHome: '/claim-twitter-handle/home',
   confirmBuy: '/wallet/allpay/confirm-purchase',
   purchaseSuccess: '/wallet/allpay/purchase-success',
   registerName: '/wallet/allpay/register',
@@ -25,7 +27,7 @@ export const claimTwitterHandlePaths = {
 export const claimTwitterHandleFlows = {
   'claim-twitter-handle': [
     claimTwitterHandlePaths.walletSetup,
-    claimTwitterHandlePaths.walletSetupStepTwo,
+    claimTwitterHandlePaths.walletPasswordSetup,
   ],
 };
 
@@ -35,8 +37,13 @@ const ClaimTwitterHandleComponent = props => {
       <Route exact path={claimTwitterHandlePaths.walletSetup} render={() => <WalletSetup />} />
       <Route
         exact
-        path={claimTwitterHandlePaths.walletSetupStepTwo}
-        render={() => <WalletSetupStepTwo />}
+        path={claimTwitterHandlePaths.walletPasswordSetup}
+        render={() => <WalletPasswordScreen />}
+      />
+      <Route
+        exact
+        path={claimTwitterHandlePaths.twitterAuthHome}
+        render={() => <TwitterAuthHome />}
       />
       <Route
         exact
