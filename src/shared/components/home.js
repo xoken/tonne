@@ -81,9 +81,9 @@ class Home extends React.Component {
                     />
                     Twitter handle
                   </div>
-                  <Button className='ui coral button' onClick={this.onClaimTwitterHandle}>
+                  <a className='ui coral button' onClick={this.onClaimTwitterHandle}>
                     Claim on-chain
-                  </Button>
+                  </a>
                 </div>
               </div>
             </div>
