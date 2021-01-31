@@ -19,7 +19,13 @@ export default function ExplorerHome() {
           <Route path={`${path}/blockheight/:blockheight/:txid`}>
             <ExplorerBlockHeight />
           </Route>
+          <Route path={`${path}/blockheight/:blockheight`}>
+            <ExplorerBlockHeight />
+          </Route>
           <Route path={`${path}/blockhash/:blockhash/:txid`}>
+            <ExplorerBlockHash />
+          </Route>
+          <Route path={`${path}/blockhash/:blockhash`}>
             <ExplorerBlockHash />
           </Route>
           <Route path={`${path}/address/:address`}>

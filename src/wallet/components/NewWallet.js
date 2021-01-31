@@ -89,7 +89,7 @@ class NewWallet extends React.Component {
       <Grid>
         <Grid.Row>
           <Grid.Column>
-            <Header as='h5' className='generalheadingscolor' textAlign='center'>
+            <Header as='h4' className='purplefontcolor' textAlign='center'>
               Please save this mnemonic securely. You will need this to recover your wallet on a new
               device.
             </Header>
@@ -102,7 +102,7 @@ class NewWallet extends React.Component {
         </Grid.Row>
         <Grid.Row>
           <Grid.Column>
-            <Header as='h6' id='unmaskhint' textAlign='center'>
+            <Header as='h5' id='unmaskhint' className='generalheadingscolor' textAlign='center'>
               Hint: Move your mouse pointer over the masked words to unmask them
             </Header>
           </Grid.Column>

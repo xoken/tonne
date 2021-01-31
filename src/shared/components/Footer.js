@@ -63,18 +63,18 @@ class Footer extends React.Component {
                 ? 'page-footer page-footer-displayed'
                 : 'page-footer page-footer-hidden'
             }
-            style={{ backgroundColor: '#fbe1e2', color: '#9173a8' }}>
+            style={{ backgroundColor: '#fbe1e2', color: '#8700ae' }}>
             <div className='ui container'>
-              <div className='ui transparent label' style={{ color: '#9173a8' }}>
+              <div className='ui transparent label' style={{ color: '#8700ae' }}>
                 Nexa Host: <div className='detail'>{nexaURI || 'UNKNOWN'}</div>
               </div>
-              <div className='ui transparent label' style={{ color: '#9173a8' }}>
+              <div className='ui transparent label' style={{ color: '#8700ae' }}>
                 Chain: <div className='detail'>{chain}</div>
               </div>
-              <div className='ui transparent label' style={{ color: '#9173a8' }}>
+              <div className='ui transparent label' style={{ color: '#8700ae' }}>
                 BlocksSynced: <div className='detail'>{blocksSynced}</div>
               </div>
-              <div className='ui transparent label' style={{ color: '#9173a8' }}>
+              <div className='ui transparent label' style={{ color: '#8700ae' }}>
                 ChainTip: <div className='detail'>{chainTip}</div>
               </div>
             </div>
@@ -85,22 +85,32 @@ class Footer extends React.Component {
       return (
         <>
           <footer className='page-footer peach'>
-            <Grid className='nopadding newpagefooter' columns={3}>
-              <Grid.Row className='nopadding'>
-                <Grid.Column width={5} style={{ whiteSpace: 'nowrap' }}>
-                  <a href='https://www.xoken.org' className='peach'>
-                    Powered by{' '}
-                    <img
-                      alt='Xoken Labs'
-                      src={images.xokenFooterLogo}
-                      style={{ width: 63, verticalAlign: 'middle' }}
-                    />
-                  </a>
-                </Grid.Column>
-                <Grid.Column width={6}></Grid.Column>
-                <Grid.Column width={5} style={{ whiteSpace: 'nowrap' }}>
-                  Connected to{' '}
-                  <span className='indicator peach'>{`${process.env.REACT_APP_NETWORK}`}</span>
+            <Grid className='nopadding newpagefooter marginLeftRightNone' columns={1}>
+              <Grid.Row className='nopadding peach'>
+                <Grid.Column
+                  computer={10}
+                  mobile={16}
+                  style={{ whiteSpace: 'nowrap', marginLeft: 'auto', marginRight: 'auto' }}>
+                  <span
+                    style={{
+                      float: 'left',
+                    }}>
+                    <a href='https://www.xoken.org' className='peach'>
+                      Powered by{' '}
+                      <img
+                        alt='Xoken Labs'
+                        src={images.xokenFooterLogo}
+                        style={{ width: 63, verticalAlign: 'middle' }}
+                      />
+                    </a>
+                  </span>
+                  <span
+                    style={{
+                      float: 'right',
+                    }}>
+                    Network:{' '}
+                    <span className='indicator peach'>{`${process.env.REACT_APP_NETWORK}`}</span>
+                  </span>
                 </Grid.Column>
               </Grid.Row>
             </Grid>

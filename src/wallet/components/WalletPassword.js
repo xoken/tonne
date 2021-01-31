@@ -80,7 +80,7 @@ class WalletPassword extends React.Component {
         <Grid>
           <Grid.Row>
             <Grid.Column>
-              <Header as='h5' className='generalheadingscolor' textAlign='center'>
+              <Header as='h4' className='purplefontcolor' textAlign='center'>
                 Choose a password to encrypt your wallet keys.
               </Header>
             </Grid.Column>
