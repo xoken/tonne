@@ -1,4 +1,4 @@
-import { authAPI, allPay } from 'allegory-allpay-sdk';
+import { authAPI, allPay, getCoin } from 'allegory-allpay-sdk';
 
 class ClaimTwitterHandleService {
   constructor(store) {
@@ -11,6 +11,10 @@ class ClaimTwitterHandleService {
 
   async getPurchasedNames(args) {
     return await allPay.getPurchasedNames(args);
+  }
+
+  async getCoin(args) {
+    return await getCoin(args);
   }
 }
 

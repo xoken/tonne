@@ -6,6 +6,7 @@ import NoMatch from '../shared/components/noMatch';
 import { VerticalAnimatedSwitch } from '../shared/components/Animations';
 import WalletSetup from './screens/WalletSetup';
 import WalletPasswordScreen from './screens/WalletPasswordScreen';
+import TwitterAuthHome from './screens/TwitterAuthHome';
 import ConfirmNamePurchase from '../allpay/screens/ConfirmNamePurchase';
 import NameRegistration from '../allpay/screens/NameRegistration';
 import ProxyRegistration from '../allpay/screens/ProxyRegistration';
@@ -15,6 +16,7 @@ import RegistrationSuccess from '../allpay/screens/RegistrationSuccess';
 export const claimTwitterHandlePaths = {
   walletSetup: '/claim-twitter-handle/wallet-setup',
   walletPasswordSetup: '/claim-twitter-handle/wallet-password-setup',
+  twitterAuthHome: '/claim-twitter-handle/home',
   confirmBuy: '/wallet/allpay/confirm-purchase',
   purchaseSuccess: '/wallet/allpay/purchase-success',
   registerName: '/wallet/allpay/register',
@@ -37,6 +39,11 @@ const ClaimTwitterHandleComponent = props => {
         exact
         path={claimTwitterHandlePaths.walletPasswordSetup}
         render={() => <WalletPasswordScreen />}
+      />
+      <Route
+        exact
+        path={claimTwitterHandlePaths.twitterAuthHome}
+        render={() => <TwitterAuthHome />}
       />
       <Route
         exact

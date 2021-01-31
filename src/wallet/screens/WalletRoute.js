@@ -65,7 +65,7 @@ class WalletRoute extends React.Component {
                     activeClassName='active'>
                     Buy AllPay Name
                   </NavLink>
-                </Dropdown.Item>
+                </Dropdown.Item> */}
                 <Dropdown.Item>
                   <NavLink
                     className='dropdownmenuitems'
@@ -73,7 +73,7 @@ class WalletRoute extends React.Component {
                     activeClassName='active'>
                     Register with proxy
                   </NavLink>
-                </Dropdown.Item> */}
+                </Dropdown.Item>
                 <Dropdown.Item
                   className='dropdownmenuitems'
                   text='Rename Profile'

@@ -17,9 +17,7 @@ import {
 import ImportWallet from '../../wallet/components/ImportWallet';
 import NewWallet from '../../wallet/components/NewWallet';
 import Profiles from '../../wallet/components/Profiles';
-import images from '../../shared/images';
 import * as authActions from '../../auth/authActions';
-import * as claimTwitterHandleActions from '../../claimTwitterHandle/claimTwitterHandleActions';
 import * as authSelectors from '../../auth/authSelectors';
 
 class WalletSetup extends React.Component {
@@ -31,6 +29,7 @@ class WalletSetup extends React.Component {
       selectedOption: undefined,
     };
   }
+
   async componentDidMount() {
     const { dispatch } = this.props;
     await dispatch(authActions.getProfiles());
