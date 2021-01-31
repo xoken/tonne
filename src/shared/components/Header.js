@@ -74,7 +74,17 @@ class Header extends React.Component {
                 to='/explorer'
                 activeClassName='activeheader'
                 className='item headertabitems headerExplorer'>
-                <Icon name='bitcoin' style={{ transform: 'rotate(-14deg)' }} />
+                <img
+                  alt='Bitcoin SV Explorer'
+                  src={images.bsvLogo}
+                  style={{
+                    display: 'block',
+                    height: 23,
+                    width: 'auto',
+                    borderRadius: '100px',
+                  }}
+                  className='icon'
+                />
                 Explorer
               </NavLink>
               <NavLink

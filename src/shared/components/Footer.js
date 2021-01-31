@@ -63,18 +63,18 @@ class Footer extends React.Component {
                 ? 'page-footer page-footer-displayed'
                 : 'page-footer page-footer-hidden'
             }
-            style={{ backgroundColor: '#fbe1e2', color: '#8700ae' }}>
+            style={{ backgroundColor: '#fbe1e2', color: '#7e42ad' }}>
             <div className='ui container'>
-              <div className='ui transparent label' style={{ color: '#8700ae' }}>
+              <div className='ui transparent label' style={{ color: '#7e42ad' }}>
                 Nexa Host: <div className='detail'>{nexaURI || 'UNKNOWN'}</div>
               </div>
-              <div className='ui transparent label' style={{ color: '#8700ae' }}>
+              <div className='ui transparent label' style={{ color: '#7e42ad' }}>
                 Chain: <div className='detail'>{chain}</div>
               </div>
-              <div className='ui transparent label' style={{ color: '#8700ae' }}>
+              <div className='ui transparent label' style={{ color: '#7e42ad' }}>
                 BlocksSynced: <div className='detail'>{blocksSynced}</div>
               </div>
-              <div className='ui transparent label' style={{ color: '#8700ae' }}>
+              <div className='ui transparent label' style={{ color: '#7e42ad' }}>
                 ChainTip: <div className='detail'>{chainTip}</div>
               </div>
             </div>

@@ -12,12 +12,12 @@ class ExplorerSearch extends React.Component {
   onSearchClick = () => {
     if (this.state.searchterm !== '') {
       if (this.state.searchterm.length < 26) {
-        this.props.history.push('/explorer/blockheight/' + this.state.searchterm + '/""');
+        this.props.history.push('/explorer/blockheight/' + this.state.searchterm);
       } else if (this.state.searchterm.length >= 26 && this.state.searchterm.length <= 35) {
         this.props.history.push(`/explorer/address/${this.state.searchterm}`);
       } else if (this.state.searchterm.length === 64) {
         if (this.state.searchterm.substring(0, 4) === '0000') {
-          this.props.history.push(`/explorer/blockhash/${this.state.searchterm}/""`);
+          this.props.history.push(`/explorer/blockhash/${this.state.searchterm}`);
         } else {
           this.props.history.push(`/explorer/transaction/${this.state.searchterm}`);
         }

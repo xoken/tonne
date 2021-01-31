@@ -26,7 +26,17 @@ class Home extends React.Component {
               <div className='column'>
                 <div className='homeMainSection'>
                   <div className='ui icon header purplefontcolor'>
-                    <Icon name='bitcoin' style={{ transform: 'rotate(-14deg)' }} />
+                    <img
+                      alt='Bitcoin SV Blockchain'
+                      src={images.bsvLogo}
+                      style={{
+                        display: 'block',
+                        height: 53,
+                        width: 'auto',
+                        borderRadius: '100px',
+                      }}
+                      className='icon'
+                    />
                     Bitcoin SV Blockchain
                   </div>
                   <Link to='/explorer' className='ui coral button'>
@@ -59,7 +69,7 @@ class Home extends React.Component {
                 <div className='homeMainSection'>
                   <div className='ui icon header purplefontcolor'>
                     <img
-                      alt='Twitter Logo'
+                      alt='Twitter handle'
                       src={images.twitterLogo}
                       className='icon'
                       style={{
