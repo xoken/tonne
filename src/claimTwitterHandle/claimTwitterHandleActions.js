@@ -8,10 +8,6 @@ export const getPurchasedFollowersRequest = createAction('GET_PURCHASED_FOLLOWER
 export const getPurchasedFollowersSuccess = createAction('GET_PURCHASED_FOLLOWERS_SUCCESS');
 export const getPurchasedFollowersFailure = createAction('GET_PURCHASED_FOLLOWERS_FAILURE');
 
-export const getCoinRequest = createAction('GET_COIN_REQUEST');
-export const getCoinSuccess = createAction('GET_COIN_SUCCESS');
-export const getCoinFailure = createAction('GET_COIN_FAILURE');
-
 export const doTwitterAuth = history => async (dispatch, getState, { serviceInjector }) => {
   const popup = window.open(
     '/api/v1/auth/twitter',
@@ -64,12 +60,9 @@ export const getPurchasedFollowers = args => async (dispatch, getState, { servic
 };
 
 export const getCoin = args => async (dispatch, getState, { serviceInjector }) => {
-  dispatch(getCoinRequest());
   try {
-    const data = await serviceInjector(ClaimTwitterHandleService).getCoin(args);
-    console.log(data);
+    return await serviceInjector(ClaimTwitterHandleService).getCoin(args);
   } catch (error) {
-    dispatch(getCoinFailure());
     throw error;
   }
 };

@@ -1,10 +1,11 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { Button, Grid, Loader, Message } from 'semantic-ui-react';
 import * as allpayActions from '../../allpay/allpayActions';
 import * as walletActions from '../../wallet/walletActions';
 import * as claimTwitterHandleActions from '../claimTwitterHandleActions';
+import * as authSelectors from '../../auth/authSelectors';
 import { satoshiToBSV } from '../../shared/utils';
 import { utils } from 'allegory-allpay-sdk';
 
@@ -52,15 +53,17 @@ class TwitterAuthHome extends React.Component {
                   address: unusedAddresses[0],
                 })
               );
-              this.setState({
-                isError: false,
-                message: `Since you have more than 1000 followers, we have credited ${satoshiToBSV(
-                  150000
-                )} to your account.`,
-              });
-              setTimeout(async () => {
-                await this.buyTwitterHandle();
-              }, 3000);
+              if (success) {
+                this.setState({
+                  isError: false,
+                  message: `Since you have more than 1000 followers, we have credited ${satoshiToBSV(
+                    150000
+                  )} to your account.`,
+                });
+                setTimeout(async () => {
+                  await this.buyTwitterHandle();
+                }, 3000);
+              }
             } catch (error) {
               this.setState({
                 isError: true,
@@ -130,17 +133,21 @@ class TwitterAuthHome extends React.Component {
   }
 
   render() {
+    const { user, profile } = this.props;
     const { message } = this.state;
     if (message) {
       return this.renderContent();
-    } else {
+    } else if (user && profile) {
       return <Loader active size='massive' />;
+    } else {
+      return <Redirect to='/' />;
     }
   }
 }
 
 const mapStateToProps = state => ({
   user: state.twitter.user,
+  profile: authSelectors.getProfile(state),
 });
 
 export default withRouter(connect(mapStateToProps)(TwitterAuthHome));

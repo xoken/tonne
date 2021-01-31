@@ -104,10 +104,9 @@ class Header extends React.Component {
 
               <Dropdown
                 button
-                className='icon purplefontcolor'
+                className='icon purplefontcolor menuDropdown'
                 pointing='top right'
-                icon='bars'
-                className='menuDropdown'>
+                icon='bars'>
                 <Dropdown.Menu
                   style={{
                     backgroundColor: 'white',

@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Grid, GridColumn, Icon, Image } from 'semantic-ui-react';
+import { Button, Grid, GridColumn, Icon } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import * as claimTwitterHandleActions from '../../claimTwitterHandle/claimTwitterHandleActions';
 import images from '../images';
@@ -59,6 +59,7 @@ class Home extends React.Component {
                 <div className='homeMainSection'>
                   <div className='ui icon header purplefontcolor'>
                     <img
+                      alt='Twitter Logo'
                       src={images.twitterLogo}
                       className='icon'
                       style={{

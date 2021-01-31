@@ -5,15 +5,23 @@ import { connect } from 'react-redux';
 import Navbar from '../shared/components/Navbar';
 import ProgressIndicator from '../shared/components/ProgressIndicator';
 import { ClaimTwitterHandleRoutes } from './claimTwitterHandleRoutes';
+import { decrementFlow } from './claimTwitterHandleActions';
 
 class ClaimTwitterHandleContainer extends Component {
+  onBack = () => {
+    const { dispatch, history } = this.props;
+    dispatch(decrementFlow(history));
+  };
+
   render() {
     const { progressStep, progressTotalSteps, title } = this.props;
     return (
       <>
-        <Navbar title={title || ''} />
+        <Navbar title={title || ''} onBack={this.onBack} />
         <div className='ui grid'>
-          <div className='one wide column'></div>
+          <div className='one wide column'>
+            <ProgressIndicator steps={progressTotalSteps} activeStep={progressStep} />
+          </div>
           <div className='fifteen wide column'>
             <ClaimTwitterHandleRoutes />
           </div>

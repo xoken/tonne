@@ -240,6 +240,8 @@ class WalletSetup extends React.Component {
       return <Loader active size='massive' />;
     } else if (!user) {
       return <Redirect to='/' />;
+    } else if (user && profile) {
+      return <Redirect to='/claim-twitter-handle/home' />;
     } else {
       return this.renderContent();
     }
