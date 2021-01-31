@@ -193,12 +193,12 @@ class ImportWallet extends React.Component {
           </Grid.Column>
         </Grid.Row>
         <Grid.Row>
-          <Grid.Column floated='left' width='2'>
+          <Grid.Column floated='left' width='8'>
             <Button className='backspace' onClick={this.backspaceOnClick}>
               &#9003;
             </Button>
           </Grid.Column>
-          <Grid.Column floated='right' width='2' verticalAlign='middle'>
+          <Grid.Column floated='right' width='8' verticalAlign='middle'>
             <div id='wordsremaining'>(0 of 12)</div>
           </Grid.Column>
         </Grid.Row>
