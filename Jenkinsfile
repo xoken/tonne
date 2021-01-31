@@ -24,6 +24,8 @@ pipeline {
 
         dir(path: 'tonne') {
           sh 'rm -rf node_modules'
+          sh 'rm -rf tonne-web-regtest'
+          sh 'rm -rf tonne-web-testnet'
         }
       }
     }
