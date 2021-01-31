@@ -91,46 +91,46 @@ class ExplorerBlockHeight extends React.Component {
       <>
         <Grid>
           <Grid.Row columns={2}>
-            <Grid.Column width='4'>
+            <Grid.Column computer={4} mobile={5}>
               <b>Previous Block</b>
             </Grid.Column>
-            <Grid.Column width='12'>
+            <Grid.Column computer={12} mobile={11}>
               <Link
-                to={'/explorer/blockhash/' + this.rjdecoded.block.header.prevBlock + '/""'}
+                to={'/explorer/blockhash/' + this.rjdecoded.block.header.prevBlock}
                 id='previousblock'>
                 {this.rjdecoded.block.header.prevBlock}
               </Link>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
-            <Grid.Column width='4'>
+            <Grid.Column computer={4} mobile={5}>
               <b>Block Version</b>
             </Grid.Column>
-            <Grid.Column width='12'>
+            <Grid.Column computer={12} mobile={11}>
               <div id='blockversion'>{this.rjdecoded.block.header.blockVersion}</div>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
-            <Grid.Column width='4'>
+            <Grid.Column computer={4} mobile={5}>
               <b>Number of transactions</b>
             </Grid.Column>
-            <Grid.Column width='12'>
+            <Grid.Column computer={12} mobile={11}>
               <div id='txcount'>{this.rjdecoded.block.txCount}</div>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
-            <Grid.Column width='4'>
+            <Grid.Column computer={4} mobile={5}>
               <b>Nonce</b>
             </Grid.Column>
-            <Grid.Column width='12'>
+            <Grid.Column computer={12} mobile={11}>
               <div id='bhnonce'>{this.rjdecoded.block.header.nonce}</div>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
-            <Grid.Column width='4'>
+            <Grid.Column computer={4} mobile={5}>
               <b>Coinbase Transaction</b>
             </Grid.Column>
-            <Grid.Column width='12'>
+            <Grid.Column computer={12} mobile={11}>
               <div id='coinbasetx'>{this.rjdecoded.block.coinbaseTx}</div>
             </Grid.Column>
           </Grid.Row>
@@ -141,38 +141,36 @@ class ExplorerBlockHeight extends React.Component {
       <>
         <Grid>
           <Grid.Row columns={2}>
-            <Grid.Column width='4'>
+            <Grid.Column computer={4} mobile={5}>
               <b>Next Block</b>
             </Grid.Column>
-            <Grid.Column width='12'>
-              <Link
-                to={'/explorer/blockhash/' + this.rjdecoded.block.nextBlockHash + '/""'}
-                id='nextblock'>
+            <Grid.Column computer={12} mobile={11}>
+              <Link to={'/explorer/blockhash/' + this.rjdecoded.block.nextBlockHash} id='nextblock'>
                 {this.rjdecoded.block.nextBlockHash}
               </Link>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
-            <Grid.Column width='4'>
+            <Grid.Column computer={4} mobile={5}>
               <b>Block Bits</b>
             </Grid.Column>
-            <Grid.Column width='12'>
+            <Grid.Column computer={12} mobile={11}>
               <div id='blockbits'>{this.rjdecoded.block.header.blockBits}</div>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
-            <Grid.Column width='4'>
+            <Grid.Column computer={4} mobile={5}>
               <b>Size</b>
             </Grid.Column>
-            <Grid.Column width='12'>
+            <Grid.Column computer={12} mobile={11}>
               <div id='size'>{this.rjdecoded.block.size} bytes</div>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
-            <Grid.Column width='4'>
+            <Grid.Column computer={4} mobile={5}>
               <b>Timestamp (UTC)</b>
             </Grid.Column>
-            <Grid.Column width='12'>
+            <Grid.Column computer={12} mobile={11}>
               <div id='timestamp'>
                 {this.date.getDate()}/{this.date.getMonth() + 1}/{this.date.getFullYear()}-
                 {this.date.getHours()}:{this.date.getMinutes()}:{this.date.getSeconds()}
@@ -180,26 +178,26 @@ class ExplorerBlockHeight extends React.Component {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
-            <Grid.Column width='4'>
+            <Grid.Column computer={4} mobile={5}>
               <b>Merkle Root</b>
             </Grid.Column>
-            <Grid.Column width='12'>
+            <Grid.Column computer={12} mobile={11}>
               <div id='merkleroot'>{this.rjdecoded.block.header.merkleRoot}</div>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
-            <Grid.Column width='4'>
+            <Grid.Column computer={4} mobile={5}>
               <b>Coinbase Message</b>
             </Grid.Column>
-            <Grid.Column width='12'>
+            <Grid.Column computer={12} mobile={11}>
               <div id='coinbasemessage'>{this.rjdecoded.block.coinbaseMessage}</div>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row columns={2}>
-            <Grid.Column width='4'>
+            <Grid.Column computer={4} mobile={5}>
               <b>Guessed Miner</b>
             </Grid.Column>
-            <Grid.Column width='12'>
+            <Grid.Column computer={12} mobile={11}>
               <div id='guessedminer'>{this.rjdecoded.block.guessedMiner}</div>
             </Grid.Column>
           </Grid.Row>
@@ -210,10 +208,17 @@ class ExplorerBlockHeight extends React.Component {
     this.blocktitle = this.rjdecoded.block.height;
     this.blockhash = this.rjdecoded.block.hash;
 
-    if (this.props.match.params.txid !== undefined && this.props.match.params.txid !== '""') {
-      this.selected = Math.ceil(
-        (parseInt(this.props.match.params.txid, 10) + 1) / this.transactionsperpage
-      );
+    if (this.props.match.params.txid) {
+      if (parseInt(this.props.match.params.txid, 10) === 0) {
+        this.selected = Math.ceil(
+          (parseInt(this.props.match.params.txid, 10) + 1) / this.transactionsperpage
+        );
+      } else {
+        this.selected = Math.ceil(
+          parseInt(this.props.match.params.txid, 10) / this.transactionsperpage
+        );
+      }
+
       this.currentbatchnum = Math.ceil(this.selected / this.fixedarrlength);
 
       this.numberofpages = Math.ceil(this.numberoftransactions / this.transactionsperpage);
@@ -486,11 +491,13 @@ class ExplorerBlockHeight extends React.Component {
         tempColor = 'white';
       }
       this.txsection.push(
-        <Segment.Group className='nosegmentmargin removesegmentborder'>
+        <Segment.Group
+          className='nosegmentmargin removesegmentborder'
+          style={{ width: '800px', overflow: 'auto' }}>
           <Segment style={{ backgroundColor: tempColor }}>
             <Grid columns={1}>
               <Grid.Row>
-                <Grid.Column>
+                <Grid.Column width={16}>
                   ({this.txnumber + printbreaker})&nbsp;
                   <Link to={'/explorer/transaction/' + this.txcache[k]}>{this.txcache[k]}</Link>
                 </Grid.Column>
@@ -582,12 +589,12 @@ class ExplorerBlockHeight extends React.Component {
             <Segment>
               <h4>
                 <span className='purplefontcolor'>Block #</span>
-                <Link to={'/explorer/blockheight/' + this.blocktitle + '/""'}>
-                  {this.blocktitle}
-                </Link>
+                <Link to={'/explorer/blockheight/' + this.blocktitle}>{this.blocktitle}</Link>
               </h4>
               <div>
-                <Link to={'/explorer/blockhash/' + this.blockhash + '/""'}>{this.blockhash}</Link>
+                <Link to={'/explorer/blockhash/' + this.blockhash} className='word-wrap'>
+                  {this.blockhash}
+                </Link>
               </div>
             </Segment>
             <Segment>
@@ -596,7 +603,7 @@ class ExplorerBlockHeight extends React.Component {
 
             <Segment.Group horizontal>
               <Segment>
-                <Grid columns={2} divided>
+                <Grid columns={2} divided stackable>
                   <Grid.Row>
                     <Grid.Column>{this.summarysect1}</Grid.Column>
 
@@ -604,7 +611,7 @@ class ExplorerBlockHeight extends React.Component {
                   </Grid.Row>
                 </Grid>
                 <Grid columns={1}>
-                  <Grid.Row>
+                  <Grid.Row style={{ width: '800px', overflow: 'auto' }}>
                     <Grid.Column>{this.txsection}</Grid.Column>
                   </Grid.Row>
 
@@ -624,7 +631,7 @@ class ExplorerBlockHeight extends React.Component {
                             </div>
                             <div className='three wide field'>
                               <input
-                                className='pagenuminput'
+                                className='pagenuminput searchBoxAndButtons'
                                 size='5'
                                 type='text'
                                 onChange={event =>
@@ -636,7 +643,7 @@ class ExplorerBlockHeight extends React.Component {
                             </div>
                             <div className='one wide field'>
                               <Button
-                                className='explorerbuttoncolor coral'
+                                className='explorerbuttoncolor coral searchBoxAndButtons'
                                 type='submit'
                                 id='pagebutton'>
                                 Go

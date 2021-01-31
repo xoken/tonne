@@ -16,7 +16,7 @@ class Navbar extends Component {
             </Button>
           </div>
           <div className='item'>
-            <div className='ui medium header'>{title}</div>
+            <div className='ui medium header purplefontcolor'>{title}</div>
           </div>
           {/* <div className='right menu'>
             <div className='item'>

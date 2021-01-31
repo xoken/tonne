@@ -4,30 +4,31 @@ import { Segment, Grid, Button, Icon, Header } from 'semantic-ui-react';
 export default function Downloads() {
   return (
     <>
-      <Header as='h3' className='purplefontcolor' textAlign='center'>
+      <Header as='h4' className='purplefontcolor' textAlign='center'>
         Download Tonne Desktop App
       </Header>
-      <Segment placeholder style={{ height: '93%' }}>
-        <Grid centered columns={3} verticalAlign='middle' style={{ height: '100%' }}>
+      <Segment verticalAlign='middle' style={{ height: '100%' }}>
+        <Grid centered stackable columns={3} verticalAlign='middle' style={{ height: '100%' }}>
           <Grid.Row>
             <Grid.Column textAlign='center'>
               <Header icon className='purplefontcolor'>
                 <Icon name='apple' />
-              </Header>
 
-              <Button className='coral'>Download</Button>
+                <Button className='coral'>Download</Button>
+              </Header>
             </Grid.Column>
             <Grid.Column textAlign='center'>
               <Header icon className='purplefontcolor'>
                 <Icon name='windows' />
+                <Button className='coral'>Download</Button>
               </Header>
-              <Button className='coral'>Download</Button>
             </Grid.Column>
             <Grid.Column textAlign='center'>
               <Header icon className='purplefontcolor'>
                 <Icon name='linux' />
+
+                <Button className='coral'>Download</Button>
               </Header>
-              <Button className='coral'>Download</Button>
             </Grid.Column>
           </Grid.Row>
         </Grid>

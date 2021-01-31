@@ -66,11 +66,15 @@ class ExplorerAddress extends React.Component {
       this.txlist.push(
         <>
           <Grid>
-            <Grid.Row columns={1} className='nopadding'>
-              <Grid.Column className='txslnum'>
+            <Grid.Row columns={1} className=' txslnum'>
+              <Grid.Column computer={1} tablet={1} mobile={2}>
+                <h4>#({i + 1})</h4>
+              </Grid.Column>
+              <Grid.Column computer={15} tablet={15} mobile={14}>
                 <h4>
-                  #({i + 1})&nbsp;
-                  <Link to={'/explorer/transaction/' + this.addressCache[i].txId}>
+                  <Link
+                    to={'/explorer/transaction/' + this.addressCache[i].txId}
+                    className='word-wrap'>
                     {this.addressCache[i].txId}
                   </Link>
                 </h4>
@@ -79,23 +83,26 @@ class ExplorerAddress extends React.Component {
             <Grid.Row columns={1} className=''>
               <Grid.Column>
                 <Grid>
-                  <Grid.Row columns={1}>
-                    <Grid.Column width='16'>
+                  <Grid.Row columns={2}>
+                    <Grid.Column computer={2} mobile={2}>
                       <b>Satoshis: </b>
+                    </Grid.Column>
+                    <Grid.Column computer={14} mobile={14}>
                       {this.addressCache[i].value}
                     </Grid.Column>
                   </Grid.Row>
                   <Grid.Row className='nopaddingtop'>
-                    <Grid.Column width='16'>
-                      <b>Block:</b>{' '}
+                    <Grid.Column computer={1} tablet={2} mobile={3}>
+                      <b>Block:</b>
+                    </Grid.Column>
+                    <Grid.Column computer={15} tablet={14} mobile={13}>
                       <span className='tdwordbreak'>
-                        <Link to={'/explorer/blockhash/' + this.addressCache[i].blockHash + '/""'}>
+                        <Link to={'/explorer/blockhash/' + this.addressCache[i].blockHash}>
                           {this.addressCache[i].blockHash}
                         </Link>
                       </span>
                       {'   '}&nbsp; (#
-                      <Link
-                        to={'/explorer/blockheight/' + this.addressCache[i].blockHeight + '/""'}>
+                      <Link to={'/explorer/blockheight/' + this.addressCache[i].blockHeight}>
                         {this.addressCache[i].blockHeight}
                       </Link>
                       )
@@ -104,7 +111,7 @@ class ExplorerAddress extends React.Component {
                   <Grid.Row columns={1} className='nopaddingtop'>
                     <Grid.Column style={{ padding: '0px' }}>
                       <Segment className='nopaddingtop removesegmentborder'>
-                        <Grid>
+                        <Grid stackable>
                           <Grid.Row columns={2}>
                             <Grid.Column>
                               <Grid>
@@ -186,22 +193,28 @@ class ExplorerAddress extends React.Component {
         outputsjsx.push(
           <Grid>
             <Grid.Row columns={2}>
-              <Grid.Column width={1}>({b + 1}).</Grid.Column>
-              <Grid.Column width={15}>
+              <Grid.Column width={2}>({b + 1}).</Grid.Column>
+              <Grid.Column width={14}>
                 <Grid>
                   <Grid.Row columns={2} className='paddtopbottom5px'>
-                    <Grid.Column width={3}>
+                    <Grid.Column computer={3} mobile={5} style={{ marginTop: '10px' }}>
                       <b>Address</b>
                     </Grid.Column>
-                    <Grid.Column className='tdwordbreak' width={13}>
+                    <Grid.Column
+                      className='tdwordbreak'
+                      computer={13}
+                      mobile={11}
+                      style={{ marginTop: '10px' }}>
                       {checkforemptyaddress(output.tx.txOuts[b].address)}
                     </Grid.Column>
                   </Grid.Row>
                   <Grid.Row columns={2} className='paddtopbottom5px'>
-                    <Grid.Column width={3}>
+                    <Grid.Column computer={3} mobile={5}>
                       <b>Satoshis</b>
                     </Grid.Column>
-                    <Grid.Column width={13}>{output.tx.txOuts[b].value}</Grid.Column>
+                    <Grid.Column computer={13} mobile={11}>
+                      {output.tx.txOuts[b].value}
+                    </Grid.Column>
                   </Grid.Row>
                 </Grid>
               </Grid.Column>
@@ -230,10 +243,14 @@ class ExplorerAddress extends React.Component {
       if (txaddress) {
         return (
           <>
-            <Grid.Column width={3}>
+            <Grid.Column computer={3} mobile={5} style={{ marginTop: '10px' }}>
               <b>Address</b>
             </Grid.Column>
-            <Grid.Column className='tdwordbreak' width={13}>
+            <Grid.Column
+              className='tdwordbreak'
+              computer={13}
+              mobile={11}
+              style={{ marginTop: '10px' }}>
               <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>{' '}
             </Grid.Column>
           </>
@@ -241,7 +258,9 @@ class ExplorerAddress extends React.Component {
       } else {
         return (
           <>
-            <Grid.Column width={16}>Newly minted coins</Grid.Column>
+            <Grid.Column width={16} style={{ marginTop: '10px' }} className='paddtopbottom5px'>
+              Newly minted coins
+            </Grid.Column>
           </>
         );
       }
@@ -251,10 +270,12 @@ class ExplorerAddress extends React.Component {
         return (
           <>
             <Grid.Row columns={2} className='paddtopbottom5px'>
-              <Grid.Column width={3}>
+              <Grid.Column computer={3} mobile={5}>
                 <b>Outpoint Index</b>
               </Grid.Column>
-              <Grid.Column width={13}>{outpointindex}</Grid.Column>
+              <Grid.Column computer={13} mobile={11}>
+                {outpointindex}
+              </Grid.Column>
             </Grid.Row>
           </>
         );
@@ -266,17 +287,19 @@ class ExplorerAddress extends React.Component {
       inputsjsx.push(
         <Grid>
           <Grid.Row columns={2}>
-            <Grid.Column width={1}>({a + 1}). </Grid.Column>
-            <Grid.Column width={15}>
+            <Grid.Column width={2}>({a + 1}).</Grid.Column>
+            <Grid.Column width={14}>
               <Grid>
                 <Grid.Row columns={2} className='paddtopbottom5px'>
                   {checkforinvalidaddress(input.tx.txInps[a].address)}
                 </Grid.Row>
                 <Grid.Row columns={2} className='paddtopbottom5px'>
-                  <Grid.Column width={3}>
+                  <Grid.Column computer={3} mobile={5}>
                     <b>Satoshis</b>
                   </Grid.Column>
-                  <Grid.Column width={13}>{input.tx.txInps[a].value}</Grid.Column>
+                  <Grid.Column computer={13} mobile={11}>
+                    {input.tx.txInps[a].value}
+                  </Grid.Column>
                 </Grid.Row>
                 {checkforinvalidoutpointindex(input.tx.txInps[a].outpointIndex)}
               </Grid>
@@ -524,7 +547,9 @@ class ExplorerAddress extends React.Component {
             <Segment>
               <h4>
                 <span className='purplefontcolor'>Address</span> &nbsp;
-                <Link to={'/explorer/address/' + this.address}>{this.address}</Link>
+                <Link to={'/explorer/address/' + this.address} className='word-wrap'>
+                  {this.address}
+                </Link>
               </h4>
             </Segment>
             <Segment>

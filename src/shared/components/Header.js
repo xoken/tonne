@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { NavLink, Link } from 'react-router-dom';
-import { Icon, Dropdown } from 'semantic-ui-react';
+import { Icon, Dropdown, Divider } from 'semantic-ui-react';
 import images from '../images';
 
 class Header extends React.Component {
@@ -10,29 +10,49 @@ class Header extends React.Component {
     if (REACT_APP_CLIENT === 'browser') {
       if (REACT_APP_NETWORK === 'testnet') {
         return (
-          <Dropdown.Item>
-            <a href='https://tonne.app'>Switch to Mainnet</a>
-          </Dropdown.Item>
+          <>
+            <a href='https://tonne.app'>
+              <Dropdown.Item className='menuDropDownItems purplefontcolor'>
+                Switch to Mainnet
+              </Dropdown.Item>
+            </a>
+            <Divider className='marginTopBottom0px' />
+          </>
         );
       } else if (REACT_APP_NETWORK === 'bitcoinSV') {
         return (
-          <Dropdown.Item>
-            <a href='https://test.tonne.app'>Switch to Testnet</a>
-          </Dropdown.Item>
+          <>
+            <a href='https://test.tonne.app'>
+              <Dropdown.Item className='menuDropDownItems purplefontcolor'>
+                Switch to Testnet
+              </Dropdown.Item>
+            </a>
+            <Divider className='marginTopBottom0px' />
+          </>
         );
       }
     } else {
       if (REACT_APP_NETWORK === 'testnet') {
         return (
-          <Dropdown.Item>
-            <Link className='ui'>Switch to Mainnet</Link>
-          </Dropdown.Item>
+          <>
+            <Link className='ui'>
+              <Dropdown.Item className='menuDropDownItems purplefontcolor'>
+                Switch to Mainnet
+              </Dropdown.Item>
+            </Link>
+            <Divider className='marginTopBottom0px' />
+          </>
         );
       } else if (REACT_APP_NETWORK === 'bitcoinSV') {
         return (
-          <Dropdown.Item>
-            <Link className='ui'>Switch to Testnet</Link>
-          </Dropdown.Item>
+          <>
+            <Link className='ui'>
+              <Dropdown.Item className='menuDropDownItems purplefontcolor'>
+                Switch to Testnet
+              </Dropdown.Item>
+            </Link>
+            <Divider className='marginTopBottom0px' />
+          </>
         );
       }
     }
@@ -46,18 +66,21 @@ class Header extends React.Component {
           <div className='ui secondary labeled icon menu'>
             <div className='header item'>
               <Link to='/' className='' style={{ display: 'block' }}>
-                <img src={images.logo} style={{ display: 'block', width: 150 }} alt='Tonne' />
+                <img src={images.logo} className='headerLogo' alt='Tonne' />
               </Link>
             </div>
             <div className='right menu'>
               <NavLink
                 to='/explorer'
                 activeClassName='activeheader'
-                className='item headertabitems'>
+                className='item headertabitems headerExplorer'>
                 <Icon name='bitcoin' style={{ transform: 'rotate(-14deg)' }} />
                 Explorer
               </NavLink>
-              <NavLink to='/wallet' activeClassName='activeheader' className='item headertabitems'>
+              <NavLink
+                to='/wallet'
+                activeClassName='activeheader'
+                className='item headertabitems headerWallet'>
                 <img
                   alt='Bitcoin SV Wallet'
                   src={images.wallet}
@@ -65,6 +88,7 @@ class Header extends React.Component {
                     display: 'block',
                     height: 23,
                     width: 'auto',
+                    borderRadius: '100px',
                   }}
                   className='icon'
                 />
@@ -81,27 +105,26 @@ class Header extends React.Component {
               <Dropdown
                 button
                 className='icon purplefontcolor'
+                pointing='top right'
                 icon='bars'
-                style={{
-                  backgroundColor: 'white',
-                  height: 'auto',
-                  marginTop: 'auto',
-                  marginBottom: 'auto',
-                  zIndex: 999,
-                  fontSize: '25px',
-                }}>
+                className='menuDropdown'>
                 <Dropdown.Menu
                   style={{
                     backgroundColor: 'white',
                     fontSize: '14px',
                   }}>
                   {this.renderNetworkToggle()}
-                  <Dropdown.Item>
-                    <a href='https://www.xoken.org/contact-us/'>Contact Us</a>
-                  </Dropdown.Item>
-                  <Dropdown.Item>
-                    <Link to='/downloads'>Download App</Link>
-                  </Dropdown.Item>
+                  <a href='https://www.xoken.org/contact-us/'>
+                    <Dropdown.Item className='menuDropDownItems purplefontcolor'>
+                      Contact Us
+                    </Dropdown.Item>
+                  </a>
+                  <Divider className='marginTopBottom0px' />
+                  <Link to='/downloads'>
+                    <Dropdown.Item className='menuDropDownItems purplefontcolor'>
+                      Download App
+                    </Dropdown.Item>
+                  </Link>
                 </Dropdown.Menu>
               </Dropdown>
             </div>

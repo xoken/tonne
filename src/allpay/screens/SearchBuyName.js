@@ -116,7 +116,9 @@ class SearchBuyName extends React.Component {
             <div className='column'>
               <div className='ui fluid action labeled large input'>
                 <div className='uneditableinput'>
-                  <span className='purplefontcolor'>aa/</span>
+                  <span className='purplefontcolor' style={{ paddingLeft: '5px' }}>
+                    aa/
+                  </span>
                 </div>
                 <input
                   className='searchname'
