@@ -401,7 +401,11 @@ class ExplorerDashboard extends React.Component {
           <br />
 
           <center>
-            <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
+            <ul
+              className='pagination justify-content-center'
+              style={{ overflow: 'auto', minWidth: '300px' }}>
+              {this.pagescontainer}
+            </ul>
           </center>
 
           <form onSubmit={this.pagebutton}>
