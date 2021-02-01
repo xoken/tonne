@@ -127,7 +127,7 @@
   height: 22px;
   padding: 0px 5px 0px 5px !important;
   z-index: 999;
-  color: #8700ae !important;
+  color: #7e42ad !important;
 }
 
 .newpagefooter {
@@ -136,7 +136,7 @@
   vertical-align: top;
   left: 0px;
   right:0px;
-  padding: 0px 5px 0px 5px !important;
+  padding: 0px 0px 0px 0px !important;
   z-index: 999;
   min-width: 100% !important;
   height: 22px;
@@ -207,14 +207,14 @@
   left: 0;
   margin-left: 30px;
   border-radius: 5px;
-  background-color: #8700ae;
+  background-color: #7e42ad;
   transition: height 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .ui.basic.button.borderless {
   box-shadow: none;
 }
 .headertabitems {
-  color: #8700ae !important;
+  color: #7e42ad !important;
   box-shadow: 1px 1px 3px lightgrey !important;
   border-radius: 2px !important;
   z-index: 999;
@@ -248,28 +248,28 @@
   box-shadow: 0 0 0 2px #ed7464 inset !important;
 }
 .purplefontcolor {
-  color: #8700ae !important;
+  color: #7e42ad !important;
 }
 .purplefontcolor > label {
-  color: #8700ae !important;
+  color: #7e42ad !important;
 }
 .peachfontcolor {
   color: #fbe1e2 !important;
 }
 .purple {
-  background-color: #8700ae !important;
+  background-color: #7e42ad !important;
   color: white !important;
 }
 .peach {
   background-color: #fbe1e2 !important;
-  color: #8700ae !important;
+  color: #7e42ad !important;
 }
 .page-header {
   background: none;
 }
 .backspace {
   background-color: #fbe1e2 !important;
-  color: #8700ae !important;
+  color: #7e42ad !important;
   border-radius: 2px !important;
   box-shadow: 2px 2px 5px !important;
   position: relative;
@@ -315,7 +315,7 @@
 }
 .ui.dropdown .menu > .item a,
 .ui.dropdown .menu > .item span {
-  color: #8700ae;
+  color: #7e42ad;
 }
 .ui.dropdown .menu > .item .active {
   color: grey;
@@ -436,5 +436,8 @@
   }
   .negativeMarginBottom{
     margin-bottom: -14px !important;
+  }
+  .newpagefooter{
+    font-size: 13px;
   }
 }

@@ -313,12 +313,29 @@ class ExplorerDashboard extends React.Component {
       </Segment.Group>
     );
     this.size = Object.keys(this.rjdecoded.blocks).length;
-    var todaysdate, age, tempColor;
+    var timeDifference, age, tempColor, years, days, hours, minutes;
     for (var i = this.size - 1; i >= 0; i--) {
       this.date = new Date(this.rjdecoded.blocks[i].header.blockTimestamp * 1000);
-      todaysdate = Date.now() - this.rjdecoded.blocks[i].header.blockTimestamp * 1000;
-      age = todaysdate / 1000 / 60 / 60 / 24;
-      console.log(age);
+      timeDifference = Date.now() - this.rjdecoded.blocks[i].header.blockTimestamp * 1000;
+      timeDifference /= 1000;
+      years = Math.floor(timeDifference / (24 * 3600 * 365));
+      timeDifference = timeDifference % (24 * 3600 * 365);
+      days = Math.floor(timeDifference / (24 * 3600));
+      timeDifference = timeDifference % (24 * 3600);
+      hours = Math.floor(timeDifference / 3600);
+      timeDifference %= 3600;
+      minutes = Math.floor(timeDifference / 60);
+
+      if (years > 0) {
+        age = `${years} ${years > 1 ? 'years' : 'year'}, ${days} ${
+          days > 1 ? 'days' : 'day'
+        }, ${hours}:${minutes}`;
+      } else if (days > 0) {
+        age = `${days} ${days > 1 ? 'days' : 'day'}, ${hours}:${minutes}`;
+      } else {
+        age = `${hours}:${minutes}`;
+      }
+
       if (i % 2 === 0) {
         tempColor = 'white';
       } else {
@@ -342,7 +359,7 @@ class ExplorerDashboard extends React.Component {
                   <br />
                   {this.date.getHours()}:{this.date.getMinutes()}:{this.date.getSeconds()}
                 </Grid.Column>
-                <Grid.Column>{age.toFixed(2)} Days</Grid.Column>
+                <Grid.Column className='word-wrap'>{age}</Grid.Column>
                 <Grid.Column>{this.rjdecoded.blocks[i].header.blockVersion} </Grid.Column>
                 <Grid.Column>{this.rjdecoded.blocks[i].txCount} </Grid.Column>
                 <Grid.Column>{this.rjdecoded.blocks[i].size} </Grid.Column>

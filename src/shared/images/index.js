@@ -5,6 +5,7 @@ const images = {
   xokenFooterLogo: require('./images/xoken-logo.png'),
   wallet: require('./images/wallet.png'),
   twitterLogo: require('./images/Twitter_Logo_WhiteOnBlue.png'),
+  bsvLogo: require('./images/bsvlogo.png'),
 };
 
 export default images;
