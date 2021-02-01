@@ -14,17 +14,13 @@ export const doTwitterAuth = history => async (dispatch, getState, { serviceInje
     'twitter-auth-window',
     'width=500, height=500, top=0, left=0'
   );
-  console.log('Popup open');
   //   this.polling(popup);
   const messageHandler = async event => {
     if (event.origin !== window.location.origin) return;
-    console.log('event.source.name : ' + event.source.name);
-    debugger;
     if (event.source.name === 'twitter-auth-window') {
       const queryParams = new URLSearchParams(event.data);
       const oauthToken = queryParams.get('oauth_token');
       const oauthTokenSecret = queryParams.get('oauth_token_secret');
-      console.log('Here');
       popup.close();
       window.removeEventListener('message', messageHandler);
       dispatch(updateTwitterInfo({ oauthToken, oauthTokenSecret }));
