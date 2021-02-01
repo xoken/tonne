@@ -133,21 +133,15 @@
 .newpagefooter {
   position: absolute;
   bottom: 0px !important;
-  vertical-align: top;
   left: 0px;
   right:0px;
-  padding: 0px 0px 0px 0px !important;
   z-index: 999;
-  min-width: 100% !important;
-  height: 22px;
-  margin-top: 0px !important;
-  margin-bottom: 0px !important;
 }
 
 .page-footer {
   text-align: center;
   font-weight: bold;
-  height: 22px;
+  height: 23px;
   padding: 0px 15px 0px 15px;
 }
 .page-footer-displayed {
@@ -241,12 +235,12 @@
   height: 10px;
 }
 .coral {
-  background-color: #ed7464 !important;
+  background-color: #FF7F7F !important;
   color: white !important;
 }
 
 .coralinverted {
-  box-shadow: 0 0 0 2px #ed7464 inset !important;
+  box-shadow: 0 0 0 2px #FF7F7F inset !important;
 }
 .purplefontcolor {
   color: #7e42ad !important;
@@ -297,7 +291,7 @@
   border-radius: 0px !important;
 }
 .buyallpaybutton {
-  background-color: #ed7464;
+  background-color: #FF7F7F;
   color: white;
   padding: 8px 10px 8px 10px;
   border-radius: 4px;
@@ -366,10 +360,23 @@
   padding-left: 0px !important;
   margin-left:0px !important;
 }
-
+.footerLeftCol{
+  margin-left: 0%;
+  float: left;
+}
+.footerRightCol{
+  margin-right: 0%;
+  float: right;
+}
 @media screen and (min-width: 455px) {
   .headerLogo {
     width: 150px;
+  }
+  .footerLeftCol{
+    margin-left: 18%;
+  }
+  .footerRightCol{
+    margin-right: 18%;
   }
 }
 
@@ -437,8 +444,5 @@
   }
   .negativeMarginBottom{
     margin-bottom: -14px !important;
-  }
-  .newpagefooter{
-    font-size: 13px;
   }
 }

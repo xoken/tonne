@@ -314,15 +314,15 @@ table {
   padding: 0.5rem 0.75rem;
   margin-left: -1px;
   line-height: 1.25;
-  color: #ed7464;
+  color: #FF7F7F;
   background-color: #fff;
   border: 1px solid #dee2e6;
 }
 .page-item.active .page-link {
   z-index: 3;
   color: #fff;
-  background-color: #ed7464;
-  border-color: #ed7464;
+  background-color: #FF7F7F;
+  border-color: #FF7F7F;
 }
 .emptypagelink {
   position: relative;
@@ -330,7 +330,7 @@ table {
   padding: 0.5rem 0.75rem;
   margin-left: -1px;
   line-height: 1.25;
-  color: #ed7464;
+  color: #FF7F7F;
   background-color: #fff;
   border: 1px solid #dee2e6;
   cursor: not-allowed;

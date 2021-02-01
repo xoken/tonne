@@ -84,11 +84,8 @@ class Footer extends React.Component {
     } else {
       return (
         <>
-          <footer className='page-footer peach'>
-            <span
-              style={{
-                float: 'left',
-              }}>
+          <footer className='page-footer peach newpagefooter'>
+            <span className='footerLeftCol'>
               <a href='https://www.xoken.org' className='peach' style={{ whiteSpace: 'nowrap' }}>
                 Powered by{' '}
                 <img
@@ -98,14 +95,12 @@ class Footer extends React.Component {
                     width: 63,
                     verticalAlign: 'middle',
                     backgroundColor: 'white',
+                    padding: '3px 3px 3px 3px',
                   }}
                 />
               </a>
             </span>
-            <span
-              style={{
-                float: 'right',
-              }}>
+            <span className='footerRightCol'>
               Network: <span className='indicator peach'>{`${process.env.REACT_APP_NETWORK}`}</span>
             </span>
           </footer>
