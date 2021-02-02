@@ -8,7 +8,6 @@ import WalletSetup from './screens/WalletSetup';
 import WalletPasswordScreen from './screens/WalletPasswordScreen';
 import TwitterAuthHome from './screens/TwitterAuthHome';
 import ConfirmNamePurchase from '../allpay/screens/ConfirmNamePurchase';
-import NameRegistration from '../allpay/screens/NameRegistration';
 import ProxyRegistration from '../allpay/screens/ProxyRegistration';
 import ConfirmRegistration from '../allpay/screens/ConfirmRegistration';
 import RegistrationSuccess from '../allpay/screens/RegistrationSuccess';
@@ -18,7 +17,6 @@ export const claimTwitterHandlePaths = {
   walletPasswordSetup: '/claim-twitter-handle/wallet-password-setup',
   twitterAuthHome: '/claim-twitter-handle/home',
   confirmBuy: '/wallet/allpay/confirm-purchase',
-  purchaseSuccess: '/wallet/allpay/purchase-success',
   registerName: '/wallet/allpay/register',
   confirmRegister: '/wallet/allpay/confirm-register',
   registerSuccess: '/wallet/allpay/register-success',
@@ -49,11 +47,6 @@ const ClaimTwitterHandleComponent = props => {
         exact
         path={claimTwitterHandlePaths.confirmBuy}
         render={() => <ConfirmNamePurchase />}
-      />
-      <Route
-        exact
-        path={claimTwitterHandlePaths.purchaseSuccess}
-        render={() => <NameRegistration />}
       />
       <Route
         exact

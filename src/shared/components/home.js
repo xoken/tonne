@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Grid, GridColumn, Icon } from 'semantic-ui-react';
+import { Button, Grid, GridColumn } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import * as claimTwitterHandleActions from '../../claimTwitterHandle/claimTwitterHandleActions';
 import images from '../images';
@@ -39,7 +39,7 @@ class Home extends React.Component {
                     />
                     Bitcoin SV Blockchain
                   </div>
-                  <Link to='/explorer' className='ui coral button'>
+                  <Link to='/explorer' className='ui button coral'>
                     Explore
                   </Link>
                 </div>
@@ -60,7 +60,7 @@ class Home extends React.Component {
                     />
                     Bitcoin SV Wallet
                   </div>
-                  <Link to='/wallet' className='ui coral button'>
+                  <Link to='/wallet' className='ui button coral'>
                     Send / Receive
                   </Link>
                 </div>
@@ -81,9 +81,9 @@ class Home extends React.Component {
                     />
                     Twitter handle
                   </div>
-                  <a className='ui coral button' onClick={this.onClaimTwitterHandle}>
+                  <Button fluid className='coral' onClick={this.onClaimTwitterHandle}>
                     Claim on-chain
-                  </a>
+                  </Button>
                 </div>
               </div>
             </div>

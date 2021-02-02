@@ -40,7 +40,7 @@ class ConfirmNamePurchase extends React.Component {
         );
         if (txBroadcast) {
           this.setState({ isError: false, message: 'Transaction signed and relayed successfully' });
-          this.props.history.push('/wallet/allpay/purchase-success');
+          this.props.history.push('/wallet/allpay/register');
         } else {
           this.setState({ isError: true, message: 'Error in relaying Transaction' });
         }

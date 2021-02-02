@@ -75,7 +75,7 @@
   color: #dc3545 !important;
 }
 .nUTXO {
-  color: #28a745;
+  border-bottom: 1px dashed;
 }
 .ui.transparent.label,
 .ui.transparent.labels .label {
@@ -117,7 +117,6 @@
 .word-wrap {
   word-wrap: anywhere;
 }
-
 .statusbuttontext {
   position: absolute;
   bottom: 0px !important;
@@ -129,13 +128,12 @@
   z-index: 999;
   color: #7e42ad !important;
 }
-
 .newpagefooter {
   position: absolute;
   bottom: 0px !important;
   vertical-align: top;
   left: 0px;
-  right:0px;
+  right: 0px;
   padding: 0px 0px 0px 0px !important;
   z-index: 999;
   min-width: 100% !important;
@@ -143,7 +141,6 @@
   margin-top: 0px !important;
   margin-bottom: 0px !important;
 }
-
 .page-footer {
   text-align: center;
   font-weight: bold;
@@ -162,7 +159,6 @@
     left: -20px !important;
     opacity: 0;
   }
-
   to {
     left: 0px !important;
     opacity: 1;
@@ -173,7 +169,6 @@
     left: 0px;
     opacity: 1;
   }
-
   to {
     left: -20px;
     opacity: 0;
@@ -191,7 +186,6 @@
   margin: 0;
   padding: 0;
 }
-
 .progress-indicator-step {
   background-color: #f1f1f1;
   border-radius: 50%;
@@ -219,7 +213,6 @@
   border-radius: 2px !important;
   z-index: 999;
 }
-
 .activeheader {
   background-color: #fbe1e2 !important;
 }
@@ -243,7 +236,6 @@
   background-color: #ed7464 !important;
   color: white !important;
 }
-
 .coralinverted {
   box-shadow: 0 0 0 2px #ed7464 inset !important;
 }
@@ -306,7 +298,6 @@
   margin-left: 10px;
   margin-right: 10px;
 }
-
 .buyallpaybutton:hover {
   color: white;
 }
@@ -336,9 +327,6 @@
 .ui.header.generalheadingscolor {
   color: grey;
 }
-/* .ui.button {
-  margin-right: 0;
-} */
 .ui.card.twitter-card {
   box-shadow: none;
 }
@@ -348,8 +336,7 @@
 .indicator:first-letter {
   text-transform: capitalize;
 }
-
-.menuDropdown{
+.menuDropdown {
   background-color: white !important;
   height: auto !important;
   margin-top: auto !important;
@@ -361,83 +348,83 @@
 }
 .headerLogo {
   display: block;
-  width:100px;
+  width: 100px;
   padding-left: 0px !important;
-  margin-left:0px !important;
+  margin-left: 0px !important;
 }
-
+.ui.modal > .actions {
+  background: none;
+  border: none;
+}
+.homeMainSection {
+  padding-top: 40px !important;
+  padding-bottom: 40px !important;
+}
+.marginLeftRightNone {
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+}
+.menuDropDownItems {
+  text-align: left !important;
+  display: block !important;
+  margin-left: 0px !important;
+  margin-right: 0px !important;
+}
+.menuDropDownItems:hover {
+  background-color: #fafafa !important;
+}
+.marginTopBottom0px {
+  margin-top: 0px !important;
+  margin-bottom: 0px !important;
+}
+.walletHomeDividerHorizontal {
+  display: none;
+}
+.walletHomeDividerVertical {
+  display: block;
+}
 @media screen and (min-width: 455px) {
   .headerLogo {
     width: 150px;
   }
 }
-
 @media screen and (max-width: 405px) {
-
-  .header{
-    padding:0px !important;
+  .header {
+    padding: 0px !important;
     margin-left: 0px !important;
   }
 
-  .menuDropdown{
+  .menuDropdown {
     padding-left: 8px !important;
     margin-right: 0px !important;
   }
-  .bars{
+  .bars {
     margin-right: 0px !important;
   }
-  .headerWallet{
+  .headerWallet {
     min-width: auto !important;
     padding: 6px 12px 6px 12px !important;
   }
-  .headerExplorer{
+  .headerExplorer {
     min-width: auto !important;
     padding: 6px !important;
   }
-  .noPaddingTopBottomFormobiles{
+  .noPaddingTopBottomFormobiles {
     padding-top: 0px !important;
     padding-bottom: 0px !important;
   }
 }
-.homeMainSection{
-  padding-top: 40px !important;
-  padding-bottom: 40px !important;
-}
-.marginLeftRightNone{
-  margin-left:0px !important;
-  margin-right:0px !important;
-}
-.menuDropDownItems{
-  text-align: left !important;
-  display: block !important;
-  margin-left:0px !important;
-  margin-right:0px !important;
-}
-.menuDropDownItems:hover{
-  background-color: #fafafa !important;
-}
-.marginTopBottom0px{
-  margin-top: 0px !important;
-  margin-bottom:0px !important;
-}
-.walletHomeDividerHorizontal{
-  display: none;
-}
-.walletHomeDividerVertical{
-  display: block;
-}
-
 @media screen and (max-width: 767px) {
-  .walletHomeDividerHorizontal{
+  .walletHomeDividerHorizontal {
     display: block;
   }
-  .walletHomeDividerVertical{
+  .walletHomeDividerVertical {
     display: none;
   }
-  .negativeMarginBottom{
+  .negativeMarginBottom {
     margin-bottom: -14px !important;
   }
-  .newpagefooter{
+  .newpagefooter {
     font-size: 13px;
   }
 }

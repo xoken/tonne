@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { NavLink, Link } from 'react-router-dom';
-import { Icon, Dropdown, Divider } from 'semantic-ui-react';
+import { Dropdown, Divider } from 'semantic-ui-react';
 import images from '../images';
 
 class Header extends React.Component {

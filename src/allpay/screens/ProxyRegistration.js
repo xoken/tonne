@@ -1,7 +1,18 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Form, Grid, Header, Input, Checkbox, Message, Segment } from 'semantic-ui-react';
+import {
+  Button,
+  Checkbox,
+  Form,
+  Grid,
+  Header,
+  Input,
+  Message,
+  Modal,
+  Segment,
+  Image,
+} from 'semantic-ui-react';
 import * as allpayActions from '../allpayActions';
 import { wallet, utils } from 'allegory-allpay-sdk';
 
@@ -10,11 +21,12 @@ class ProxyRegistration extends React.Component {
     super(props);
     this.state = {
       selectedProxyProvider: undefined,
-      addressCount: 5,
+      addressCount: process.env.REACT_APP_PROXY_DEFAULT_ADDRESS_COUNT || 64,
       unregisteredNames: [],
       showRegistrationOptions: this.props.outpoint?.name ? false : true,
       name: this.props.outpoint?.name || [],
       proxyProviders: [{ name: 'Xoken Proxy Provider', proxyURI: process.env.REACT_APP_PROXY_URI }],
+      skipRegistrationModal: false,
       message: '',
       isError: false,
     };
@@ -78,6 +90,17 @@ class ProxyRegistration extends React.Component {
     }
   };
 
+  onToggle = () => {
+    const { skipRegistrationModal } = this.state;
+    this.setState({
+      skipRegistrationModal: !skipRegistrationModal,
+    });
+  };
+
+  onSkipAnyWay = () => {
+    this.props.history.push('/wallet');
+  };
+
   onSelect = proxyProvider => async () => {
     this.setState({
       selectedProxyProvider: proxyProvider,
@@ -103,8 +126,16 @@ class ProxyRegistration extends React.Component {
     const { name, selectedProxyProvider } = this.state;
     return (
       <>
-        Register {name.length > 0 ? utils.codePointToName(name) : 'name'} with AllPay service
-        provider {selectedProxyProvider && `"${selectedProxyProvider.name}"`}
+        <Header as='h4' textAlign='center'>
+          Register {name.length > 0 ? utils.codePointToName(name) : 'name'} with AllPay service
+          provider {selectedProxyProvider && `"${selectedProxyProvider.name}"`}
+        </Header>
+        <Header textAlign='center'>
+          <Header.Subheader t>
+            The proxy generates provably correct Bitcoin addresses on your behalf. The AllPay
+            protocol is completely trustless and secure.
+          </Header.Subheader>
+        </Header>
       </>
     );
   }
@@ -190,17 +221,37 @@ class ProxyRegistration extends React.Component {
     );
   }
 
+  renderSkipModal() {
+    const { skipRegistrationModal } = this.state;
+    return (
+      <Modal open={skipRegistrationModal}>
+        <Modal.Content>
+          <Modal.Description>
+            <p>
+              If you skip you will not be able to receive BitcoinSV by AllPay name. Click Cancel to
+              proceed with proxy registration.
+            </p>
+          </Modal.Description>
+        </Modal.Content>
+        <Modal.Actions>
+          <Button className='coral' onClick={this.onToggle}>
+            Cancel
+          </Button>
+          <Button basic className='borderless' onClick={this.onSkipAnyWay}>
+            Skip Anyway
+          </Button>
+        </Modal.Actions>
+      </Modal>
+    );
+  }
+
   render() {
     const { showRegistrationOptions } = this.state;
     return (
       <>
         <Grid>
           <Grid.Row>
-            <Grid.Column>
-              <Header as='h4' textAlign='center'>
-                {this.renderHeader()}
-              </Header>
-            </Grid.Column>
+            <Grid.Column>{this.renderHeader()}</Grid.Column>
           </Grid.Row>
           <Grid.Row>
             <Grid.Column textAlign='center'>
@@ -222,10 +273,14 @@ class ProxyRegistration extends React.Component {
               <Button className='coral' onClick={this.onRegister}>
                 Register
               </Button>
+              <Button basic className='borderless' onClick={this.onToggle}>
+                Skip
+              </Button>
             </Grid.Column>
           </Grid.Row>
           {this.renderMessage()}
         </Grid>
+        {this.renderSkipModal()}
       </>
     );
   }
