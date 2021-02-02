@@ -31,17 +31,6 @@
   margin-left: 0;
   margin-right: 0;
 }
-.modal {
-  position: fixed;
-  top: unset;
-  left: unset;
-  z-index: unset;
-  display: unset;
-  width: unset;
-  height: unset;
-  overflow: unset;
-  outline: unset;
-}
 .warning {
   color: #794b02;
 }
@@ -102,6 +91,10 @@
 .last-refresh {
   margin-right: 15px;
 }
+.ui.modal > .actions {
+  background: none;
+  border: none;
+}
 .ui.receive-modal.modal > .header {
   border: none;
 }
@@ -109,10 +102,6 @@
   top: 1.0535rem;
   right: 1rem;
   color: rgba(0, 0, 0, 0.87);
-}
-.ui.receive-modal.modal > .actions {
-  background: none;
-  border: none;
 }
 .word-wrap {
   word-wrap: anywhere;
@@ -131,20 +120,15 @@
 .newpagefooter {
   position: absolute;
   bottom: 0px !important;
-  vertical-align: top;
   left: 0px;
   right: 0px;
-  padding: 0px 0px 0px 0px !important;
   z-index: 999;
-  min-width: 100% !important;
-  height: 22px;
-  margin-top: 0px !important;
-  margin-bottom: 0px !important;
 }
 .page-footer {
   text-align: center;
   font-weight: bold;
-  height: 22px;
+  height: 23px;
+  padding: 0px 15px 0px 15px;
 }
 .page-footer-displayed {
   animation-duration: 1s;
@@ -233,11 +217,11 @@
   height: 10px;
 }
 .coral {
-  background-color: #ed7464 !important;
+  background-color: #ff7f7f !important;
   color: white !important;
 }
 .coralinverted {
-  box-shadow: 0 0 0 2px #ed7464 inset !important;
+  box-shadow: 0 0 0 2px #ff7f7f inset !important;
 }
 .purplefontcolor {
   color: #7e42ad !important;
@@ -288,7 +272,7 @@
   border-radius: 0px !important;
 }
 .buyallpaybutton {
-  background-color: #ed7464;
+  background-color: #ff7f7f;
   color: white;
   padding: 8px 10px 8px 10px;
   border-radius: 4px;
@@ -352,10 +336,6 @@
   padding-left: 0px !important;
   margin-left: 0px !important;
 }
-.ui.modal > .actions {
-  background: none;
-  border: none;
-}
 .homeMainSection {
   padding-top: 40px !important;
   padding-bottom: 40px !important;
@@ -383,9 +363,23 @@
 .walletHomeDividerVertical {
   display: block;
 }
+.footerLeftCol {
+  margin-left: 0%;
+  float: left;
+}
+.footerRightCol {
+  margin-right: 0%;
+  float: right;
+}
 @media screen and (min-width: 455px) {
   .headerLogo {
     width: 150px;
+  }
+  .footerLeftCol {
+    margin-left: 18%;
+  }
+  .footerRightCol {
+    margin-right: 18%;
   }
 }
 @media screen and (max-width: 405px) {
@@ -393,7 +387,6 @@
     padding: 0px !important;
     margin-left: 0px !important;
   }
-
   .menuDropdown {
     padding-left: 8px !important;
     margin-right: 0px !important;
@@ -423,8 +416,5 @@
   }
   .negativeMarginBottom {
     margin-bottom: -14px !important;
-  }
-  .newpagefooter {
-    font-size: 13px;
   }
 }

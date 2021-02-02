@@ -11,7 +11,6 @@ import {
   Message,
   Modal,
   Segment,
-  Image,
 } from 'semantic-ui-react';
 import * as allpayActions from '../allpayActions';
 import { wallet, utils } from 'allegory-allpay-sdk';

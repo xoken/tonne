@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { chainAPI } from 'allegory-allpay-sdk';
-import { Button, Grid } from 'semantic-ui-react';
+import { Button } from 'semantic-ui-react';
 import images from '../images';
 
 class Footer extends React.Component {
@@ -84,40 +84,25 @@ class Footer extends React.Component {
     } else {
       return (
         <>
-          <footer className='page-footer peach'>
-            <Grid className='nopadding newpagefooter marginLeftRightNone' columns={1}>
-              <Grid.Row className='nopadding peach'>
-                <Grid.Column
-                  computer={10}
-                  mobile={16}
-                  style={{ whiteSpace: 'nowrap', marginLeft: 'auto', marginRight: 'auto' }}>
-                  <span
-                    style={{
-                      float: 'left',
-                    }}>
-                    <a href='https://www.xoken.org' className='peach'>
-                      Powered by{' '}
-                      <img
-                        alt='Xoken Labs'
-                        src={images.xokenFooterLogo}
-                        style={{
-                          width: 63,
-                          verticalAlign: 'middle',
-                          backgroundColor: 'white',
-                        }}
-                      />
-                    </a>
-                  </span>
-                  <span
-                    style={{
-                      float: 'right',
-                    }}>
-                    Network:{' '}
-                    <span className='indicator peach'>{`${process.env.REACT_APP_NETWORK}`}</span>
-                  </span>
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
+          <footer className='page-footer peach newpagefooter'>
+            <span className='footerLeftCol'>
+              <a href='https://www.xoken.org' className='peach' style={{ whiteSpace: 'nowrap' }}>
+                Powered by{' '}
+                <img
+                  alt='Xoken Labs'
+                  src={images.xokenFooterLogo}
+                  style={{
+                    width: 63,
+                    verticalAlign: 'middle',
+                    backgroundColor: 'white',
+                    padding: '3px 3px 3px 3px',
+                  }}
+                />
+              </a>
+            </span>
+            <span className='footerRightCol'>
+              Network: <span className='indicator peach'>{`${process.env.REACT_APP_NETWORK}`}</span>
+            </span>
           </footer>
         </>
       );
