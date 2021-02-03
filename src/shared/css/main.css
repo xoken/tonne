@@ -1,5 +1,5 @@
 .passinputwidth {
-  width: 60%;
+  width: 60% !important;
 }
 .redalert {
   color: red;
