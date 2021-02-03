@@ -422,12 +422,8 @@ class ExplorerDashboard extends React.Component {
             <div className='latestblocks'>{this.resultsrow}</div>
             <br />
 
-            <center>
-              <ul
-                className='pagination justify-content-center'
-                style={{ overflow: 'auto', minWidth: '300px' }}>
-                {this.pagescontainer}
-              </ul>
+            <center style={{ overflow: 'auto' }}>
+              <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
             </center>
 
             <form onSubmit={this.pagebutton}>
