@@ -65,8 +65,8 @@ class App extends React.Component {
                   <NoMatch />
                 </Route>
               </Switch>
-              {this.props.location.pathname !== '/auth/success' && <Footer />}
             </Container>
+            {this.props.location.pathname !== '/auth/success' && <Footer />}
           </main>
         </>
       );
