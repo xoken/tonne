@@ -376,7 +376,7 @@ class ExplorerDashboard extends React.Component {
                   {this.date.getHours()}:{this.date.getMinutes()}:{this.date.getSeconds()}
                 </Grid.Column>
                 <Grid.Column className='word-wrap'>{age}</Grid.Column>
-                <Grid.Column>
+                <Grid.Column style={{ wordBreak: 'break-all' }}>
                   {this.rjdecoded.blocks[i].coinbaseMessage.replace(/[^\x00-\x7F]/g, '')}
                 </Grid.Column>
                 <Grid.Column>{this.rjdecoded.blocks[i].txCount} </Grid.Column>
