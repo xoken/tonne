@@ -9,10 +9,11 @@ class ExplorerSearch extends React.Component {
     this.state = { searchterm: '' };
   }
 
-  onSearchClick = () => {
+  onSearchClick = event => {
+    event.preventDefault();
     if (this.state.searchterm !== '') {
       if (this.state.searchterm.length < 26) {
-        this.props.history.push('/explorer/blockheight/' + this.state.searchterm);
+        this.props.history.push(`/explorer/blockheight/${this.state.searchterm}`);
       } else if (this.state.searchterm.length >= 26 && this.state.searchterm.length <= 35) {
         this.props.history.push(`/explorer/address/${this.state.searchterm}`);
       } else if (this.state.searchterm.length === 64) {
@@ -22,6 +23,7 @@ class ExplorerSearch extends React.Component {
           this.props.history.push(`/explorer/transaction/${this.state.searchterm}`);
         }
       } else {
+        setTimeout(3000);
         this.props.history.push(`/explorer/404`);
       }
     }
