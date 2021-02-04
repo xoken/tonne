@@ -42,7 +42,36 @@ class SendTransaction extends React.Component {
     ) {
       this.setState({ receiverAddress: receiverAllpayNameOrAddress, isAllpayName: false });
     } else {
-      this.setState({ receiverAddress: receiverAllpayNameOrAddress, isAllpayName: true });
+      if (
+        receiverAllpayNameOrAddress.substring(
+          0,
+          receiverAllpayNameOrAddress.length <= 3 ? receiverAllpayNameOrAddress.length : 3
+        ) ===
+          (receiverAllpayNameOrAddress.length <= 3
+            ? 'aa/'.substring(0, receiverAllpayNameOrAddress.length)
+            : 'aa/') ||
+        receiverAllpayNameOrAddress.substring(
+          0,
+          receiverAllpayNameOrAddress.length <= 3 ? receiverAllpayNameOrAddress.length : 3
+        ) ===
+          (receiverAllpayNameOrAddress.length <= 3
+            ? 'tw/'.substring(0, receiverAllpayNameOrAddress.length)
+            : 'tw/')
+      ) {
+        this.setState({
+          isError: false,
+          receiverAddress: receiverAllpayNameOrAddress,
+          isAllpayName: true,
+          message: '',
+        });
+      } else {
+        this.setState({
+          isError: true,
+          receiverAddress: receiverAllpayNameOrAddress,
+          isAllpayName: true,
+          message: "Namespace should be either 'aa/' or 'tw/'",
+        });
+      }
     }
   };
 
