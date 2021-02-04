@@ -59,13 +59,16 @@ class SendTransaction extends React.Component {
             : 'tw/')
       ) {
         this.setState({
+          isError: false,
           receiverAddress: receiverAllpayNameOrAddress,
           isAllpayName: true,
           message: '',
         });
       } else {
         this.setState({
+          isError: true,
           receiverAddress: receiverAllpayNameOrAddress,
+          isAllpayName: true,
           message: "Namespace should be either 'aa/' or 'tw/'",
         });
       }
