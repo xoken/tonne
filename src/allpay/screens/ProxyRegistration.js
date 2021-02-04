@@ -80,7 +80,7 @@ class ProxyRegistration extends React.Component {
             addressCount,
           })
         );
-        this.props.history.push('/wallet/allpay/confirm-register');
+        this.props.history.push('/wallet/allpay/register-success');
       } catch (error) {
         this.setState({ isError: true, message: error.message });
       }
@@ -130,7 +130,7 @@ class ProxyRegistration extends React.Component {
           provider {selectedProxyProvider && `"${selectedProxyProvider.name}"`}
         </Header>
         <Header textAlign='center'>
-          <Header.Subheader t>
+          <Header.Subheader>
             The proxy generates provably correct Bitcoin addresses on your behalf. The AllPay
             protocol is completely trustless and secure.
           </Header.Subheader>

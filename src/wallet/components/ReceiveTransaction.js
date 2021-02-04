@@ -41,37 +41,39 @@ class ReceiveTransaction extends React.Component {
   };
 
   renderAllpayHandle() {
-    const { allpayHandles } = this.props;
+    const { allpayHandles, profile } = this.props;
     const { copiedAddress } = this.state;
+    const allpayHandle = profile.screenName;
     return (
       <>
-        {allpayHandles && allpayHandles.length > 0 && (
+        {/* {allpayHandles && allpayHandles.length > 0 && ( */}
+        {allpayHandle && (allpayHandle.startsWith('aa/') || allpayHandle.startsWith('tw/')) && (
           <>
             <div className='ui grid'>
               <div className='left floated six wide middle aligned column'>
                 <h4>My AllPay handle</h4>
               </div>
             </div>
-            {allpayHandles.map((allpayHandle, index) => (
-              <div className='ui two column grid' key={index.toString()}>
-                <div className='column'>
-                  <div className='ui fluid action input'>
-                    <input type='text' className='monospace' readOnly value={allpayHandle} />
-                    <button className='ui coral button' onClick={this.onCopy(allpayHandle)}>
-                      Copy
-                    </button>
-                  </div>
+            {/* {allpayHandles.map((allpayHandle, index) => ( */}
+            <div className='ui two column grid'>
+              <div className='column'>
+                <div className='ui fluid action input'>
+                  <input type='text' className='monospace' readOnly value={allpayHandle} />
+                  <button className='ui coral button' onClick={this.onCopy(allpayHandle)}>
+                    Copy
+                  </button>
                 </div>
-                {copiedAddress && copiedAddress === allpayHandle ? (
-                  <div className='column middle aligned'>
-                    <Label>
-                      <Icon name='check' color='green' />
-                      Copied!
-                    </Label>
-                  </div>
-                ) : null}
               </div>
-            ))}
+              {copiedAddress && copiedAddress === allpayHandle ? (
+                <div className='column middle aligned'>
+                  <Label>
+                    <Icon name='check' color='green' />
+                    Copied!
+                  </Label>
+                </div>
+              ) : null}
+            </div>
+            {/* ))} */}
           </>
         )}
       </>
@@ -202,6 +204,7 @@ const mapStateToProps = state => ({
   usedAddresses: state.wallet.usedAddresses,
   unusedAddresses: state.wallet.unusedAddresses,
   allpayHandles: state.wallet.allpayHandles,
+  profile: state.auth.profile,
 });
 
 export default connect(mapStateToProps)(ReceiveTransaction);

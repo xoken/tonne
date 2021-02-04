@@ -7,11 +7,4 @@ module.exports = function (app) {
       secure: false,
     })
   );
-  app.use(
-    ['/v1'],
-    createProxyMiddleware({
-      target: 'https://localhost:9091',
-      secure: false,
-    })
-  );
 };

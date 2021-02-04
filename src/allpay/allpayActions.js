@@ -1,6 +1,7 @@
 import { createAction } from 'redux-act';
 import { allpayFlows } from './allpayRoutes';
 import * as walletActions from '../wallet/walletActions';
+import * as authActions from '../auth/authActions';
 import AllpayService from './allpayService';
 
 export const getResellerURIRequest = createAction('GET_RESELLER_URI_REQUEST');
@@ -49,6 +50,9 @@ export const registerName = ({ proxyURI, name, addressCount }) => async (
   getState,
   { serviceInjector }
 ) => {
+  const {
+    profile: { screenName },
+  } = getState();
   dispatch(registerNameRequest());
   try {
     const { psbt, inputs, ownOutputs } = await serviceInjector(AllpayService).registerName({
@@ -57,6 +61,7 @@ export const registerName = ({ proxyURI, name, addressCount }) => async (
       addressCount,
     });
     dispatch(registerNameSuccess({ psbt, inputs, ownOutputs }));
+    await dispatch(authActions.updateProfileName(screenName, name));
   } catch (error) {
     dispatch(registerNameFailure());
     throw error;

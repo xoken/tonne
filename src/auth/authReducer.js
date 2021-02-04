@@ -1,3 +1,4 @@
+import { stat } from 'fs';
 import { createReducer } from 'redux-act';
 import * as actions from './authActions';
 
@@ -22,6 +23,10 @@ export default createReducer(
     [actions.getProfileFailure]: state => ({
       ...state,
       isLoading: false,
+    }),
+    [actions.updateProfileNameSuccess]: (state, { profile }) => ({
+      ...state,
+      profile,
     }),
     [actions.setMnemonicSuccess]: (state, { bip39Mnemonic }) => ({
       ...state,
