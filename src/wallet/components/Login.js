@@ -51,6 +51,7 @@ class Login extends React.Component {
                   id='password'
                   placeholder='Password'
                   value={password}
+                  maxLength='50'
                   onChange={event =>
                     this.setState({
                       password: event.target.value,

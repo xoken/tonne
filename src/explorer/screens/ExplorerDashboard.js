@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Segment, Grid, Button } from 'semantic-ui-react';
+import { Segment, Grid, Button, Loader } from 'semantic-ui-react';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 
 class ExplorerDashboard extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { selectnum: '' };
+    this.state = { selectnum: '', loading: 'true' };
     this.addlistener = this.addlistener.bind(this);
     this.pagebutton = this.pagebutton.bind(this);
   }
@@ -35,6 +35,7 @@ class ExplorerDashboard extends React.Component {
     }
     this.rjdecoded = await ExplorerHttpsReq.httpsreq('getChainInfo');
     if (this.rjdecoded !== undefined) {
+      this.setState({ loading: false });
       this.summary();
     }
   };
@@ -299,13 +300,13 @@ class ExplorerDashboard extends React.Component {
                 <b>Age</b>
               </Grid.Column>
               <Grid.Column>
-                <b>Block Version</b>
+                <b>Coinbase / Miner</b>
               </Grid.Column>
               <Grid.Column>
                 <b>Transactions</b>
               </Grid.Column>
               <Grid.Column>
-                <b>Size(Bytes)</b>
+                <b>Size</b>
               </Grid.Column>
             </Grid.Row>
           </Grid>
@@ -327,15 +328,30 @@ class ExplorerDashboard extends React.Component {
       minutes = Math.floor(timeDifference / 60);
 
       if (years > 0) {
-        age = `${years} ${years > 1 ? 'years' : 'year'}, ${days} ${
-          days > 1 ? 'days' : 'day'
-        }, ${hours}:${minutes}`;
+        age = `${years} ${years > 1 ? 'years' : 'year'}, ${days} ${days > 1 ? 'days' : 'day'}, ${
+          hours > 9 ? hours : '0' + hours
+        }:${minutes > 9 ? minutes : '0' + minutes}`;
       } else if (days > 0) {
-        age = `${days} ${days > 1 ? 'days' : 'day'}, ${hours}:${minutes}`;
+        age = `${days} ${days > 1 ? 'days' : 'day'}, ${hours > 9 ? hours : '0' + hours}:${
+          minutes > 9 ? minutes : '0' + minutes
+        }`;
       } else {
-        age = `${hours}:${minutes}`;
+        age = `${hours > 9 ? hours : '0' + hours}:${minutes > 9 ? minutes : '0' + minutes}`;
       }
-
+      let kb = 1024,
+        mb = kb * kb,
+        gb = mb * kb;
+      let size = 0;
+      if (this.rjdecoded.blocks[i].size < kb) {
+        size = this.rjdecoded.blocks[i].size + ' Bytes';
+      } else if (this.rjdecoded.blocks[i].size < mb) {
+        size = (this.rjdecoded.blocks[i].size / kb).toFixed(2) + ' KB';
+      } else if (this.rjdecoded.blocks[i].size < gb) {
+        size = (this.rjdecoded.blocks[i].size / mb).toFixed(2) + ' MB';
+      } else {
+        size = this.rjdecoded.blocks[i].size / gb.toFixed(2) + ' GB';
+      }
+      console.log(this.rjdecoded.blocks[i]);
       if (i % 2 === 0) {
         tempColor = 'white';
       } else {
@@ -360,9 +376,11 @@ class ExplorerDashboard extends React.Component {
                   {this.date.getHours()}:{this.date.getMinutes()}:{this.date.getSeconds()}
                 </Grid.Column>
                 <Grid.Column className='word-wrap'>{age}</Grid.Column>
-                <Grid.Column>{this.rjdecoded.blocks[i].header.blockVersion} </Grid.Column>
+                <Grid.Column style={{ wordBreak: 'break-all' }}>
+                  {this.rjdecoded.blocks[i].coinbaseMessage.replace(/[^\x20-\x7E]+/g, '')}
+                </Grid.Column>
                 <Grid.Column>{this.rjdecoded.blocks[i].txCount} </Grid.Column>
-                <Grid.Column>{this.rjdecoded.blocks[i].size} </Grid.Column>
+                <Grid.Column>{size} </Grid.Column>
               </Grid.Row>
             </Grid>
           </Segment>
@@ -379,6 +397,7 @@ class ExplorerDashboard extends React.Component {
   }
 
   render() {
+    const { loading } = this.state;
     return (
       <>
         {
@@ -386,57 +405,57 @@ class ExplorerDashboard extends React.Component {
           //  Back
           //    </button>
         }
-        <div className='opacitywhileload' style={{ minWidth: '100%' }}>
-          <Segment className='removesegmentborder nosegmentmargin removepaddingbottom'>
-            <h4 className='purplefontcolor'>Summary</h4>
-          </Segment>
-          <Segment className='cen' style={{ overflow: 'auto' }}>
-            <div>{this.summarysection}</div>
-          </Segment>
-          <Segment className='removesegmentborder'>
-            <h4 className='purplefontcolor'>Latest Blocks</h4>
-          </Segment>
+        {loading ? (
+          <Loader active />
+        ) : (
+          <div className='opacitywhileload' style={{ minWidth: '100%' }}>
+            <Segment className='removesegmentborder nosegmentmargin removepaddingbottom'>
+              <h4 className='purplefontcolor'>Summary</h4>
+            </Segment>
+            <Segment className='cen' style={{ overflow: 'auto' }}>
+              <div>{this.summarysection}</div>
+            </Segment>
+            <Segment className='removesegmentborder'>
+              <h4 className='purplefontcolor'>Latest Blocks</h4>
+            </Segment>
 
-          <div className='latestblocks'>{this.resultsrow}</div>
-          <br />
+            <div className='latestblocks'>{this.resultsrow}</div>
+            <br />
 
-          <center>
-            <ul
-              className='pagination justify-content-center'
-              style={{ overflow: 'auto', minWidth: '300px' }}>
-              {this.pagescontainer}
-            </ul>
-          </center>
+            <center style={{ overflow: 'auto' }}>
+              <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
+            </center>
 
-          <form onSubmit={this.pagebutton}>
-            <div className='ui form'>
-              <div className='inline fields'>
-                <div className='five wide field'></div>
-                <div className='two wide field'>
-                  <h5>Enter page number</h5>
+            <form onSubmit={this.pagebutton}>
+              <div className='ui form'>
+                <div className='inline fields'>
+                  <div className='five wide field'></div>
+                  <div className='two wide field'>
+                    <h5>Enter page number</h5>
+                  </div>
+                  <div className='three wide field'>
+                    <input
+                      className='pagenuminput searchBoxAndButtons'
+                      size='5'
+                      type='text'
+                      onChange={event =>
+                        this.setState({
+                          selectnum: event.target.value.replace(/\s/g, ''),
+                        })
+                      }
+                    />
+                  </div>
+                  <div className='one wide field'>
+                    <Button type='submit' className='explorerbuttoncolor coral searchBoxAndButtons'>
+                      Go
+                    </Button>
+                  </div>
+                  <div className='five wide field'></div>
                 </div>
-                <div className='three wide field'>
-                  <input
-                    className='pagenuminput searchBoxAndButtons'
-                    size='5'
-                    type='text'
-                    onChange={event =>
-                      this.setState({
-                        selectnum: event.target.value.replace(/\s/g, ''),
-                      })
-                    }
-                  />
-                </div>
-                <div className='one wide field'>
-                  <Button type='submit' className='explorerbuttoncolor coral searchBoxAndButtons'>
-                    Go
-                  </Button>
-                </div>
-                <div className='five wide field'></div>
               </div>
-            </div>
-          </form>
-        </div>
+            </form>
+          </div>
+        )}
       </>
     );
   }

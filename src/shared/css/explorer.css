@@ -350,7 +350,7 @@ table {
   display: none;
 }
 .pagination {
-  display: flex;
+  display: inline-flex;
   padding-left: 0;
   list-style: none;
   border-radius: 0.25rem;
@@ -417,4 +417,8 @@ table {
   .dashboardSummaryForOtherScreens{
     display: none !important;
   }
+}
+#searchnegative{
+
+  padding-bottom: 60px;
 }

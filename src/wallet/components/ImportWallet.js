@@ -202,8 +202,8 @@ class ImportWallet extends React.Component {
             <div id='wordsremaining'>(0 of 12)</div>
           </Grid.Column>
         </Grid.Row>
-        <Grid.Row>
-          <Grid.Column>
+        <Grid.Row centered>
+          <Grid.Column width='15'>
             <Segment textAlign='center'>
               <ul id='alphabets'>{this.state.alphabets}</ul>
             </Segment>

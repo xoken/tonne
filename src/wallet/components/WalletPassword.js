@@ -108,6 +108,7 @@ class WalletPassword extends React.Component {
                         className='form-control'
                         placeholder='Password'
                         value={password}
+                        maxLength='50'
                         onChange={event => this.setState({ password: event.target.value })}
                       />
                     </Grid.Column>
@@ -124,6 +125,7 @@ class WalletPassword extends React.Component {
                         className='form-control'
                         placeholder='Confirm Password'
                         value={confirmPassword}
+                        maxLength='50'
                         onChange={event => this.setState({ confirmPassword: event.target.value })}
                       />
                     </Grid.Column>

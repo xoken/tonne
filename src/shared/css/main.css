@@ -1,5 +1,5 @@
 .passinputwidth {
-  width: 60%;
+  width: 60% !important;
 }
 .redalert {
   color: red;
@@ -34,13 +34,16 @@
 .warning {
   color: #794b02;
 }
+#root{
+  height:100%;
+}
 .main {
-  height: calc(100vh - 89px);
-  padding: 1rem 0;
-  overflow-x: auto;
+  vertical-align: middle !important;
+  height: 100%;
 }
 .main > .container {
   height: 100%;
+  padding: 100px 0px 100px 0px;
 }
 .profile .text {
   width: 14px;
@@ -118,7 +121,7 @@
   color: #7e42ad !important;
 }
 .newpagefooter {
-  position: absolute;
+  position: fixed;
   bottom: 0px !important;
   left: 0px;
   right: 0px;
@@ -241,7 +244,10 @@
   color: #7e42ad !important;
 }
 .page-header {
-  background: none;
+  position: fixed;
+  z-index: 999;
+  background-color: white;
+  width: 100%;
 }
 .backspace {
   background-color: #fbe1e2 !important;

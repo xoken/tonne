@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Segment, Grid } from 'semantic-ui-react';
+import { Segment, Grid, Loader } from 'semantic-ui-react';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 
 class ExplorerTransaction extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { loaded: false };
+    this.state = { loaded: false, loading: true };
   }
   rjdecoded;
   transactionparam;
@@ -35,9 +35,11 @@ class ExplorerTransaction extends React.Component {
     this.rjdecoded = await ExplorerHttpsReq.httpsreq('getTransactionByTxID', this.transactionparam);
     if (this.rjdecoded === undefined) {
       if (this.props.match.params.txid !== undefined) {
+        setTimeout(3000);
         this.props.history.push(`/explorer/404`);
       }
     } else {
+      this.setState({ loading: false });
       this.printresults();
     }
   };
@@ -361,10 +363,12 @@ class ExplorerTransaction extends React.Component {
   }
   componentDidUpdate(latestprops) {
     if (this.props.match.params.txid !== latestprops.match.params.txid) {
+      this.setState({ loading: 'true' });
       this.initTransaction();
     }
   }
   render() {
+    const { loading } = this.state;
     return (
       <>
         <Segment className='noborder'>
@@ -374,37 +378,41 @@ class ExplorerTransaction extends React.Component {
             Back
           </Link>
         </Segment>
-        <div className='opacitywhileload'>
-          <Segment.Group className='removesegmentborder'>
-            <Segment>
-              <h4>
-                <span className='purplefontcolor'>Transaction</span> &nbsp;
-                <Link to={'/explorer/transaction/' + this.txid} className='word-wrap'>
-                  {this.txid}
-                </Link>
-              </h4>
-            </Segment>
-            <Segment>
-              <h4 className='purplefontcolor'>Summary</h4>
-            </Segment>
-            <Segment className='removesegmentborder'>
-              <Grid columns={2} divided stackable>
-                <Grid.Row>
-                  <Grid.Column width='12'>{this.summarysect1}</Grid.Column>
-                  <Grid.Column width='4'>{this.summarysect2}</Grid.Column>
-                </Grid.Row>
-              </Grid>
-            </Segment>
-            <Segment>
-              <Grid columns={2} stackable>
-                <Grid.Row>
-                  <Grid.Column>{this.inputaddress}</Grid.Column>
-                  <Grid.Column className='verticaldivider'>{this.tempoutputstring}</Grid.Column>
-                </Grid.Row>
-              </Grid>
-            </Segment>
-          </Segment.Group>
-        </div>
+        {loading ? (
+          <Loader active />
+        ) : (
+          <div className='opacitywhileload'>
+            <Segment.Group className='removesegmentborder'>
+              <Segment>
+                <h4>
+                  <span className='purplefontcolor'>Transaction</span> &nbsp;
+                  <Link to={'/explorer/transaction/' + this.txid} className='word-wrap'>
+                    {this.txid}
+                  </Link>
+                </h4>
+              </Segment>
+              <Segment>
+                <h4 className='purplefontcolor'>Summary</h4>
+              </Segment>
+              <Segment className='removesegmentborder'>
+                <Grid columns={2} divided stackable>
+                  <Grid.Row>
+                    <Grid.Column width='12'>{this.summarysect1}</Grid.Column>
+                    <Grid.Column width='4'>{this.summarysect2}</Grid.Column>
+                  </Grid.Row>
+                </Grid>
+              </Segment>
+              <Segment>
+                <Grid columns={2} stackable>
+                  <Grid.Row>
+                    <Grid.Column>{this.inputaddress}</Grid.Column>
+                    <Grid.Column className='verticaldivider'>{this.tempoutputstring}</Grid.Column>
+                  </Grid.Row>
+                </Grid>
+              </Segment>
+            </Segment.Group>
+          </div>
+        )}
       </>
     );
   }

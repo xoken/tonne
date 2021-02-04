@@ -2,12 +2,12 @@ import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
-import { Segment, Grid, Button } from 'semantic-ui-react';
+import { Segment, Grid, Button, Loader } from 'semantic-ui-react';
 
 class ExplorerBlockHeight extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { enteredpagenumber: '', selectnum: '' };
+    this.state = { enteredpagenumber: '', selectnum: '', loading: true };
     this.addlistener = this.addlistener.bind(this);
     this.leftlistener = this.leftlistener.bind(this);
     this.rightlistener = this.rightlistener.bind(this);
@@ -74,8 +74,10 @@ class ExplorerBlockHeight extends React.Component {
       this.props.match.params.blockheight
     );
     if (this.rjdecoded === undefined) {
+      setTimeout(3000);
       this.props.history.push(`/explorer/404`);
     } else {
+      this.setState({ loading: false });
       this.printresults();
     }
   };
@@ -575,10 +577,12 @@ class ExplorerBlockHeight extends React.Component {
   }
   componentDidUpdate(latestprops) {
     if (this.props.match.params.blockheight !== latestprops.match.params.blockheight) {
+      this.setState({ loading: 'true' });
       this.initBlockHeight();
     }
   }
   render() {
+    const { loading } = this.state;
     return (
       <>
         <Segment className='noborder'>
@@ -586,82 +590,88 @@ class ExplorerBlockHeight extends React.Component {
             Back
           </Link>
         </Segment>
-        <div className='opacitywhileload'>
-          <Segment.Group className='removesegmentborder'>
-            <Segment>
-              <h4>
-                <span className='purplefontcolor'>Block #</span>
-                <Link to={'/explorer/blockheight/' + this.blocktitle}>{this.blocktitle}</Link>
-              </h4>
-              <div>
-                <Link to={'/explorer/blockhash/' + this.blockhash} className='word-wrap'>
-                  {this.blockhash}
-                </Link>
-              </div>
-            </Segment>
-            <Segment>
-              <h4 className='purplefontcolor'>Summary</h4>
-            </Segment>
+        {loading ? (
+          <Loader active />
+        ) : (
+          <>
+            <div className='opacitywhileload'>
+              <Segment.Group className='removesegmentborder'>
+                <Segment>
+                  <h4>
+                    <span className='purplefontcolor'>Block #</span>
+                    <Link to={'/explorer/blockheight/' + this.blocktitle}>{this.blocktitle}</Link>
+                  </h4>
+                  <div>
+                    <Link to={'/explorer/blockhash/' + this.blockhash} className='word-wrap'>
+                      {this.blockhash}
+                    </Link>
+                  </div>
+                </Segment>
+                <Segment>
+                  <h4 className='purplefontcolor'>Summary</h4>
+                </Segment>
 
-            <Segment.Group horizontal>
-              <Segment>
-                <Grid columns={2} divided stackable>
-                  <Grid.Row>
-                    <Grid.Column>{this.summarysect1}</Grid.Column>
+                <Segment.Group horizontal>
+                  <Segment>
+                    <Grid columns={2} divided stackable>
+                      <Grid.Row>
+                        <Grid.Column>{this.summarysect1}</Grid.Column>
 
-                    <Grid.Column>{this.summarysect2}</Grid.Column>
-                  </Grid.Row>
-                </Grid>
-                <Grid columns={1}>
-                  <Grid.Row style={{ width: '800px', overflow: 'auto' }}>
-                    <Grid.Column>{this.txsection}</Grid.Column>
-                  </Grid.Row>
+                        <Grid.Column>{this.summarysect2}</Grid.Column>
+                      </Grid.Row>
+                    </Grid>
+                    <Grid columns={1}>
+                      <Grid.Row style={{ width: '800px', overflow: 'auto' }}>
+                        <Grid.Column>{this.txsection}</Grid.Column>
+                      </Grid.Row>
 
-                  <Grid.Row>
-                    <Grid.Column className='cen'>
-                      <nav aria-label='transactions navigation'>
-                        <ul className='pagination justify-content-center' id='pagination'>
-                          {this.pagescontainer}
-                        </ul>
-                      </nav>
-                      <form onSubmit={this.pagebutton}>
-                        <div className='ui form'>
-                          <div className='inline fields'>
-                            <div className='five wide field'></div>
-                            <div className='two wide field'>
-                              <h5>Enter page number</h5>
+                      <Grid.Row>
+                        <Grid.Column className='cen'>
+                          <nav aria-label='transactions navigation'>
+                            <ul className='pagination justify-content-center' id='pagination'>
+                              {this.pagescontainer}
+                            </ul>
+                          </nav>
+                          <form onSubmit={this.pagebutton}>
+                            <div className='ui form'>
+                              <div className='inline fields'>
+                                <div className='five wide field'></div>
+                                <div className='two wide field'>
+                                  <h5>Enter page number</h5>
+                                </div>
+                                <div className='three wide field'>
+                                  <input
+                                    className='pagenuminput searchBoxAndButtons'
+                                    size='5'
+                                    type='text'
+                                    onChange={event =>
+                                      this.setState({
+                                        enteredpagenumber: event.target.value.replace(/\s/g, ''),
+                                      })
+                                    }
+                                  />
+                                </div>
+                                <div className='one wide field'>
+                                  <Button
+                                    className='explorerbuttoncolor coral searchBoxAndButtons'
+                                    type='submit'
+                                    id='pagebutton'>
+                                    Go
+                                  </Button>
+                                </div>
+                                <div className='five wide field'></div>
+                              </div>
                             </div>
-                            <div className='three wide field'>
-                              <input
-                                className='pagenuminput searchBoxAndButtons'
-                                size='5'
-                                type='text'
-                                onChange={event =>
-                                  this.setState({
-                                    enteredpagenumber: event.target.value.replace(/\s/g, ''),
-                                  })
-                                }
-                              />
-                            </div>
-                            <div className='one wide field'>
-                              <Button
-                                className='explorerbuttoncolor coral searchBoxAndButtons'
-                                type='submit'
-                                id='pagebutton'>
-                                Go
-                              </Button>
-                            </div>
-                            <div className='five wide field'></div>
-                          </div>
-                        </div>
-                      </form>
-                    </Grid.Column>
-                  </Grid.Row>
-                </Grid>
-              </Segment>
-            </Segment.Group>
-          </Segment.Group>
-        </div>
+                          </form>
+                        </Grid.Column>
+                      </Grid.Row>
+                    </Grid>
+                  </Segment>
+                </Segment.Group>
+              </Segment.Group>
+            </div>
+          </>
+        )}
       </>
     );
   }
