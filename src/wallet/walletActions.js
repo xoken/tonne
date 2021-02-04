@@ -47,6 +47,10 @@ export const getUnusedAddressesRequest = createAction('GET_UNUSED_ADDRESSES_REQU
 export const getUnusedAddressesSuccess = createAction('GET_UNUSED_ADDRESSES_SUCCESS');
 export const getUnusedAddressesFailure = createAction('GET_UNUSED_ADDRESSES_FAILURE');
 
+export const getAllpayHandleRequest = createAction('GET_ALLPAY_HANDLE_REQUEST');
+export const getAllpayHandleSuccess = createAction('GET_ALLPAY_HANDLE_SUCCESS');
+export const getAllpayHandleFailure = createAction('GET_ALLPAY_HANDLE_FAILURE');
+
 export const getTransactions = options => async (dispatch, getState, { serviceInjector }) => {
   dispatch(getTransactionsRequest());
   try {
@@ -192,6 +196,17 @@ export const getUnusedAddresses = () => async (dispatch, getState, { serviceInje
     return { unusedAddresses };
   } catch (error) {
     dispatch(getUnusedAddressesFailure());
+    throw error;
+  }
+};
+
+export const getAllpayHandle = () => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(getAllpayHandleRequest());
+  try {
+    const { allpayHandles } = await serviceInjector(WalletService).getAllpayHandle();
+    dispatch(getAllpayHandleSuccess({ allpayHandles }));
+  } catch (error) {
+    dispatch(getAllpayHandleFailure());
     throw error;
   }
 };

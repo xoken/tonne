@@ -9,6 +9,7 @@ const INITIAL_STATE = {
   balance: 0,
   usedAddresses: null,
   unusedAddresses: [],
+  allpayHandles: null,
 };
 
 export default createReducer(
@@ -80,6 +81,10 @@ export default createReducer(
       unusedAddresses: state.unusedAddresses
         ? [...state.unusedAddresses, ...unusedAddresses]
         : unusedAddresses,
+    }),
+    [actions.getAllpayHandleSuccess]: (state, { allpayHandles }) => ({
+      ...state,
+      allpayHandles: allpayHandles,
     }),
     [actions.CLEAR_USED_UNUSED_ADDRESS]: state => ({
       ...state,

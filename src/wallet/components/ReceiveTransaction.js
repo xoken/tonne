@@ -17,6 +17,7 @@ class ReceiveTransaction extends React.Component {
     const { dispatch } = this.props;
     await dispatch(walletActions.getUsedAddresses());
     await dispatch(walletActions.getUnusedAddresses());
+    await dispatch(walletActions.getAllpayHandle());
   }
 
   onCopy = address => () => {
@@ -38,6 +39,44 @@ class ReceiveTransaction extends React.Component {
     const { dispatch } = this.props;
     dispatch(walletActions.getUnusedAddresses());
   };
+
+  renderAllpayHandle() {
+    const { allpayHandles } = this.props;
+    const { copiedAddress } = this.state;
+    return (
+      <>
+        {allpayHandles && allpayHandles.length > 0 && (
+          <>
+            <div className='ui grid'>
+              <div className='left floated six wide middle aligned column'>
+                <h4>My AllPay handle</h4>
+              </div>
+            </div>
+            {allpayHandles.map((allpayHandle, index) => (
+              <div className='ui two column grid' key={index.toString()}>
+                <div className='column'>
+                  <div className='ui fluid action input'>
+                    <input type='text' className='monospace' readOnly value={allpayHandle} />
+                    <button className='ui coral button' onClick={this.onCopy(allpayHandle)}>
+                      Copy
+                    </button>
+                  </div>
+                </div>
+                {copiedAddress && copiedAddress === allpayHandle ? (
+                  <div className='column middle aligned'>
+                    <Label>
+                      <Icon name='check' color='green' />
+                      Copied!
+                    </Label>
+                  </div>
+                ) : null}
+              </div>
+            ))}
+          </>
+        )}
+      </>
+    );
+  }
 
   renderUnusedAddresses() {
     const { unusedAddresses } = this.props;
@@ -69,7 +108,7 @@ class ReceiveTransaction extends React.Component {
                   </button>
                 </div>
               </div>
-              {copiedAddress === unusedAddress ? (
+              {copiedAddress && copiedAddress === unusedAddress ? (
                 <div className='column middle aligned'>
                   <Label>
                     <Icon name='check' color='green' />
@@ -138,6 +177,7 @@ class ReceiveTransaction extends React.Component {
   render() {
     return (
       <>
+        {this.renderAllpayHandle()}
         {this.renderUnusedAddresses()}
         {this.renderUsedAddresses()}
       </>
@@ -161,6 +201,7 @@ const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoading(state),
   usedAddresses: state.wallet.usedAddresses,
   unusedAddresses: state.wallet.unusedAddresses,
+  allpayHandles: state.wallet.allpayHandles,
 });
 
 export default connect(mapStateToProps)(ReceiveTransaction);

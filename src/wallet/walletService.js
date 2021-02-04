@@ -36,6 +36,10 @@ class WalletService {
   async getUnusedAddresses(options) {
     return await wallet.getUnusedAddresses(options);
   }
+
+  async getAllpayHandle() {
+    return await wallet.getAllpayHandle();
+  }
 }
 
 export default WalletService;
