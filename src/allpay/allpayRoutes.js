@@ -6,7 +6,7 @@ import { VerticalAnimatedSwitch } from '../shared/components/Animations';
 import SearchBuyName from './screens/SearchBuyName';
 import ConfirmNamePurchase from './screens/ConfirmNamePurchase';
 import ProxyRegistration from './screens/ProxyRegistration';
-import ConfirmRegistration from './screens/ConfirmRegistration';
+// import ConfirmRegistration from './screens/ConfirmRegistration';
 import RegistrationSuccess from './screens/RegistrationSuccess';
 
 export const allpayPaths = {
@@ -22,7 +22,7 @@ export const allpayFlows = {
     allpayPaths.searchBuyName,
     allpayPaths.confirmBuy,
     allpayPaths.registerName,
-    allpayPaths.confirmRegister,
+    // allpayPaths.confirmRegister,
     allpayPaths.registerSuccess,
   ],
 };
@@ -33,7 +33,7 @@ const AllpayComponent = () => {
       <Route exact path={allpayPaths.searchBuyName} render={() => <SearchBuyName />} />
       <Route exact path={allpayPaths.confirmBuy} render={() => <ConfirmNamePurchase />} />
       <Route exact path={allpayPaths.registerName} render={() => <ProxyRegistration />} />
-      <Route exact path={allpayPaths.confirmRegister} render={() => <ConfirmRegistration />} />
+      {/* <Route exact path={allpayPaths.confirmRegister} render={() => <ConfirmRegistration />} /> */}
       <Route exact path={allpayPaths.registerSuccess} render={() => <RegistrationSuccess />} />
     </Switch>
   );
