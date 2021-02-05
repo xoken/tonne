@@ -51,7 +51,9 @@ export const registerName = ({ proxyURI, name, addressCount }) => async (
   { serviceInjector }
 ) => {
   const {
-    profile: { screenName },
+    auth: {
+      profile: { screenName },
+    },
   } = getState();
   dispatch(registerNameRequest());
   try {

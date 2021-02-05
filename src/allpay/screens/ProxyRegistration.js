@@ -80,7 +80,9 @@ class ProxyRegistration extends React.Component {
             addressCount,
           })
         );
-        this.props.history.push('/wallet/allpay/register-success');
+        setTimeout(() => {
+          this.props.history.push('/wallet/allpay/register-success');
+        }, 3000);
       } catch (error) {
         this.setState({ isError: true, message: error.message });
       }
