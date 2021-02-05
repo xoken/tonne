@@ -86,10 +86,10 @@ export const updateTransactionsConfirmations = () => async (
 ) => {
   dispatch(updateTransactionsConfirmationsRequest());
   try {
-    const { updatedTransactions } = await serviceInjector(
+    const { updatedTransactions, deletedTransactions } = await serviceInjector(
       WalletService
     ).updateTransactionsConfirmations();
-    dispatch(updateTransactionsConfirmationsSuccess({ updatedTransactions }));
+    dispatch(updateTransactionsConfirmationsSuccess({ updatedTransactions, deletedTransactions }));
   } catch (error) {
     dispatch(updateTransactionsConfirmationsFailure());
     throw error;

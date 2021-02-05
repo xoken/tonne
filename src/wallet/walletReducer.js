@@ -47,17 +47,32 @@ export default createReducer(
       transactions: [...transactions, ...state.transactions],
       isLoading: false,
     }),
-    [actions.updateTransactionsConfirmationsSuccess]: (state, { updatedTransactions }) => ({
+    [actions.updateTransactionsConfirmationsSuccess]: (
+      state,
+      { updatedTransactions, deletedTransactions }
+    ) => ({
       ...state,
-      transactions: state.transactions.map(transaction => {
-        const isUpdated = updatedTransactions.find(
-          updatedTransaction => updatedTransaction.txId === transaction.txId
-        );
-        if (isUpdated) {
-          return isUpdated;
-        }
-        return transaction;
-      }),
+      transactions: (() => {
+        const remainingTransactions = state.transactions.filter(transaction => {
+          const isDeleted = deletedTransactions.find(deletedTransaction => {
+            return deletedTransaction.txId === transaction.txId;
+          });
+          if (isDeleted) {
+            return false;
+          }
+          return true;
+        });
+        const newTransactions = remainingTransactions.map(transaction => {
+          const isUpdated = updatedTransactions.find(
+            updatedTransaction => updatedTransaction.txId === transaction.txId
+          );
+          if (isUpdated) {
+            return isUpdated;
+          }
+          return transaction;
+        });
+        return newTransactions;
+      })(),
     }),
     [actions.createSendTransactionSuccess]: (state, { transaction }) => ({
       ...state,

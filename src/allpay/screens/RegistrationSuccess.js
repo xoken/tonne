@@ -19,6 +19,9 @@ class RegistrationSuccess extends React.Component {
         activeStep: 6,
       })
     );
+    setTimeout(() => {
+      this.props.history.push('/wallet/dashboard');
+    }, 3000);
   }
 
   onExit() {

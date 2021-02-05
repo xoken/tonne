@@ -39,15 +39,12 @@ class ConfirmNamePurchase extends React.Component {
           })
         );
         if (txBroadcast) {
-          debugger;
           this.setState({ isError: false, message: 'Transaction signed and relayed successfully' });
           this.props.history.push('/wallet/allpay/register');
         } else {
-          debugger;
           this.setState({ isError: true, message: 'Error in relaying Transaction' });
         }
       } catch (error) {
-        debugger;
         this.setState({ isError: true, message: error.message });
       }
     }
