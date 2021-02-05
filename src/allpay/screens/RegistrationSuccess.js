@@ -16,7 +16,7 @@ class RegistrationSuccess extends React.Component {
     dispatch(
       allpayActions.updateScreenProps({
         title: 'Registration Successful',
-        activeStep: 6,
+        activeStep: 4,
       })
     );
     setTimeout(() => {

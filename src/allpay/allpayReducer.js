@@ -53,11 +53,17 @@ export default createReducer(
       addressCommitment: null,
       utxoCommitment: null,
     }),
-    [allpayActions.registerNameSuccess]: (state, { psbt, inputs, ownOutputs }) => ({
+    // [allpayActions.registerNameSuccess]: (state, { psbt, inputs, ownOutputs }) => ({
+    //   ...state,
+    //   psbt,
+    //   inputs,
+    //   ownOutputs,
+    // }),
+    [allpayActions.registerNameSuccess]: state => ({
       ...state,
-      psbt,
-      inputs,
-      ownOutputs,
+      snv: null,
+      addressCommitment: null,
+      utxoCommitment: null,
     }),
     [allpayActions.signRelayTransactionSuccess]: state => ({
       ...state,

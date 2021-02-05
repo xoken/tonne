@@ -13,7 +13,7 @@ export const allpayPaths = {
   searchBuyName: '/wallet/allpay/search',
   confirmBuy: '/wallet/allpay/confirm-purchase',
   registerName: '/wallet/allpay/register',
-  confirmRegister: '/wallet/allpay/confirm-register',
+  // confirmRegister: '/wallet/allpay/confirm-register',
   registerSuccess: '/wallet/allpay/register-success',
 };
 

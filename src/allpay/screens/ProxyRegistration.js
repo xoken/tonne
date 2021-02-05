@@ -49,7 +49,7 @@ class ProxyRegistration extends React.Component {
     } else {
       dispatch(
         allpayActions.updateScreenProps({
-          activeStep: 4,
+          activeStep: 3,
         })
       );
     }

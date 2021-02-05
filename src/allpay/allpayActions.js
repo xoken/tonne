@@ -57,12 +57,14 @@ export const registerName = ({ proxyURI, name, addressCount }) => async (
   } = getState();
   dispatch(registerNameRequest());
   try {
-    const { psbt, inputs, ownOutputs } = await serviceInjector(AllpayService).registerName({
+    const { transaction, txBroadcast } = await serviceInjector(AllpayService).registerName({
       proxyURI,
       name,
       addressCount,
     });
-    dispatch(registerNameSuccess({ psbt, inputs, ownOutputs }));
+    dispatch(registerNameSuccess());
+    dispatch(walletActions.createSendTransactionSuccess({ transaction }));
+    await dispatch(walletActions.getBalance());
     await dispatch(authActions.updateProfileName(screenName, name));
   } catch (error) {
     dispatch(registerNameFailure());
