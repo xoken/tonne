@@ -72,7 +72,7 @@ class WalletDashboard extends React.Component {
   render() {
     const { isLoading, balance } = this.props;
     return (
-      <>
+      <div className='paddingBottom100px'>
         {process.env.REACT_APP_ENVIRONMENT === 'development' && (
           <Button onClick={this.runScript}>Run</Button>
         )}
@@ -98,7 +98,7 @@ class WalletDashboard extends React.Component {
         <RecentTransaction />
         {this.renderSendTransactionModal()}
         {this.renderReceiveTransactionModal()}
-      </>
+      </div>
     );
   }
 }

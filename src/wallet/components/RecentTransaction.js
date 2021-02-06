@@ -138,14 +138,14 @@ class RecentTransaction extends React.Component {
                   index={index}
                   onClick={this.onTransactionTitleClick}>
                   <Grid>
-                    <Grid.Column width={10}>
+                    <Grid.Column computer={10} mobile={9}>
                       <Icon name='dropdown' className='purplefontcolor' />
-                      <span className='monospace'>{transaction.txId}</span>
+                      <span className='monospace word-wrap'>{transaction.txId}</span>
                     </Grid.Column>
-                    <Grid.Column width={5} textAlign='right'>
+                    <Grid.Column computer={5} mobile={5} textAlign='right' className='word-wrap'>
                       {renderCreditOrDebit(credit, debit)}
                     </Grid.Column>
-                    <Grid.Column width={1} textAlign='right'>
+                    <Grid.Column computer={1} mobile={2} textAlign='right'>
                       <Label className='plain'>
                         <i
                           title={

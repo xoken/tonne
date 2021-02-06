@@ -97,10 +97,10 @@ class WalletPassword extends React.Component {
               <form onSubmit={this.handleNext}>
                 <Grid centered>
                   <Grid.Row>
-                    <Grid.Column width={2} verticalAlign='middle'>
+                    <Grid.Column computer={2} mobile={4} verticalAlign='middle'>
                       <label>Password</label>
                     </Grid.Column>
-                    <Grid.Column width={10}>
+                    <Grid.Column computer={10} mobile={12}>
                       <Input
                         fluid
                         type='password'
@@ -114,10 +114,10 @@ class WalletPassword extends React.Component {
                     </Grid.Column>
                   </Grid.Row>
                   <Grid.Row>
-                    <Grid.Column width={2} verticalAlign='middle'>
+                    <Grid.Column computer={2} mobile={4} verticalAlign='middle'>
                       <label>Confirm Password</label>
                     </Grid.Column>
-                    <Grid.Column width={10}>
+                    <Grid.Column computer={10} mobile={12}>
                       <Input
                         fluid
                         type='password'

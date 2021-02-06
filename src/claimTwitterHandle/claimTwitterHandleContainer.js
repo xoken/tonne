@@ -16,7 +16,7 @@ class ClaimTwitterHandleContainer extends Component {
   render() {
     const { progressStep, progressTotalSteps, title } = this.props;
     return (
-      <>
+      <div className='paddingBottom100px'>
         <Navbar title={title || ''} onBack={this.onBack} />
         <div className='ui grid'>
           <div className='one wide column'>
@@ -26,7 +26,7 @@ class ClaimTwitterHandleContainer extends Component {
             <ClaimTwitterHandleRoutes />
           </div>
         </div>
-      </>
+      </div>
     );
   }
 }

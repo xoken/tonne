@@ -16,6 +16,7 @@ class ImportWallet extends React.Component {
       bip39Mnemonic: '',
       suggestions: [],
       alphabets: [],
+      disableKeypad: false,
     };
     this.alphabetarray = alphabet;
     this.data = undefined;
@@ -128,9 +129,13 @@ class ImportWallet extends React.Component {
     }
     this.setState({ bip39Mnemonic: tempmn, suggestions: '' });
     document.getElementById('wordsremaining').textContent = '(' + splitwords.length + ' of 12)';
+    if (splitwords.length === 12) {
+      this.setState({ disableKeypad: true });
+    }
   };
 
   backspaceOnClick = () => {
+    this.setState({ disableKeypad: false });
     if (this.state.bip39Mnemonic.length !== 0) {
       var splitwords,
         tempmn = this.state.bip39Mnemonic.substring(0, this.state.bip39Mnemonic.length - 1);
@@ -167,12 +172,12 @@ class ImportWallet extends React.Component {
   }
 
   renderContinue() {
-    const { bip39Mnemonic, suggestions } = this.state;
-    if (bip39Mnemonic.split(' ').length === 12 && suggestions.length === 0) {
+    const { disableKeypad } = this.state;
+    if (disableKeypad) {
       return (
         <Grid.Row>
           <Grid.Column textAlign='center'>
-            <Button className='coral' onClick={this.onContinue}>
+            <Button className='coral buttonAnimation' onClick={this.onContinue}>
               Continue
             </Button>
           </Grid.Column>
@@ -183,6 +188,7 @@ class ImportWallet extends React.Component {
   }
 
   render() {
+    const { disableKeypad } = this.state;
     return (
       <Grid>
         <Grid.Row>
@@ -204,9 +210,13 @@ class ImportWallet extends React.Component {
         </Grid.Row>
         <Grid.Row centered>
           <Grid.Column width='15'>
-            <Segment textAlign='center'>
-              <ul id='alphabets'>{this.state.alphabets}</ul>
-            </Segment>
+            {disableKeypad ? (
+              ''
+            ) : (
+              <Segment textAlign='center'>
+                <ul id='alphabets'>{this.state.alphabets}</ul>
+              </Segment>
+            )}
           </Grid.Column>
         </Grid.Row>
         {this.renderSuggestions()}

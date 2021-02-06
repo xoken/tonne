@@ -145,6 +145,8 @@
   padding: 8px;
   border: 1px solid lightgrey;
   user-select: none;
+  word-wrap: break-word;
+  line-height: 30px;
 }
 #wordsremaining {
   float: right;
@@ -209,6 +211,11 @@
 .txbtn:hover {
   background-color: grey;
 }
+
+.buttonAnimation{
+  animation-name: buttonslide;
+}
+
 @keyframes buttonslide {
   from {
     top: -20px;
@@ -418,7 +425,11 @@ table {
     display: none !important;
   }
 }
-#searchnegative{
 
+#searchnegative{
   padding-bottom: 60px;
+}
+
+.paddingBottom100px{
+  padding-bottom: 100px !important;
 }

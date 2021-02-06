@@ -289,7 +289,7 @@ class ExplorerDashboard extends React.Component {
         style={{ overflow: 'auto', minWidth: '800px' }}>
         <Segment className='cen'>
           <Grid columns={6}>
-            <Grid.Row>
+            <Grid.Row key='0'>
               <Grid.Column>
                 <b>Height</b>
               </Grid.Column>
@@ -351,7 +351,7 @@ class ExplorerDashboard extends React.Component {
       } else {
         size = this.rjdecoded.blocks[i].size / gb.toFixed(2) + ' GB';
       }
-      console.log(this.rjdecoded.blocks[i]);
+
       if (i % 2 === 0) {
         tempColor = 'white';
       } else {
@@ -363,7 +363,7 @@ class ExplorerDashboard extends React.Component {
           className='nosegmentmargin removesegmentborder'
           style={{ overflow: 'auto', minWidth: '800px' }}>
           <Segment className='cen removesegmentborder'>
-            <Grid columns={6} verticalAlign='middle'>
+            <Grid columns={6} verticalAlign='middle' key={i + 10000001}>
               <Grid.Row style={{ backgroundColor: tempColor }}>
                 <Grid.Column>
                   <Link to={'/explorer/blockheight/' + this.rjdecoded.blocks[i].height}>
