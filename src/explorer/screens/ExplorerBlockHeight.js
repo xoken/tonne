@@ -68,11 +68,14 @@ class ExplorerBlockHeight extends React.Component {
     this.title = '';
     this.blockhash = '';
     this.backheight = '';
+    this.chaintip = 0;
 
     this.rjdecoded = await ExplorerHttpsReq.httpsreq(
       'getBlockByBlockHeight',
       this.props.match.params.blockheight
     );
+    let chaininfo = await ExplorerHttpsReq.httpsreq('getChainInfo');
+    this.chaintip = chaininfo.chainInfo.blocksSynced;
     if (this.rjdecoded === undefined) {
       setTimeout(3000);
       this.props.history.push(`/explorer/404`);
@@ -90,6 +93,7 @@ class ExplorerBlockHeight extends React.Component {
     this.numberoftransactions = this.rjdecoded.block.txCount;
 
     this.date = new Date(this.rjdecoded.block.header.blockTimestamp * 1000);
+    const confirmations = this.chaintip - this.backheight;
     this.summarysect1.push(
       <>
         <Grid>
@@ -131,10 +135,28 @@ class ExplorerBlockHeight extends React.Component {
           </Grid.Row>
           <Grid.Row columns={2}>
             <Grid.Column computer={4} mobile={5}>
-              <b>Coinbase Transaction</b>
+              <b>Block Bits</b>
             </Grid.Column>
             <Grid.Column computer={12} mobile={11}>
-              <div id='coinbasetx'>{this.rjdecoded.block.coinbaseTx}</div>
+              <div id='blockbits'>{this.rjdecoded.block.header.blockBits}</div>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column computer={4} mobile={5}>
+              <b>Confirmations</b>
+            </Grid.Column>
+            <Grid.Column computer={12} mobile={11}>
+              <div>
+                {confirmations}{' '}
+                <i
+                  className={
+                    confirmations !== 0
+                      ? confirmations > 6
+                        ? 'green lock icon'
+                        : 'yellow unlock alternate icon'
+                      : 'red unlock alternate icon'
+                  }></i>
+              </div>
             </Grid.Column>
           </Grid.Row>
         </Grid>
@@ -153,14 +175,7 @@ class ExplorerBlockHeight extends React.Component {
               </Link>
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row columns={2}>
-            <Grid.Column computer={4} mobile={5}>
-              <b>Block Bits</b>
-            </Grid.Column>
-            <Grid.Column computer={12} mobile={11}>
-              <div id='blockbits'>{this.rjdecoded.block.header.blockBits}</div>
-            </Grid.Column>
-          </Grid.Row>
+
           <Grid.Row columns={2}>
             <Grid.Column computer={4} mobile={5}>
               <b>Size</b>
@@ -194,14 +209,6 @@ class ExplorerBlockHeight extends React.Component {
             </Grid.Column>
             <Grid.Column computer={12} mobile={11}>
               <div id='coinbasemessage'>{this.rjdecoded.block.coinbaseMessage}</div>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row columns={2}>
-            <Grid.Column computer={4} mobile={5}>
-              <b>Guessed Miner</b>
-            </Grid.Column>
-            <Grid.Column computer={12} mobile={11}>
-              <div id='guessedminer'>{this.rjdecoded.block.guessedMiner}</div>
             </Grid.Column>
           </Grid.Row>
         </Grid>

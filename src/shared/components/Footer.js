@@ -92,7 +92,7 @@ class Footer extends React.Component {
                   alt='Xoken Labs'
                   src={images.xokenFooterLogo}
                   style={{
-                    width: 63,
+                    width: 72,
                     verticalAlign: 'middle',
                     backgroundColor: 'white',
                     padding: '3px 3px 3px 3px',
