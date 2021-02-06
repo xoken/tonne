@@ -41,7 +41,11 @@ class WalletRoute extends React.Component {
       return (
         <div className='ui grid'>
           <div className='column'>
-            <span className='welcometext purplefontcolor'>{profile.screenName}</span>
+            {profile.screenName.substring(2, 3) === '/' ? (
+              <span className='welcometext purplefontcolor'>{profile.screenName}</span>
+            ) : (
+              <span className='welcometext'>{profile.screenName}</span>
+            )}
             <Dropdown
               button
               className='icon top left right floated coral button'
