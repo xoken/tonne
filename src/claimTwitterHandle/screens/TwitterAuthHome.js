@@ -44,7 +44,7 @@ class TwitterAuthHome extends React.Component {
         }
       } catch (error) {
         if (error.message === 'Empty inputs or outputs') {
-          if (followers_count >= 1000) {
+          if (followers_count >= 1) {
             const { unusedAddresses } = await dispatch(walletActions.getUnusedAddresses());
             try {
               const { success } = await dispatch(
@@ -56,7 +56,7 @@ class TwitterAuthHome extends React.Component {
               if (success) {
                 this.setState({
                   isError: false,
-                  message: `Since you have more than 1000 followers, we have credited ${satoshiToBSV(
+                  message: `Since you have more than 1 followers, we have credited ${satoshiToBSV(
                     150000
                   )} to your account.`,
                 });
