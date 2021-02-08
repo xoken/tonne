@@ -84,7 +84,9 @@ class NewWallet extends React.Component {
         this.addmnwordlistener();
       }
     }
-
+    if (process.env.REACT_APP_ENVIRONMENT === 'development') {
+      console.log(this.props.bip39Mnemonic);
+    }
     return (
       <Grid>
         <Grid.Row>

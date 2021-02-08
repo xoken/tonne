@@ -49,7 +49,7 @@ class ProxyRegistration extends React.Component {
     } else {
       dispatch(
         allpayActions.updateScreenProps({
-          activeStep: 4,
+          activeStep: 3,
         })
       );
     }
@@ -62,6 +62,11 @@ class ProxyRegistration extends React.Component {
       value: unregisteredName,
     }));
     this.setState({ unregisteredNames });
+    if (unregisteredNames[0]) {
+      const name = utils.getCodePoint(unregisteredNames[0].value);
+      this.setState({ name: name });
+      dispatch(allpayActions.setName({ name: name }));
+    }
   }
 
   onRegister = async () => {

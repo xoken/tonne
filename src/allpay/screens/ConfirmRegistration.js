@@ -21,7 +21,7 @@ class ConfirmRegistration extends React.Component {
     dispatch(
       allpayActions.updateScreenProps({
         title: 'Confirm AllPay Name Registration',
-        activeStep: 5,
+        activeStep: 4,
       })
     );
   }

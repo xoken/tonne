@@ -86,10 +86,10 @@ export const updateTransactionsConfirmations = () => async (
 ) => {
   dispatch(updateTransactionsConfirmationsRequest());
   try {
-    const { updatedTransactions } = await serviceInjector(
+    const { updatedTransactions, deletedTransactions } = await serviceInjector(
       WalletService
     ).updateTransactionsConfirmations();
-    dispatch(updateTransactionsConfirmationsSuccess({ updatedTransactions }));
+    dispatch(updateTransactionsConfirmationsSuccess({ updatedTransactions, deletedTransactions }));
   } catch (error) {
     dispatch(updateTransactionsConfirmationsFailure());
     throw error;
@@ -126,18 +126,10 @@ export const getTransactionFee = (receiverAddress, amountInSatoshi, feeRate) => 
   }
 };
 
-export const createSendTransaction = (receiverAddress, amountInSatoshi, satoshisPerByte) => async (
-  dispatch,
-  getState,
-  { serviceInjector }
-) => {
+export const createSendTransaction = args => async (dispatch, getState, { serviceInjector }) => {
   dispatch(createSendTransactionRequest());
   try {
-    const { transaction } = await serviceInjector(WalletService).createSendTransaction(
-      receiverAddress,
-      amountInSatoshi,
-      satoshisPerByte
-    );
+    const { transaction } = await serviceInjector(WalletService).createSendTransaction(args);
     dispatch(createSendTransactionSuccess({ transaction }));
     await dispatch(getBalance());
   } catch (error) {

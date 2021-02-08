@@ -7,4 +7,11 @@ module.exports = function (app) {
       secure: false,
     })
   );
+  app.use(
+    ['/v1'],
+    createProxyMiddleware({
+      target: 'https://sb2.xoken.org:9091',
+      secure: false,
+    })
+  );
 };

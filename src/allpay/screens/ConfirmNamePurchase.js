@@ -5,6 +5,7 @@ import { utils } from 'allegory-allpay-sdk';
 import { satoshiToBSV } from '../../shared/utils';
 import RenderTransaction from '../components/RenderTransaction';
 import * as allpayActions from '../allpayActions';
+import * as authActions from '../../auth/authActions';
 
 class ConfirmNamePurchase extends React.Component {
   constructor(props) {
@@ -27,7 +28,7 @@ class ConfirmNamePurchase extends React.Component {
   }
 
   onSignRelay = async () => {
-    const { psbt, inputs, ownOutputs } = this.props;
+    const { psbt, inputs, ownOutputs, outpoint, profile } = this.props;
     if (psbt) {
       try {
         const { dispatch } = this.props;
@@ -39,15 +40,17 @@ class ConfirmNamePurchase extends React.Component {
           })
         );
         if (txBroadcast) {
-          debugger;
           this.setState({ isError: false, message: 'Transaction signed and relayed successfully' });
+          // rename profile
+          await dispatch(
+            authActions.updateProfileName(profile.screenName, utils.codePointToName(outpoint.name))
+          );
+          //--
           this.props.history.push('/wallet/allpay/register');
         } else {
-          debugger;
           this.setState({ isError: true, message: 'Error in relaying Transaction' });
         }
       } catch (error) {
-        debugger;
         this.setState({ isError: true, message: error.message });
       }
     }
@@ -195,6 +198,7 @@ const mapStateToProps = state => ({
   inputs: state.allpay.inputs,
   ownOutputs: state.allpay.ownOutputs,
   snv: state.allpay.snv,
+  profile: state.auth.profile,
 });
 
 export default withRouter(connect(mapStateToProps)(ConfirmNamePurchase));

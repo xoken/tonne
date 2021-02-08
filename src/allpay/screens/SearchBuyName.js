@@ -22,7 +22,7 @@ class SearchBuyName extends React.Component {
       allpayActions.updateScreenProps({
         title: 'Buy AllPay name',
         activeStep: 1,
-        progressTotalSteps: 6,
+        progressTotalSteps: 4,
       })
     );
   }
