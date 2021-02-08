@@ -1,3 +1,15 @@
+@font-face {
+  font-family: 'moonhouse';
+  src: url('../fonts/Moonhouse.ttf')  format('truetype');
+}
+.tonneLogo{
+  font-family: 'moonhouse';
+  color:#7e42ad;
+  padding: 15px 0px 15px 0px;
+  font-size:20px;
+  font-weight:700 !important;
+}
+
 .passinputwidth {
   width: 60% !important;
 }
@@ -114,7 +126,7 @@
   bottom: 0px !important;
   vertical-align: top;
   left: 0px;
-  background-color: #fbe1e2 !important;
+  background-color: #fff3f3 !important;
   height: 22px;
   padding: 0px 5px 0px 5px !important;
   z-index: 999;
@@ -201,7 +213,7 @@
   z-index: 999;
 }
 .activeheader {
-  background-color: #fbe1e2 !important;
+  background-color: #fafafa !important;
 }
 .embed-data {
   cursor: pointer;
@@ -233,24 +245,24 @@
   color: #7e42ad !important;
 }
 .peachfontcolor {
-  color: #fbe1e2 !important;
+  color: #fff3f3 !important;
 }
 .purple {
   background-color: #7e42ad !important;
   color: white !important;
 }
 .peach {
-  background-color: #fbe1e2 !important;
+  background-color: #fff3f3 !important;
   color: #7e42ad !important;
 }
 .page-header {
   position: fixed;
   z-index: 999;
-  background-color: white;
+  background-color: #fff3f3;
   width: 100%;
 }
 .backspace {
-  background-color: #fbe1e2 !important;
+  background-color: #fff3f3 !important;
   color: #7e42ad !important;
   border-radius: 2px !important;
   box-shadow: 2px 2px 5px !important;
@@ -327,7 +339,7 @@
   text-transform: capitalize;
 }
 .menuDropdown {
-  background-color: white !important;
+  background-color: #fff3f3 !important;
   height: auto !important;
   margin-top: auto !important;
   margin-bottom: auto !important;
@@ -380,6 +392,9 @@
 @media screen and (min-width: 455px) {
   .headerLogo {
     width: 150px;
+  }
+  .tonneLogo{
+    font-size: 37px;
   }
   .footerLeftCol {
     margin-left: 18%;

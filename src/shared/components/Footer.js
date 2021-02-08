@@ -63,7 +63,7 @@ class Footer extends React.Component {
                 ? 'page-footer page-footer-displayed'
                 : 'page-footer page-footer-hidden'
             }
-            style={{ backgroundColor: '#fbe1e2', color: '#7e42ad' }}>
+            style={{ backgroundColor: '#fff3f3', color: '#7e42ad' }}>
             <div className='ui container'>
               <div className='ui transparent label' style={{ color: '#7e42ad' }}>
                 Nexa Host: <div className='detail'>{nexaURI || 'UNKNOWN'}</div>
@@ -88,14 +88,16 @@ class Footer extends React.Component {
             <span className='footerLeftCol'>
               <a href='https://www.xoken.org' className='peach' style={{ whiteSpace: 'nowrap' }}>
                 Powered by{' '}
+                <span style={{ fontFamily: 'Didact Gothic', color: '#2f355b' }}>Xoken</span>{' '}
                 <img
                   alt='Xoken Labs'
                   src={images.xokenFooterLogo}
                   style={{
-                    width: 72,
+                    width: 22,
                     verticalAlign: 'middle',
                     backgroundColor: 'white',
-                    padding: '3px 3px 3px 3px',
+                    padding: '0px',
+                    borderRadius: '100px',
                   }}
                 />
               </a>
