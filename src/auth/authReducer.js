@@ -1,4 +1,3 @@
-import { stat } from 'fs';
 import { createReducer } from 'redux-act';
 import * as actions from './authActions';
 

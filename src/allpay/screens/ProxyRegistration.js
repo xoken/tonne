@@ -49,7 +49,7 @@ class ProxyRegistration extends React.Component {
     } else {
       dispatch(
         allpayActions.updateScreenProps({
-          activeStep: 4,
+          activeStep: 3,
         })
       );
     }
@@ -62,6 +62,11 @@ class ProxyRegistration extends React.Component {
       value: unregisteredName,
     }));
     this.setState({ unregisteredNames });
+    if (unregisteredNames[0]) {
+      const name = utils.getCodePoint(unregisteredNames[0].value);
+      this.setState({ name: name });
+      dispatch(allpayActions.setName({ name: name }));
+    }
   }
 
   onRegister = async () => {
@@ -125,9 +130,17 @@ class ProxyRegistration extends React.Component {
     const { name, selectedProxyProvider } = this.state;
     return (
       <>
-        <Header as='h4' textAlign='center'>
-          Register {name.length > 0 ? utils.codePointToName(name) : 'name'} with AllPay service
-          provider {selectedProxyProvider && `"${selectedProxyProvider.name}"`}
+        <Header as='h3' textAlign='center'>
+          Register{' '}
+          {name.length > 0 ? (
+            <span className='purplefontcolor'>{utils.codePointToName(name)} </span>
+          ) : (
+            <span className='purplefontcolor'>name</span>
+          )}{' '}
+          with AllPay service provider{' '}
+          {selectedProxyProvider && (
+            <span className='purplefontcolor'>{selectedProxyProvider.name}</span>
+          )}
         </Header>
         <Header textAlign='center'>
           <Header.Subheader>

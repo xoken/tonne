@@ -16,9 +16,12 @@ class RegistrationSuccess extends React.Component {
     dispatch(
       allpayActions.updateScreenProps({
         title: 'Registration Successful',
-        activeStep: 6,
+        activeStep: 4,
       })
     );
+    setTimeout(() => {
+      this.props.history.push('/wallet/dashboard');
+    }, 3000);
   }
 
   onExit() {

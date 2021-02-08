@@ -13,8 +13,8 @@ class AllpayService {
     return await allPay.buyName(data);
   }
 
-  async registerName(data) {
-    return await allPay.registerName(data);
+  async registerName(args) {
+    return await allPay.registerName(args);
   }
 
   async signRelayTransaction(data) {

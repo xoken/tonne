@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { satoshiToBSV } from '../../shared/utils';
-import { Button, Divider, Icon, Label, Table } from 'semantic-ui-react';
+import { Button, Divider, Icon, Label, Table, Message } from 'semantic-ui-react';
 import * as walletSelectors from '../walletSelectors';
 import * as walletActions from '../walletActions';
 
@@ -49,6 +49,12 @@ class ReceiveTransaction extends React.Component {
         {/* {allpayHandles && allpayHandles.length > 0 && ( */}
         {allpayHandle && (allpayHandle.startsWith('aa/') || allpayHandle.startsWith('tw/')) && (
           <>
+            <Message>
+              <Message.Header>
+                AllPay enabled wallets can send you BSV directly to your AllPay handle "xx\yyyy".
+                The addresses are generated from on-chain registrations and hence provably correct.
+              </Message.Header>
+            </Message>
             <div className='ui grid'>
               <div className='left floated six wide middle aligned column'>
                 <h4>My AllPay handle</h4>
@@ -58,7 +64,14 @@ class ReceiveTransaction extends React.Component {
             <div className='ui two column grid'>
               <div className='column'>
                 <div className='ui fluid action input'>
-                  <input type='text' className='monospace' readOnly value={allpayHandle} />
+                  <input
+                    type='text'
+                    className='purple'
+                    style={{ fontWeight: 'bold' }}
+                    readOnly
+                    value={allpayHandle}
+                  />
+
                   <button className='ui coral button' onClick={this.onCopy(allpayHandle)}>
                     Copy
                   </button>

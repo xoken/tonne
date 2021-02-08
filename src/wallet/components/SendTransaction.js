@@ -130,7 +130,11 @@ class SendTransaction extends React.Component {
       } else {
         try {
           await dispatch(
-            walletActions.createSendTransaction(receiverAddress, amountInSatoshi, Number(feeRate))
+            walletActions.createSendTransaction({
+              receiverAddress,
+              amountInSatoshi,
+              feeRate: Number(feeRate),
+            })
           );
           this.setState({ isError: false, message: 'Transaction Successful' });
         } catch (error) {
