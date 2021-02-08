@@ -92,7 +92,7 @@ class ExplorerBlockHeight extends React.Component {
     this.summarysect1.length = 0;
     this.summarysect2.length = 0;
     this.date = new Date(this.rjdecoded.block.header.blockTimestamp * 1000);
-    const confirmations = this.chaintip - this.backheight;
+    const confirmations = this.chaintip - this.backheight + 1;
     this.summarysect1.push(
       <>
         <Grid>

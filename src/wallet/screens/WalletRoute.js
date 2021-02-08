@@ -42,7 +42,11 @@ class WalletRoute extends React.Component {
         <Grid>
           <Grid.Row>
             <Grid.Column width={16}>
-              <span className='welcometext'>{profile.screenName}</span>
+              {profile.screenName.substring(2, 3) === '/' ? (
+                <span className='welcometext purplefontcolor'>{profile.screenName}</span>
+              ) : (
+                <span className='welcometext'>{profile.screenName}</span>
+              )}
               <Dropdown
                 button
                 className='icon top left right floated coral button'
