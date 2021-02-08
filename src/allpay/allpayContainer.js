@@ -22,7 +22,7 @@ class AllpayContainer extends Component {
   render() {
     const { progressStep, progressTotalSteps, title } = this.props;
     return (
-      <>
+      <div className='paddingBottom100px'>
         <Navbar title={title || ''} onBack={this.onBack} />
         <div className='ui grid'>
           <div className='one wide column'>
@@ -32,7 +32,7 @@ class AllpayContainer extends Component {
             <AllpayRoutes />
           </div>
         </div>
-      </>
+      </div>
     );
   }
 }

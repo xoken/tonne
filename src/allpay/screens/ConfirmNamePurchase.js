@@ -140,7 +140,7 @@ class ConfirmNamePurchase extends React.Component {
               <div className='item'>
                 <div className='ui large custom label'>
                   AllPay Name:
-                  <div className='detail'>{utils.codePointToName(name)}</div>
+                  <div className='detail purplefontcolor'>{utils.codePointToName(name)}</div>
                 </div>
               </div>
               <div className='item'>

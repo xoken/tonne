@@ -387,6 +387,7 @@
   .footerRightCol {
     margin-right: 18%;
   }
+
 }
 @media screen and (max-width: 405px) {
   .header {
@@ -411,6 +412,9 @@
   .noPaddingTopBottomFormobiles {
     padding-top: 0px !important;
     padding-bottom: 0px !important;
+  }
+  .passinputwidth{
+    width:100% !important;
   }
 }
 @media screen and (max-width: 767px) {

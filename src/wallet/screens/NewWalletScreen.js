@@ -12,7 +12,7 @@ class NewWalletScreen extends React.Component {
 
   render() {
     return (
-      <Grid verticalAlign='middle' style={{ height: '100%' }}>
+      <Grid verticalAlign='middle' style={{ height: '100%' }} className='paddingBottom100px'>
         <Grid.Row>
           <Grid.Column width={16}>
             <NewWallet onContinue={this.onContinue} />

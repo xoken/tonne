@@ -558,7 +558,7 @@ class ExplorerAddress extends React.Component {
               </h4>
             </Segment>
             <Segment>{this.state.isLoading ? <Loader active /> : this.txlist}</Segment>
-            <Segment>
+            <Segment textAlign='center'>
               <nav aria-label='transactions navigation'>
                 <ul className='pagination justify-content-center' id='pagination'>
                   {this.pagescontainer}

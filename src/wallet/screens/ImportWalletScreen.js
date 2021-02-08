@@ -11,13 +11,15 @@ class ImportWalletScreen extends React.Component {
 
   render() {
     return (
-      <Grid verticalAlign='middle' style={{ height: '100%' }}>
-        <Grid.Row>
-          <Grid.Column width={16}>
-            <ImportWallet onContinue={this.onContinue} />
-          </Grid.Column>
-        </Grid.Row>
-      </Grid>
+      <div className='paddingBottom100px'>
+        <Grid verticalAlign='middle' style={{ height: '100%', paddingTop: '30px' }}>
+          <Grid.Row>
+            <Grid.Column width={16}>
+              <ImportWallet onContinue={this.onContinue} />
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      </div>
     );
   }
 }
