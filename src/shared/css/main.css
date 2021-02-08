@@ -4,7 +4,7 @@
 }
 .tonneLogo{
   font-family: 'moonhouse';
-  color:#7e42ad;
+  color:#922FDF;
   padding: 15px 0px 15px 0px;
   font-size:20px;
   font-weight:700 !important;
@@ -130,7 +130,7 @@
   height: 22px;
   padding: 0px 5px 0px 5px !important;
   z-index: 999;
-  color: #7e42ad !important;
+  color: #922FDF !important;
 }
 .newpagefooter {
   position: fixed;
@@ -200,14 +200,14 @@
   left: 0;
   margin-left: 30px;
   border-radius: 5px;
-  background-color: #7e42ad;
+  background-color: #922FDF;
   transition: height 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .ui.basic.button.borderless {
   box-shadow: none;
 }
 .headertabitems {
-  color: #7e42ad !important;
+  color: #922FDF !important;
   box-shadow: 1px 1px 3px lightgrey !important;
   border-radius: 2px !important;
   z-index: 999;
@@ -239,21 +239,21 @@
   box-shadow: 0 0 0 2px #ff7f7f inset !important;
 }
 .purplefontcolor {
-  color: #7e42ad !important;
+  color: #922FDF !important;
 }
 .purplefontcolor > label {
-  color: #7e42ad !important;
+  color: #922FDF !important;
 }
 .peachfontcolor {
   color: #fff3f3 !important;
 }
 .purple {
-  background-color: #7e42ad !important;
+  background-color: #922FDF !important;
   color: white !important;
 }
 .peach {
   background-color: #fff3f3 !important;
-  color: #7e42ad !important;
+  color: #922FDF !important;
 }
 .page-header {
   position: fixed;
@@ -263,7 +263,7 @@
 }
 .backspace {
   background-color: #fff3f3 !important;
-  color: #7e42ad !important;
+  color: #922FDF !important;
   border-radius: 2px !important;
   box-shadow: 2px 2px 5px !important;
   position: relative;
@@ -308,7 +308,7 @@
 }
 .ui.dropdown .menu > .item a,
 .ui.dropdown .menu > .item span {
-  color: #7e42ad;
+  color: #922FDF;
 }
 .ui.dropdown .menu > .item .active {
   color: grey;
