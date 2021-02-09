@@ -6,7 +6,6 @@ import { Button, Grid, Segment } from 'semantic-ui-react';
 import words from '../../shared/constants/wordlist/english';
 import alphabet from '../../shared/constants/alphabet/english';
 import * as authActions from '../../auth/authActions';
-import * as authSelectors from '../../auth/authSelectors';
 const crypto = require('crypto');
 
 class ImportWallet extends React.Component {

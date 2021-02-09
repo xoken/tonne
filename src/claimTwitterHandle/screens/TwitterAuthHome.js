@@ -18,11 +18,9 @@ class TwitterAuthHome extends React.Component {
   }
 
   async componentDidMount() {
-    const {
-      user: { screen_name, followers_count },
-      dispatch,
-    } = this.props;
-    if (screen_name) {
+    const { user, dispatch } = this.props;
+    if (user) {
+      const { screen_name, followers_count } = user;
       try {
         const { dispatch } = this.props;
         const { isAvailable, name, uri } = await dispatch(

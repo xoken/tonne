@@ -3,7 +3,6 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as authActions from '../../auth/authActions';
-import * as authSelectors from '../../auth/authSelectors';
 import { Button, Form, Grid, Input } from 'semantic-ui-react';
 
 class Login extends React.Component {
