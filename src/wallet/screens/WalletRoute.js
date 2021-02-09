@@ -39,14 +39,16 @@ class WalletRoute extends React.Component {
     const { profile, allpayHandles } = this.props;
     if (profile) {
       return (
-        <Grid>
+        <Grid stackable reversed='mobile'>
           <Grid.Row>
-            <Grid.Column width={16}>
+            <Grid.Column computer={6} tablet={6} mobile={6}>
               {profile.screenName.substring(2, 3) === '/' ? (
                 <span className='welcometext purplefontcolor'>{profile.screenName}</span>
               ) : (
                 <span className='welcometext'>{profile.screenName}</span>
               )}
+            </Grid.Column>
+            <Grid.Column computer={5} tablet={6} mobile={12} floated='right'>
               <Dropdown
                 button
                 className='icon top left right floated coral button'
@@ -95,6 +97,7 @@ class WalletRoute extends React.Component {
                   Buy AllPay Name
                 </NavLink>
               )}
+
               {/* <Dropdown
               button
               className='circular icon top left right floated profile'

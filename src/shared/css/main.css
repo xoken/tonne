@@ -13,6 +13,9 @@
 .passinputwidth {
   width: 60% !important;
 }
+.inputWidth {
+  width: max-content !important;
+}
 .redalert {
   color: red;
   font-weight: bold;
@@ -402,6 +405,9 @@ input[type='number'] {
 .balance {
   min-height: 32px;
 }
+.floatRightOnComp{
+  float: none !important;
+}
 @media screen and (min-width: 455px) {
   .headerLogo {
     width: 150px;
@@ -443,6 +449,7 @@ input[type='number'] {
   .passinputwidth {
     width: 100% !important;
   }
+
 }
 @media screen and (max-width: 767px) {
   .walletHomeDividerHorizontal {
@@ -454,4 +461,22 @@ input[type='number'] {
   .negativeMarginBottom {
     margin-bottom: -14px !important;
   }
+  .floatRightOnComp{
+    float: none !important;
+  }
+}
+
+.paddingLeftRight14px{
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+}
+
+.marginRightAuto{
+  margin-right: auto !important;
+  margin-left: 0px !important;
+}
+
+.marginLeftAuto{
+  margin-left: auto !important;
+  margin-right: 0px !important;
 }
