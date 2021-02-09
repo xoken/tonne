@@ -1,4 +1,5 @@
 import { createAction } from 'redux-act';
+import * as walletActions from '../wallet/walletActions';
 import AuthService from './authService';
 
 export const getProfileRequest = createAction('GET_PROFILE_REQUEST');
@@ -106,6 +107,7 @@ export const login = (profileId, password) => async (dispatch, getState, { servi
     const { profile } = await serviceInjector(AuthService).login(profileId, password);
     if (profile) {
       dispatch(loginSuccess({ profile }));
+      await dispatch(walletActions.getAllpayHandle());
     } else {
       dispatch(loginFailure());
     }
