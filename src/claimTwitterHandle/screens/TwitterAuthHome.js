@@ -76,7 +76,9 @@ class TwitterAuthHome extends React.Component {
           } else {
             this.setState({
               isError: true,
-              message: "You don't have sufficient coin to claim your twitter handle.",
+              message: `Please deposit a minimum of ${utils.satoshiToBSV(
+                process.env.REACT_APP_FAUCET_FREE_CREDIT
+              )} in your wallet to claim your Twitter handle.`,
             });
           }
         }
@@ -116,7 +118,7 @@ class TwitterAuthHome extends React.Component {
           <Grid.Row>
             <Grid.Column>
               <Message positive={!isError} negative={isError}>
-                <Message.Header>{isError ? 'Sorry!' : 'Congratulation!'}</Message.Header>
+                {!isError && <Message.Header>{isError ? '' : 'Congratulation!'}</Message.Header>}
                 <p>{message}</p>
               </Message>
             </Grid.Column>
