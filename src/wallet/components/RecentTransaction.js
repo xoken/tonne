@@ -167,83 +167,87 @@ class RecentTransaction extends React.Component {
                   </Grid>
                 </Accordion.Title>
                 <Accordion.Content active={activeIndex.includes(index)}>
-                  <Grid divided columns='two'>
+                  <Grid divided stackable columns='two'>
                     <Grid.Row>
                       <Grid.Column>
-                        <Header as='h5' className='monospace purplefontcolor'>
-                          Inputs
-                        </Header>
-                        {txInps.map((input, index) => {
-                          return (
-                            <Grid key={index.toString()}>
-                              <Grid.Column width='10'>
-                                <p className='monospace'>
-                                  <span
-                                    className={input.isNUTXO ? 'nUTXO' : undefined}
-                                    title={input.isNUTXO ? 'Name UTXO' : undefined}>
-                                    {input.address}
-                                  </span>
-                                </p>
-                              </Grid.Column>
-                              <Grid.Column width='6' textAlign='right'>
-                                <p className='monospace'>
-                                  <span className={input.isMine ? 'debit' : ''}>
-                                    {utils.satoshiToBSV(input.value)}
-                                  </span>
-                                </p>
-                              </Grid.Column>
-                            </Grid>
-                          );
-                        })}
+                        <div className='paddingLeftRight14px'>
+                          <Header as='h5' className='monospace purplefontcolor'>
+                            Inputs
+                          </Header>
+                          {txInps.map((input, index) => {
+                            return (
+                              <Grid key={index.toString()}>
+                                <Grid.Column width='10'>
+                                  <p className='monospace word-wrap'>
+                                    <span
+                                      className={input.isNUTXO ? 'nUTXO' : undefined}
+                                      title={input.isNUTXO ? 'Name UTXO' : undefined}>
+                                      {input.address}
+                                    </span>
+                                  </p>
+                                </Grid.Column>
+                                <Grid.Column width='6' textAlign='right'>
+                                  <p className='monospace'>
+                                    <span className={input.isMine ? 'debit' : ''}>
+                                      {utils.satoshiToBSV(input.value)}
+                                    </span>
+                                  </p>
+                                </Grid.Column>
+                              </Grid>
+                            );
+                          })}
+                        </div>
                       </Grid.Column>
                       <Grid.Column>
-                        <Header as='h5' className='monospace purplefontcolor'>
-                          Outputs
-                        </Header>
-                        {txOuts.map((output, index) => {
-                          return (
-                            // <Grid key={output.outputIndex}>
-                            // <Grid.Column width='10'>
-                            <RenderOutput
-                              key={index.toString()}
-                              addressStyle={output.isNUTXO ? 'nUTXO' : undefined}
-                              address={output.address}
-                              script={output.lockingScript}
-                              title={output.isNUTXO ? 'Name UTXO' : undefined}
-                              valueStyle={output.isMine ? 'credit' : ''}
-                              value={output.value}
-                            />
-                            // </Grid.Column>
-                            // <Grid.Column width='6' textAlign='right'>
-                            // <p className='monospace'>
-                            // <span className={output.isMine ? 'credit' : ''}>
-                            // {utils.satoshiToBSV(output.value)}
-                            // </span>
-                            // </p>
-                            // </Grid.Column>
-                            // </Grid>
-                          );
-                        })}
-                        <div className='ui right aligned grid'>
-                          <div className='column'>
-                            <Label className='monospace plain'>
-                              {debit > 0 ? 'Total debit:' : 'Total credit:'}
-                              <Label.Detail>
-                                {debit > 0
-                                  ? utils.satoshiToBSV(outgoing)
-                                  : utils.satoshiToBSV(credit)}
-                              </Label.Detail>
-                            </Label>
+                        <div className='paddingLeftRight14px'>
+                          <Header as='h5' className='monospace purplefontcolor'>
+                            Outputs
+                          </Header>
+                          {txOuts.map((output, index) => {
+                            return (
+                              // <Grid key={output.outputIndex}>
+                              // <Grid.Column width='10'>
+                              <RenderOutput
+                                key={index.toString()}
+                                addressStyle={output.isNUTXO ? 'nUTXO' : undefined}
+                                address={output.address}
+                                script={output.lockingScript}
+                                title={output.isNUTXO ? 'Name UTXO' : undefined}
+                                valueStyle={output.isMine ? 'credit' : ''}
+                                value={output.value}
+                              />
+                              // </Grid.Column>
+                              // <Grid.Column width='6' textAlign='right'>
+                              // <p className='monospace'>
+                              // <span className={output.isMine ? 'credit' : ''}>
+                              // {utils.satoshiToBSV(output.value)}
+                              // </span>
+                              // </p>
+                              // </Grid.Column>
+                              // </Grid>
+                            );
+                          })}
+                          <div className='ui right aligned grid'>
+                            <div className='column'>
+                              <Label className='monospace plain'>
+                                {debit > 0 ? 'Total debit:' : 'Total credit:'}
+                                <Label.Detail>
+                                  {debit > 0
+                                    ? utils.satoshiToBSV(outgoing)
+                                    : utils.satoshiToBSV(credit)}
+                                </Label.Detail>
+                              </Label>
+                            </div>
                           </div>
-                        </div>
-                        <div className='ui right aligned grid'>
-                          <div className='column'>
-                            <Label className='monospace plain'>
-                              Fee:
-                              <Label.Detail>
-                                {utils.satoshiToBSV(totalInput - totalOutput)}
-                              </Label.Detail>
-                            </Label>
+                          <div className='ui right aligned grid'>
+                            <div className='column'>
+                              <Label className='monospace plain'>
+                                Fee:
+                                <Label.Detail>
+                                  {utils.satoshiToBSV(totalInput - totalOutput)}
+                                </Label.Detail>
+                              </Label>
+                            </div>
                           </div>
                         </div>
                       </Grid.Column>
@@ -277,25 +281,27 @@ class RecentTransaction extends React.Component {
     const { isLoading } = this.props;
     return (
       <>
-        <div className='ui grid'>
-          <div className='left floated six wide middle aligned column'>
-            <h3 className='purplefontcolor'>Recent Transactions</h3>
-          </div>
-          <div className='right floated right aligned six wide column'>
-            {this.renderLastRefresh()}
-            <Button
-              circular
-              icon
-              style={{
-                marginRight: '0px',
-              }}
-              className='peach'
-              disabled={isLoading}
-              onClick={this.onRefresh}>
-              <Icon name='refresh' />
-            </Button>
-          </div>
-        </div>
+        <Grid stackable>
+          <Grid.Row>
+            <Grid.Column width={5} verticalAlign='middle' floated='left'>
+              <h3 className='purplefontcolor'>Recent Transactions</h3>
+            </Grid.Column>
+            <Grid.Column width={5} verticalAlign='middle' floated='right'>
+              {this.renderLastRefresh()}
+              <Button
+                circular
+                icon
+                style={{
+                  marginRight: '0px',
+                }}
+                className='peach'
+                disabled={isLoading}
+                onClick={this.onRefresh}>
+                <Icon name='refresh' />
+              </Button>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
         <div className='ui grid recent-transactions'>{this.renderTransaction()}</div>
         {this.renderPagination()}
       </>

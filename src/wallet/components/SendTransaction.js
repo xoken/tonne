@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Button, Grid, Input } from 'semantic-ui-react';
+import { Button, Grid, Input, Divider } from 'semantic-ui-react';
 import { utils } from 'allegory-allpay-sdk';
 import * as walletActions from '../walletActions';
 
@@ -226,10 +226,10 @@ class SendTransaction extends React.Component {
       sliderValue,
     } = this.state;
     return (
-      <Grid>
+      <Grid stackable>
         <Grid.Row>
           <Grid.Column width={4} verticalAlign='middle'>
-            Pay to
+            <b>Pay to</b>
           </Grid.Column>
           <Grid.Column width={7}>
             <Input
@@ -241,9 +241,10 @@ class SendTransaction extends React.Component {
             />
           </Grid.Column>
         </Grid.Row>
+        <Divider className='walletHomeDividerHorizontal' />
         <Grid.Row>
           <Grid.Column width={4} verticalAlign='middle'>
-            Amount
+            <b>Amount</b>
           </Grid.Column>
           <Grid.Column width={7}>
             <Input
@@ -260,9 +261,10 @@ class SendTransaction extends React.Component {
             <p className='form-control-plaintext'>{utils.satoshiToBSV(amountInSatoshi)}</p>
           </Grid.Column>
         </Grid.Row>
+        <Divider className='walletHomeDividerHorizontal' />
         <Grid.Row>
           <Grid.Column width={4} verticalAlign='middle'>
-            Network Fee (Satoshis/byte)
+            <b>Network Fee (Satoshis/byte)</b>
           </Grid.Column>
           <Grid.Column width={7} verticalAlign='middle'>
             <input
@@ -279,6 +281,7 @@ class SendTransaction extends React.Component {
             <p>{`${utils.satoshiToBSV(Number(transactionFee))} (${feeRate} satoshis/byte)`}</p>
           </Grid.Column>
         </Grid.Row>
+        <Divider className='walletHomeDividerHorizontal' />
         <Grid.Row>
           <Grid.Column width={16}>{this.renderMessage()}</Grid.Column>
         </Grid.Row>

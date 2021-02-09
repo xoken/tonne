@@ -19,7 +19,7 @@ class RenderOutput extends React.Component {
     const { addressStyle, address, script, title } = this.props;
     if (address) {
       return (
-        <p className='monospace'>
+        <p className='monospace word-wrap'>
           <span className={addressStyle} title={title}>
             {address}
           </span>
