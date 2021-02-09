@@ -15,6 +15,7 @@ class ReceiveTransaction extends React.Component {
 
   async componentDidMount() {
     const { dispatch } = this.props;
+    await dispatch(walletActions.getAllpayHandle());
     await dispatch(walletActions.getUsedAddresses());
     await dispatch(walletActions.getUnusedAddresses());
   }
