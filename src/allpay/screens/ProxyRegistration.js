@@ -62,10 +62,10 @@ class ProxyRegistration extends React.Component {
       value: unregisteredName,
     }));
     this.setState({ unregisteredNames });
-    if (unregisteredNames[0]) {
-      const name = utils.getCodePoint(unregisteredNames[0].value);
-      this.setState({ name: name });
-      dispatch(allpayActions.setName({ name: name }));
+    if (this.state.name.length === 0 && unregisteredNames.length > 0) {
+      const nameCodePoint = utils.getCodePoint(unregisteredNames[0].value);
+      this.setState({ name: nameCodePoint });
+      dispatch(allpayActions.setName({ name: nameCodePoint }));
     }
   }
 
@@ -167,6 +167,7 @@ class ProxyRegistration extends React.Component {
               <Form.Select
                 options={unregisteredNames}
                 placeholder='Allegory Name'
+                value={utils.codePointToName(this.state.name)}
                 onChange={(e, { value }) => {
                   const nameCodePoint = utils.getCodePoint(value);
                   this.setState({ name: nameCodePoint });

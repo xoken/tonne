@@ -24,7 +24,7 @@ export const doTwitterAuth = history => async (dispatch, getState, { serviceInje
       popup.close();
       window.removeEventListener('message', messageHandler);
       dispatch(updateTwitterInfo({ oauthToken, oauthTokenSecret }));
-      await dispatch(getPurchasedFollowers({ prefix: [97, 97, 47] }));
+      await dispatch(getPurchasedFollowers({ prefix: [116, 119, 47] }));
       history.push('/claim-twitter-handle/wallet-setup');
     }
   };
@@ -46,7 +46,9 @@ export const getPurchasedFollowers = args => async (dispatch, getState, { servic
     const uniqPurchasedNames = [...new Set(purchasedNames)];
     const nameWithoutPrefix = uniqPurchasedNames.map(name => name.slice(3));
     const purchasedTwitterFollowers = followers.filter(follower => {
-      const isPurchased = nameWithoutPrefix.find(name => follower.screen_name === name);
+      const isPurchased = nameWithoutPrefix.find(
+        name => follower.screen_name.replaceAll(/\s/g, '').toLowerCase() === name.toLowerCase()
+      );
       if (isPurchased) {
         return true;
       }

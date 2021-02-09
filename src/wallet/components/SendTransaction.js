@@ -4,7 +4,6 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Button, Grid, Input } from 'semantic-ui-react';
 import { utils } from 'allegory-allpay-sdk';
-import * as walletSelectors from '../walletSelectors';
 import * as walletActions from '../walletActions';
 
 class SendTransaction extends React.Component {

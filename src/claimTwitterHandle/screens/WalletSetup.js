@@ -125,7 +125,9 @@ class WalletSetup extends React.Component {
                   return (
                     <div key={String(index)} style={{ padding: '15px 25px 15px 25px' }}>
                       <Image src={follower.profile_image_url_https} avatar />
-                      <span>{`tw/${follower.screen_name}`}</span>
+                      <span>{`tw/${follower.screen_name
+                        .replaceAll(/\s/g, '')
+                        .toLowerCase()}`}</span>
                     </div>
                   );
                 })}

@@ -26,7 +26,6 @@ class RecentTransaction extends React.Component {
       try {
         await dispatch(walletActions.getTransactions({ limit: 10 }));
         await dispatch(walletActions.updateTransactionsConfirmations());
-        await dispatch(walletActions.getAllpayHandle());
         this.setState({ lastRefreshed: new Date() });
         this.timerID = setInterval(
           () =>

@@ -18,11 +18,9 @@ class TwitterAuthHome extends React.Component {
   }
 
   async componentDidMount() {
-    const {
-      user: { screen_name, followers_count },
-      dispatch,
-    } = this.props;
-    if (screen_name) {
+    const { user, dispatch } = this.props;
+    if (user) {
+      const { screen_name, followers_count } = user;
       try {
         const { dispatch } = this.props;
         const { isAvailable, name, uri } = await dispatch(
@@ -78,7 +76,9 @@ class TwitterAuthHome extends React.Component {
           } else {
             this.setState({
               isError: true,
-              message: "You don't have sufficient coin to claim your twitter handle.",
+              message: `Please deposit a minimum of ${utils.satoshiToBSV(
+                process.env.REACT_APP_FAUCET_FREE_CREDIT
+              )} in your wallet to claim your Twitter handle.`,
             });
           }
         }
@@ -95,7 +95,9 @@ class TwitterAuthHome extends React.Component {
     } = this.props;
     await dispatch(walletActions.getTransactions({ limit: 10 }));
     const { name, uri } = await dispatch(
-      allpayActions.getResellerURI([116, 119, 47].concat(utils.getCodePoint(screen_name)))
+      allpayActions.getResellerURI(
+        [116, 119, 47].concat(utils.getCodePoint(screen_name.replaceAll(/\s/g, '').toLowerCase()))
+      )
     );
     const data = {
       uri,
@@ -118,7 +120,7 @@ class TwitterAuthHome extends React.Component {
           <Grid.Row>
             <Grid.Column>
               <Message positive={!isError} negative={isError}>
-                <Message.Header>{isError ? 'Sorry!' : 'Congratulation!'}</Message.Header>
+                {!isError && <Message.Header>{isError ? '' : 'Congratulation!'}</Message.Header>}
                 <p>{message}</p>
               </Message>
             </Grid.Column>
