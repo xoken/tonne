@@ -124,7 +124,6 @@ class NewWallet extends React.Component {
 
 NewWallet.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired,
   bip39Mnemonic: PropTypes.string,
 };
 
@@ -133,7 +132,6 @@ NewWallet.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  isLoading: authSelectors.isLoading(state),
   bip39Mnemonic: authSelectors.getMnemonic(state),
 });
 

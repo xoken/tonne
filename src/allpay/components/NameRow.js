@@ -30,7 +30,7 @@ export default class NameRow extends React.Component {
                   <div className='seven wide middle aligned column'>
                     <div className='ui grid'>
                       <div className='six wide column middle aligned'>
-                        {/* <div className='ui plain label'>{satoshiToBSV(
+                        {/* <div className='ui plain label'>{utils.satoshiToBSV(
                           priceInSatoshi
                         )}</div> */}
                       </div>

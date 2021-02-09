@@ -144,13 +144,11 @@ class WalletPassword extends React.Component {
 
 WalletPassword.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired,
 };
 
 WalletPassword.defaultProps = {};
 
 const mapStateToProps = state => ({
-  isLoading: authSelectors.isLoading(state),
   bip39Mnemonic: authSelectors.getMnemonic(state),
 });
 

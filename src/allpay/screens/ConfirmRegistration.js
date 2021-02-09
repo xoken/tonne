@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { utils } from 'allegory-allpay-sdk';
-import { satoshiToBSV } from '../../shared/utils';
 import RenderTransaction from '../components/RenderTransaction';
 import * as allpayActions from '../allpayActions';
 
@@ -88,7 +87,7 @@ class ConfirmRegistration extends React.Component {
         return false;
       });
       if (nameOutpoint) {
-        return satoshiToBSV(nameOutpoint.value);
+        return utils.satoshiToBSV(nameOutpoint.value);
       }
     }
     return null;
@@ -116,7 +115,7 @@ class ConfirmRegistration extends React.Component {
         return acc;
       }, 0);
 
-      return satoshiToBSV(totalOwnInput - totalOwnOutput);
+      return utils.satoshiToBSV(totalOwnInput - totalOwnOutput);
     }
     return null;
   }

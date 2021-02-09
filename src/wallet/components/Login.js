@@ -80,13 +80,10 @@ class Login extends React.Component {
 
 Login.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired,
 };
 
 Login.defaultProps = {};
 
-const mapStateToProps = state => ({
-  isLoading: authSelectors.isLoading(state),
-});
+const mapStateToProps = state => ({});
 
 export default withRouter(connect(mapStateToProps)(Login));

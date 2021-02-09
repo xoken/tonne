@@ -2,7 +2,6 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { utils } from 'allegory-allpay-sdk';
-import { satoshiToBSV } from '../../shared/utils';
 import RenderTransaction from '../components/RenderTransaction';
 import * as allpayActions from '../allpayActions';
 import * as authActions from '../../auth/authActions';
@@ -41,11 +40,9 @@ class ConfirmNamePurchase extends React.Component {
         );
         if (txBroadcast) {
           this.setState({ isError: false, message: 'Transaction signed and relayed successfully' });
-          // rename profile
           await dispatch(
             authActions.updateProfileName(profile.screenName, utils.codePointToName(outpoint.name))
           );
-          //--
           this.props.history.push('/wallet/allpay/register');
         } else {
           this.setState({ isError: true, message: 'Error in relaying Transaction' });
@@ -94,7 +91,7 @@ class ConfirmNamePurchase extends React.Component {
         return false;
       });
       if (nameOutpoint) {
-        return satoshiToBSV(nameOutpoint.value);
+        return utils.satoshiToBSV(nameOutpoint.value);
       }
     }
     return '0.0001 BSV';
@@ -122,7 +119,7 @@ class ConfirmNamePurchase extends React.Component {
         return acc;
       }, 0);
 
-      return satoshiToBSV(totalOwnInput - totalOwnOutput);
+      return utils.satoshiToBSV(totalOwnInput - totalOwnOutput);
     }
     return null;
   }

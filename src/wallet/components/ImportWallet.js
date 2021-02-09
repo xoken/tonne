@@ -241,13 +241,10 @@ class ImportWallet extends React.Component {
 
 ImportWallet.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  isLoading: PropTypes.bool.isRequired,
 };
 
 ImportWallet.defaultProps = {};
 
-const mapStateToProps = state => ({
-  isLoading: authSelectors.isLoading(state),
-});
+const mapStateToProps = state => ({});
 
 export default withRouter(connect(mapStateToProps)(ImportWallet));

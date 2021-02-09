@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { satoshiToBSV } from '../../shared/utils';
 import { Button, Divider, Icon, Label, Table, Message } from 'semantic-ui-react';
+import { utils } from 'allegory-allpay-sdk';
 import * as walletSelectors from '../walletSelectors';
 import * as walletActions from '../walletActions';
 
@@ -17,7 +17,6 @@ class ReceiveTransaction extends React.Component {
     const { dispatch } = this.props;
     await dispatch(walletActions.getUsedAddresses());
     await dispatch(walletActions.getUnusedAddresses());
-    await dispatch(walletActions.getAllpayHandle());
   }
 
   onCopy = address => () => {
@@ -41,13 +40,11 @@ class ReceiveTransaction extends React.Component {
   };
 
   renderAllpayHandle() {
-    const { allpayHandles, profile } = this.props;
+    const { allpayHandles } = this.props;
     const { copiedAddress } = this.state;
-    const allpayHandle = profile.screenName;
     return (
       <>
-        {/* {allpayHandles && allpayHandles.length > 0 && ( */}
-        {allpayHandle && (allpayHandle.startsWith('aa/') || allpayHandle.startsWith('tw/')) && (
+        {allpayHandles && allpayHandles.length > 0 && (
           <>
             <Message>
               <Message.Header>
@@ -60,33 +57,33 @@ class ReceiveTransaction extends React.Component {
                 <h4>My AllPay handle</h4>
               </div>
             </div>
-            {/* {allpayHandles.map((allpayHandle, index) => ( */}
-            <div className='ui two column grid'>
-              <div className='column'>
-                <div className='ui fluid action input'>
-                  <input
-                    type='text'
-                    className='purple'
-                    style={{ fontWeight: 'bold' }}
-                    readOnly
-                    value={allpayHandle}
-                  />
+            {allpayHandles.map((allpayHandle, index) => (
+              <div className='ui two column grid'>
+                <div className='column'>
+                  <div className='ui fluid action input'>
+                    <input
+                      type='text'
+                      className='purple'
+                      style={{ fontWeight: 'bold' }}
+                      readOnly
+                      value={allpayHandle}
+                    />
 
-                  <button className='ui coral button' onClick={this.onCopy(allpayHandle)}>
-                    Copy
-                  </button>
+                    <button className='ui coral button' onClick={this.onCopy(allpayHandle)}>
+                      Copy
+                    </button>
+                  </div>
                 </div>
+                {copiedAddress && copiedAddress === allpayHandle ? (
+                  <div className='column middle aligned'>
+                    <Label>
+                      <Icon name='check' color='green' />
+                      Copied!
+                    </Label>
+                  </div>
+                ) : null}
               </div>
-              {copiedAddress && copiedAddress === allpayHandle ? (
-                <div className='column middle aligned'>
-                  <Label>
-                    <Icon name='check' color='green' />
-                    Copied!
-                  </Label>
-                </div>
-              ) : null}
-            </div>
-            {/* ))} */}
+            ))}
           </>
         )}
       </>
@@ -163,17 +160,17 @@ class ReceiveTransaction extends React.Component {
                     <Table.Cell className='monospace'>
                       <div>
                         {incomingBalance !== null
-                          ? `Total Incoming: ${satoshiToBSV(Number(incomingBalance))}`
+                          ? `Total Incoming: ${utils.satoshiToBSV(Number(incomingBalance))}`
                           : ''}
                       </div>
                       <div>
                         {outgoingBalance !== null
-                          ? `Total Outgoing: ${satoshiToBSV(Number(outgoingBalance))}`
+                          ? `Total Outgoing: ${utils.satoshiToBSV(Number(outgoingBalance))}`
                           : ''}
                       </div>
                       <div>
                         {currentBalance !== null
-                          ? `Current Balance: ${satoshiToBSV(Number(currentBalance))}`
+                          ? `Current Balance: ${utils.satoshiToBSV(Number(currentBalance))}`
                           : ''}
                       </div>
                     </Table.Cell>
@@ -213,11 +210,10 @@ ReceiveTransaction.propTypes = {
 ReceiveTransaction.defaultProps = {};
 
 const mapStateToProps = state => ({
-  isLoading: walletSelectors.isLoading(state),
+  isLoading: walletSelectors.isLoadingAddresses(state),
   usedAddresses: state.wallet.usedAddresses,
   unusedAddresses: state.wallet.unusedAddresses,
   allpayHandles: state.wallet.allpayHandles,
-  profile: state.auth.profile,
 });
 
 export default connect(mapStateToProps)(ReceiveTransaction);
