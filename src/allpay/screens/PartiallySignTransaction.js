@@ -62,7 +62,7 @@ class PartiallySignTransaction extends React.Component {
     return (
       <>
         <Header as='h2' textAlign='center'>
-          Partially Signed Transaction
+          Signed Transaction
         </Header>
         <RenderTransaction />
         <Grid>

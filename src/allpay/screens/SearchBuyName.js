@@ -124,9 +124,10 @@ class SearchBuyName extends React.Component {
                   className='searchname'
                   type='text'
                   placeholder='Enter a name you want to purchase'
+                  value={this.state.queryName}
                   onChange={event =>
                     this.setState({
-                      queryName: event.target.value,
+                      queryName: event.target.value.replaceAll(/\s/g, '').toLowerCase(),
                       searchResults: undefined,
                       isError: false,
                       message: '',

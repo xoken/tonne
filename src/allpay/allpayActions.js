@@ -1,7 +1,6 @@
 import { createAction } from 'redux-act';
 import { allpayFlows } from './allpayRoutes';
 import * as walletActions from '../wallet/walletActions';
-import * as authActions from '../auth/authActions';
 import AllpayService from './allpayService';
 
 export const getResellerURIRequest = createAction('GET_RESELLER_URI_REQUEST');
@@ -50,11 +49,6 @@ export const registerName = ({ proxyURI, name, addressCount }) => async (
   getState,
   { serviceInjector }
 ) => {
-  const {
-    auth: {
-      profile: { screenName },
-    },
-  } = getState();
   dispatch(registerNameRequest());
   try {
     const { transaction, txBroadcast } = await serviceInjector(AllpayService).registerName({
@@ -62,10 +56,13 @@ export const registerName = ({ proxyURI, name, addressCount }) => async (
       name,
       addressCount,
     });
-    dispatch(registerNameSuccess());
-    dispatch(walletActions.createSendTransactionSuccess({ transaction }));
-    await dispatch(walletActions.getBalance());
-    await dispatch(authActions.updateProfileName(screenName, name));
+    if (txBroadcast) {
+      dispatch(registerNameSuccess());
+      await dispatch(walletActions.getBalance());
+      dispatch(walletActions.createSendTransactionSuccess({ transaction }));
+    } else {
+      throw new Error('Failed to broadcast transaction');
+    }
   } catch (error) {
     dispatch(registerNameFailure());
     throw error;
@@ -87,8 +84,8 @@ export const signRelayTransaction = data => async (dispatch, getState, { service
       data
     );
     dispatch(signRelayTransactionSuccess());
-    dispatch(walletActions.createSendTransactionSuccess({ transaction }));
     await dispatch(walletActions.getBalance());
+    dispatch(walletActions.createSendTransactionSuccess({ transaction }));
     return { txBroadcast };
   } catch (error) {
     dispatch(signRelayTransactionFailure());

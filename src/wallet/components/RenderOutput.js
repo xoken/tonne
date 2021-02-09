@@ -1,8 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { satoshiToBSV } from '../../shared/utils';
 import { Grid } from 'semantic-ui-react';
-import { allegory } from 'allegory-allpay-sdk';
+import { utils, allegory } from 'allegory-allpay-sdk';
 
 class RenderOutput extends React.Component {
   constructor(props) {
@@ -69,7 +68,7 @@ class RenderOutput extends React.Component {
           <Grid.Column width='10'>{this.renderOutput()}</Grid.Column>
           <Grid.Column width='6' textAlign='right'>
             <p className='monospace'>
-              <span className={valueStyle}>{satoshiToBSV(value)}</span>
+              <span className={valueStyle}>{utils.satoshiToBSV(value)}</span>
             </p>
           </Grid.Column>
         </Grid.Row>

@@ -36,7 +36,7 @@ class WalletRoute extends React.Component {
   };
 
   renderHeader() {
-    const { profile } = this.props;
+    const { profile, allpayHandles } = this.props;
     if (profile) {
       return (
         <Grid>
@@ -64,13 +64,13 @@ class WalletRoute extends React.Component {
                     </NavLink>
                   </Dropdown.Item>
                   {/* <Dropdown.Item>
-                  <NavLink
-                    className='dropdownmenuitems'
-                    to={`/wallet/allpay/search`}
-                    activeClassName='active'>
-                    Buy AllPay Name
-                  </NavLink>
-                </Dropdown.Item> */}
+                    <NavLink
+                      className='dropdownmenuitems'
+                      to={`/wallet/allpay/search`}
+                      activeClassName='active'>
+                      Buy AllPay Name
+                    </NavLink>
+                  </Dropdown.Item>
                   <Dropdown.Item>
                     <NavLink
                       className='dropdownmenuitems'
@@ -78,7 +78,7 @@ class WalletRoute extends React.Component {
                       activeClassName='active'>
                       Register with proxy
                     </NavLink>
-                  </Dropdown.Item>
+                  </Dropdown.Item> */}
                   <Dropdown.Item
                     className='dropdownmenuitems'
                     text='Rename Profile'
@@ -87,12 +87,14 @@ class WalletRoute extends React.Component {
                   <Dropdown.Item className='logoutlink' text='Logout' onClick={this.onLogout} />
                 </Dropdown.Menu>
               </Dropdown>
-              <NavLink
-                className='buyallpaybutton'
-                activeClassName='buyallpaybuttonactive'
-                to={`/wallet/allpay/search`}>
-                Buy AllPay Name
-              </NavLink>
+              {allpayHandles && allpayHandles.length < 0 && (
+                <NavLink
+                  className='buyallpaybutton'
+                  activeClassName='buyallpaybuttonactive'
+                  to={`/wallet/allpay/search`}>
+                  Buy AllPay Name
+                </NavLink>
+              )}
               {/* <Dropdown
               button
               className='circular icon top left right floated profile'
@@ -169,6 +171,7 @@ WalletRoute.defaultProps = {};
 
 const mapStateToProps = state => ({
   profile: state.auth.profile,
+  allpayHandles: state.wallet.allpayHandles,
 });
 
 export default withRouter(connect(mapStateToProps)(WalletRoute));

@@ -2,7 +2,15 @@ import { createSelector } from 'reselect';
 
 export const getWallet = state => state.wallet;
 
-export const isLoading = createSelector([getWallet], ({ isLoading }) => isLoading);
+export const isLoadingTransactions = createSelector(
+  [getWallet],
+  ({ isLoadingTransactions }) => isLoadingTransactions
+);
+
+export const isLoadingAddresses = createSelector(
+  [getWallet],
+  ({ isLoadingAddresses }) => isLoadingAddresses
+);
 
 export const getBalance = createSelector([getWallet], ({ balance }) => balance);
 

@@ -52,26 +52,26 @@ export const getAllpayHandleSuccess = createAction('GET_ALLPAY_HANDLE_SUCCESS');
 export const getAllpayHandleFailure = createAction('GET_ALLPAY_HANDLE_FAILURE');
 
 export const getTransactions = options => async (dispatch, getState, { serviceInjector }) => {
-  dispatch(getTransactionsRequest());
   try {
     const {
-      wallet: { nextTransactionCursor: startkey },
+      wallet: { nextTransactionCursor: startkey, isLoadingTransactions },
     } = getState();
-    if (startkey) {
-      options.startkey = startkey;
-    }
-    if (options.diff) {
-      const { transactions } = await serviceInjector(WalletService).getTransactions(options);
-      dispatch(getDiffTransactionsSuccess({ transactions }));
-      if (transactions.length > 0) {
-        await dispatch(getBalance());
+    if (!isLoadingTransactions) {
+      dispatch(getTransactionsRequest());
+      if (startkey) {
+        options.startkey = startkey;
       }
-    } else {
-      const { transactions, nextTransactionCursor } = await serviceInjector(
-        WalletService
-      ).getTransactions(options);
-      await dispatch(getBalance());
-      dispatch(getTransactionsSuccess({ transactions, nextTransactionCursor }));
+      if (options.diff) {
+        const { transactions } = await serviceInjector(WalletService).getTransactions(options);
+        await dispatch(getBalance());
+        dispatch(getDiffTransactionsSuccess({ transactions }));
+      } else {
+        const { transactions, nextTransactionCursor } = await serviceInjector(
+          WalletService
+        ).getTransactions(options);
+        await dispatch(getBalance());
+        dispatch(getTransactionsSuccess({ transactions, nextTransactionCursor }));
+      }
     }
   } catch (error) {
     dispatch(getTransactionsFailure());
@@ -130,8 +130,8 @@ export const createSendTransaction = args => async (dispatch, getState, { servic
   dispatch(createSendTransactionRequest());
   try {
     const { transaction } = await serviceInjector(WalletService).createSendTransaction(args);
-    dispatch(createSendTransactionSuccess({ transaction }));
     await dispatch(getBalance());
+    dispatch(createSendTransactionSuccess({ transaction }));
   } catch (error) {
     dispatch(createSendTransactionFailure());
     throw error;

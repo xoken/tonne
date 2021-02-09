@@ -3,10 +3,11 @@ import * as actions from './walletActions';
 import * as authActions from '../auth/authActions';
 
 const INITIAL_STATE = {
-  isLoading: false,
+  isLoadingTransactions: false,
   transactions: [],
   nextTransactionCursor: null,
   balance: 0,
+  isLoadingAddresses: false,
   usedAddresses: null,
   unusedAddresses: [],
   allpayHandles: null,
@@ -14,38 +15,29 @@ const INITIAL_STATE = {
 
 export default createReducer(
   {
-    [actions.getBalanceRequest]: state => ({
-      ...state,
-      isLoading: true,
-    }),
     [actions.getBalanceSuccess]: (state, { balance }) => ({
       ...state,
-      isLoading: false,
       balance,
-    }),
-    [actions.getBalanceFailure]: state => ({
-      ...state,
-      isLoading: false,
     }),
     [actions.getTransactionsRequest]: state => ({
       ...state,
-      isLoading: true,
+      isLoadingTransactions: true,
     }),
     [actions.getTransactionsSuccess]: (state, { transactions, nextTransactionCursor }) => ({
       ...state,
       transactions: [...state.transactions, ...transactions],
       nextTransactionCursor:
         nextTransactionCursor !== undefined ? nextTransactionCursor : state.nextTransactionCursor,
-      isLoading: false,
+      isLoadingTransactions: false,
     }),
     [actions.getTransactionsFailure]: state => ({
       ...state,
-      isLoading: false,
+      isLoadingTransactions: false,
     }),
     [actions.getDiffTransactionsSuccess]: (state, { transactions }) => ({
       ...state,
       transactions: [...transactions, ...state.transactions],
-      isLoading: false,
+      isLoadingTransactions: false,
     }),
     [actions.updateTransactionsConfirmationsSuccess]: (
       state,
@@ -80,21 +72,21 @@ export default createReducer(
     }),
     [actions.getUsedAddressesRequest]: state => ({
       ...state,
-      isLoading: true,
+      isLoadingAddresses: true,
     }),
     [actions.getUsedAddressesSuccess]: (state, { usedAddresses }) => ({
       ...state,
-      isLoading: false,
+      isLoadingAddresses: false,
       usedAddresses,
     }),
     [actions.getUsedAddressesFailure]: state => ({
       ...state,
-      isLoading: true,
+      isLoadingAddresses: true,
     }),
     [actions.getUnusedAddressesSuccess]: (state, { unusedAddresses }) => ({
       ...state,
       unusedAddresses: state.unusedAddresses
-        ? [...state.unusedAddresses, ...unusedAddresses]
+        ? [...unusedAddresses, ...state.unusedAddresses]
         : unusedAddresses,
     }),
     [actions.getAllpayHandleSuccess]: (state, { allpayHandles }) => ({

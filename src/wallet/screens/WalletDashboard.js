@@ -6,8 +6,7 @@ import { Button, Icon, Loader, Modal } from 'semantic-ui-react';
 import SendTransaction from '../components/SendTransaction';
 import ReceiveTransaction from '../components/ReceiveTransaction';
 import RecentTransaction from '../components/RecentTransaction';
-import { satoshiToBSV } from '../../shared/utils';
-import { wallet } from 'allegory-allpay-sdk';
+import { utils, allPay } from 'allegory-allpay-sdk';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
 
@@ -65,8 +64,8 @@ class WalletDashboard extends React.Component {
   }
 
   runScript = () => {
-    this.props.history.push('/claim-twitter-handle/wallet-password-setup');
-    wallet.runScript();
+    // this.props.history.push('/claim-twitter-handle/wallet-password-setup');
+    allPay.runScript();
   };
 
   render() {
@@ -82,7 +81,7 @@ class WalletDashboard extends React.Component {
             <div className='content'>
               Your Current Balance is
               <div className='balance purplefontcolor'>
-                {isLoading ? <Loader inline active /> : satoshiToBSV(balance)}
+                {isLoading ? <Loader inline active /> : utils.satoshiToBSV(balance)}
               </div>
             </div>
           </div>
@@ -113,7 +112,7 @@ WalletDashboard.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  isLoading: walletSelectors.isLoading(state),
+  isLoading: walletSelectors.isLoadingTransactions(state),
   balance: walletSelectors.getBalance(state),
 });
 

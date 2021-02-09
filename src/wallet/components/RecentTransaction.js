@@ -3,11 +3,11 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Accordion, Button, Grid, Header, Icon, Label, Segment } from 'semantic-ui-react';
-import RenderOutput from './RenderOutput';
 import { formatDistanceToNow } from 'date-fns';
+import { utils } from 'allegory-allpay-sdk';
+import RenderOutput from './RenderOutput';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
-import { satoshiToBSV } from '../../shared/utils';
 
 class RecentTransaction extends React.Component {
   constructor(props) {
@@ -26,6 +26,7 @@ class RecentTransaction extends React.Component {
       try {
         await dispatch(walletActions.getTransactions({ limit: 10 }));
         await dispatch(walletActions.updateTransactionsConfirmations());
+        await dispatch(walletActions.getAllpayHandle());
         this.setState({ lastRefreshed: new Date() });
         this.timerID = setInterval(
           () =>
@@ -119,15 +120,15 @@ class RecentTransaction extends React.Component {
               if (credit > 0 && debit > 0) {
                 return (
                   <>
-                    <span className='monospace debit'>{`-${satoshiToBSV(debit)}`}</span>
+                    <span className='monospace debit'>{`-${utils.satoshiToBSV(debit)}`}</span>
                     <span className='monospace'>{` / `}</span>
-                    <span className='monospace credit'>{`+${satoshiToBSV(credit)}`}</span>
+                    <span className='monospace credit'>{`+${utils.satoshiToBSV(credit)}`}</span>
                   </>
                 );
               } else if (credit > 0) {
-                return <span className='monospace credit'>{`+${satoshiToBSV(credit)}`}</span>;
+                return <span className='monospace credit'>{`+${utils.satoshiToBSV(credit)}`}</span>;
               } else if (debit > 0) {
-                return <span className='monospace debit'>{`-${satoshiToBSV(debit)}`}</span>;
+                return <span className='monospace debit'>{`-${utils.satoshiToBSV(debit)}`}</span>;
               }
               return '';
             };
@@ -188,7 +189,7 @@ class RecentTransaction extends React.Component {
                               <Grid.Column width='6' textAlign='right'>
                                 <p className='monospace'>
                                   <span className={input.isMine ? 'debit' : ''}>
-                                    {satoshiToBSV(input.value)}
+                                    {utils.satoshiToBSV(input.value)}
                                   </span>
                                 </p>
                               </Grid.Column>
@@ -217,7 +218,7 @@ class RecentTransaction extends React.Component {
                             // <Grid.Column width='6' textAlign='right'>
                             // <p className='monospace'>
                             // <span className={output.isMine ? 'credit' : ''}>
-                            // {satoshiToBSV(output.value)}
+                            // {utils.satoshiToBSV(output.value)}
                             // </span>
                             // </p>
                             // </Grid.Column>
@@ -229,7 +230,9 @@ class RecentTransaction extends React.Component {
                             <Label className='monospace plain'>
                               {debit > 0 ? 'Total debit:' : 'Total credit:'}
                               <Label.Detail>
-                                {debit > 0 ? satoshiToBSV(outgoing) : satoshiToBSV(credit)}
+                                {debit > 0
+                                  ? utils.satoshiToBSV(outgoing)
+                                  : utils.satoshiToBSV(credit)}
                               </Label.Detail>
                             </Label>
                           </div>
@@ -238,7 +241,9 @@ class RecentTransaction extends React.Component {
                           <div className='column'>
                             <Label className='monospace plain'>
                               Fee:
-                              <Label.Detail>{satoshiToBSV(totalInput - totalOutput)}</Label.Detail>
+                              <Label.Detail>
+                                {utils.satoshiToBSV(totalInput - totalOutput)}
+                              </Label.Detail>
                             </Label>
                           </div>
                         </div>
@@ -270,6 +275,7 @@ class RecentTransaction extends React.Component {
   }
 
   render() {
+    const { isLoading } = this.props;
     return (
       <>
         <div className='ui grid'>
@@ -285,6 +291,7 @@ class RecentTransaction extends React.Component {
                 marginRight: '0px',
               }}
               className='peach'
+              disabled={isLoading}
               onClick={this.onRefresh}>
               <Icon name='refresh' />
             </Button>
@@ -312,6 +319,7 @@ RecentTransaction.defaultProps = {
 };
 
 const mapStateToProps = state => ({
+  isLoading: walletSelectors.isLoadingTransactions(state),
   transactions: walletSelectors.getTransactions(state),
   nextTransactionCursor: state.wallet.nextTransactionCursor,
 });

@@ -46,8 +46,8 @@
 .warning {
   color: #794b02;
 }
-#root{
-  height:100%;
+#root {
+  height: 100%;
 }
 .main {
   vertical-align: middle !important;
@@ -389,6 +389,19 @@
   margin-right: 0%;
   float: right;
 }
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type='number'] {
+  -moz-appearance: textfield;
+}
+.balance {
+  min-height: 32px;
+}
 @media screen and (min-width: 455px) {
   .headerLogo {
     width: 150px;
@@ -402,7 +415,6 @@
   .footerRightCol {
     margin-right: 18%;
   }
-
 }
 @media screen and (max-width: 405px) {
   .header {
@@ -428,8 +440,8 @@
     padding-top: 0px !important;
     padding-bottom: 0px !important;
   }
-  .passinputwidth{
-    width:100% !important;
+  .passinputwidth {
+    width: 100% !important;
   }
 }
 @media screen and (max-width: 767px) {

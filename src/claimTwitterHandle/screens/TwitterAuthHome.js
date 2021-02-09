@@ -6,7 +6,6 @@ import * as allpayActions from '../../allpay/allpayActions';
 import * as walletActions from '../../wallet/walletActions';
 import * as claimTwitterHandleActions from '../claimTwitterHandleActions';
 import * as authSelectors from '../../auth/authSelectors';
-import { satoshiToBSV } from '../../shared/utils';
 import { utils } from 'allegory-allpay-sdk';
 
 class TwitterAuthHome extends React.Component {
@@ -27,7 +26,11 @@ class TwitterAuthHome extends React.Component {
       try {
         const { dispatch } = this.props;
         const { isAvailable, name, uri } = await dispatch(
-          allpayActions.getResellerURI([116, 119, 47].concat(utils.getCodePoint(screen_name)))
+          allpayActions.getResellerURI(
+            [116, 119, 47].concat(
+              utils.getCodePoint(screen_name.replaceAll(/\s/g, '').toLowerCase())
+            )
+          )
         );
         if (isAvailable) {
           await dispatch(walletActions.getTransactions({ limit: 10 }));
@@ -43,8 +46,8 @@ class TwitterAuthHome extends React.Component {
           this.setState({ isError: true, message: `${nameString} is not available` });
         }
       } catch (error) {
-        if (error.message === 'Empty inputs or outputs') {
-          if (followers_count >= 1) {
+        if (error.name === 'NotEnoughUtxoError') {
+          if (followers_count >= process.env.REACT_APP_MIN_TWITTER_FOLLOWER) {
             const { unusedAddresses } = await dispatch(walletActions.getUnusedAddresses());
             try {
               const { success } = await dispatch(
@@ -56,8 +59,10 @@ class TwitterAuthHome extends React.Component {
               if (success) {
                 this.setState({
                   isError: false,
-                  message: `Since you have more than 1 followers, we have credited ${satoshiToBSV(
-                    150000
+                  message: `Since you have more than ${
+                    process.env.REACT_APP_MIN_TWITTER_FOLLOWER
+                  } followers, we have credited ${utils.satoshiToBSV(
+                    process.env.REACT_APP_FAUCET_FREE_CREDIT
                   )} to your account.`,
                 });
                 setTimeout(async () => {
