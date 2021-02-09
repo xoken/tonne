@@ -95,7 +95,9 @@ class TwitterAuthHome extends React.Component {
     } = this.props;
     await dispatch(walletActions.getTransactions({ limit: 10 }));
     const { name, uri } = await dispatch(
-      allpayActions.getResellerURI([116, 119, 47].concat(utils.getCodePoint(screen_name)))
+      allpayActions.getResellerURI(
+        [116, 119, 47].concat(utils.getCodePoint(screen_name.replaceAll(/\s/g, '').toLowerCase()))
+      )
     );
     const data = {
       uri,
