@@ -98,13 +98,13 @@
 }
 .letter {
   text-align: center;
-  background-color: #fbe1e2;
+  background-color: #fff3f3;
   cursor: pointer;
   display: inline-block;
   padding: 15px;
   border-radius: 5px;
   margin: 10px;
-  color: #7e42ad;
+  color: #922FDF;
   vertical-align: middle;
   font-size: 18px;
   width: 57px;
@@ -117,7 +117,7 @@
 }
 .wordlist {
   text-align: center;
-  background-color: #7e42ad;
+  background-color: #922FDF;
   cursor: pointer;
   display: inline-block;
   padding: 5px 10px 5px 10px;

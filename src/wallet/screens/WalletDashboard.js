@@ -71,7 +71,7 @@ class WalletDashboard extends React.Component {
   render() {
     const { isLoading, balance } = this.props;
     return (
-      <div className='paddingBottom100px'>
+      <div className='paddingBottom100px' style={{ paddingTop: '30px' }}>
         {process.env.REACT_APP_ENVIRONMENT === 'development' && (
           <Button onClick={this.runScript}>Run</Button>
         )}

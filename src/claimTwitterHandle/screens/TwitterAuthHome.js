@@ -46,7 +46,7 @@ class TwitterAuthHome extends React.Component {
           this.setState({ isError: true, message: `${nameString} is not available` });
         }
       } catch (error) {
-        if (error.message === 'Empty inputs or outputs') {
+        if (error.name === 'NotEnoughUtxoError') {
           if (followers_count >= process.env.REACT_APP_MIN_TWITTER_FOLLOWER) {
             const { unusedAddresses } = await dispatch(walletActions.getUnusedAddresses());
             try {
