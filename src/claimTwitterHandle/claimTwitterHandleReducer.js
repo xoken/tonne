@@ -45,9 +45,6 @@ export default createReducer(
     [actions.RESET_FLOW]: () => ({
       ...INITIAL_STATE,
     }),
-    [actions.SET_NAME]: state => ({
-      ...state,
-    }),
   },
   INITIAL_STATE
 );

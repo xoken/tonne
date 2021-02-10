@@ -105,19 +105,6 @@ export const setMessage = message => (dispatch, getState, { serviceInjector }) =
 //   }, 500);
 // };
 
-export const SET_NAME = 'SET_NAME';
-export const setName = ({ name }) => async (dispatch, getState, { serviceInjector }) => {
-  dispatch({
-    type: SET_NAME,
-    payload: { name },
-  });
-};
-
-export const updateProgressStep = createAction('UPDATE_PROGRESS_STEP');
-export const updateProgress = payload => dispatch => {
-  dispatch(updateProgressStep(payload));
-};
-
 export const UPDATE_SCREEN_PROPS = 'UPDATE_SCREEN_PROPS';
 export const updateScreenProps = props => dispatch => {
   dispatch({
@@ -129,20 +116,6 @@ export const updateScreenProps = props => dispatch => {
 export const RESET_FLOW = 'RESET_FLOW';
 export const resetFlow = () => async dispatch => {
   dispatch({ type: RESET_FLOW, payload: {} });
-};
-
-export const incrementFlow = (history, count = 1) => (dispatch, getState) => {
-  const { activeStep, id } = getState();
-  const nextStep = activeStep + count;
-
-  dispatch({
-    type: UPDATE_SCREEN_PROPS,
-    payload: {
-      activeStep: nextStep,
-    },
-  });
-  dispatch(updateProgress(nextStep));
-  history.push(claimTwitterHandleFlows[id][nextStep - 1]);
 };
 
 export const decrementFlow = (history, count = 1) => (dispatch, getState) => {
@@ -159,7 +132,6 @@ export const decrementFlow = (history, count = 1) => (dispatch, getState) => {
         activeStep: prevStep,
       },
     });
-    dispatch(updateProgress(prevStep));
     history.push(claimTwitterHandleFlows['claim-twitter-handle'][prevStep - 1]);
   } else {
     dispatch(resetFlow());
