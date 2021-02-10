@@ -12,8 +12,8 @@ class WalletPasswordScreen extends React.Component {
   };
 
   render() {
-    const { bip39Mnemonic } = this.props;
-    if (!bip39Mnemonic) {
+    const { bip39Mnemonic, profile } = this.props;
+    if (!bip39Mnemonic && !profile) {
       return <Redirect to='/wallet' />;
     } else {
       return (
@@ -37,6 +37,7 @@ WalletPasswordScreen.defaultProps = {};
 
 const mapStateToProps = state => ({
   bip39Mnemonic: authSelectors.getMnemonic(state),
+  profile: state.auth.profile,
 });
 
 export default withRouter(connect(mapStateToProps)(WalletPasswordScreen));

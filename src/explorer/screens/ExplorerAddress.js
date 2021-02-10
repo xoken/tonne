@@ -251,7 +251,7 @@ class ExplorerAddress extends React.Component {
               computer={13}
               mobile={11}
               style={{ marginTop: '10px' }}>
-              <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>{' '}
+              <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>
             </Grid.Column>
           </>
         );
