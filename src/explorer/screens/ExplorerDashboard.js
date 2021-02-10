@@ -371,9 +371,12 @@ class ExplorerDashboard extends React.Component {
                   </Link>
                 </Grid.Column>
                 <Grid.Column>
-                  {this.date.getDate()}/{this.date.getMonth() + 1}/{this.date.getFullYear()}
-                  <br />
-                  {this.date.getHours()}:{this.date.getMinutes()}:{this.date.getSeconds()}
+                  <div>
+                    {this.date.getDate()}/{this.date.getMonth() + 1}/{this.date.getFullYear()}
+                  </div>
+                  <div>
+                    {this.date.getHours()}:{this.date.getMinutes()}:{this.date.getSeconds()}
+                  </div>
                 </Grid.Column>
                 <Grid.Column className='word-wrap'>{age}</Grid.Column>
                 <Grid.Column style={{ wordBreak: 'break-all' }}>
@@ -418,14 +421,20 @@ class ExplorerDashboard extends React.Component {
             <Segment className='removesegmentborder'>
               <h4 className='purplefontcolor'>Latest Blocks</h4>
             </Segment>
-
-            <div className='latestblocks'>{this.resultsrow}</div>
-            <br />
-
-            <center style={{ overflow: 'auto' }}>
-              <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
-            </center>
-
+            <Grid>
+              <Grid.Row>
+                <Grid.Column>
+                  <div className='latestblocks'>{this.resultsrow}</div>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+            <Grid>
+              <Grid.Row>
+                <Grid.Column textAlign='center'>
+                  <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
             <form onSubmit={this.pagebutton}>
               <div className='ui form'>
                 <div className='inline fields'>

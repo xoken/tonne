@@ -28,7 +28,7 @@ class Home extends React.Component {
                   <div className='ui icon header purplefontcolor'>
                     <img
                       alt='Bitcoin SV Blockchain'
-                      src={images.bsvLogo}
+                      src={images.explorerLogo}
                       style={{
                         display: 'block',
                         height: 53,
@@ -39,7 +39,7 @@ class Home extends React.Component {
                     />
                     Bitcoin SV Blockchain
                   </div>
-                  <Link to='/explorer' className='ui button coral'>
+                  <Link to='/explorer' className='ui button coral coralButton'>
                     Explore
                   </Link>
                 </div>
@@ -60,7 +60,7 @@ class Home extends React.Component {
                     />
                     Bitcoin SV Wallet
                   </div>
-                  <Link to='/wallet' className='ui button coral'>
+                  <Link to='/wallet' className='ui button coral coralButton'>
                     Send / Receive
                   </Link>
                 </div>
@@ -81,7 +81,7 @@ class Home extends React.Component {
                     />
                     Twitter handle
                   </div>
-                  <Button fluid className='coral' onClick={this.onClaimTwitterHandle}>
+                  <Button fluid className='coral coralButton' onClick={this.onClaimTwitterHandle}>
                     Claim on-chain
                   </Button>
                 </div>

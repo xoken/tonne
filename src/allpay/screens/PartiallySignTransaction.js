@@ -29,7 +29,7 @@ class PartiallySignTransaction extends React.Component {
         );
         if (txBroadcast) {
           this.setState({ isError: false, message: 'Transaction signed and relayed successfully' });
-          setTimeout(() => {
+          this.timerID = setTimeout(() => {
             this.props.history.push('/wallet/dashboard');
           }, 3000);
         }
@@ -81,6 +81,10 @@ class PartiallySignTransaction extends React.Component {
         </Grid>
       </>
     );
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timerID);
   }
 }
 

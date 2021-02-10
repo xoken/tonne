@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 import { utils, allegory } from 'allegory-allpay-sdk';
+import { Link } from 'react-router-dom';
+import images from '../../shared/images';
 
 class RenderOutput extends React.Component {
   constructor(props) {
@@ -19,13 +21,62 @@ class RenderOutput extends React.Component {
     const { addressStyle, address, script, title } = this.props;
     if (address) {
       return (
-        <p className='monospace'>
+        <p className='monospace word-wrap'>
           <span className={addressStyle} title={title}>
             {address}
+            <Link to={'/explorer/address/' + address}>
+              <img
+                alt='Bitcoin SV Blockchain'
+                src={images.explorerLogo}
+                className='icon explorerIconForWallet'
+              />
+            </Link>
           </span>
         </p>
       );
     } else if (script && script.startsWith('006a0f416c6c65676f72792f416c6c506179')) {
+      function renderAdditionalInfo() {
+        const allegoryData = allegory.decodeCBORData(script);
+        const allegoryJSON = allegory.getAllegoryType(allegoryData);
+        const { name, action } = allegoryJSON;
+        if (action instanceof allegory.OwnerAction) {
+          const ownerAction = action;
+          if (ownerAction.oProxyProviders.length > 0) {
+            if (name) {
+              return (
+                <span>
+                  {' '}
+                  Proxy registration: <i>{utils.codePointToName(name)}</i>
+                </span>
+              );
+            }
+          } else {
+            return (
+              <span>
+                {' '}
+                Purchase: <i>{utils.codePointToName(name)}</i>
+              </span>
+            );
+          }
+        } else if (action instanceof allegory.ProducerAction) {
+          const producerAction = action;
+          if (producerAction.extensions.length > 0) {
+            const producerExtensions = producerAction.extensions.map(extension => {
+              return {
+                codePoint: extension.codePoint,
+              };
+            });
+            const producerCodePoints = producerExtensions.map(({ codePoint }) => codePoint);
+            const namePurchased = utils.codePointToName([...name, ...producerCodePoints]);
+            return (
+              <span>
+                {' '}
+                Purchase: <i>{namePurchased}</i>
+              </span>
+            );
+          }
+        }
+      }
       return (
         <p className='monospace'>
           <span
@@ -34,6 +85,7 @@ class RenderOutput extends React.Component {
             onClick={this.toggleEmbedDataVisiblity}>
             OP_RETURN
           </span>
+          {renderAdditionalInfo()}
         </p>
       );
     }
@@ -50,9 +102,9 @@ class RenderOutput extends React.Component {
       return (
         <Grid.Row>
           <Grid.Column width='16'>
-            <p className={`monospace ${addressStyle} word-wrap embed-data-json`} title={title}>
-              {JSON.stringify(allegoryJSON)}
-            </p>
+            <pre className={`monospace embed-data-json ${addressStyle}`} title={title}>
+              {JSON.stringify(allegoryJSON, null, 2)}
+            </pre>
           </Grid.Column>
         </Grid.Row>
       );

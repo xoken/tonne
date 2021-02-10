@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Button, Grid, Input } from 'semantic-ui-react';
+import { Button, Grid, Input, Divider } from 'semantic-ui-react';
 import { utils } from 'allegory-allpay-sdk';
 import * as walletActions from '../walletActions';
 
@@ -126,7 +126,10 @@ class SendTransaction extends React.Component {
           );
           this.props.history.push('/wallet/allpay/transaction');
         } catch (error) {
-          this.setState({ isError: true, message: error.message });
+          this.setState({
+            isError: true,
+            message: error.response && error.response.data ? error.response.data : error.message,
+          });
         }
       } else {
         try {
@@ -217,19 +220,12 @@ class SendTransaction extends React.Component {
   };
 
   render() {
-    const {
-      isError,
-      receiverAddress,
-      amountInSatoshi,
-      transactionFee,
-      feeRate,
-      sliderValue,
-    } = this.state;
+    const { receiverAddress, amountInSatoshi, transactionFee, feeRate, sliderValue } = this.state;
     return (
-      <Grid>
+      <Grid stackable>
         <Grid.Row>
           <Grid.Column width={4} verticalAlign='middle'>
-            Pay to
+            <b>Pay to</b>
           </Grid.Column>
           <Grid.Column width={7}>
             <Input
@@ -241,9 +237,10 @@ class SendTransaction extends React.Component {
             />
           </Grid.Column>
         </Grid.Row>
+        <Divider className='walletHomeDividerHorizontal' />
         <Grid.Row>
           <Grid.Column width={4} verticalAlign='middle'>
-            Amount
+            <b>Amount</b>
           </Grid.Column>
           <Grid.Column width={7}>
             <Input
@@ -260,9 +257,10 @@ class SendTransaction extends React.Component {
             <p className='form-control-plaintext'>{utils.satoshiToBSV(amountInSatoshi)}</p>
           </Grid.Column>
         </Grid.Row>
+        <Divider className='walletHomeDividerHorizontal' />
         <Grid.Row>
           <Grid.Column width={4} verticalAlign='middle'>
-            Network Fee (Satoshis/byte)
+            <b>Network Fee (Satoshis/byte)</b>
           </Grid.Column>
           <Grid.Column width={7} verticalAlign='middle'>
             <input
@@ -279,12 +277,16 @@ class SendTransaction extends React.Component {
             <p>{`${utils.satoshiToBSV(Number(transactionFee))} (${feeRate} satoshis/byte)`}</p>
           </Grid.Column>
         </Grid.Row>
+        <Divider className='walletHomeDividerHorizontal' />
         <Grid.Row>
           <Grid.Column width={16}>{this.renderMessage()}</Grid.Column>
         </Grid.Row>
         <Grid.Row centered>
           <Grid.Column>
-            <Button className='coral' onClick={this.onSend} disabled={isError}>
+            <Button
+              className='coral'
+              onClick={this.onSend}
+              disabled={receiverAddress === '' ? true : false}>
               Send
             </Button>
             <Button className='peach' onClick={this.onClose}>

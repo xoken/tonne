@@ -1,17 +1,20 @@
 @font-face {
   font-family: 'moonhouse';
-  src: url('../fonts/Moonhouse.ttf')  format('truetype');
+  src: url('../fonts/Moonhouse.ttf') format('truetype');
 }
-.tonneLogo{
+.tonneLogo {
   font-family: 'moonhouse';
-  color:#922FDF;
+  color: #922fdf;
   padding: 15px 0px 15px 0px;
-  font-size:20px;
-  font-weight:700 !important;
+  font-size: 20px;
+  font-weight: 700 !important;
 }
 
 .passinputwidth {
   width: 60% !important;
+}
+.inputWidth {
+  width: max-content !important;
 }
 .redalert {
   color: red;
@@ -130,7 +133,7 @@
   height: 22px;
   padding: 0px 5px 0px 5px !important;
   z-index: 999;
-  color: #922FDF !important;
+  color: #922fdf !important;
 }
 .newpagefooter {
   position: fixed;
@@ -200,14 +203,14 @@
   left: 0;
   margin-left: 30px;
   border-radius: 5px;
-  background-color: #922FDF;
+  background-color: #922fdf;
   transition: height 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .ui.basic.button.borderless {
   box-shadow: none;
 }
 .headertabitems {
-  color: #922FDF !important;
+  color: #922fdf !important;
   box-shadow: 1px 1px 3px lightgrey !important;
   border-radius: 2px !important;
   z-index: 999;
@@ -222,6 +225,7 @@
 .embed-data-json {
   border: 1px solid rgba(34, 36, 38, 0.15);
   padding: 1em;
+  white-space: pre-wrap;
 }
 .progressIndicatorStep {
   width: 10px;
@@ -239,21 +243,21 @@
   box-shadow: 0 0 0 2px #ff7f7f inset !important;
 }
 .purplefontcolor {
-  color: #922FDF !important;
+  color: #922fdf !important;
 }
 .purplefontcolor > label {
-  color: #922FDF !important;
+  color: #922fdf !important;
 }
 .peachfontcolor {
   color: #fff3f3 !important;
 }
 .purple {
-  background-color: #922FDF !important;
+  background-color: #922fdf !important;
   color: white !important;
 }
 .peach {
   background-color: #fff3f3 !important;
-  color: #922FDF !important;
+  color: #922fdf !important;
 }
 .page-header {
   position: fixed;
@@ -263,7 +267,7 @@
 }
 .backspace {
   background-color: #fff3f3 !important;
-  color: #922FDF !important;
+  color: #922fdf !important;
   border-radius: 2px !important;
   box-shadow: 2px 2px 5px !important;
   position: relative;
@@ -296,8 +300,7 @@
   border-radius: 4px;
   font-weight: bold;
   position: relative;
-  float: right;
-  margin-left: 10px;
+  margin-left: 0px;
   margin-right: 10px;
 }
 .buyallpaybutton:hover {
@@ -308,7 +311,7 @@
 }
 .ui.dropdown .menu > .item a,
 .ui.dropdown .menu > .item span {
-  color: #922FDF;
+  color: #922fdf;
 }
 .ui.dropdown .menu > .item .active {
   color: grey;
@@ -402,11 +405,14 @@ input[type='number'] {
 .balance {
   min-height: 32px;
 }
+.floatRightOnComp{
+  float: right !important;
+}
 @media screen and (min-width: 455px) {
   .headerLogo {
     width: 150px;
   }
-  .tonneLogo{
+  .tonneLogo {
     font-size: 37px;
   }
   .footerLeftCol {
@@ -454,4 +460,36 @@ input[type='number'] {
   .negativeMarginBottom {
     margin-bottom: -14px !important;
   }
+  .floatRightOnComp{
+    float: left !important;
+  }
+}
+
+.paddingLeftRight14px {
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+}
+
+.marginRightAuto {
+  margin-right: auto !important;
+  margin-left: 0px !important;
+}
+
+.marginLeftAuto {
+  margin-left: auto !important;
+  margin-right: 0px !important;
+}
+
+.coralButton{
+  width:150px !important;
+}
+
+.explorerIconForWallet{
+  display: block;
+  height: 20px;
+  width: auto;
+  borderRadius: 100px;
+}
+body{
+  overflow-y: scroll;
 }

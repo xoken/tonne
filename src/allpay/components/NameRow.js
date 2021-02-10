@@ -1,8 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { Button } from 'semantic-ui-react';
 import { utils } from 'allegory-allpay-sdk';
 
-export default class NameRow extends React.Component {
+class NameRow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -13,13 +15,14 @@ export default class NameRow extends React.Component {
   toggle = () => this.setState(prevState => ({ resellerRight: !prevState.resellerRight }));
 
   render() {
-    const { isAvailable, name: codePoints, uri, protocol } = this.props.data;
+    const { requestInProgress, data } = this.props;
+    const { isAvailable, name: codePoints, uri, protocol } = data;
     const name = utils.codePointToName(codePoints);
     return (
-      <div className='ten wide column centered row'>
+      <div className='fifteen wide column centered row'>
         <div className='column'>
           <div className='ui clearing segment'>
-            <div className='ui grid'>
+            <div className='ui grid stackable'>
               <div className='row'>
                 <div className='nine wide middle aligned column'>
                   <h4 className='ui header'>
@@ -29,17 +32,19 @@ export default class NameRow extends React.Component {
                 {isAvailable && (
                   <div className='seven wide middle aligned column'>
                     <div className='ui grid'>
-                      <div className='six wide column middle aligned'>
+                      <div className='six wide computer only column middle aligned'>
                         {/* <div className='ui plain label'>{utils.satoshiToBSV(
-                          priceInSatoshi
-                        )}</div> */}
+                             priceInSatoshi
+                           )}</div> */}
                       </div>
-                      <div className='ten wide column'>
+
+                      <div className='ten wide computer column'>
                         <div className='ui form'>
-                          <div className='field'>
+                          <div className='field floatRightOnComp'>
                             <Button
                               fluid
                               className='coral'
+                              loading={requestInProgress}
                               onClick={this.props.onBuy({
                                 name: utils.getCodePoint(name),
                                 isProducer: this.state.resellerRight,
@@ -69,3 +74,9 @@ export default class NameRow extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  requestInProgress: state.allpay.requestInProgress,
+});
+
+export default withRouter(connect(mapStateToProps)(NameRow));

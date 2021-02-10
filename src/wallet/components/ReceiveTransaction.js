@@ -53,13 +53,13 @@ class ReceiveTransaction extends React.Component {
                 The addresses are generated from on-chain registrations and hence provably correct.
               </Message.Header>
             </Message>
-            <div className='ui grid'>
+            <div className='ui grid stackable'>
               <div className='left floated six wide middle aligned column'>
                 <h4>My AllPay handle</h4>
               </div>
             </div>
             {allpayHandles.map((allpayHandle, index) => (
-              <div className='ui two column grid'>
+              <div className='ui two column grid stackable'>
                 <div className='column'>
                   <div className='ui fluid action input'>
                     <input
@@ -97,32 +97,39 @@ class ReceiveTransaction extends React.Component {
     if (unusedAddresses && unusedAddresses.length > 0) {
       return (
         <>
-          <div className='ui grid'>
-            <div className='left floated six wide middle aligned column'>
+          <div className='ui grid stackable mobile reversed'>
+            <div className='left floated eight wide middle aligned column'>
               <h4>Unused Addresses</h4>
             </div>
-            <div className='right floated right aligned six wide column'>
-              <Button
-                className='coral'
-                disabled={unusedAddresses.length > 10 ? true : false}
-                onClick={this.onNewUnusedAddress}>
-                Get new Addresses
-              </Button>
+            <div className='right floated right aligned eight wide column'>
+              <div className='floatRightOnComp'>
+                <Button
+                  className='coral'
+                  disabled={unusedAddresses.length > 10 ? true : false}
+                  onClick={this.onNewUnusedAddress}>
+                  Get new Addresses
+                </Button>
+              </div>
             </div>
           </div>
           <Divider />
           {unusedAddresses.map((unusedAddress, index) => (
-            <div className='ui two column grid' key={index.toString()}>
-              <div className='column'>
+            <div className='ui two column grid stackable' key={index.toString()}>
+              <div className='twelve wide column'>
                 <div className='ui fluid action input'>
-                  <input type='text' className='monospace' readOnly value={unusedAddress} />
+                  <input
+                    type='text'
+                    className='monospace inputWidth'
+                    readOnly
+                    value={unusedAddress}
+                  />
                   <button className='ui coral button' onClick={this.onCopy(unusedAddress)}>
                     Copy
                   </button>
                 </div>
               </div>
               {copiedAddress && copiedAddress === unusedAddress ? (
-                <div className='column middle aligned'>
+                <div className='column three wide middle aligned'>
                   <Label>
                     <Icon name='check' color='green' />
                     Copied!

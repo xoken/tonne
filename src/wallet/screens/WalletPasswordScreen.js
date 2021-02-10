@@ -8,16 +8,12 @@ import * as authSelectors from '../../auth/authSelectors';
 
 class WalletPasswordScreen extends React.Component {
   onSuccess = () => {
-    try {
-      this.props.history.push('/wallet/dashboard');
-    } catch (error) {
-      console.log(error);
-    }
+    this.props.history.push('/wallet/dashboard');
   };
 
   render() {
-    const { bip39Mnemonic } = this.props;
-    if (!bip39Mnemonic) {
+    const { bip39Mnemonic, profile } = this.props;
+    if (!bip39Mnemonic && !profile) {
       return <Redirect to='/wallet' />;
     } else {
       return (
@@ -41,6 +37,7 @@ WalletPasswordScreen.defaultProps = {};
 
 const mapStateToProps = state => ({
   bip39Mnemonic: authSelectors.getMnemonic(state),
+  profile: state.auth.profile,
 });
 
 export default withRouter(connect(mapStateToProps)(WalletPasswordScreen));

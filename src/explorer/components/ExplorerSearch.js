@@ -23,7 +23,6 @@ class ExplorerSearch extends React.Component {
           this.props.history.push(`/explorer/transaction/${this.state.searchterm}`);
         }
       } else {
-        setTimeout(3000);
         this.props.history.push(`/explorer/404`);
       }
     }

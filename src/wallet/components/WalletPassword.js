@@ -1,9 +1,8 @@
 import React from 'react';
-import { withRouter, Redirect } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as authActions from '../../auth/authActions';
-import * as authSelectors from '../../auth/authSelectors';
 import { Button, Input, Grid, Header } from 'semantic-ui-react';
 
 class WalletPassword extends React.Component {
@@ -20,7 +19,6 @@ class WalletPassword extends React.Component {
       await dispatch(authActions.createProfile(password));
       this.props.onSuccess();
     } catch (error) {
-      console.log(error);
       throw error;
     }
   };
@@ -71,74 +69,69 @@ class WalletPassword extends React.Component {
   }
 
   render() {
-    const { bip39Mnemonic } = this.props;
     const { password, confirmPassword } = this.state;
-    if (!bip39Mnemonic) {
-      return <Redirect to='/wallet' />;
-    } else {
-      return (
-        <Grid>
-          <Grid.Row>
-            <Grid.Column>
-              <Header as='h4' className='purplefontcolor' textAlign='center'>
-                Choose a password to encrypt your wallet keys.
-              </Header>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <Header as='h5' className='generalheadingscolor' textAlign='center'>
-                Include alphabets, numbers and special characters in your password.
-              </Header>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <form onSubmit={this.handleNext}>
-                <Grid centered>
-                  <Grid.Row>
-                    <Grid.Column computer={2} mobile={4} verticalAlign='middle'>
-                      <label>Password</label>
-                    </Grid.Column>
-                    <Grid.Column computer={10} mobile={12}>
-                      <Input
-                        fluid
-                        type='password'
-                        id='password'
-                        className='form-control'
-                        placeholder='Password'
-                        value={password}
-                        maxLength='50'
-                        onChange={event => this.setState({ password: event.target.value })}
-                      />
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row>
-                    <Grid.Column computer={2} mobile={4} verticalAlign='middle'>
-                      <label>Confirm Password</label>
-                    </Grid.Column>
-                    <Grid.Column computer={10} mobile={12}>
-                      <Input
-                        fluid
-                        type='password'
-                        id='confirmPassword'
-                        className='form-control'
-                        placeholder='Confirm Password'
-                        value={confirmPassword}
-                        maxLength='50'
-                        onChange={event => this.setState({ confirmPassword: event.target.value })}
-                      />
-                    </Grid.Column>
-                  </Grid.Row>
-                  {this.renderPasswordStrength()}
-                  {this.renderPasswordMatchStatus()}
-                </Grid>
-              </form>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      );
-    }
+    return (
+      <Grid>
+        <Grid.Row>
+          <Grid.Column>
+            <Header as='h4' className='purplefontcolor' textAlign='center'>
+              Choose a password to encrypt your wallet keys.
+            </Header>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column>
+            <Header as='h5' className='generalheadingscolor' textAlign='center'>
+              Include alphabets, numbers and special characters in your password.
+            </Header>
+          </Grid.Column>
+        </Grid.Row>
+        <Grid.Row>
+          <Grid.Column>
+            <form onSubmit={this.handleNext}>
+              <Grid centered>
+                <Grid.Row>
+                  <Grid.Column computer={2} mobile={4} verticalAlign='middle'>
+                    <label>Password</label>
+                  </Grid.Column>
+                  <Grid.Column computer={10} mobile={12}>
+                    <Input
+                      fluid
+                      type='password'
+                      id='password'
+                      className='form-control'
+                      placeholder='Password'
+                      value={password}
+                      maxLength='50'
+                      onChange={event => this.setState({ password: event.target.value })}
+                    />
+                  </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                  <Grid.Column computer={2} mobile={4} verticalAlign='middle'>
+                    <label>Confirm Password</label>
+                  </Grid.Column>
+                  <Grid.Column computer={10} mobile={12}>
+                    <Input
+                      fluid
+                      type='password'
+                      id='confirmPassword'
+                      className='form-control'
+                      placeholder='Confirm Password'
+                      value={confirmPassword}
+                      maxLength='50'
+                      onChange={event => this.setState({ confirmPassword: event.target.value })}
+                    />
+                  </Grid.Column>
+                </Grid.Row>
+                {this.renderPasswordStrength()}
+                {this.renderPasswordMatchStatus()}
+              </Grid>
+            </form>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
+    );
   }
 }
 
@@ -148,8 +141,6 @@ WalletPassword.propTypes = {
 
 WalletPassword.defaultProps = {};
 
-const mapStateToProps = state => ({
-  bip39Mnemonic: authSelectors.getMnemonic(state),
-});
+const mapStateToProps = state => ({});
 
 export default withRouter(connect(mapStateToProps)(WalletPassword));

@@ -22,11 +22,11 @@ class RenameProfile extends React.Component {
     const { newProfilename } = this.state;
     try {
       await dispatch(authActions.updateProfileName(screenName, newProfilename));
-      this.setState({ isError: false, message: 'Success! Your Profile has been renamed.' });
-      setTimeout(() => {
-        this.props.onClose();
-        dispatch(authActions.logoutSuccess());
-      }, 1000);
+      this.setState({
+        newProfilename: '',
+        isError: false,
+        message: 'Success! Your Profile has been renamed.',
+      });
     } catch (error) {
       this.setState({ isError: true, message: error.message });
     }
@@ -45,7 +45,7 @@ class RenameProfile extends React.Component {
   }
 
   render() {
-    const { newProfilename } = this.state;
+    const { isError, message, newProfilename } = this.state;
     const {
       profile: { screenName },
     } = this.props;
@@ -76,7 +76,7 @@ class RenameProfile extends React.Component {
                       Rename
                     </Button>
                     <Button className='coral' onClick={this.props.onClose}>
-                      Cancel
+                      {!isError && message ? 'Close' : 'Cancel'}
                     </Button>
                   </div>
                   {this.renderMessage()}

@@ -1,5 +1,6 @@
 import { createReducer } from 'redux-act';
 import * as actions from './claimTwitterHandleActions';
+import * as allpayActions from '../allpay/allpayActions';
 
 const INITIAL_STATE = {
   ui: {
@@ -7,6 +8,7 @@ const INITIAL_STATE = {
     title: null,
     progressTotalSteps: 7,
   },
+  message: '',
   oauthToken: undefined,
   oauthTokenSecret: undefined,
   user: undefined,
@@ -25,6 +27,14 @@ export default createReducer(
       user,
       purchasedTwitterFollowers,
     }),
+    [actions.SET_MESSAGE]: (state, { message }) => ({
+      ...state,
+      message,
+    }),
+    [allpayActions.signRelayTransactionSuccess]: state => ({
+      ...state,
+      message: '',
+    }),
     [actions.UPDATE_SCREEN_PROPS]: (state, payload) => ({
       ...state,
       ui: {
@@ -34,9 +44,6 @@ export default createReducer(
     }),
     [actions.RESET_FLOW]: () => ({
       ...INITIAL_STATE,
-    }),
-    [actions.SET_NAME]: state => ({
-      ...state,
     }),
   },
   INITIAL_STATE
