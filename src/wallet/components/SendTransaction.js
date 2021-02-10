@@ -217,14 +217,7 @@ class SendTransaction extends React.Component {
   };
 
   render() {
-    const {
-      isError,
-      receiverAddress,
-      amountInSatoshi,
-      transactionFee,
-      feeRate,
-      sliderValue,
-    } = this.state;
+    const { receiverAddress, amountInSatoshi, transactionFee, feeRate, sliderValue } = this.state;
     return (
       <Grid stackable>
         <Grid.Row>
