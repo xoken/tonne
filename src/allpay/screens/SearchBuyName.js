@@ -122,7 +122,6 @@ class SearchBuyName extends React.Component {
                 </div>
                 <input
                   className='searchname inputWidth'
-                  style={{ width: '100%' }}
                   type='text'
                   placeholder='Enter a name you want to purchase'
                   value={this.state.queryName}
@@ -140,7 +139,7 @@ class SearchBuyName extends React.Component {
                 <button className='ui coral button' onClick={this.onSearch}>
                   Search
                 </button>
-                {process.env.REACT_APP_ENVIRONMENT === 'production' && (
+                {process.env.REACT_APP_ENVIRONMENT === 'development' && (
                   <button className='ui coral button' onClick={this.onSetRoot}>
                     Set Root
                   </button>

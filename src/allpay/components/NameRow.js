@@ -19,7 +19,7 @@ export default class NameRow extends React.Component {
       <div className='fifteen wide column centered row'>
         <div className='column'>
           <div className='ui clearing segment'>
-            <div className='ui grid'>
+            <div className='ui grid stackable'>
               <div className='row'>
                 <div className='nine wide middle aligned column'>
                   <h4 className='ui header'>
@@ -29,17 +29,15 @@ export default class NameRow extends React.Component {
                 {isAvailable && (
                   <div className='seven wide middle aligned column'>
                     <div className='ui grid'>
-                      <div className='six wide column middle aligned'>
-                        {
-                          //   /* <div className='ui plain label'>{utils.satoshiToBSV(
-                          //   priceInSatoshi
-                          // )}</div> */
-                        }
+                      <div className='six wide computer only column middle aligned'>
+                        {/* <div className='ui plain label'>{utils.satoshiToBSV(
+                             priceInSatoshi
+                           )}</div> */}
                       </div>
 
-                      <div className='sixteen wide column'>
+                      <div className='ten wide computer column'>
                         <div className='ui form'>
-                          <div className='field'>
+                          <div className='field floatRightOnComp'>
                             <Button
                               fluid
                               className='coral'
