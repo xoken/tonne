@@ -26,6 +26,31 @@ class RenderOutput extends React.Component {
         </p>
       );
     } else if (script && script.startsWith('006a0f416c6c65676f72792f416c6c506179')) {
+      function renderAdditionalInfo() {
+        const allegoryData = allegory.decodeCBORData(script);
+        const allegoryJSON = allegory.getAllegoryType(allegoryData);
+        const { name, action } = allegoryJSON;
+        if (action instanceof allegory.OwnerAction) {
+          const ownerAction = action;
+          if (ownerAction.oProxyProviders.length > 0) {
+            if (name) {
+              return <span>{` (${utils.codePointToName(name)} Proxy registration)`}</span>;
+            }
+          }
+        } else if (action instanceof allegory.ProducerAction) {
+          const producerAction = action;
+          if (producerAction.extensions.length > 0) {
+            const producerExtensions = producerAction.extensions.map(extension => {
+              return {
+                codePoint: extension.codePoint,
+              };
+            });
+            const producerCodePoints = producerExtensions.map(({ codePoint }) => codePoint);
+            const namePurchased = utils.codePointToName([...name, ...producerCodePoints]);
+            return <span>{` (${namePurchased} Purchase)`}</span>;
+          }
+        }
+      }
       return (
         <p className='monospace'>
           <span
@@ -34,6 +59,7 @@ class RenderOutput extends React.Component {
             onClick={this.toggleEmbedDataVisiblity}>
             OP_RETURN
           </span>
+          {renderAdditionalInfo()}
         </p>
       );
     }
@@ -50,9 +76,9 @@ class RenderOutput extends React.Component {
       return (
         <Grid.Row>
           <Grid.Column width='16'>
-            <p className={`monospace ${addressStyle} word-wrap embed-data-json`} title={title}>
-              {JSON.stringify(allegoryJSON)}
-            </p>
+            <pre className={`monospace embed-data-json ${addressStyle}`} title={title}>
+              {JSON.stringify(allegoryJSON, null, 2)}
+            </pre>
           </Grid.Column>
         </Grid.Row>
       );

@@ -150,14 +150,14 @@ class RecentTransaction extends React.Component {
                         <i
                           title={
                             transaction.confirmation !== null
-                              ? transaction.confirmation > 10
-                                ? 'More than 10 Confirmations'
+                              ? transaction.confirmation > 6
+                                ? 'More than 6 Confirmations'
                                 : `${transaction.confirmation} Confirmations`
                               : 'Unconfirmed Transaction'
                           }
                           className={
                             transaction.confirmation !== null
-                              ? transaction.confirmation > 10
+                              ? transaction.confirmation > 6
                                 ? 'green lock icon'
                                 : 'warning unlock alternate icon'
                               : 'red unlock alternate icon'
@@ -209,7 +209,7 @@ class RecentTransaction extends React.Component {
                               // <Grid.Column width='10'>
                               <RenderOutput
                                 key={index.toString()}
-                                addressStyle={output.isNUTXO ? 'nUTXO' : undefined}
+                                addressStyle={output.isNUTXO ? 'nUTXO' : ''}
                                 address={output.address}
                                 script={output.lockingScript}
                                 title={output.isNUTXO ? 'Name UTXO' : undefined}

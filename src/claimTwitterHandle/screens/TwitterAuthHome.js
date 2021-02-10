@@ -119,7 +119,7 @@ class TwitterAuthHome extends React.Component {
         <Grid>
           <Grid.Row>
             <Grid.Column>
-              <Message positive={!isError} negative={isError}>
+              <Message positive={!isError}>
                 {!isError && <Message.Header>{isError ? '' : 'Congratulation!'}</Message.Header>}
                 <p>{message}</p>
               </Message>
