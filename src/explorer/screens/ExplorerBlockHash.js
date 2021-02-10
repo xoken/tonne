@@ -77,7 +77,6 @@ class ExplorerBlockHeight extends React.Component {
     let chaininfo = await ExplorerHttpsReq.httpsreq('getChainInfo');
     this.chaintip = chaininfo.chainInfo.blocksSynced;
     if (this.rjdecoded === undefined) {
-      setTimeout(3000);
       this.props.history.push(`/explorer/404`);
     } else {
       this.setState({ loading: false });

@@ -35,7 +35,6 @@ class ExplorerTransaction extends React.Component {
     this.rjdecoded = await ExplorerHttpsReq.httpsreq('getTransactionByTxID', this.transactionparam);
     if (this.rjdecoded === undefined) {
       if (this.props.match.params.txid !== undefined) {
-        setTimeout(3000);
         this.props.history.push(`/explorer/404`);
       }
     } else {
