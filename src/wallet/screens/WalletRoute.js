@@ -41,31 +41,40 @@ class WalletRoute extends React.Component {
       return (
         <Grid stackable reversed='mobile'>
           <Grid.Row>
-            <Grid.Column computer={6} tablet={6} mobile={6}>
+            <Grid.Column computer={8} tablet={8} mobile={8} floated='left'>
               {profile.screenName.substring(2, 3) === '/' ? (
                 <span className='welcometext purplefontcolor'>{profile.screenName}</span>
               ) : (
                 <span className='welcometext'>{profile.screenName}</span>
               )}
             </Grid.Column>
-            <Grid.Column computer={5} tablet={6} mobile={12} floated='right'>
-              <Dropdown
-                button
-                className='icon top left right floated coral button'
-                icon={null}
-                text='Options'
-                additionPosition='top'
-                pointing>
-                <Dropdown.Menu>
-                  <Dropdown.Item>
-                    <NavLink
-                      className='dropdownmenuitems'
-                      to={`/wallet/dashboard`}
-                      activeClassName='active'>
-                      Wallet Dashboard
-                    </NavLink>
-                  </Dropdown.Item>
-                  {/* <Dropdown.Item>
+            <Grid.Column computer={8} tablet={8} mobile={8} floated='right'>
+              <div className='floatRightOnComp'>
+                {allpayHandles && allpayHandles.length <= 0 && (
+                  <NavLink
+                    className='buyallpaybutton'
+                    activeClassName='buyallpaybuttonactive'
+                    to={`/wallet/allpay/search`}>
+                    Buy AllPay Name
+                  </NavLink>
+                )}
+                <Dropdown
+                  button
+                  className='icon coral button'
+                  icon={null}
+                  text='Options'
+                  additionPosition='top'
+                  pointing>
+                  <Dropdown.Menu>
+                    <Dropdown.Item>
+                      <NavLink
+                        className='dropdownmenuitems'
+                        to={`/wallet/dashboard`}
+                        activeClassName='active'>
+                        Wallet Dashboard
+                      </NavLink>
+                    </Dropdown.Item>
+                    {/* <Dropdown.Item>
                     <NavLink
                       className='dropdownmenuitems'
                       to={`/wallet/allpay/search`}
@@ -81,22 +90,15 @@ class WalletRoute extends React.Component {
                       Register with proxy
                     </NavLink>
                   </Dropdown.Item> */}
-                  <Dropdown.Item
-                    className='dropdownmenuitems'
-                    text='Rename Profile'
-                    onClick={this.toggleRenameProfileModal}
-                  />
-                  <Dropdown.Item className='logoutlink' text='Logout' onClick={this.onLogout} />
-                </Dropdown.Menu>
-              </Dropdown>
-              {allpayHandles && allpayHandles.length <= 0 && (
-                <NavLink
-                  className='buyallpaybutton'
-                  activeClassName='buyallpaybuttonactive'
-                  to={`/wallet/allpay/search`}>
-                  Buy AllPay Name
-                </NavLink>
-              )}
+                    <Dropdown.Item
+                      className='dropdownmenuitems'
+                      text='Rename Profile'
+                      onClick={this.toggleRenameProfileModal}
+                    />
+                    <Dropdown.Item className='logoutlink' text='Logout' onClick={this.onLogout} />
+                  </Dropdown.Menu>
+                </Dropdown>
+              </div>
 
               {/* <Dropdown
               button

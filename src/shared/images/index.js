@@ -6,6 +6,7 @@ const images = {
   wallet: require('./images/wallet.png'),
   twitterLogo: require('./images/Twitter_Logo_WhiteOnBlue.png'),
   bsvLogo: require('./images/bsvlogo.png'),
+  explorerLogo: require('./images/explorer.png'),
 };
 
 export default images;

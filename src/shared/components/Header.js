@@ -79,7 +79,7 @@ class Header extends React.Component {
                 className='item headertabitems headerExplorer'>
                 <img
                   alt='Bitcoin SV Explorer'
-                  src={images.bsvLogo}
+                  src={images.explorerLogo}
                   style={{
                     display: 'block',
                     height: 23,

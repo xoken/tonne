@@ -300,8 +300,7 @@
   border-radius: 4px;
   font-weight: bold;
   position: relative;
-  float: right;
-  margin-left: 10px;
+  margin-left: 0px;
   margin-right: 10px;
 }
 .buyallpaybutton:hover {
@@ -406,8 +405,8 @@ input[type='number'] {
 .balance {
   min-height: 32px;
 }
-.floatRightOnComp {
-  float: none !important;
+.floatRightOnComp{
+  float: right !important;
 }
 @media screen and (min-width: 455px) {
   .headerLogo {
@@ -461,8 +460,8 @@ input[type='number'] {
   .negativeMarginBottom {
     margin-bottom: -14px !important;
   }
-  .floatRightOnComp {
-    float: none !important;
+  .floatRightOnComp{
+    float: left !important;
   }
 }
 
@@ -479,4 +478,18 @@ input[type='number'] {
 .marginLeftAuto {
   margin-left: auto !important;
   margin-right: 0px !important;
+}
+
+.coralButton{
+  width:150px !important;
+}
+
+.explorerIconForWallet{
+  display: block;
+  height: 20px;
+  width: auto;
+  borderRadius: 100px;
+}
+body{
+  overflow-y: scroll;
 }
