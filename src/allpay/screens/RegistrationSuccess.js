@@ -7,8 +7,6 @@ import * as allpayActions from '../allpayActions';
 class RegistrationSuccess extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
-    this.onExit = this.onExit.bind(this);
   }
 
   componentDidMount() {
@@ -20,26 +18,24 @@ class RegistrationSuccess extends React.Component {
       })
     );
     setTimeout(() => {
-      this.props.history.push('/wallet/dashboard');
+      this.onExit();
     }, 3000);
   }
 
-  onExit() {
+  onExit = () => {
     const { dispatch, history } = this.props;
     dispatch(allpayActions.resetAllpay());
     history.push('/wallet/dashboard');
-  }
-
-  renderActionButton() {
-    return (
-      <Button className='coral' onClick={this.onExit}>
-        Close
-      </Button>
-    );
-  }
+  };
 
   render() {
-    return <div className='ui form'>{this.renderActionButton()}</div>;
+    return (
+      <div className='ui form'>
+        <Button className='coral' onClick={this.onExit}>
+          Close
+        </Button>
+      </div>
+    );
   }
 }
 

@@ -82,7 +82,7 @@ class WalletRoute extends React.Component {
                       Buy AllPay Name
                     </NavLink>
                   </Dropdown.Item>*/}
-                  {/* <Dropdown.Item>
+                    {/* <Dropdown.Item>
                     <NavLink
                       className='dropdownmenuitems'
                       to={`/wallet/allpay/register?progressTotalSteps=3&activeStep=1`}
