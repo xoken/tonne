@@ -5,10 +5,6 @@ import { Button } from 'semantic-ui-react';
 import * as allpayActions from '../allpayActions';
 
 class RegistrationSuccess extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   componentDidMount() {
     const { dispatch } = this.props;
     dispatch(

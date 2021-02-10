@@ -1,9 +1,8 @@
 import React from 'react';
-import { withRouter, Redirect } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as authActions from '../../auth/authActions';
-import * as authSelectors from '../../auth/authSelectors';
 import { Button, Input, Grid, Header } from 'semantic-ui-react';
 
 class WalletPassword extends React.Component {
