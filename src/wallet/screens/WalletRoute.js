@@ -89,14 +89,14 @@ class WalletRoute extends React.Component {
                   <Dropdown.Item className='logoutlink' text='Logout' onClick={this.onLogout} />
                 </Dropdown.Menu>
               </Dropdown>
-              {/* {allpayHandles && allpayHandles.length <= 0 && ( */}
-              <NavLink
-                className='buyallpaybutton'
-                activeClassName='buyallpaybuttonactive'
-                to={`/wallet/allpay/search`}>
-                Buy AllPay Name
-              </NavLink>
-              {/* )} */}
+              {allpayHandles && allpayHandles.length <= 0 && (
+                <NavLink
+                  className='buyallpaybutton'
+                  activeClassName='buyallpaybuttonactive'
+                  to={`/wallet/allpay/search`}>
+                  Buy AllPay Name
+                </NavLink>
+              )}
 
               {/* <Dropdown
               button
