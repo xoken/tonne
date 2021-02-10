@@ -34,7 +34,12 @@ class RenderOutput extends React.Component {
           const ownerAction = action;
           if (ownerAction.oProxyProviders.length > 0) {
             if (name) {
-              return <span>{` (${utils.codePointToName(name)} Proxy registration)`}</span>;
+              return (
+                <span>
+                  {' '}
+                  Proxy registration: <i>{utils.codePointToName(name)}</i>
+                </span>
+              );
             }
           }
         } else if (action instanceof allegory.ProducerAction) {
@@ -47,7 +52,12 @@ class RenderOutput extends React.Component {
             });
             const producerCodePoints = producerExtensions.map(({ codePoint }) => codePoint);
             const namePurchased = utils.codePointToName([...name, ...producerCodePoints]);
-            return <span>{` (${namePurchased} Purchase)`}</span>;
+            return (
+              <span>
+                {' '}
+                Purchase: <i>{namePurchased}</i>
+              </span>
+            );
           }
         }
       }
