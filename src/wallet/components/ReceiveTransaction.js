@@ -98,16 +98,18 @@ class ReceiveTransaction extends React.Component {
       return (
         <>
           <div className='ui grid stackable mobile reversed'>
-            <div className='left floated six wide middle aligned column'>
+            <div className='left floated eight wide middle aligned column'>
               <h4>Unused Addresses</h4>
             </div>
-            <div className='right floated right aligned six wide column'>
-              <Button
-                className='coral'
-                disabled={unusedAddresses.length > 10 ? true : false}
-                onClick={this.onNewUnusedAddress}>
-                Get new Addresses
-              </Button>
+            <div className='right floated right aligned eight wide column'>
+              <div className='floatRightOnComp'>
+                <Button
+                  className='coral'
+                  disabled={unusedAddresses.length > 10 ? true : false}
+                  onClick={this.onNewUnusedAddress}>
+                  Get new Addresses
+                </Button>
+              </div>
             </div>
           </div>
           <Divider />

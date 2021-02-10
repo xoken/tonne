@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
 import { utils, allegory } from 'allegory-allpay-sdk';
+import { Link } from 'react-router-dom';
+import images from '../../shared/images';
 
 class RenderOutput extends React.Component {
   constructor(props) {
@@ -22,6 +24,13 @@ class RenderOutput extends React.Component {
         <p className='monospace word-wrap'>
           <span className={addressStyle} title={title}>
             {address}
+            <Link to={'/explorer/address/' + address}>
+              <img
+                alt='Bitcoin SV Blockchain'
+                src={images.explorerLogo}
+                className='icon explorerIconForWallet'
+              />
+            </Link>
           </span>
         </p>
       );
