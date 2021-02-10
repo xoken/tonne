@@ -8,11 +8,7 @@ import * as authSelectors from '../../auth/authSelectors';
 
 class WalletPasswordScreen extends React.Component {
   onSuccess = () => {
-    try {
-      this.props.history.push('/wallet/dashboard');
-    } catch (error) {
-      console.log(error);
-    }
+    this.props.history.push('/wallet/dashboard');
   };
 
   render() {

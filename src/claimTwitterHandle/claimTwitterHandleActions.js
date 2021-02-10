@@ -101,7 +101,6 @@ export const setMessage = message => (dispatch, getState, { serviceInjector }) =
 //         }
 //       }
 //     } catch (error) {
-//       console.log(error);
 //     }
 //   }, 500);
 // };

@@ -63,9 +63,7 @@ class SearchBuyName extends React.Component {
       const data = { uri: process.env.REACT_APP_RESELLER_URI, name: [115], isProducer: false };
       await dispatch(allpayActions.buyName(data));
       this.props.history.push('/wallet/allpay/confirm-purchase');
-    } catch (error) {
-      console.log(error);
-    }
+    } catch (error) {}
   };
 
   onBuy = data => async () => {

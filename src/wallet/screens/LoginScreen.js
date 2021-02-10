@@ -7,11 +7,7 @@ import Login from '../components/Login';
 
 class LoginScreen extends React.Component {
   onSuccess = () => {
-    try {
-      this.props.history.push('/wallet/dashboard');
-    } catch (error) {
-      console.log(error);
-    }
+    this.props.history.push('/wallet/dashboard');
   };
 
   render() {
