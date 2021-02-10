@@ -50,6 +50,13 @@ class RenderOutput extends React.Component {
                 </span>
               );
             }
+          } else {
+            return (
+              <span>
+                {' '}
+                Purchase: <i>{utils.codePointToName(name)}</i>
+              </span>
+            );
           }
         } else if (action instanceof allegory.ProducerAction) {
           const producerAction = action;

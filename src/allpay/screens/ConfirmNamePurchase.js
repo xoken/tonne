@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Grid } from 'semantic-ui-react';
+import { Button, Grid, Header } from 'semantic-ui-react';
 import { utils } from 'allegory-allpay-sdk';
 import RenderTransaction from '../components/RenderTransaction';
 import * as allpayActions from '../allpayActions';
@@ -132,11 +132,19 @@ class ConfirmNamePurchase extends React.Component {
     const {
       outpoint: { name, isProducer },
       requestInProgress,
+      message,
     } = this.props;
     const { showTxDetails } = this.state;
     return (
       <>
         <Grid>
+          {message && (
+            <Grid.Row>
+              <Grid.Column>
+                <Header as='h3'>{message}</Header>
+              </Grid.Column>
+            </Grid.Row>
+          )}
           <Grid.Row>
             <div className='twelve wide column'>
               <div className='ui list'>
@@ -203,6 +211,7 @@ class ConfirmNamePurchase extends React.Component {
 
 const mapStateToProps = state => ({
   requestInProgress: state.allpay.requestInProgress,
+  message: state.twitter.message,
   psbt: state.allpay.psbt,
   outpoint: state.allpay.outpoint,
   inputs: state.allpay.inputs,

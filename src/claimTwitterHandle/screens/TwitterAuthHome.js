@@ -55,22 +55,22 @@ class TwitterAuthHome extends React.Component {
                 })
               );
               if (success) {
-                this.setState({
-                  isError: false,
-                  message: `Since you have more than ${
-                    process.env.REACT_APP_MIN_TWITTER_FOLLOWER
-                  } followers, we have credited ${utils.satoshiToBSV(
-                    process.env.REACT_APP_FAUCET_FREE_CREDIT
-                  )} to your account.`,
-                });
-                setTimeout(async () => {
-                  await this.buyTwitterHandle();
-                }, 3000);
+                await dispatch(
+                  claimTwitterHandleActions.setMessage(
+                    `Since you have more than ${
+                      process.env.REACT_APP_MIN_TWITTER_FOLLOWER
+                    } followers, we have credited ${utils.satoshiToBSV(
+                      process.env.REACT_APP_FAUCET_FREE_CREDIT
+                    )} to your account.`
+                  )
+                );
+                await this.buyTwitterHandle();
               }
             } catch (error) {
               this.setState({
                 isError: true,
-                message: error.message,
+                message:
+                  error.response && error.response.data ? error.response.data : error.message,
               });
             }
           } else {
@@ -119,8 +119,7 @@ class TwitterAuthHome extends React.Component {
         <Grid>
           <Grid.Row>
             <Grid.Column>
-              <Message positive={!isError}>
-                {!isError && <Message.Header>{isError ? '' : 'Congratulation!'}</Message.Header>}
+              <Message>
                 <p>{message}</p>
               </Message>
             </Grid.Column>

@@ -69,6 +69,14 @@ export const getCoin = args => async (dispatch, getState, { serviceInjector }) =
   }
 };
 
+export const SET_MESSAGE = 'SET_MESSAGE';
+export const setMessage = message => (dispatch, getState, { serviceInjector }) => {
+  dispatch({
+    type: SET_MESSAGE,
+    payload: { message },
+  });
+};
+
 // export const polling = popup => {
 //   const polling = setInterval(() => {
 //     if (!popup || popup.closed || popup.closed === undefined) {
