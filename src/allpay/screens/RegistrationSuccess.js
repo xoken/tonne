@@ -17,7 +17,7 @@ class RegistrationSuccess extends React.Component {
         activeStep: 4,
       })
     );
-    setTimeout(() => {
+    this.timerID = setTimeout(() => {
       this.onExit();
     }, 3000);
   }
@@ -36,6 +36,10 @@ class RegistrationSuccess extends React.Component {
         </Button>
       </div>
     );
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timerID);
   }
 }
 
