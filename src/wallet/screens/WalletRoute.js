@@ -72,8 +72,8 @@ class WalletRoute extends React.Component {
                       activeClassName='active'>
                       Buy AllPay Name
                     </NavLink>
-                  </Dropdown.Item>
-                  <Dropdown.Item>
+                  </Dropdown.Item>*/}
+                  {/* <Dropdown.Item>
                     <NavLink
                       className='dropdownmenuitems'
                       to={`/wallet/allpay/register?progressTotalSteps=3&activeStep=1`}
@@ -89,14 +89,14 @@ class WalletRoute extends React.Component {
                   <Dropdown.Item className='logoutlink' text='Logout' onClick={this.onLogout} />
                 </Dropdown.Menu>
               </Dropdown>
-              {allpayHandles && allpayHandles.length <= 0 && (
-                <NavLink
-                  className='buyallpaybutton'
-                  activeClassName='buyallpaybuttonactive'
-                  to={`/wallet/allpay/search`}>
-                  Buy AllPay Name
-                </NavLink>
-              )}
+              {/* {allpayHandles && allpayHandles.length <= 0 && ( */}
+              <NavLink
+                className='buyallpaybutton'
+                activeClassName='buyallpaybuttonactive'
+                to={`/wallet/allpay/search`}>
+                Buy AllPay Name
+              </NavLink>
+              {/* )} */}
 
               {/* <Dropdown
               button

@@ -1,8 +1,10 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
 import { Button } from 'semantic-ui-react';
 import { utils } from 'allegory-allpay-sdk';
 
-export default class NameRow extends React.Component {
+class NameRow extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -13,7 +15,8 @@ export default class NameRow extends React.Component {
   toggle = () => this.setState(prevState => ({ resellerRight: !prevState.resellerRight }));
 
   render() {
-    const { isAvailable, name: codePoints, uri, protocol } = this.props.data;
+    const { requestInProgress, data } = this.props;
+    const { isAvailable, name: codePoints, uri, protocol } = data;
     const name = utils.codePointToName(codePoints);
     return (
       <div className='ten wide column centered row'>
@@ -40,6 +43,7 @@ export default class NameRow extends React.Component {
                             <Button
                               fluid
                               className='coral'
+                              loading={requestInProgress}
                               onClick={this.props.onBuy({
                                 name: utils.getCodePoint(name),
                                 isProducer: this.state.resellerRight,
@@ -69,3 +73,9 @@ export default class NameRow extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => ({
+  requestInProgress: state.allpay.requestInProgress,
+});
+
+export default withRouter(connect(mapStateToProps)(NameRow));

@@ -9,6 +9,7 @@ const INITIAL_STATE = {
     title: null,
     progressTotalSteps: 4,
   },
+  requestInProgress: false,
   psbt: null,
   outpoint: null,
   inputs: null,
@@ -36,16 +37,38 @@ export default createReducer(
         name,
       },
     }),
+    [allpayActions.getResellerURIRequest]: state => ({
+      ...state,
+      requestInProgress: true,
+    }),
+    [allpayActions.getResellerURISuccess]: state => ({
+      ...state,
+      requestInProgress: false,
+    }),
+    [allpayActions.getResellerURIFailure]: state => ({
+      ...state,
+      requestInProgress: false,
+    }),
+    [allpayActions.buyNameRequest]: state => ({
+      ...state,
+      requestInProgress: true,
+    }),
     [allpayActions.buyNameSuccess]: (state, { psbt, outpoint, inputs, ownOutputs, snv }) => ({
       ...state,
+      requestInProgress: false,
       psbt,
       outpoint,
       inputs,
       ownOutputs,
       snv,
     }),
+    [allpayActions.buyNameFailure]: state => ({
+      ...state,
+      requestInProgress: false,
+    }),
     [allpayActions.registerNameRequest]: state => ({
       ...state,
+      requestInProgress: true,
       psbt: null,
       inputs: null,
       ownOutputs: null,
@@ -61,15 +84,29 @@ export default createReducer(
     // }),
     [allpayActions.registerNameSuccess]: state => ({
       ...state,
+      requestInProgress: false,
       snv: null,
       addressCommitment: null,
       utxoCommitment: null,
     }),
+    [allpayActions.registerNameFailure]: state => ({
+      ...state,
+      requestInProgress: false,
+    }),
+    [allpayActions.signRelayTransactionRequest]: state => ({
+      ...state,
+      requestInProgress: true,
+    }),
     [allpayActions.signRelayTransactionSuccess]: state => ({
       ...state,
+      requestInProgress: false,
       snv: null,
       addressCommitment: null,
       utxoCommitment: null,
+    }),
+    [allpayActions.signRelayTransactionFailure]: state => ({
+      ...state,
+      requestInProgress: false,
     }),
     [walletActions.createAllpaySendTransactionSuccess]: (
       state,

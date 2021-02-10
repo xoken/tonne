@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
+import { Button } from 'semantic-ui-react';
 import { utils } from 'allegory-allpay-sdk';
 import NameRow from '../components/NameRow';
 import * as allpayActions from '../allpayActions';
@@ -47,7 +48,10 @@ class SearchBuyName extends React.Component {
           );
           this.setState({ searchResults: [{ isAvailable, name, uri, protocol }] });
         } catch (error) {
-          this.setState({ isError: true, message: error.message });
+          this.setState({
+            isError: true,
+            message: error.response && error.response.data ? error.response.data : error.message,
+          });
         }
       }
     }
@@ -70,7 +74,10 @@ class SearchBuyName extends React.Component {
       await dispatch(allpayActions.buyName(data));
       this.props.history.push('/wallet/allpay/confirm-purchase');
     } catch (error) {
-      this.setState({ isError: true, message: error.message });
+      this.setState({
+        isError: true,
+        message: error.response && error.response.data ? error.response.data : error.message,
+      });
     }
   };
 
@@ -109,6 +116,8 @@ class SearchBuyName extends React.Component {
   }
 
   render() {
+    const { requestInProgress } = this.props;
+    const { searchResults } = this.state;
     return (
       <>
         <div className='ui grid'>
@@ -135,10 +144,12 @@ class SearchBuyName extends React.Component {
                   }
                   onKeyPress={this.onKeyPress}
                 />
-
-                <button className='ui coral button' onClick={this.onSearch}>
+                <Button
+                  loading={!searchResults && requestInProgress}
+                  className='coral'
+                  onClick={this.onSearch}>
                   Search
-                </button>
+                </Button>
                 {process.env.REACT_APP_ENVIRONMENT === 'development' && (
                   <button className='ui coral button' onClick={this.onSetRoot}>
                     Set Root
@@ -177,6 +188,8 @@ class SearchBuyName extends React.Component {
   }
 }
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  requestInProgress: state.allpay.requestInProgress,
+});
 
 export default withRouter(connect(mapStateToProps)(SearchBuyName));

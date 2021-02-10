@@ -87,7 +87,10 @@ class ProxyRegistration extends React.Component {
         );
         this.props.history.push('/wallet/allpay/register-success');
       } catch (error) {
-        this.setState({ isError: true, message: error.message });
+        this.setState({
+          isError: true,
+          message: error.response && error.response.data ? error.response.data : error.message,
+        });
       }
     } else {
       this.setState({ isError: true, message: 'Please select a name to register' });
@@ -259,6 +262,7 @@ class ProxyRegistration extends React.Component {
   }
 
   render() {
+    const { requestInProgress } = this.props;
     const { showRegistrationOptions } = this.state;
     return (
       <>
@@ -283,7 +287,7 @@ class ProxyRegistration extends React.Component {
           {this.renderRegistrationOption()}
           <Grid.Row>
             <Grid.Column width='16' textAlign='center'>
-              <Button className='coral' onClick={this.onRegister}>
+              <Button className='coral' loading={requestInProgress} onClick={this.onRegister}>
                 Register
               </Button>
               <Button basic className='borderless' onClick={this.onToggle}>
@@ -300,6 +304,7 @@ class ProxyRegistration extends React.Component {
 }
 
 const mapStateToProps = state => ({
+  requestInProgress: state.allpay.requestInProgress,
   outpoint: state.allpay.outpoint,
 });
 

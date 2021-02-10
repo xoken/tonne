@@ -126,7 +126,10 @@ class SendTransaction extends React.Component {
           );
           this.props.history.push('/wallet/allpay/transaction');
         } catch (error) {
-          this.setState({ isError: true, message: error.message });
+          this.setState({
+            isError: true,
+            message: error.response && error.response.data ? error.response.data : error.message,
+          });
         }
       } else {
         try {
