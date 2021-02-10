@@ -1,13 +1,14 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { Accordion, Button, Grid, Header, Icon, Label, Segment } from 'semantic-ui-react';
 import { formatDistanceToNow } from 'date-fns';
 import { utils } from 'allegory-allpay-sdk';
 import RenderOutput from './RenderOutput';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
+import images from '../../shared/images';
 
 class RecentTransaction extends React.Component {
   constructor(props) {
@@ -138,9 +139,19 @@ class RecentTransaction extends React.Component {
                   index={index}
                   onClick={this.onTransactionTitleClick}>
                   <Grid>
-                    <Grid.Column computer={10} mobile={9}>
+                    <Grid.Column computer={9} mobile={8}>
                       <Icon name='dropdown' className='purplefontcolor' />
+
                       <span className='monospace word-wrap'>{transaction.txId}</span>
+                    </Grid.Column>
+                    <Grid.Column computer={1} mobile={1}>
+                      <Link to={'/explorer/transaction/' + transaction.txId}>
+                        <img
+                          alt='Bitcoin SV Blockchain'
+                          src={images.explorerLogo}
+                          className='icon explorerIconForWallet'
+                        />
+                      </Link>
                     </Grid.Column>
                     <Grid.Column computer={5} mobile={5} textAlign='right' className='word-wrap'>
                       {renderCreditOrDebit(credit, debit)}
@@ -182,7 +193,14 @@ class RecentTransaction extends React.Component {
                                     <span
                                       className={input.isNUTXO ? 'nUTXO' : undefined}
                                       title={input.isNUTXO ? 'Name UTXO' : undefined}>
-                                      {input.address}
+                                      {input.address}{' '}
+                                      <Link to={'/explorer/address/' + input.address}>
+                                        <img
+                                          alt='Bitcoin SV Blockchain'
+                                          src={images.explorerLogo}
+                                          className='icon explorerIconForWallet'
+                                        />
+                                      </Link>
                                     </span>
                                   </p>
                                 </Grid.Column>
@@ -283,22 +301,24 @@ class RecentTransaction extends React.Component {
       <>
         <Grid stackable>
           <Grid.Row>
-            <Grid.Column width={5} verticalAlign='middle' floated='left'>
+            <Grid.Column width={8} verticalAlign='middle' floated='left'>
               <h3 className='purplefontcolor'>Recent Transactions</h3>
             </Grid.Column>
-            <Grid.Column width={5} verticalAlign='middle' floated='right'>
-              {this.renderLastRefresh()}
-              <Button
-                circular
-                icon
-                style={{
-                  marginRight: '0px',
-                }}
-                className='peach'
-                disabled={isLoading}
-                onClick={this.onRefresh}>
-                <Icon name='refresh' />
-              </Button>
+            <Grid.Column width={8} verticalAlign='middle' floated='right'>
+              <div className='floatRightOnComp'>
+                {this.renderLastRefresh()}
+                <Button
+                  circular
+                  icon
+                  style={{
+                    marginRight: '0px',
+                  }}
+                  className='peach'
+                  disabled={isLoading}
+                  onClick={this.onRefresh}>
+                  <Icon name='refresh' />
+                </Button>
+              </div>
             </Grid.Column>
           </Grid.Row>
         </Grid>

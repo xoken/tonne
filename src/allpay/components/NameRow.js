@@ -16,7 +16,7 @@ export default class NameRow extends React.Component {
     const { isAvailable, name: codePoints, uri, protocol } = this.props.data;
     const name = utils.codePointToName(codePoints);
     return (
-      <div className='ten wide column centered row'>
+      <div className='fifteen wide column centered row'>
         <div className='column'>
           <div className='ui clearing segment'>
             <div className='ui grid'>
@@ -30,11 +30,14 @@ export default class NameRow extends React.Component {
                   <div className='seven wide middle aligned column'>
                     <div className='ui grid'>
                       <div className='six wide column middle aligned'>
-                        {/* <div className='ui plain label'>{utils.satoshiToBSV(
-                          priceInSatoshi
-                        )}</div> */}
+                        {
+                          //   /* <div className='ui plain label'>{utils.satoshiToBSV(
+                          //   priceInSatoshi
+                          // )}</div> */
+                        }
                       </div>
-                      <div className='ten wide column'>
+
+                      <div className='sixteen wide column'>
                         <div className='ui form'>
                           <div className='field'>
                             <Button

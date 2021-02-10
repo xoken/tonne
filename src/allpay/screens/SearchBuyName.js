@@ -112,8 +112,8 @@ class SearchBuyName extends React.Component {
     return (
       <>
         <div className='ui grid'>
-          <div className='ten wide column centered row'>
-            <div className='column'>
+          <div className='fifteen wide column centered row'>
+            <div className='column centered'>
               <div className='ui fluid action labeled large input'>
                 <div className='uneditableinput'>
                   <span className='purplefontcolor' style={{ paddingLeft: '5px' }}>
@@ -121,7 +121,8 @@ class SearchBuyName extends React.Component {
                   </span>
                 </div>
                 <input
-                  className='searchname'
+                  className='searchname inputWidth'
+                  style={{ width: '100%' }}
                   type='text'
                   placeholder='Enter a name you want to purchase'
                   value={this.state.queryName}
@@ -139,7 +140,7 @@ class SearchBuyName extends React.Component {
                 <button className='ui coral button' onClick={this.onSearch}>
                   Search
                 </button>
-                {process.env.REACT_APP_ENVIRONMENT === 'development' && (
+                {process.env.REACT_APP_ENVIRONMENT === 'production' && (
                   <button className='ui coral button' onClick={this.onSetRoot}>
                     Set Root
                   </button>
@@ -168,7 +169,7 @@ class SearchBuyName extends React.Component {
             </div>
           </div> */}
           {this.renderSearchResults()}
-          <div className='ten wide column centered row'>
+          <div className='fifteen wide column centered row'>
             <div className='column'>{this.renderError()}</div>
           </div>
         </div>
