@@ -490,3 +490,6 @@ input[type='number'] {
   width: auto;
   borderRadius: 100px;
 }
+body{
+  overflow-y: scroll;
+}
