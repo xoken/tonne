@@ -37,8 +37,12 @@ class WalletService {
     return await wallet.getUnusedAddresses(options);
   }
 
-  async getAllpayHandle() {
-    return await wallet.getAllpayHandle();
+  async getUnregisteredNames() {
+    return await wallet.getUnregisteredNames();
+  }
+
+  async getAllpayHandles() {
+    return await wallet.getAllpayHandles();
   }
 }
 

@@ -33,8 +33,31 @@ class WalletHeader extends React.Component {
     );
   }
 
+  renderAllpayAction() {
+    const { allpayHandles, unregisteredNames } = this.props;
+    if (unregisteredNames && unregisteredNames.length > 0) {
+      return (
+        <NavLink
+          className='buyallpaybutton'
+          activeClassName='buyallpaybuttonactive'
+          to={`/wallet/allpay/register?progressTotalSteps=3&activeStep=1`}>
+          Register AllPay Name
+        </NavLink>
+      );
+    } else if (allpayHandles && allpayHandles.length <= 0) {
+      return (
+        <NavLink
+          className='buyallpaybutton'
+          activeClassName='buyallpaybuttonactive'
+          to={`/wallet/allpay/search`}>
+          Buy AllPay Name
+        </NavLink>
+      );
+    }
+  }
+
   render() {
-    const { profile, allpayHandles } = this.props;
+    const { profile } = this.props;
     if (profile) {
       return (
         <>
@@ -49,14 +72,7 @@ class WalletHeader extends React.Component {
               </Grid.Column>
               <Grid.Column computer={8} tablet={8} mobile={8} floated='right'>
                 <div className='floatRightOnComp'>
-                  {allpayHandles && allpayHandles.length <= 0 && (
-                    <NavLink
-                      className='buyallpaybutton'
-                      activeClassName='buyallpaybuttonactive'
-                      to={`/wallet/allpay/search`}>
-                      Buy AllPay Name
-                    </NavLink>
-                  )}
+                  {this.renderAllpayAction()}
                   <Dropdown
                     button
                     className='icon coral button'
@@ -129,6 +145,7 @@ WalletHeader.defaultProps = {};
 const mapStateToProps = state => ({
   profile: state.auth.profile,
   allpayHandles: state.wallet.allpayHandles,
+  unregisteredNames: state.wallet.unregisteredNames,
 });
 
 export default withRouter(connect(mapStateToProps)(WalletHeader));

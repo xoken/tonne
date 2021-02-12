@@ -5,7 +5,6 @@ import { Button, Grid, Header } from 'semantic-ui-react';
 import { utils } from 'allegory-allpay-sdk';
 import RenderTransaction from '../components/RenderTransaction';
 import * as allpayActions from '../allpayActions';
-import * as walletActions from '../../wallet/walletActions';
 import * as authActions from '../../auth/authActions';
 
 class ConfirmNamePurchase extends React.Component {
@@ -42,7 +41,6 @@ class ConfirmNamePurchase extends React.Component {
         );
         if (txBroadcast) {
           this.setState({ isError: false, message: 'Transaction signed and relayed successfully' });
-          await dispatch(walletActions.getAllpayHandle());
           await dispatch(
             authActions.updateProfileName(profile.screenName, utils.codePointToName(outpoint.name))
           );

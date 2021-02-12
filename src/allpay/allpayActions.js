@@ -58,6 +58,8 @@ export const registerName = ({ proxyURI, name, addressCount }) => async (
     });
     if (txBroadcast) {
       dispatch(registerNameSuccess());
+      await dispatch(walletActions.getAllpayHandles());
+      await dispatch(walletActions.getUnregisteredNames());
       await dispatch(walletActions.getBalance());
       dispatch(walletActions.createSendTransactionSuccess({ transaction }));
     } else {
