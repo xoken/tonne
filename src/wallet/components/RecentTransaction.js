@@ -139,18 +139,13 @@ class RecentTransaction extends React.Component {
                   index={index}
                   onClick={this.onTransactionTitleClick}>
                   <Grid>
-                    <Grid.Column computer={9} mobile={8}>
+                    <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
                       <Icon name='dropdown' className='purplefontcolor' />
-
-                      <span className='monospace word-wrap'>{transaction.txId}</span>
-                    </Grid.Column>
-                    <Grid.Column computer={1} mobile={1}>
+                      <span className='monospace word-wrap recentTxidAddress'>
+                        {transaction.txId}
+                      </span>{' '}
                       <Link to={'/explorer/transaction/' + transaction.txId}>
-                        <img
-                          alt='Bitcoin SV Blockchain'
-                          src={images.explorerLogo}
-                          className='icon explorerIconForWallet'
-                        />
+                        <i class='walletLink'></i>
                       </Link>
                     </Grid.Column>
                     <Grid.Column computer={5} mobile={5} textAlign='right' className='word-wrap'>
@@ -191,15 +186,15 @@ class RecentTransaction extends React.Component {
                                 <Grid.Column width='10'>
                                   <p className='monospace word-wrap'>
                                     <span
-                                      className={input.isNUTXO ? 'nUTXO' : undefined}
+                                      className={
+                                        input.isNUTXO
+                                          ? 'nUTXO recentTxidAddressColumn'
+                                          : 'recentTxidAddressColumn'
+                                      }
                                       title={input.isNUTXO ? 'Name UTXO' : undefined}>
-                                      {input.address}{' '}
+                                      <span className='recentTxidAddress'>{input.address}</span>
                                       <Link to={'/explorer/address/' + input.address}>
-                                        <img
-                                          alt='Bitcoin SV Blockchain'
-                                          src={images.explorerLogo}
-                                          className='icon explorerIconForWallet'
-                                        />
+                                        <i class='walletLink'></i>
                                       </Link>
                                     </span>
                                   </p>

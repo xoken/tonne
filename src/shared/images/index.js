@@ -7,6 +7,10 @@ const images = {
   twitterLogo: require('./images/Twitter_Logo_WhiteOnBlue.png'),
   bsvLogo: require('./images/bsvlogo.png'),
   explorerLogo: require('./images/explorer.png'),
+  backgroundImage: require('./images/background-image.png'),
+  alice: require('./images/alice.png'),
+  paperRockets: require('./images/paper1.png'),
+  strange: require('./images/strange.png'),
 };
 
 export default images;

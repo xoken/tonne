@@ -45,13 +45,13 @@ class PartiallySignTransaction extends React.Component {
       if (isError) {
         return (
           <div className='ui negative message'>
-            <p>{message}</p>
+            <p className='word-wrap'>{message}</p>
           </div>
         );
       } else {
         return (
           <div className='ui success message'>
-            <p>{message}</p>
+            <p className='word-wrap'>{message}</p>
           </div>
         );
       }
