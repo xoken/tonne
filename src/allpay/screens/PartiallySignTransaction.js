@@ -69,7 +69,7 @@ class PartiallySignTransaction extends React.Component {
           <Grid.Row>
             <Grid.Column textAlign='right'>
               <Button className='coral' onClick={this.onSignRelay}>
-                Sign & Relay
+                Send
               </Button>
             </Grid.Column>
           </Grid.Row>

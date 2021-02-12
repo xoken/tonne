@@ -47,9 +47,13 @@ export const getUnusedAddressesRequest = createAction('GET_UNUSED_ADDRESSES_REQU
 export const getUnusedAddressesSuccess = createAction('GET_UNUSED_ADDRESSES_SUCCESS');
 export const getUnusedAddressesFailure = createAction('GET_UNUSED_ADDRESSES_FAILURE');
 
-export const getAllpayHandleRequest = createAction('GET_ALLPAY_HANDLE_REQUEST');
-export const getAllpayHandleSuccess = createAction('GET_ALLPAY_HANDLE_SUCCESS');
-export const getAllpayHandleFailure = createAction('GET_ALLPAY_HANDLE_FAILURE');
+export const getUnregisteredNameRequest = createAction('GET_UNREGISTERED_NAMES_REQUEST');
+export const getUnregisteredNameSuccess = createAction('GET_UNREGISTERED_NAMES_SUCCESS');
+export const getUnregisteredNameFailure = createAction('GET_UNREGISTERED_NAMES_FAILURE');
+
+export const getAllpayHandlesRequest = createAction('GET_ALLPAY_HANDLES_REQUEST');
+export const getAllpayHandlesSuccess = createAction('GET_ALLPAY_HANDLES_SUCCESS');
+export const getAllpayHandlesFailure = createAction('GET_ALLPAY_HANDLES_FAILURE');
 
 export const getTransactions = options => async (dispatch, getState, { serviceInjector }) => {
   try {
@@ -192,13 +196,25 @@ export const getUnusedAddresses = () => async (dispatch, getState, { serviceInje
   }
 };
 
-export const getAllpayHandle = () => async (dispatch, getState, { serviceInjector }) => {
-  dispatch(getAllpayHandleRequest());
+export const getUnregisteredNames = () => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(getUnregisteredNameRequest());
   try {
-    const { allpayHandles } = await serviceInjector(WalletService).getAllpayHandle();
-    dispatch(getAllpayHandleSuccess({ allpayHandles }));
+    const { names } = await serviceInjector(WalletService).getUnregisteredNames();
+    dispatch(getUnregisteredNameSuccess({ unregisteredNames: names }));
+    return { names };
   } catch (error) {
-    dispatch(getAllpayHandleFailure());
+    dispatch(getUnregisteredNameFailure());
+    throw error;
+  }
+};
+
+export const getAllpayHandles = () => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(getAllpayHandlesRequest());
+  try {
+    const { allpayHandles } = await serviceInjector(WalletService).getAllpayHandles();
+    dispatch(getAllpayHandlesSuccess({ allpayHandles }));
+  } catch (error) {
+    dispatch(getAllpayHandlesFailure());
     throw error;
   }
 };

@@ -220,7 +220,7 @@
 }
 .embed-data {
   cursor: pointer;
-  color: #fbbd08;
+  color: #e1ad01;
 }
 .embed-data-json {
   border: 1px solid rgba(34, 36, 38, 0.15);
@@ -405,8 +405,11 @@ input[type='number'] {
 .balance {
   min-height: 32px;
 }
-.floatRightOnComp{
+.floatRightOnComp {
   float: right !important;
+}
+.ui.yellow.message.allpay-receive-message {
+  box-shadow: none;
 }
 @media screen and (min-width: 455px) {
   .headerLogo {
@@ -460,7 +463,7 @@ input[type='number'] {
   .negativeMarginBottom {
     margin-bottom: -14px !important;
   }
-  .floatRightOnComp{
+  .floatRightOnComp {
     float: left !important;
   }
 }
@@ -480,16 +483,16 @@ input[type='number'] {
   margin-right: 0px !important;
 }
 
-.coralButton{
-  width:150px !important;
+.coralButton {
+  width: 150px !important;
 }
 
-.explorerIconForWallet{
+.explorerIconForWallet {
   display: block;
   height: 20px;
   width: auto;
-  borderRadius: 100px;
+  borderradius: 100px;
 }
-body{
+body {
   overflow-y: scroll;
 }

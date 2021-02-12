@@ -44,18 +44,18 @@ class RenderOutput extends React.Component {
           if (ownerAction.oProxyProviders.length > 0) {
             if (name) {
               return (
-                <span>
+                <>
                   {' '}
-                  Proxy registration: <i>{utils.codePointToName(name)}</i>
-                </span>
+                  Proxy registration: <i>{utils.codePointToName(name)}</i>{' '}
+                </>
               );
             }
           } else {
             return (
-              <span>
+              <>
                 {' '}
-                Purchase: <i>{utils.codePointToName(name)}</i>
-              </span>
+                Purchase: <i>{utils.codePointToName(name)}</i>{' '}
+              </>
             );
           }
         } else if (action instanceof allegory.ProducerAction) {
@@ -69,10 +69,10 @@ class RenderOutput extends React.Component {
             const producerCodePoints = producerExtensions.map(({ codePoint }) => codePoint);
             const namePurchased = utils.codePointToName([...name, ...producerCodePoints]);
             return (
-              <span>
+              <>
                 {' '}
-                Purchase: <i>{namePurchased}</i>
-              </span>
+                Purchase: <i>{namePurchased}</i>{' '}
+              </>
             );
           }
         }
@@ -83,9 +83,9 @@ class RenderOutput extends React.Component {
             className={`${addressStyle} embed-data`}
             title={title}
             onClick={this.toggleEmbedDataVisiblity}>
-            OP_RETURN
+            OP_RETURN{renderAdditionalInfo()}
+            <span style={{ color: 'black' }}>&#9660;</span>
           </span>
-          {renderAdditionalInfo()}
         </p>
       );
     }
@@ -117,8 +117,8 @@ class RenderOutput extends React.Component {
     return (
       <Grid key={key}>
         <Grid.Row>
-          <Grid.Column width='10'>{this.renderOutput()}</Grid.Column>
-          <Grid.Column width='6' textAlign='right'>
+          <Grid.Column width='11'>{this.renderOutput()}</Grid.Column>
+          <Grid.Column width='5' textAlign='right'>
             <p className='monospace'>
               <span className={valueStyle}>{utils.satoshiToBSV(value)}</span>
             </p>

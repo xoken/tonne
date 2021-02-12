@@ -107,7 +107,8 @@ export const login = (profileId, password) => async (dispatch, getState, { servi
     const { profile } = await serviceInjector(AuthService).login(profileId, password);
     if (profile) {
       dispatch(loginSuccess({ profile }));
-      await dispatch(walletActions.getAllpayHandle());
+      await dispatch(walletActions.getAllpayHandles());
+      await dispatch(walletActions.getUnregisteredNames());
     } else {
       dispatch(loginFailure());
     }

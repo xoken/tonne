@@ -15,7 +15,6 @@ class ReceiveTransaction extends React.Component {
 
   async componentDidMount() {
     const { dispatch } = this.props;
-    await dispatch(walletActions.getAllpayHandle());
     await dispatch(walletActions.getUsedAddresses());
     await dispatch(walletActions.getUnusedAddresses());
   }
@@ -47,19 +46,20 @@ class ReceiveTransaction extends React.Component {
       <>
         {allpayHandles && allpayHandles.length > 0 && (
           <>
-            <Message>
-              <Message.Header>
-                AllPay enabled wallets can send you BSV directly to your AllPay handle "xx\yyyy".
-                The addresses are generated from on-chain registrations and hence provably correct.
-              </Message.Header>
-            </Message>
             <div className='ui grid stackable'>
               <div className='left floated six wide middle aligned column'>
                 <h4>My AllPay handle</h4>
               </div>
             </div>
+            <Message color='yellow' className='allpay-receive-message'>
+              <p>
+                AllPay enabled wallets can send you BSV directly to your AllPay handle
+                <b>{` "${allpayHandles[0]}" `}</b>. The addresses are generated from on-chain
+                registrations and hence provably correct.
+              </p>
+            </Message>
             {allpayHandles.map((allpayHandle, index) => (
-              <div className='ui two column grid stackable'>
+              <div className='ui two column grid stackable' key={index.toString()}>
                 <div className='column'>
                   <div className='ui fluid action input'>
                     <input

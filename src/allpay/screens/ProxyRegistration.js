@@ -13,7 +13,8 @@ import {
   Segment,
 } from 'semantic-ui-react';
 import * as allpayActions from '../allpayActions';
-import { wallet, utils } from 'allegory-allpay-sdk';
+import * as walletActions from '../../wallet/walletActions';
+import { utils } from 'allegory-allpay-sdk';
 
 class ProxyRegistration extends React.Component {
   constructor(props) {
@@ -56,7 +57,7 @@ class ProxyRegistration extends React.Component {
     this.setState({
       selectedProxyProvider: this.state.proxyProviders[0],
     });
-    const { names } = await wallet.getUnregisteredName();
+    const { names } = await dispatch(walletActions.getUnregisteredNames());
     const unregisteredNames = names.map(unregisteredName => ({
       text: unregisteredName,
       value: unregisteredName,
