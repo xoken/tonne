@@ -144,7 +144,7 @@ class TwitterAuthHome extends React.Component {
     if (message) {
       return this.renderContent();
     } else if (user && profile) {
-      return <Loader active size='massive' />;
+      return <Loader content='Please wait while we setup your account' active size='massive' />;
     } else {
       return <Redirect to='/' />;
     }
