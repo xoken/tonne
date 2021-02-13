@@ -18,7 +18,7 @@ class ClaimTwitterHandleContainer extends Component {
     return (
       <div className='paddingBottom100px'>
         <Navbar title={title || ''} onBack={this.onBack} />
-        <div className='ui grid'>
+        <div className='ui grid stackable'>
           <div className='one wide column'>
             <ProgressIndicator steps={progressTotalSteps} activeStep={progressStep} />
           </div>
