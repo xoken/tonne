@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Grid, Header, Segment } from 'semantic-ui-react';
 import RenderOutput from '../../wallet/components/RenderOutput';
@@ -53,9 +53,9 @@ class RenderTransaction extends React.Component {
       return (
         <>
           <Segment className='transaction'>
-            <Grid>
+            <Grid stackable>
               <Grid.Column width={10}>
-                <span className='monospace'>{`${psbt.toHex().substring(0, 20)}...`}</span>
+                <span className='monospace word-wrap'>{`${psbt.toHex().substring(0, 20)}...`}</span>
               </Grid.Column>
               {/* <Grid.Column width={5} textAlign='right'>
                 {renderCreditOrDebit(credit, debit)}
@@ -90,10 +90,10 @@ class RenderTransaction extends React.Component {
                 ) : null}
               </Grid.Column>
             </Grid>
-            <Grid divided columns='two'>
+            <Grid divided columns='two' stackable>
               <Grid.Row>
                 <Grid.Column>
-                  <Header as='h5' className='monospace'>
+                  <Header as='h5' className='monospace paddingLeftRight14px'>
                     Inputs
                   </Header>
                   {txInputs.map((input, index) => {
@@ -105,14 +105,26 @@ class RenderTransaction extends React.Component {
                     return (
                       <Grid key={String(index)}>
                         <Grid.Column width='12'>
-                          <p className='monospace'>
+                          <p className='monospace word-wrap'>
                             <span
-                              className={isMine && isMine.isNameOutpoint ? 'nUTXO' : undefined}
+                              className={
+                                isMine && isMine.isNameOutpoint
+                                  ? 'nUTXO recentTxidAddressColumn'
+                                  : 'recentTxidAddressColumn'
+                              }
                               title={
                                 isMine && isMine.isNameOutpoint
                                   ? `Name Outpoint: ${transactionId}`
                                   : transactionId
-                              }>{`${transactionId.substring(0, 30)}...[${input.index}]`}</span>
+                              }>
+                              <span className='recentTxidAddress'>{`${transactionId.substring(
+                                0,
+                                30
+                              )}...[${input.index}]`}</span>
+                              <Link to={'/explorer/transaction/' + transactionId}>
+                                <i class='walletLink'></i>
+                              </Link>
+                            </span>
                           </p>
                         </Grid.Column>
                         <Grid.Column width='4' textAlign='right'>

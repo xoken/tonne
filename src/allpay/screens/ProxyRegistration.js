@@ -134,7 +134,7 @@ class ProxyRegistration extends React.Component {
     const { name, selectedProxyProvider } = this.state;
     return (
       <>
-        <Header as='h3' textAlign='center'>
+        <Header as='h3' textAlign='center' className='word-wrap'>
           Register{' '}
           {name.length > 0 ? (
             <span className='purplefontcolor'>{utils.codePointToName(name)} </span>
@@ -210,7 +210,7 @@ class ProxyRegistration extends React.Component {
             const isSelected = selectedProxyProvider?.name === name;
             return (
               <Segment key={index.toString()}>
-                <Grid>
+                <Grid stackable>
                   <Grid.Row>
                     <Grid.Column width='13' verticalAlign='middle'>
                       <Header as='h4'>{name}</Header>
@@ -267,7 +267,7 @@ class ProxyRegistration extends React.Component {
     const { showRegistrationOptions } = this.state;
     return (
       <>
-        <Grid>
+        <Grid stackable>
           <Grid.Row>
             <Grid.Column>{this.renderHeader()}</Grid.Column>
           </Grid.Row>

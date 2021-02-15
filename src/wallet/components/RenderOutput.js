@@ -22,14 +22,10 @@ class RenderOutput extends React.Component {
     if (address) {
       return (
         <p className='monospace word-wrap'>
-          <span className={addressStyle} title={title}>
-            {address}
+          <span className={'recentTxidAddressColumn' + addressStyle} title={title}>
+            <span className='recentTxidAddress'>{address}</span>
             <Link to={'/explorer/address/' + address}>
-              <img
-                alt='Bitcoin SV Blockchain'
-                src={images.explorerLogo}
-                className='icon explorerIconForWallet'
-              />
+              <i class='walletLink'></i>
             </Link>
           </span>
         </p>

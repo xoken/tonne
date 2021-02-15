@@ -55,13 +55,13 @@ class ConfirmRegistration extends React.Component {
       if (isError) {
         return (
           <div className='ui negative message'>
-            <p>{message}</p>
+            <p className='word-wrap'>{message}</p>
           </div>
         );
       } else {
         return (
           <div className='ui success message'>
-            <p>{message}</p>
+            <p className='word-wrap'>{message}</p>
           </div>
         );
       }
@@ -127,7 +127,7 @@ class ConfirmRegistration extends React.Component {
     const { showTxDetails } = this.state;
     return (
       <>
-        <div className='ui grid'>
+        <div className='ui grid stackable'>
           <div className='twelve wide column'>
             <div className='ui list'>
               <div className='item'>

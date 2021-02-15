@@ -63,13 +63,13 @@ class ConfirmNamePurchase extends React.Component {
       if (isError) {
         return (
           <div className='ui negative message'>
-            <p>{message}</p>
+            <p className='word-wrap'>{message}</p>
           </div>
         );
       } else {
         return (
           <div className='ui success message'>
-            <p>{message}</p>
+            <p className='word-wrap'>{message}</p>
           </div>
         );
       }
@@ -137,11 +137,13 @@ class ConfirmNamePurchase extends React.Component {
     const { showTxDetails } = this.state;
     return (
       <>
-        <Grid>
+        <Grid stackable>
           {message && (
             <Grid.Row>
               <Grid.Column>
-                <Header as='h3'>{message}</Header>
+                <Header as='h3' className='word-wrap'>
+                  {message}
+                </Header>
               </Grid.Column>
             </Grid.Row>
           )}
@@ -151,7 +153,9 @@ class ConfirmNamePurchase extends React.Component {
                 <div className='item'>
                   <div className='ui large custom label'>
                     AllPay Name:
-                    <div className='detail purplefontcolor'>{utils.codePointToName(name)}</div>
+                    <div className='detail purplefontcolor word-wrap'>
+                      {utils.codePointToName(name)}
+                    </div>
                   </div>
                 </div>
                 <div className='item'>
