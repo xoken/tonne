@@ -156,10 +156,14 @@ class Home extends React.Component {
                         </div>
                       </div>
                     </Grid.Row>
-                    <Grid.Row centered>
-                      <Grid.Column width={16} textAlign='center'>
+                    <Grid.Row centered verticalAlign='middle'>
+                      <Grid.Column width={16} textAlign='center' style={{ paddingTop: '80px' }}>
                         <div
-                          style={{ fontWeight: 'bold', color: 'black', cursor: 'pointer' }}
+                          style={{
+                            fontWeight: 'bold',
+                            color: 'black',
+                            cursor: 'pointer',
+                          }}
                           onClick={this.scrollToLearnMore}>
                           Learn More<div>&#9660;</div>
                         </div>
@@ -181,9 +185,9 @@ class Home extends React.Component {
                   <Grid.Column computer={8} tablet={12} mobile={8} floated='left'>
                     <h2 className='h2homepage'>Simple to use, yet super secure & private</h2>
                     <div className='width70'>
-                      Send & receive Bitcoins with simple human-readable “handles”, secured by
-                      “provably correct” payment addresses with enhanced privacy. Unwieldy Bitcoin
-                      addresses are now a relic.
+                      Send & receive Bitcoins with simple intuitive handles, secured by provably
+                      correct payment addresses with enhanced privacy. Unwieldy Bitcoin addresses
+                      are now a relic of the past!.
                     </div>
                   </Grid.Column>
 
@@ -191,8 +195,7 @@ class Home extends React.Component {
                     computer={8}
                     tablet={8}
                     mobile={8}
-                    className={rowOneShow ? 'alice rowOneShow' : 'alice homeRowOne'}
-                    floated='left'></Grid.Column>
+                    className={rowOneShow ? 'alice rowOneShow' : 'alice homeRowOne'}></Grid.Column>
                 </Grid.Row>
                 <Grid.Row className='computer reversed'>
                   <Grid.Column computer={8} tablet={12} mobile={8} floated='right'>
@@ -208,8 +211,9 @@ class Home extends React.Component {
                     computer={8}
                     tablet={8}
                     mobile={8}
-                    className={rowTwoShow ? 'strange rowTwoShow' : 'strange homeRowTwo'}
-                    floated='left'></Grid.Column>
+                    className={
+                      rowTwoShow ? 'strange rowTwoShow' : 'strange homeRowTwo'
+                    }></Grid.Column>
                 </Grid.Row>
                 <span ref={this.rowTwoShow}></span>
                 <Grid.Row>

@@ -75,9 +75,9 @@ class WalletHeader extends React.Component {
                   {this.renderAllpayAction()}
                   <Dropdown
                     button
-                    className='icon coral button'
-                    icon={null}
-                    text='Options'
+                    style={{ borderRadius: '100px' }}
+                    className='icon coral'
+                    icon='user'
                     additionPosition='top'
                     pointing>
                     <Dropdown.Menu>

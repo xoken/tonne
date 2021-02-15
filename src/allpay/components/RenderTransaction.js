@@ -93,7 +93,7 @@ class RenderTransaction extends React.Component {
             <Grid divided columns='two' stackable>
               <Grid.Row>
                 <Grid.Column>
-                  <Header as='h5' className='monospace'>
+                  <Header as='h5' className='monospace paddingLeftRight14px'>
                     Inputs
                   </Header>
                   {txInputs.map((input, index) => {
