@@ -408,7 +408,7 @@ input[type='number'] {
 .floatRightOnComp {
   float: right !important;
 }
-.ui.yellow.message.allpay-receive-message {
+.ui.yellow.message.modal-message {
   box-shadow: none;
 }
 @media screen and (min-width: 455px) {
