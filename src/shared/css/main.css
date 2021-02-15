@@ -334,6 +334,17 @@
 }
 .ui.card.twitter-card {
   box-shadow: none;
+  float: right;
+}
+.followersHorizontalSlider{
+  overflow: auto;
+  width: 375px;
+  min-width: 230px;
+  text-align: center;
+  white-space: nowrap;
+  scrollbar-width: none;
+  display: inline-flex;
+  scroll-behavior: smooth;
 }
 .indicator {
   display: inline-block;
@@ -406,6 +417,9 @@ input[type='number'] {
   min-height: 32px;
 }
 .floatRightOnComp {
+  float: right !important;
+}
+.buttonFloatRightOnComp{
   float: right !important;
 }
 .ui.yellow.message.modal-message {
@@ -718,7 +732,6 @@ transform: rotate(0deg) translate(inherit, inherit);
   .passinputwidth {
     width: 100% !important;
   }
-
 }
 @media screen and (max-width: 767px) {
   .walletHomeDividerHorizontal {
@@ -787,9 +800,15 @@ transform: rotate(0deg) translate(inherit, inherit);
 }
 
 @media screen and (max-width: 706px) {
-.breakDisplay{
-  display: none;
+  .breakDisplay{
+    display: none;
+  }
 }
+
+@media screen and (max-width: 630px) {
+  .followersHorizontalSlider{
+    width: 90%;
+  }
 }
 
 .paddingLeftRight14px {
@@ -833,6 +852,7 @@ body {
 
 .walletLink {
     scale: 66%;
+
     box-sizing: border-box;
     position: absolute;
     top:45%;
@@ -873,4 +893,8 @@ body {
 }
 .recentTxidAddressColumn{
   display: inline-flex !important;
+}
+.paddingTopBottom20px{
+  padding-top: 20px;
+  padding-bottom: 20px;
 }

@@ -22,7 +22,7 @@ class RenderOutput extends React.Component {
     if (address) {
       return (
         <p className='monospace word-wrap'>
-          <span className={'recentTxidAddressColumn' + addressStyle} title={title}>
+          <span className={'recentTxidAddressColumn ' + addressStyle} title={title}>
             <span className='recentTxidAddress'>{address}</span>
             <Link to={'/explorer/address/' + address}>
               <i class='walletLink'></i>
@@ -74,9 +74,9 @@ class RenderOutput extends React.Component {
         }
       }
       return (
-        <p className='monospace'>
+        <p className='monospace paddingLeftRight14px'>
           <span
-            className={`${addressStyle} embed-data`}
+            className={`${addressStyle} embed-data word-wrap`}
             title={title}
             onClick={this.toggleEmbedDataVisiblity}>
             OP_RETURN{renderAdditionalInfo()}

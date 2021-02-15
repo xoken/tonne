@@ -91,7 +91,7 @@ class RenderTransaction extends React.Component {
               </Grid.Column>
             </Grid>
             <Grid divided columns='two' stackable>
-              <Grid.Row>
+              <Grid.Row className='paddingLeftRight14px'>
                 <Grid.Column>
                   <Header as='h5' className='monospace paddingLeftRight14px'>
                     Inputs

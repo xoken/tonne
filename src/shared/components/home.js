@@ -231,7 +231,7 @@ class Home extends React.Component {
                       }}
                     />
                     <div className='width70'>
-                      Develop self-sovereign Bitcoin natives apps with Xoken SDK (Javascript) & the
+                      Develop self-sovereign Bitcoin native apps with Xoken SDK (Javascript) & the
                       powerful Nexa APIs. Readily leverage our scalable backend infrastructure and
                       cutting edge open protocols Allegory (Simplified Name Verification) & AllPay
                       (provably correct payment addresses).

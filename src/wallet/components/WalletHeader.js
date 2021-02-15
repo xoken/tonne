@@ -71,7 +71,7 @@ class WalletHeader extends React.Component {
                 )}
               </Grid.Column>
               <Grid.Column computer={8} tablet={8} mobile={8} floated='right'>
-                <div className='floatRightOnComp'>
+                <div className='buttonFloatRightOnComp'>
                   {this.renderAllpayAction()}
                   <Dropdown
                     button
@@ -79,7 +79,8 @@ class WalletHeader extends React.Component {
                     className='icon coral'
                     icon='user'
                     additionPosition='top'
-                    pointing>
+                    direction='left'
+                    pointing='top right'>
                     <Dropdown.Menu>
                       <Dropdown.Item>
                         <NavLink

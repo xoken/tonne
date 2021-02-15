@@ -15,7 +15,7 @@ class Navbar extends Component {
               <Icon name='arrow up' />
             </Button>
           </div>
-          <div className='item'>
+          <div className='paddingTopBottom20px'>
             <div className='ui medium header purplefontcolor word-wrap'>{title}</div>
           </div>
           {/* <div className='right menu'>

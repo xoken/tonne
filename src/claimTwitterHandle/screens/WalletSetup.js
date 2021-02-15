@@ -72,7 +72,7 @@ class WalletSetup extends React.Component {
       return (
         <Grid>
           <Grid.Row centered>
-            <Grid.Column width='4' textAlign='center'>
+            <Grid.Column computer='4' mobile='15' tablet='6' textAlign='center'>
               <Segment>
                 <Profiles profiles={profiles} onSelect={this.onSelectProfile} />
               </Segment>
@@ -109,18 +109,7 @@ class WalletSetup extends React.Component {
                 &lt;
               </Button>
 
-              <div
-                ref={this.horizontalScrollRef}
-                style={{
-                  overflow: 'auto',
-                  width: '375px',
-                  minWidth: '250px',
-                  textAlign: 'center',
-                  whiteSpace: 'nowrap',
-                  scrollbarWidth: 'none',
-                  display: 'inline-flex',
-                  scrollBehavior: 'smooth',
-                }}>
+              <div ref={this.horizontalScrollRef} className='followersHorizontalSlider'>
                 {purchasedTwitterFollowers.map((follower, index) => {
                   return (
                     <div key={String(index)} style={{ padding: '15px 25px 15px 25px' }}>
@@ -163,7 +152,7 @@ class WalletSetup extends React.Component {
       <>
         <Grid>
           <Grid.Row>
-            <Grid.Column width={5} floated='right' textAlign='right'>
+            <Grid.Column computer={5} mobile={16} tablet={12} floated='right' textAlign='right'>
               <Card className='twitter-card'>
                 <Card.Content>
                   <Card.Header>
