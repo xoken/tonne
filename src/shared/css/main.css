@@ -414,7 +414,7 @@ input[type='number'] {
 
 .introText{
   font-family: 'Cantarell';
-  font-size: 25px;
+  font-size: 20px;
   padding-top:5%;
   padding-bottom: 5%;
   padding-left: 15px;
@@ -645,11 +645,11 @@ transform: rotate(0deg) translate(inherit, inherit);
   transform: translate(-100%, 0);
 }
 .rowOneShow{
-  animation: rowOneAnimation ease 5s;
+  animation: rowOneAnimation ease 3s;
 
 }
 .rowTwoShow{
-  animation: rowTwoAnimation ease 5s;
+  animation: rowTwoAnimation ease 3s;
 
 }
 @keyframes rowOneAnimation {
@@ -718,12 +718,7 @@ transform: rotate(0deg) translate(inherit, inherit);
   .passinputwidth {
     width: 100% !important;
   }
-  .purplePaperRocket{
-    display: none;
-  }
-  .peachPaperRocket{
-    display: none;
-  }
+
 }
 @media screen and (max-width: 767px) {
   .walletHomeDividerHorizontal {
@@ -780,6 +775,21 @@ transform: rotate(0deg) translate(inherit, inherit);
   .homeTextAlignLeft{
     text-align: left;
   }
+  .purplePaperRocket{
+    display: none !important;
+  }
+  .peachPaperRocket{
+    display: none !important;
+  }
+  .peachPaperRocket2{
+    display: none;
+  }
+}
+
+@media screen and (max-width: 706px) {
+.breakDisplay{
+  display: none;
+}
 }
 
 .paddingLeftRight14px {
@@ -818,13 +828,14 @@ body {
     margin-left: auto !important;
     margin-right: auto !important;
     left: 0 !important;
-      overflow-x: hidden;
+    overflow-x: hidden;
 }
 
 .walletLink {
+    scale: 66%;
     box-sizing: border-box;
     position: absolute;
-    top:43%;
+    top:45%;
     display: block;
     transform: rotate(-45deg) scale(var(--ggs,1));
     width: 7px;

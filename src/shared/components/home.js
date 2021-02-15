@@ -65,7 +65,7 @@ class Home extends React.Component {
           <Grid.Column verticalAlign='middle' centered className='introImage'>
             <div className='introText'>
               Bitcoin wallet, self-sovereign handles,
-              <br /> explorer & gateway to Bitcoin apps.
+              <br className='breakDisplay' /> explorer & gateway to Bitcoin apps.
             </div>
           </Grid.Column>
           <span className='purplePaperRocket' style={{ left: '35%', top: '0%' }}></span>
@@ -185,9 +185,9 @@ class Home extends React.Component {
                   <Grid.Column computer={8} tablet={12} mobile={8} floated='left'>
                     <h2 className='h2homepage'>Simple to use, yet super secure & private</h2>
                     <div className='width70'>
-                      Send & receive Bitcoins with simple intuitive handles, secured by provably
-                      correct payment addresses with enhanced privacy. Unwieldy Bitcoin addresses
-                      are now a relic of the past!.
+                      Send & receive Bitcoins with intuitive handles, secured by provably correct
+                      payment addresses with enhanced privacy. Unwieldy Bitcoin addresses are now a
+                      relic of the past!
                     </div>
                   </Grid.Column>
 

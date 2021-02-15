@@ -139,7 +139,7 @@ class RenderTransaction extends React.Component {
                   })}
                 </Grid.Column>
                 <Grid.Column>
-                  <Header as='h5' className='monospace'>
+                  <Header as='h5' className='monospace paddingLeftRight14px'>
                     Outputs
                   </Header>
                   {txOutputs.map((output, index) => {
