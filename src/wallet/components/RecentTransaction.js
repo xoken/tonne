@@ -146,7 +146,7 @@ class RecentTransaction extends React.Component {
                       </span>{' '}
                       <Link to={'/explorer/transaction/' + transaction.txId}>
                         <span className='padding5px'>
-                          <i class='walletLink'></i>
+                          <i className='walletLink'></i>
                         </span>
                       </Link>
                     </Grid.Column>
@@ -197,7 +197,7 @@ class RecentTransaction extends React.Component {
                                       <span className='recentTxidAddress'>{input.address}</span>
                                       <Link to={'/explorer/address/' + input.address}>
                                         <span className='padding5px'>
-                                          <i class='walletLink'></i>
+                                          <i className='walletLink'></i>
                                         </span>
                                       </Link>
                                     </span>
