@@ -25,7 +25,9 @@ class RenderOutput extends React.Component {
           <span className={'recentTxidAddressColumn ' + addressStyle} title={title}>
             <span className='recentTxidAddress'>{address}</span>
             <Link to={'/explorer/address/' + address}>
-              <i class='walletLink'></i>
+              <span className='padding5px'>
+                <i class='walletLink'></i>
+              </span>
             </Link>
           </span>
         </p>

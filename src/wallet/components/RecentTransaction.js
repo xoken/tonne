@@ -145,7 +145,9 @@ class RecentTransaction extends React.Component {
                         {transaction.txId}
                       </span>{' '}
                       <Link to={'/explorer/transaction/' + transaction.txId}>
-                        <i class='walletLink'></i>
+                        <span className='padding5px'>
+                          <i class='walletLink'></i>
+                        </span>
                       </Link>
                     </Grid.Column>
                     <Grid.Column computer={5} mobile={5} textAlign='right' className='word-wrap'>
@@ -194,7 +196,9 @@ class RecentTransaction extends React.Component {
                                       title={input.isNUTXO ? 'Name UTXO' : undefined}>
                                       <span className='recentTxidAddress'>{input.address}</span>
                                       <Link to={'/explorer/address/' + input.address}>
-                                        <i class='walletLink'></i>
+                                        <span className='padding5px'>
+                                          <i class='walletLink'></i>
+                                        </span>
                                       </Link>
                                     </span>
                                   </p>
