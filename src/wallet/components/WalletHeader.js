@@ -76,7 +76,7 @@ class WalletHeader extends React.Component {
                   <Dropdown
                     button
                     style={{ borderRadius: '100px' }}
-                    className='icon coral'
+                    className='icon circular coral'
                     icon='user'
                     additionPosition='top'
                     direction='left'

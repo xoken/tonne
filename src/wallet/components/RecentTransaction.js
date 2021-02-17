@@ -150,10 +150,15 @@ class RecentTransaction extends React.Component {
                         </span>
                       </Link>
                     </Grid.Column>
-                    <Grid.Column computer={5} mobile={5} textAlign='right' className='word-wrap'>
+                    <Grid.Column
+                      computer={5}
+                      tablet={5}
+                      mobile={5}
+                      textAlign='right'
+                      className='word-wrap'>
                       {renderCreditOrDebit(credit, debit)}
                     </Grid.Column>
-                    <Grid.Column computer={1} mobile={2} textAlign='right'>
+                    <Grid.Column computer={1} tablet={1} mobile={2} textAlign='right'>
                       <Label className='plain'>
                         <i
                           title={
@@ -185,25 +190,24 @@ class RecentTransaction extends React.Component {
                           {txInps.map((input, index) => {
                             return (
                               <Grid key={index.toString()}>
-                                <Grid.Column width='10'>
-                                  <p className='monospace word-wrap'>
+                                <Grid.Column computer='12' tablet='11' mobile='11'>
+                                  <p className='monospace word-wrap recentTxidAddressColumn'>
                                     <span
-                                      className={
-                                        input.isNUTXO
-                                          ? 'nUTXO recentTxidAddressColumn'
-                                          : 'recentTxidAddressColumn'
-                                      }
+                                      className={input.isNUTXO ? 'nUTXO' : undefined}
                                       title={input.isNUTXO ? 'Name UTXO' : undefined}>
-                                      <span className='recentTxidAddress'>{input.address}</span>
-                                      <Link to={'/explorer/address/' + input.address}>
-                                        <span className='padding5px'>
-                                          <i className='walletLink'></i>
-                                        </span>
-                                      </Link>
+                                      {input.address}
                                     </span>
+
+                                    <Link
+                                      to={'/explorer/address/' + input.address}
+                                      className='recentTxidAddress'>
+                                      <span className='padding5px'>
+                                        <i className='walletLink'></i>
+                                      </span>
+                                    </Link>
                                   </p>
                                 </Grid.Column>
-                                <Grid.Column width='6' textAlign='right'>
+                                <Grid.Column computer='4' tablet='5' mobile='5' textAlign='right'>
                                   <p className='monospace'>
                                     <span className={input.isMine ? 'debit' : ''}>
                                       {utils.satoshiToBSV(input.value)}

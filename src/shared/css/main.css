@@ -226,6 +226,7 @@
   border: 1px solid rgba(34, 36, 38, 0.15);
   padding: 1em;
   white-space: pre-wrap;
+  word-wrap: anywhere;
 }
 .progressIndicatorStep {
   width: 10px;
@@ -852,10 +853,9 @@ body {
 
 .walletLink {
     scale: 66%;
-
     box-sizing: border-box;
     position: absolute;
-    top:45%;
+    top:50%;
     display: block;
     transform: rotate(-45deg) scale(var(--ggs,1));
     width: 7px;

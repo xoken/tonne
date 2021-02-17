@@ -104,7 +104,7 @@ class RenderTransaction extends React.Component {
                     });
                     return (
                       <Grid key={String(index)}>
-                        <Grid.Column width='12'>
+                        <Grid.Column computer='12' tablet='11' mobile='11'>
                           <p className='monospace word-wrap'>
                             <span
                               className={
@@ -129,7 +129,7 @@ class RenderTransaction extends React.Component {
                             </span>
                           </p>
                         </Grid.Column>
-                        <Grid.Column width='4' textAlign='right'>
+                        <Grid.Column computer='4' tablet='5' mobile='5' textAlign='right'>
                           <p className='monospace'>
                             <span className={isMine ? 'debit' : ''}>
                               {value && utils.satoshiToBSV(value)}

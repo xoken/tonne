@@ -2,6 +2,7 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import * as authSelectors from '../../auth/authSelectors';
 import * as authActions from '../../auth/authActions';
 import { Button, Form, Grid, Input } from 'semantic-ui-react';
 
@@ -25,8 +26,9 @@ class Login extends React.Component {
         await dispatch(authActions.login(profileId, password));
         this.props.onSuccess();
       } catch (error) {
-        this.setState({ error });
-        throw error;
+        // console.log(JSON.stringify(error.message));
+        //this.setState({ error: error.message });
+        this.setState({ error: 'Login error: Enter correct password.' });
       }
     }
   };
@@ -59,7 +61,7 @@ class Login extends React.Component {
                   }
                 />
                 {error && (
-                  <div className='invalid-feedback' style={{ display: 'block' }}>
+                  <div className='redalert' style={{ display: 'block' }}>
                     {error}
                   </div>
                 )}
