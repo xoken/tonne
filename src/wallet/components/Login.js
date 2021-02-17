@@ -2,7 +2,6 @@ import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import * as authSelectors from '../../auth/authSelectors';
 import * as authActions from '../../auth/authActions';
 import { Button, Form, Grid, Input } from 'semantic-ui-react';
 

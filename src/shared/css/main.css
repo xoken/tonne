@@ -901,3 +901,7 @@ body {
 .padding5px{
   padding: 10px;
 }
+.dropdownTriangle{
+  top: 3px;
+  position: relative;
+}

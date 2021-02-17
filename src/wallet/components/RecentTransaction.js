@@ -84,6 +84,46 @@ class RecentTransaction extends React.Component {
     }
     this.setState({ activeIndex: newIndex });
   };
+  checkIfFromAllpayHandle = () => {
+    return false;
+  };
+  titleSection = (txOuts, transaction) => {
+    let titlePicked = false;
+    return txOuts.map((output, index) => {
+      if (
+        output.lockingScript &&
+        output.lockingScript.startsWith('006a0f416c6c65676f72792f416c6c506179')
+      ) {
+        titlePicked = true;
+        return (
+          <RenderOutput
+            key={index.toString()}
+            addressStyle={output.isNUTXO ? 'nUTXO' : ''}
+            address={output.address}
+            script={output.lockingScript}
+            title={output.isNUTXO ? 'Name UTXO' : undefined}
+            valueStyle={output.isMine ? 'credit' : ''}
+            value={output.value}
+            forTitleSection={true}
+          />
+        );
+      }
+    });
+    if (!titlePicked && this.checkIfFromAllpayHandle()) {
+      return <span className='purplefontcolor'>aa/allpayname</span>;
+    } else if (!titlePicked) {
+      return (
+        <>
+          <span className='monospace word-wrap recentTxidAddress'>{transaction.txId}</span>{' '}
+          <Link to={'/explorer/transaction/' + transaction.txId}>
+            <span className='padding5px'>
+              <i className='walletLink'></i>
+            </span>
+          </Link>
+        </>
+      );
+    }
+  };
 
   renderTransaction() {
     const { activeIndex } = this.state;
@@ -132,6 +172,7 @@ class RecentTransaction extends React.Component {
               }
               return '';
             };
+            const isAllpayHandle = this.checkIfFromAllpayHandle();
             return (
               <Segment key={index.toString()} className='transaction'>
                 <Accordion.Title
@@ -140,15 +181,8 @@ class RecentTransaction extends React.Component {
                   onClick={this.onTransactionTitleClick}>
                   <Grid>
                     <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
-                      <Icon name='dropdown' className='purplefontcolor' />
-                      <span className='monospace word-wrap recentTxidAddress'>
-                        {transaction.txId}
-                      </span>{' '}
-                      <Link to={'/explorer/transaction/' + transaction.txId}>
-                        <span className='padding5px'>
-                          <i className='walletLink'></i>
-                        </span>
-                      </Link>
+                      <Icon name='dropdown' className='purplefontcolor dropdownTriangle' />
+                      {this.titleSection(txOuts, transaction)}
                     </Grid.Column>
                     <Grid.Column
                       computer={5}
@@ -181,6 +215,22 @@ class RecentTransaction extends React.Component {
                 </Accordion.Title>
                 <Accordion.Content active={activeIndex.includes(index)}>
                   <Grid divided stackable columns='two'>
+                    {this.checkIfFromAllpayHandle() ? (
+                      <Grid.Row>
+                        <Grid.Column width='12' className='recentTxidAddressColumn'>
+                          <span className='monospace word-wrap recentTxidAddress'>
+                            {transaction.txId}
+                          </span>{' '}
+                          <Link to={'/explorer/transaction/' + transaction.txId}>
+                            <span className='padding5px'>
+                              <i className='walletLink'></i>
+                            </span>
+                          </Link>
+                        </Grid.Column>
+                      </Grid.Row>
+                    ) : (
+                      ''
+                    )}
                     <Grid.Row>
                       <Grid.Column>
                         <div className='paddingLeftRight14px'>
@@ -236,6 +286,7 @@ class RecentTransaction extends React.Component {
                                 title={output.isNUTXO ? 'Name UTXO' : undefined}
                                 valueStyle={output.isMine ? 'credit' : ''}
                                 value={output.value}
+                                forTitleSection={false}
                               />
                               // </Grid.Column>
                               // <Grid.Column width='6' textAlign='right'>

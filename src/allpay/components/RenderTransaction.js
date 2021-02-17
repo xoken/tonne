@@ -157,6 +157,7 @@ class RenderTransaction extends React.Component {
                         title={isMine ? isMine.title : undefined}
                         valueStyle={isMine ? 'credit' : ''}
                         value={output.value}
+                        forTitleSection={false}
                       />
                     );
                   })}

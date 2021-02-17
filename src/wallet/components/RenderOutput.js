@@ -18,7 +18,7 @@ class RenderOutput extends React.Component {
   };
 
   renderOutput() {
-    const { addressStyle, address, script, title } = this.props;
+    const { addressStyle, address, script, title, forTitleSection } = this.props;
     if (address) {
       return (
         <p className='monospace word-wrap recentTxidAddressColumn'>
@@ -80,9 +80,9 @@ class RenderOutput extends React.Component {
           <span
             className={`${addressStyle} embed-data word-wrap`}
             title={title}
-            onClick={this.toggleEmbedDataVisiblity}>
+            onClick={forTitleSection ? '' : this.toggleEmbedDataVisiblity}>
             OP_RETURN{renderAdditionalInfo()}
-            <span style={{ color: 'black' }}>&#9660;</span>
+            {forTitleSection ? '' : <span style={{ color: 'black' }}>&#9660;</span>}
           </span>
         </p>
       );
