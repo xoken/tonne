@@ -904,4 +904,21 @@ body {
 .dropdownTriangle{
   top: 3px;
   position: relative;
+  color: lightgrey;
+}
+.toArrow{
+  color: #000080;
+  background-color: #FDFD31;
+  font-weight: bold !important;
+  display: inline-block;
+  border-radius: 60px;
+  padding: 4px 10px 5px 10px;
+}
+.fromArrow{
+  color: #013220;
+  background-color: #97E47E;
+  font-weight: bold !important;
+  display: inline-block;
+  border-radius: 60px;
+  padding: 4px 10px 5px 10px;
 }

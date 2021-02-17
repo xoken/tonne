@@ -84,12 +84,13 @@ class RecentTransaction extends React.Component {
     }
     this.setState({ activeIndex: newIndex });
   };
-  checkIfFromAllpayHandle = () => {
-    return false;
+  checkIfAllpayHandleOpReturn = () => {
+    return true;
   };
   titleSection = (txOuts, transaction) => {
     let titlePicked = false;
-    return txOuts.map((output, index) => {
+    let renderOutput = undefined;
+    renderOutput = txOuts.map((output, index) => {
       if (
         output.lockingScript &&
         output.lockingScript.startsWith('006a0f416c6c65676f72792f416c6c506179')
@@ -109,17 +110,50 @@ class RecentTransaction extends React.Component {
         );
       }
     });
-    if (!titlePicked && this.checkIfFromAllpayHandle()) {
-      return <span className='purplefontcolor'>aa/allpayname</span>;
+    if (titlePicked) {
+      for (let op = 0; op < renderOutput.length; op++)
+        if (renderOutput[op]) {
+          return (
+            <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
+              <Icon name='dropdown' className='dropdownTriangle' />
+              {renderOutput[op]}
+            </Grid.Column>
+          );
+        }
+    }
+    if (!titlePicked && this.checkIfAllpayHandleOpReturn()) {
+      function determineToOrFromAllpay() {
+        return 'from';
+      }
+      return (
+        <>
+          <Grid.Column computer={1} mobile={3} className='recentTxidAddressColumn'>
+            <Icon name='dropdown' className='dropdownTriangle' />
+            <span className='purplefontcolor paddingLeftRight14px'>
+              {determineToOrFromAllpay() === 'to' ? (
+                <span className='toArrow'>&#129133; </span>
+              ) : (
+                <span className='fromArrow'>&#129134; </span>
+              )}{' '}
+            </span>
+          </Grid.Column>
+          <Grid.Column computer={9} mobile={6} className='recentTxidAddressColumn purplefontcolor'>
+            aa/allpayname
+          </Grid.Column>
+        </>
+      );
     } else if (!titlePicked) {
       return (
         <>
-          <span className='monospace word-wrap recentTxidAddress'>{transaction.txId}</span>{' '}
-          <Link to={'/explorer/transaction/' + transaction.txId}>
-            <span className='padding5px'>
-              <i className='walletLink'></i>
-            </span>
-          </Link>
+          {' '}
+          <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
+            <span className='monospace word-wrap recentTxidAddress'>{transaction.txId}</span>{' '}
+            <Link to={'/explorer/transaction/' + transaction.txId}>
+              <span className='padding5px'>
+                <i className='walletLink'></i>
+              </span>
+            </Link>
+          </Grid.Column>
         </>
       );
     }
@@ -172,7 +206,6 @@ class RecentTransaction extends React.Component {
               }
               return '';
             };
-            const isAllpayHandle = this.checkIfFromAllpayHandle();
             return (
               <Segment key={index.toString()} className='transaction'>
                 <Accordion.Title
@@ -180,10 +213,8 @@ class RecentTransaction extends React.Component {
                   index={index}
                   onClick={this.onTransactionTitleClick}>
                   <Grid>
-                    <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
-                      <Icon name='dropdown' className='purplefontcolor dropdownTriangle' />
-                      {this.titleSection(txOuts, transaction)}
-                    </Grid.Column>
+                    {this.titleSection(txOuts, transaction)}
+
                     <Grid.Column
                       computer={5}
                       tablet={5}
@@ -215,10 +246,11 @@ class RecentTransaction extends React.Component {
                 </Accordion.Title>
                 <Accordion.Content active={activeIndex.includes(index)}>
                   <Grid divided stackable columns='two'>
-                    {this.checkIfFromAllpayHandle() ? (
+                    {this.checkIfAllpayHandleOpReturn() ? (
                       <Grid.Row>
-                        <Grid.Column width='12' className='recentTxidAddressColumn'>
+                        <Grid.Column width='16' className='recentTxidAddressColumn'>
                           <span className='monospace word-wrap recentTxidAddress'>
+                            <span className='purplefontcolor'>TxID : </span>
                             {transaction.txId}
                           </span>{' '}
                           <Link to={'/explorer/transaction/' + transaction.txId}>

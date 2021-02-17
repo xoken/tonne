@@ -75,17 +75,27 @@ class RenderOutput extends React.Component {
           }
         }
       }
-      return (
-        <p className='monospace'>
-          <span
-            className={`${addressStyle} embed-data word-wrap`}
-            title={title}
-            onClick={forTitleSection ? '' : this.toggleEmbedDataVisiblity}>
-            OP_RETURN{renderAdditionalInfo()}
-            {forTitleSection ? '' : <span style={{ color: 'black' }}>&#9660;</span>}
-          </span>
-        </p>
-      );
+      if (forTitleSection) {
+        return (
+          <p className='monospace'>
+            <span className='word-wrap purplefontcolor paddingLeftRight14px' title={title}>
+              {renderAdditionalInfo()}
+            </span>
+          </p>
+        );
+      } else {
+        return (
+          <p className='monospace'>
+            <span
+              className={`${addressStyle} embed-data word-wrap`}
+              title={title}
+              onClick={this.toggleEmbedDataVisiblity}>
+              OP_RETURN{renderAdditionalInfo()}
+              {<span style={{ color: 'black' }}>&#9660;</span>}
+            </span>
+          </p>
+        );
+      }
     }
     return null;
   }
@@ -111,22 +121,26 @@ class RenderOutput extends React.Component {
   }
 
   render() {
-    const { key, valueStyle, value } = this.props;
-    return (
-      <Grid key={key}>
-        <Grid.Row>
-          <Grid.Column computer='12' tablet='11' mobile='11'>
-            {this.renderOutput()}
-          </Grid.Column>
-          <Grid.Column computer='4' tablet='5' mobile='5' textAlign='right'>
-            <p className='monospace'>
-              <span className={valueStyle}>{utils.satoshiToBSV(value)}</span>
-            </p>
-          </Grid.Column>
-        </Grid.Row>
-        {this.renderEmbedData()}
-      </Grid>
-    );
+    const { key, valueStyle, value, forTitleSection } = this.props;
+    if (forTitleSection) {
+      return <span>{this.renderOutput()}</span>;
+    } else {
+      return (
+        <Grid key={key}>
+          <Grid.Row>
+            <Grid.Column computer='12' tablet='11' mobile='11'>
+              {this.renderOutput()}
+            </Grid.Column>
+            <Grid.Column computer='4' tablet='5' mobile='5' textAlign='right'>
+              <p className='monospace'>
+                <span className={valueStyle}>{utils.satoshiToBSV(value)}</span>
+              </p>
+            </Grid.Column>
+          </Grid.Row>
+          {this.renderEmbedData()}
+        </Grid>
+      );
+    }
   }
 }
 
