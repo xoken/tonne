@@ -44,7 +44,7 @@ class RenderOutput extends React.Component {
               return (
                 <>
                   {' '}
-                  Proxy registration: <i>{utils.codePointToName(name)}</i>{' '}
+                  Proxy registration : <i>{utils.codePointToName(name)}</i>{' '}
                 </>
               );
             }
@@ -52,7 +52,7 @@ class RenderOutput extends React.Component {
             return (
               <>
                 {' '}
-                Purchase: <i>{utils.codePointToName(name)}</i>{' '}
+                Purchase : <i>{utils.codePointToName(name)}</i>{' '}
               </>
             );
           }
@@ -78,7 +78,9 @@ class RenderOutput extends React.Component {
       if (forTitleSection) {
         return (
           <p className='monospace'>
-            <span className='word-wrap purplefontcolor paddingLeftRight14px' title={title}>
+            <span
+              className='word-wrap purplefontcolor paddingLeftRight14px fontWeightBold'
+              title={title}>
               {renderAdditionalInfo()}
             </span>
           </p>

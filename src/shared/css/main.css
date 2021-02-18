@@ -907,18 +907,32 @@ body {
   color: lightgrey;
 }
 .toArrow{
-  color: #000080;
-  background-color: #FDFD31;
+  color: #013222;
+  background-color: #FBFB90;
   font-weight: bold !important;
   display: inline-block;
   border-radius: 60px;
   padding: 4px 10px 5px 10px;
 }
 .fromArrow{
-  color: #013220;
-  background-color: #97E47E;
+  color: #013222;
+  background-color: #BFFFAA;
   font-weight: bold !important;
   display: inline-block;
   border-radius: 60px;
   padding: 4px 10px 5px 10px;
+}
+
+.fontWeightBold{
+  font-weight: bold;
+}
+.paddingTop14px{
+  padding-top: 14px;
+}
+.paddingTop28px{
+  padding-top: 28px !important;
+}
+.paddingLeftRight5px{
+  padding-left:5px !important;
+  padding-right: 5px !important;
 }

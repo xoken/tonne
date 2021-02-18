@@ -85,7 +85,7 @@ class RecentTransaction extends React.Component {
     this.setState({ activeIndex: newIndex });
   };
   checkIfAllpayHandleOpReturn = () => {
-    return true;
+    return false;
   };
   titleSection = (txOuts, transaction) => {
     let titlePicked = false;
@@ -127,8 +127,8 @@ class RecentTransaction extends React.Component {
       }
       return (
         <>
-          <Grid.Column computer={1} mobile={3} className='recentTxidAddressColumn'>
-            <Icon name='dropdown' className='dropdownTriangle' />
+          <Grid.Column computer={1} tablet={2} mobile={4} className='recentTxidAddressColumn'>
+            <Icon name='dropdown' className='dropdownTriangle paddingLeftRight5px' />
             <span className='purplefontcolor paddingLeftRight14px'>
               {determineToOrFromAllpay() === 'to' ? (
                 <span className='toArrow'>&#129133; </span>
@@ -137,7 +137,11 @@ class RecentTransaction extends React.Component {
               )}{' '}
             </span>
           </Grid.Column>
-          <Grid.Column computer={9} mobile={6} className='recentTxidAddressColumn purplefontcolor'>
+          <Grid.Column
+            computer={9}
+            tablet={7}
+            mobile={5}
+            className='recentTxidAddressColumn purplefontcolor'>
             aa/allpayname
           </Grid.Column>
         </>
@@ -147,6 +151,7 @@ class RecentTransaction extends React.Component {
         <>
           {' '}
           <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
+            <Icon name='dropdown' className='dropdownTriangle' />
             <span className='monospace word-wrap recentTxidAddress'>{transaction.txId}</span>{' '}
             <Link to={'/explorer/transaction/' + transaction.txId}>
               <span className='padding5px'>
@@ -214,7 +219,6 @@ class RecentTransaction extends React.Component {
                   onClick={this.onTransactionTitleClick}>
                   <Grid>
                     {this.titleSection(txOuts, transaction)}
-
                     <Grid.Column
                       computer={5}
                       tablet={5}
@@ -247,10 +251,10 @@ class RecentTransaction extends React.Component {
                 <Accordion.Content active={activeIndex.includes(index)}>
                   <Grid divided stackable columns='two'>
                     {this.checkIfAllpayHandleOpReturn() ? (
-                      <Grid.Row>
+                      <Grid.Row className='paddingTop28px'>
                         <Grid.Column width='16' className='recentTxidAddressColumn'>
-                          <span className='monospace word-wrap recentTxidAddress'>
-                            <span className='purplefontcolor'>TxID : </span>
+                          <span className='monospace word-wrap paddingLeftRight14px'>
+                            <span className='purplefontcolor fontWeightBold'>TxID : </span>
                             {transaction.txId}
                           </span>{' '}
                           <Link to={'/explorer/transaction/' + transaction.txId}>
