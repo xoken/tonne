@@ -84,6 +84,85 @@ class RecentTransaction extends React.Component {
     }
     this.setState({ activeIndex: newIndex });
   };
+  checkIfAllpayHandleOpReturn = () => {
+    return false;
+  };
+  titleSection = (txOuts, transaction) => {
+    let titlePicked = false;
+    let renderOutput = undefined;
+    renderOutput = txOuts.map((output, index) => {
+      if (
+        output.lockingScript &&
+        output.lockingScript.startsWith('006a0f416c6c65676f72792f416c6c506179')
+      ) {
+        titlePicked = true;
+        return (
+          <RenderOutput
+            key={index.toString()}
+            addressStyle={output.isNUTXO ? 'nUTXO' : ''}
+            address={output.address}
+            script={output.lockingScript}
+            title={output.isNUTXO ? 'Name UTXO' : undefined}
+            valueStyle={output.isMine ? 'credit' : ''}
+            value={output.value}
+            forTitleSection={true}
+          />
+        );
+      }
+    });
+    if (titlePicked) {
+      for (let op = 0; op < renderOutput.length; op++)
+        if (renderOutput[op]) {
+          return (
+            <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
+              <Icon name='dropdown' className='dropdownTriangle' />
+              {renderOutput[op]}
+            </Grid.Column>
+          );
+        }
+    }
+    if (!titlePicked && this.checkIfAllpayHandleOpReturn()) {
+      function determineToOrFromAllpay() {
+        return 'from';
+      }
+      return (
+        <>
+          <Grid.Column computer={1} tablet={2} mobile={4} className='recentTxidAddressColumn'>
+            <Icon name='dropdown' className='dropdownTriangle paddingLeftRight5px' />
+            <span className='purplefontcolor paddingLeftRight14px'>
+              {determineToOrFromAllpay() === 'to' ? (
+                <span className='toArrow'>&#129133; </span>
+              ) : (
+                <span className='fromArrow'>&#129134; </span>
+              )}{' '}
+            </span>
+          </Grid.Column>
+          <Grid.Column
+            computer={9}
+            tablet={7}
+            mobile={5}
+            className='recentTxidAddressColumn purplefontcolor'>
+            aa/allpayname
+          </Grid.Column>
+        </>
+      );
+    } else if (!titlePicked) {
+      return (
+        <>
+          {' '}
+          <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
+            <Icon name='dropdown' className='dropdownTriangle' />
+            <span className='monospace word-wrap recentTxidAddress'>{transaction.txId}</span>{' '}
+            <Link to={'/explorer/transaction/' + transaction.txId}>
+              <span className='padding5px'>
+                <i className='walletLink'></i>
+              </span>
+            </Link>
+          </Grid.Column>
+        </>
+      );
+    }
+  };
 
   renderTransaction() {
     const { activeIndex } = this.state;
@@ -139,21 +218,16 @@ class RecentTransaction extends React.Component {
                   index={index}
                   onClick={this.onTransactionTitleClick}>
                   <Grid>
-                    <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
-                      <Icon name='dropdown' className='purplefontcolor' />
-                      <span className='monospace word-wrap recentTxidAddress'>
-                        {transaction.txId}
-                      </span>{' '}
-                      <Link to={'/explorer/transaction/' + transaction.txId}>
-                        <span className='padding5px'>
-                          <i className='walletLink'></i>
-                        </span>
-                      </Link>
-                    </Grid.Column>
-                    <Grid.Column computer={5} mobile={5} textAlign='right' className='word-wrap'>
+                    {this.titleSection(txOuts, transaction)}
+                    <Grid.Column
+                      computer={5}
+                      tablet={5}
+                      mobile={5}
+                      textAlign='right'
+                      className='word-wrap'>
                       {renderCreditOrDebit(credit, debit)}
                     </Grid.Column>
-                    <Grid.Column computer={1} mobile={2} textAlign='right'>
+                    <Grid.Column computer={1} tablet={1} mobile={2} textAlign='right'>
                       <Label className='plain'>
                         <i
                           title={
@@ -176,6 +250,23 @@ class RecentTransaction extends React.Component {
                 </Accordion.Title>
                 <Accordion.Content active={activeIndex.includes(index)}>
                   <Grid divided stackable columns='two'>
+                    {this.checkIfAllpayHandleOpReturn() ? (
+                      <Grid.Row className='paddingTop28px'>
+                        <Grid.Column width='16' className='recentTxidAddressColumn'>
+                          <span className='monospace word-wrap paddingLeftRight14px'>
+                            <span className='purplefontcolor fontWeightBold'>TxID : </span>
+                            {transaction.txId}
+                          </span>{' '}
+                          <Link to={'/explorer/transaction/' + transaction.txId}>
+                            <span className='padding5px'>
+                              <i className='walletLink'></i>
+                            </span>
+                          </Link>
+                        </Grid.Column>
+                      </Grid.Row>
+                    ) : (
+                      ''
+                    )}
                     <Grid.Row>
                       <Grid.Column>
                         <div className='paddingLeftRight14px'>
@@ -185,25 +276,24 @@ class RecentTransaction extends React.Component {
                           {txInps.map((input, index) => {
                             return (
                               <Grid key={index.toString()}>
-                                <Grid.Column width='10'>
-                                  <p className='monospace word-wrap'>
+                                <Grid.Column computer='12' tablet='11' mobile='11'>
+                                  <p className='monospace word-wrap recentTxidAddressColumn'>
                                     <span
-                                      className={
-                                        input.isNUTXO
-                                          ? 'nUTXO recentTxidAddressColumn'
-                                          : 'recentTxidAddressColumn'
-                                      }
+                                      className={input.isNUTXO ? 'nUTXO' : undefined}
                                       title={input.isNUTXO ? 'Name UTXO' : undefined}>
-                                      <span className='recentTxidAddress'>{input.address}</span>
-                                      <Link to={'/explorer/address/' + input.address}>
-                                        <span className='padding5px'>
-                                          <i className='walletLink'></i>
-                                        </span>
-                                      </Link>
+                                      {input.address}
                                     </span>
+
+                                    <Link
+                                      to={'/explorer/address/' + input.address}
+                                      className='recentTxidAddress'>
+                                      <span className='padding5px'>
+                                        <i className='walletLink'></i>
+                                      </span>
+                                    </Link>
                                   </p>
                                 </Grid.Column>
-                                <Grid.Column width='6' textAlign='right'>
+                                <Grid.Column computer='4' tablet='5' mobile='5' textAlign='right'>
                                   <p className='monospace'>
                                     <span className={input.isMine ? 'debit' : ''}>
                                       {utils.satoshiToBSV(input.value)}
@@ -232,6 +322,7 @@ class RecentTransaction extends React.Component {
                                 title={output.isNUTXO ? 'Name UTXO' : undefined}
                                 valueStyle={output.isMine ? 'credit' : ''}
                                 value={output.value}
+                                forTitleSection={false}
                               />
                               // </Grid.Column>
                               // <Grid.Column width='6' textAlign='right'>

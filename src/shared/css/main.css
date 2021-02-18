@@ -226,6 +226,7 @@
   border: 1px solid rgba(34, 36, 38, 0.15);
   padding: 1em;
   white-space: pre-wrap;
+  word-wrap: anywhere;
 }
 .progressIndicatorStep {
   width: 10px;
@@ -852,10 +853,9 @@ body {
 
 .walletLink {
     scale: 66%;
-
     box-sizing: border-box;
     position: absolute;
-    top:45%;
+    top:50%;
     display: block;
     transform: rotate(-45deg) scale(var(--ggs,1));
     width: 7px;
@@ -900,4 +900,39 @@ body {
 }
 .padding5px{
   padding: 10px;
+}
+.dropdownTriangle{
+  top: 3px;
+  position: relative;
+  color: lightgrey;
+}
+.toArrow{
+  color: #013222;
+  background-color: #FBFB90;
+  font-weight: bold !important;
+  display: inline-block;
+  border-radius: 60px;
+  padding: 4px 10px 5px 10px;
+}
+.fromArrow{
+  color: #013222;
+  background-color: #BFFFAA;
+  font-weight: bold !important;
+  display: inline-block;
+  border-radius: 60px;
+  padding: 4px 10px 5px 10px;
+}
+
+.fontWeightBold{
+  font-weight: bold;
+}
+.paddingTop14px{
+  padding-top: 14px;
+}
+.paddingTop28px{
+  padding-top: 28px !important;
+}
+.paddingLeftRight5px{
+  padding-left:5px !important;
+  padding-right: 5px !important;
 }

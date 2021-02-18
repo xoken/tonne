@@ -18,18 +18,18 @@ class RenderOutput extends React.Component {
   };
 
   renderOutput() {
-    const { addressStyle, address, script, title } = this.props;
+    const { addressStyle, address, script, title, forTitleSection } = this.props;
     if (address) {
       return (
-        <p className='monospace word-wrap'>
-          <span className={'recentTxidAddressColumn ' + addressStyle} title={title}>
-            <span className='recentTxidAddress'>{address}</span>
-            <Link to={'/explorer/address/' + address}>
-              <span className='padding5px'>
-                <i className='walletLink'></i>
-              </span>
-            </Link>
+        <p className='monospace word-wrap recentTxidAddressColumn'>
+          <span className={addressStyle} title={title}>
+            {address}
           </span>
+          <Link to={'/explorer/address/' + address} className='recentTxidAddress'>
+            <span className='padding5px'>
+              <i className='walletLink'></i>
+            </span>
+          </Link>
         </p>
       );
     } else if (script && script.startsWith('006a0f416c6c65676f72792f416c6c506179')) {
@@ -44,7 +44,7 @@ class RenderOutput extends React.Component {
               return (
                 <>
                   {' '}
-                  Proxy registration: <i>{utils.codePointToName(name)}</i>{' '}
+                  Proxy registration : <i>{utils.codePointToName(name)}</i>{' '}
                 </>
               );
             }
@@ -52,7 +52,7 @@ class RenderOutput extends React.Component {
             return (
               <>
                 {' '}
-                Purchase: <i>{utils.codePointToName(name)}</i>{' '}
+                Purchase : <i>{utils.codePointToName(name)}</i>{' '}
               </>
             );
           }
@@ -75,17 +75,29 @@ class RenderOutput extends React.Component {
           }
         }
       }
-      return (
-        <p className='monospace paddingLeftRight14px'>
-          <span
-            className={`${addressStyle} embed-data word-wrap`}
-            title={title}
-            onClick={this.toggleEmbedDataVisiblity}>
-            OP_RETURN{renderAdditionalInfo()}
-            <span style={{ color: 'black' }}>&#9660;</span>
-          </span>
-        </p>
-      );
+      if (forTitleSection) {
+        return (
+          <p className='monospace'>
+            <span
+              className='word-wrap purplefontcolor paddingLeftRight14px fontWeightBold'
+              title={title}>
+              {renderAdditionalInfo()}
+            </span>
+          </p>
+        );
+      } else {
+        return (
+          <p className='monospace'>
+            <span
+              className={`${addressStyle} embed-data word-wrap`}
+              title={title}
+              onClick={this.toggleEmbedDataVisiblity}>
+              OP_RETURN{renderAdditionalInfo()}
+              {<span style={{ color: 'black' }}>&#9660;</span>}
+            </span>
+          </p>
+        );
+      }
     }
     return null;
   }
@@ -111,20 +123,26 @@ class RenderOutput extends React.Component {
   }
 
   render() {
-    const { key, valueStyle, value } = this.props;
-    return (
-      <Grid key={key}>
-        <Grid.Row>
-          <Grid.Column width='11'>{this.renderOutput()}</Grid.Column>
-          <Grid.Column width='5' textAlign='right'>
-            <p className='monospace'>
-              <span className={valueStyle}>{utils.satoshiToBSV(value)}</span>
-            </p>
-          </Grid.Column>
-        </Grid.Row>
-        {this.renderEmbedData()}
-      </Grid>
-    );
+    const { key, valueStyle, value, forTitleSection } = this.props;
+    if (forTitleSection) {
+      return <span>{this.renderOutput()}</span>;
+    } else {
+      return (
+        <Grid key={key}>
+          <Grid.Row>
+            <Grid.Column computer='12' tablet='11' mobile='11'>
+              {this.renderOutput()}
+            </Grid.Column>
+            <Grid.Column computer='4' tablet='5' mobile='5' textAlign='right'>
+              <p className='monospace'>
+                <span className={valueStyle}>{utils.satoshiToBSV(value)}</span>
+              </p>
+            </Grid.Column>
+          </Grid.Row>
+          {this.renderEmbedData()}
+        </Grid>
+      );
+    }
   }
 }
 

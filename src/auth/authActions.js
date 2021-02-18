@@ -114,6 +114,7 @@ export const login = (profileId, password) => async (dispatch, getState, { servi
     }
   } catch (error) {
     dispatch(loginFailure());
+    throw error;
   }
 };
 
