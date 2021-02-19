@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { NavLink, Link } from 'react-router-dom';
-import { Dropdown, Divider } from 'semantic-ui-react';
+import { Dropdown, Divider, Icon } from 'semantic-ui-react';
 import images from '../images';
 
 class Header extends React.Component {
@@ -106,6 +106,21 @@ class Header extends React.Component {
                   className='icon'
                 />
                 Wallet
+              </NavLink>
+              <NavLink
+                to='/mail'
+                activeClassName='activeheader'
+                className='item headertabitems headerWallet'>
+                <Icon
+                  name='mail'
+                  style={{
+                    display: 'block',
+                    height: 23,
+                    width: 'auto',
+                    borderRadius: '100px',
+                  }}
+                />
+                Mail
               </NavLink>
               {/* <NavLink
                 to='/settings'

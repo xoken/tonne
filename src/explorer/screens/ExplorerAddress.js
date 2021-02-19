@@ -57,6 +57,28 @@ class ExplorerAddress extends React.Component {
     }
   };
 
+  calculateSatoshisForEachTx = valueSet => {
+    let inputSats = 0,
+      outputSats = 0;
+    for (let i = 0; i < Object.keys(valueSet.tx.txInps).length; i++) {
+      if (valueSet.tx.txInps[i].address === this.address) {
+        inputSats += valueSet.tx.txInps[i].value;
+      }
+    }
+    for (let index = 0; index < Object.keys(valueSet.tx.txOuts).length; index++) {
+      if (valueSet.tx.txOuts[index].address === this.address) {
+        outputSats += valueSet.tx.txOuts[index].value;
+      }
+    }
+    if (outputSats - inputSats > 0) {
+      return <span className='colorGreen'>+{(outputSats - inputSats).toString()}</span>;
+    } else if (outputSats - inputSats < 0) {
+      return <span className='colorRed'>{(outputSats - inputSats).toString()}</span>;
+    } else {
+      return 'No change in value';
+    }
+  };
+
   printresults = async () => {
     this.txlist.length = 0;
     var printbreaker = 1;
@@ -84,18 +106,18 @@ class ExplorerAddress extends React.Component {
               <Grid.Column>
                 <Grid>
                   <Grid.Row columns={2}>
-                    <Grid.Column computer={2} mobile={2}>
+                    <Grid.Column computer={1} tablet={2} mobile={4}>
                       <b>Satoshis: </b>
                     </Grid.Column>
-                    <Grid.Column computer={14} mobile={14}>
-                      {this.addressCache[i].value}
+                    <Grid.Column computer={15} tablet={14} mobile={12}>
+                      {this.calculateSatoshisForEachTx(this.addressCache[i])}
                     </Grid.Column>
                   </Grid.Row>
                   <Grid.Row className='nopaddingtop'>
-                    <Grid.Column computer={1} tablet={2} mobile={3}>
+                    <Grid.Column computer={1} tablet={2} mobile={4}>
                       <b>Block:</b>
                     </Grid.Column>
-                    <Grid.Column computer={15} tablet={14} mobile={13}>
+                    <Grid.Column computer={15} tablet={14} mobile={12}>
                       <span className='tdwordbreak'>
                         <Link to={'/explorer/blockhash/' + this.addressCache[i].blockHash}>
                           {this.addressCache[i].blockHash}

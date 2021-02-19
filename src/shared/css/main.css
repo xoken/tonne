@@ -310,6 +310,42 @@
 .buyallpaybuttonactive {
   display: none !important;
 }
+.headerWalletButton {
+  background-color: #ff7f7f;
+  color: white;
+  padding: 8px 10px 8px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  position: relative;
+  margin-left: 0px;
+  margin-right: 10px;
+}
+.headerWalletButton:hover {
+  color: white;
+}
+.headerWalletButtonactive {
+  background-color: white;
+  color: #ff7f7f;
+  border-color: #ff7f7f;
+}
+.headerMailButton {
+  background-color: #ff7f7f;
+  color: white;
+  padding: 8px 10px 8px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  position: relative;
+  margin-left: 0px;
+  margin-right: 10px;
+}
+.headerMailButton:hover {
+  color: white;
+}
+.headerMailButtonactive {
+  background-color: white;
+  color: #ff7f7f;
+  border-color: #ff7f7f;
+}
 .ui.dropdown .menu > .item a,
 .ui.dropdown .menu > .item span {
   color: #922fdf;
@@ -935,4 +971,10 @@ body {
 .paddingLeftRight5px{
   padding-left:5px !important;
   padding-right: 5px !important;
+}
+.colorRed{
+  color:red;
+}
+.colorGreen{
+  color:green;
 }
