@@ -154,7 +154,7 @@ class RecentTransaction extends React.Component {
             <Icon name='dropdown' className='dropdownTriangle' />
             <span className='monospace word-wrap recentTxidAddress'>{transaction.txId}</span>{' '}
             <Link to={'/explorer/transaction/' + transaction.txId}>
-              <span className='padding5px'>
+              <span className='padding10px'>
                 <i className='walletLink'></i>
               </span>
             </Link>
@@ -258,7 +258,7 @@ class RecentTransaction extends React.Component {
                             {transaction.txId}
                           </span>{' '}
                           <Link to={'/explorer/transaction/' + transaction.txId}>
-                            <span className='padding5px'>
+                            <span className='padding10px'>
                               <i className='walletLink'></i>
                             </span>
                           </Link>
@@ -287,7 +287,7 @@ class RecentTransaction extends React.Component {
                                     <Link
                                       to={'/explorer/address/' + input.address}
                                       className='recentTxidAddress'>
-                                      <span className='padding5px'>
+                                      <span className='padding10px'>
                                         <i className='walletLink'></i>
                                       </span>
                                     </Link>

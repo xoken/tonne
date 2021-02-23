@@ -7,14 +7,35 @@ import { Button, Grid, Input, Divider, Icon, TextArea } from 'semantic-ui-react'
 class AttachFile extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { files: null };
   }
 
+  componentDidMount() {
+    window.addEventListener('dragenter', this.onDragOverEnter);
+    window.addEventListener('dragover', this.onDragOverEnter);
+    window.addEventListener('drop', this.onDragOverEnter);
+    document.getElementById('files').addEventListener('dragleave', this.onDragLeave);
+  }
   onCancel = () => {
     this.props.onCancel();
   };
 
+  onDragOverEnter = event => {
+    event.preventDefault();
+  };
+  onDragLeave = event => {
+    this.setState({ className: 'drop-zone-hide' });
+    event.stopPropagation();
+    event.preventDefault();
+  };
+
+  onFileDrop = event => {
+    this.setState({ files: event.dataTransfer.files });
+    event.preventDefault();
+  };
+
   render() {
+    console.log(this.state.files);
     return (
       <>
         <Grid>
@@ -22,11 +43,13 @@ class AttachFile extends React.Component {
             <Grid.Column>
               <Input
                 fluid
-                type='text'
+                id='files'
+                type='file'
                 className='form-control'
                 value=''
                 placeholder='Drop file here'
                 style={{ width: '100%', height: '300px' }}
+                onChange={event => this.setState({ files: event.target.files[0] })}
               />
               <br />
             </Grid.Column>

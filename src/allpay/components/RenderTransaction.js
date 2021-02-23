@@ -122,7 +122,7 @@ class RenderTransaction extends React.Component {
                                 30
                               )}...[${input.index}]`}</span>
                               <Link to={'/explorer/transaction/' + transactionId}>
-                                <span className='padding5px'>
+                                <span className='padding10px'>
                                   <i className='walletLink'></i>
                                 </span>
                               </Link>

@@ -47,184 +47,127 @@ class MailDashboard extends React.Component {
 
   sentMailSection = () => {
     const { sentMailSection, toggleFullMailPane } = this.state;
+    let sentmail = [
+      {
+        toaddress: 'aa/allpayname',
+        time: '10:10',
+        subject: 'welcome to',
+        currentlyOpenMail: 'sent1',
+      },
+      { toaddress: 'aa/allpayname', time: '10:10', subject: 'Welcome', currentlyOpenMail: 'sent2' },
+    ];
+
     if (sentMailSection) {
-      return (
-        <>
-          <Grid>
-            <Grid.Row
-              onClick={
-                toggleFullMailPane
-                  ? event => this.setState({ currentlyOpenMail: 'sent1' })
-                  : event =>
-                      this.setState({
-                        currentlyOpenMail: 'sent1',
-                        toggleFullMailPane: !toggleFullMailPane,
-                      })
-              }>
-              <Grid.Column
-                style={{
-                  boxShadow: '5px 5px 5px #fafafa',
-                  paddingTop: '12px',
-                  paddingBottom: '12px',
-                  marginTop: '8px',
-                  marginBottom: '8px',
-                }}>
-                <Grid>
-                  <Grid.Row>
-                    <Grid.Column computer={8} floated='left'>
-                      <span style={{ color: 'lightGrey' }}>aa/allpayname</span>
-                    </Grid.Column>
-                    <Grid.Column computer={2} floated='right'>
-                      <span style={{ color: 'lightGrey' }}>10:10</span>
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row>
-                    <Grid.Column computer={16} floated='left'>
-                      <b>welcome to</b>
-                    </Grid.Column>
-                  </Grid.Row>
-                </Grid>
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row
-              onClick={
-                toggleFullMailPane
-                  ? event => this.setState({ currentlyOpenMail: 'sent2' })
-                  : event =>
-                      this.setState({
-                        currentlyOpenMail: 'sent2',
-                        toggleFullMailPane: !toggleFullMailPane,
-                      })
-              }>
-              <Grid.Column
-                style={{
-                  boxShadow: '5px 5px 5px #fafafa',
-                  paddingTop: '12px',
-                  paddingBottom: '12px',
-                  marginTop: '8px',
-                  marginBottom: '8px',
-                }}>
-                <Grid>
-                  <Grid.Row>
-                    <Grid.Column computer={8} floated='left'>
-                      <span style={{ color: 'lightGrey' }}>aa/allpayname</span>
-                    </Grid.Column>
-                    <Grid.Column computer={2} floated='right'>
-                      <span style={{ color: 'lightGrey' }}>10:10</span>
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row>
-                    <Grid.Column computer={16} floated='left'>
-                      <b>Welcome</b>
-                    </Grid.Column>
-                  </Grid.Row>
-                </Grid>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
-        </>
-      );
+      return sentmail.map((mail, index) => {
+        return (
+          <Grid.Row
+            style={{ cursor: 'pointer' }}
+            onClick={
+              toggleFullMailPane
+                ? event => this.setState({ currentlyOpenMail: mail.currentlyOpenMail })
+                : event =>
+                    this.setState({
+                      currentlyOpenMail: mail.currentlyOpenMail,
+                      toggleFullMailPane: !toggleFullMailPane,
+                    })
+            }>
+            <Grid.Column
+              style={{
+                boxShadow: '5px 5px 5px #fafafa',
+                paddingTop: '12px',
+                paddingBottom: '12px',
+                marginTop: '8px',
+                marginBottom: '8px',
+              }}>
+              <Grid>
+                <Grid.Row>
+                  <Grid.Column computer={8} mobile={8} floated='left'>
+                    <span style={{ color: 'lightGrey' }}>{mail.toaddress}</span>
+                  </Grid.Column>
+                  <Grid.Column computer={2} mobile={8} floated='right'>
+                    <span style={{ color: 'lightGrey', float: 'right' }}>{mail.time}</span>
+                  </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                  <Grid.Column computer={16} floated='left'>
+                    <b>{mail.subject}</b>
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Grid.Column>
+          </Grid.Row>
+        );
+      });
     } else {
       return;
     }
   };
   inboxSection = () => {
     const { inboxSection, currentlyOpenMail, toggleFullMailPane } = this.state;
+    let inbox = [
+      {
+        fromaddress: 'aa/allpayname',
+        time: '10:10',
+        subject: 'Thank you for your interest in abc',
+        currentlyOpenMail: 'inbox1',
+      },
+      {
+        fromaddress: 'aa/allpayname',
+        time: '10:10',
+        subject: 'Thank you for buying a xyz',
+        currentlyOpenMail: 'inbox2',
+      },
+    ];
     if (inboxSection) {
-      return (
-        <>
-          <Grid>
-            <Grid.Row
-              onClick={
-                toggleFullMailPane
-                  ? event => this.setState({ currentlyOpenMail: 'inbox1' })
-                  : event =>
-                      this.setState({
-                        currentlyOpenMail: 'inbox1',
-                        toggleFullMailPane: !toggleFullMailPane,
-                      })
-              }>
-              <Grid.Column
-                style={{
-                  boxShadow: '5px 5px 5px #fafafa',
-                  paddingTop: '12px',
-                  paddingBottom: '12px',
-                  marginTop: '8px',
-                  marginBottom: '8px',
-                }}>
-                <Grid>
-                  <Grid.Row>
-                    <Grid.Column computer={8} floated='left'>
-                      {
-                        //allpayname
-                      }
-                      <span style={{ color: 'lightGrey' }}>aa/allpayname</span>
-                    </Grid.Column>
-                    <Grid.Column computer={2} floated='right'>
-                      {
-                        //time
-                      }
-                      <span style={{ color: 'lightGrey' }}>10:10</span>
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row>
-                    <Grid.Column computer={16} floated='left'>
-                      {
-                        //full Subject:
-                      }
-                      <b>Thank you for your interest in abc</b>
-                    </Grid.Column>
-                  </Grid.Row>
-                </Grid>
-              </Grid.Column>
-            </Grid.Row>
-            <Grid.Row
-              onClick={
-                toggleFullMailPane
-                  ? event => this.setState({ currentlyOpenMail: 'inbox2' })
-                  : event =>
-                      this.setState({
-                        currentlyOpenMail: 'inbox2',
-                        toggleFullMailPane: !toggleFullMailPane,
-                      })
-              }>
-              <Grid.Column
-                style={{
-                  boxShadow: '5px 5px 5px #fafafa',
-                  paddingTop: '12px',
-                  paddingBottom: '12px',
-                  marginTop: '8px',
-                  marginBottom: '8px',
-                }}>
-                <Grid>
-                  <Grid.Row>
-                    <Grid.Column computer={8} floated='left'>
-                      {
-                        //allpayname
-                      }
-                      <span style={{ color: 'lightGrey' }}>aa/allpayname</span>
-                    </Grid.Column>
-                    <Grid.Column computer={2} floated='right'>
-                      {
-                        //time
-                      }
-                      <span style={{ color: 'lightGrey' }}>10:10</span>
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row>
-                    <Grid.Column computer={16} floated='left'>
-                      {
-                        //full Subject:
-                      }
-                      <b>Thank you for buying a xyz</b>
-                    </Grid.Column>
-                  </Grid.Row>
-                </Grid>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
-        </>
-      );
+      return inbox.map((mail, index) => {
+        return (
+          <Grid.Row
+            style={{ cursor: 'pointer' }}
+            onClick={
+              toggleFullMailPane
+                ? event => this.setState({ currentlyOpenMail: mail.currentlyOpenMail })
+                : event =>
+                    this.setState({
+                      currentlyOpenMail: mail.currentlyOpenMail,
+                      toggleFullMailPane: !toggleFullMailPane,
+                    })
+            }>
+            <Grid.Column
+              style={{
+                boxShadow: '5px 5px 5px #fafafa',
+                paddingTop: '12px',
+                paddingBottom: '12px',
+                marginTop: '8px',
+                marginBottom: '8px',
+              }}>
+              <Grid>
+                <Grid.Row>
+                  <Grid.Column computer={8} mobile={8} floated='left'>
+                    {
+                      //allpayname
+                    }
+                    <span style={{ color: 'lightGrey' }}>{mail.fromaddress}</span>
+                  </Grid.Column>
+                  <Grid.Column computer={2} mobile={8} floated='right'>
+                    {
+                      //time
+                    }
+                    <span style={{ color: 'lightGrey', float: 'right' }}>{mail.time}</span>
+                  </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                  <Grid.Column computer={16} floated='left'>
+                    {
+                      //full Subject:
+                    }
+                    <b>{mail.subject}</b>
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Grid.Column>
+          </Grid.Row>
+        );
+      });
     } else {
       return;
     }
@@ -249,30 +192,36 @@ class MailDashboard extends React.Component {
       return (
         <Grid>
           <Grid.Row>
-            <Grid.Column computer={1} floated='right'>
+            <Grid.Column computer={16} mobile={16} floated='right'>
               {
                 //close pane
               }
               <span
-                style={{ color: 'lightgrey', cursor: 'pointer', padding: '8px', color: 'red' }}
+                style={{
+                  color: 'lightgrey',
+                  cursor: 'pointer',
+                  padding: '8px',
+                  color: 'red',
+                  float: 'right',
+                }}
                 onClick={this.toggleFullMailPane}>
                 X
               </span>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-            <Grid.Column computer={8} floated='left'>
+            <Grid.Column computer={8} mobile={8} floated='left'>
               {
                 //allpayname
               }
               <span style={{ color: 'lightgrey' }}>aa/allpayname</span>
             </Grid.Column>
 
-            <Grid.Column computer={2} floated='right'>
+            <Grid.Column computer={2} mobile={8} floated='right'>
               {
                 //time
               }
-              <span style={{ color: 'lightgrey' }}>10:10</span>
+              <span style={{ color: 'lightgrey', float: 'right' }}>10:10</span>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row computer={16}>
@@ -323,38 +272,44 @@ class MailDashboard extends React.Component {
     const { sentMailSection, inboxSection, toggleFullMailPane } = this.state;
     return (
       <>
-        <Grid>
-          <Grid.Row only='computer' centered>
-            <Grid.Column computer={16}>
-              <center>
-                <span
-                  className={inboxSection ? 'coral' : undefined}
-                  id='inbox'
-                  onClick={this.toggleFirstColumn}
-                  style={{ padding: '10px', cursor: 'pointer' }}>
-                  Inbox
-                </span>
-                <span
-                  className={sentMailSection ? 'coral' : undefined}
-                  id='sent'
-                  onClick={this.toggleFirstColumn}
-                  style={{ padding: '10px', cursor: 'pointer' }}>
-                  Sent
-                </span>
-              </center>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column computer={4} floated='left'>
-              <Button className='peach' onClick={this.toggleSendMailModal}>
-                Send Mail
-              </Button>
+        <Grid stackable>
+          <Grid.Row centered>
+            <Grid.Column computer={16} tablet={16} mobile={16}>
+              <Grid>
+                <Grid.Row verticalAlign='middle'>
+                  <Grid.Column computer={4} tablet={8} mobile={8} floated='left'>
+                    <Button className='peach' onClick={this.toggleSendMailModal}>
+                      Send Mail
+                    </Button>
+                  </Grid.Column>
+                  <Grid.Column computer={12} tablet={8} mobile={8}>
+                    <span className='sentInboxToggle'>
+                      <span
+                        className={inboxSection ? 'coral' : undefined}
+                        id='inbox'
+                        onClick={this.toggleFirstColumn}
+                        style={{ padding: '10px', cursor: 'pointer' }}>
+                        Inbox
+                      </span>
+                      <span
+                        className={sentMailSection ? 'coral' : undefined}
+                        id='sent'
+                        onClick={this.toggleFirstColumn}
+                        style={{ padding: '10px', cursor: 'pointer' }}>
+                        Sent
+                      </span>
+                    </span>
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
             <Grid.Column computer={toggleFullMailPane ? '6' : '16'}>
-              {this.inboxSection()}
-              {this.sentMailSection()}
+              <Grid>
+                {this.inboxSection()}
+                {this.sentMailSection()}
+              </Grid>
             </Grid.Column>
             {toggleFullMailPane ? (
               <Grid.Column computer='10'>{this.renderFullMail()}</Grid.Column>

@@ -564,6 +564,13 @@ input[type='number'] {
   background: url(../images/images/paper4.png) no-repeat center !important;
   /*animation: peachTurbulence2 ease 25s infinite;*/
 }
+.sentInboxToggle{
+  margin-left:28%;
+}
+.rdw-editor-main{
+  height:150px;
+  border: 1px solid rgba(34,36,38,.15);
+}
 @keyframes purpleTurbulence {
   0% {
     transform: rotate(0deg) translate(-100%, 60%);
@@ -834,6 +841,14 @@ transform: rotate(0deg) translate(inherit, inherit);
   .peachPaperRocket2{
     display: none;
   }
+
+}
+
+@media screen and (max-width: 991px) {
+  .sentInboxToggle{
+    margin-left: none;
+    float: right;
+  }
 }
 
 @media screen and (max-width: 706px) {
@@ -934,7 +949,7 @@ body {
   padding-top: 20px;
   padding-bottom: 20px;
 }
-.padding5px{
+.padding10px{
   padding: 10px;
 }
 .dropdownTriangle{
@@ -977,4 +992,10 @@ body {
 }
 .colorGreen{
   color:green;
+}
+
+.toFieldHighlight{
+  padding: 5px;
+  margin-bottom: 7px;
+  display: inline-block;
 }
