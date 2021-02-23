@@ -81,13 +81,13 @@ class RenderOutput extends React.Component {
             title={title}
             onClick={this.toggleEmbedDataVisiblity}>
             OP_RETURN{renderAdditionalInfo()}
-            {<span style={{ color: 'black' }}>&#9660;</span>}
+            {/* {<span style={{ color: 'black' }}>&#9660;</span>} */}
           </span>
         </p>
       );
     } else if (script) {
       return (
-        <p className='monospace paddingLeftRight14px'>
+        <p className='monospace'>
           <span className={`${addressStyle} embed-data word-wrap`} title={title}>
             {script}
           </span>

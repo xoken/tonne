@@ -85,14 +85,22 @@ class RecentTransaction extends React.Component {
   };
 
   renderTransactionHeader(transaction) {
-    if (transaction.additionalInfo) {
+    if (
+      transaction.additionalInfo &&
+      (transaction.additionalInfo.type === 'Purchase' ||
+        transaction.additionalInfo.type === 'Proxy registration')
+    ) {
       return (
-        <Grid.Column computer={10} mobile={9}>
-          <span>
-            {transaction.additionalInfo
-              ? JSON.stringify(transaction.additionalInfo)
-              : transaction.txId}
-          </span>
+        <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
+          <Icon name='dropdown' className='dropdownTriangle' />
+          <span className='monospace word-wrap recentTxidAddress'>
+            {`${transaction.additionalInfo.type} : ${transaction.additionalInfo.value}`}
+          </span>{' '}
+          <Link to={'/explorer/transaction/' + transaction.txId}>
+            <span className='padding5px'>
+              <i className='walletLink'></i>
+            </span>
+          </Link>
         </Grid.Column>
       );
     } else {
