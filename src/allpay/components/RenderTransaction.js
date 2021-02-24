@@ -8,7 +8,7 @@ import { utils } from 'allegory-allpay-sdk';
 
 class RenderTransaction extends React.Component {
   renderTransaction() {
-    const { psbt, inputs, ownOutputs, snv, addressCommitment, utxoCommitment } = this.props;
+    const { psbt, inputs, ownOutputs, snv } = this.props;
     if (psbt) {
       const { txInputs, txOutputs } = psbt;
 
@@ -25,22 +25,6 @@ class RenderTransaction extends React.Component {
                     SNV
                     <div className='detail'>
                       {snv ? <span>&#10003;</span> : <span>&#10005;</span>}
-                    </div>
-                  </div>
-                ) : null}
-                {addressCommitment !== null ? (
-                  <div className='ui green label'>
-                    Address Commitment
-                    <div className='detail'>
-                      {addressCommitment ? <span>&#10003;</span> : <span>&#10005;</span>}
-                    </div>
-                  </div>
-                ) : null}
-                {utxoCommitment !== null ? (
-                  <div className='ui green label'>
-                    UTXO Commitment
-                    <div className='detail'>
-                      {utxoCommitment ? <span>&#10003;</span> : <span>&#10005;</span>}
                     </div>
                   </div>
                 ) : null}
@@ -149,8 +133,6 @@ const mapStateToProps = state => ({
   inputs: state.allpay.inputs,
   ownOutputs: state.allpay.ownOutputs,
   snv: state.allpay.snv,
-  addressCommitment: state.allpay.addressCommitment,
-  utxoCommitment: state.allpay.utxoCommitment,
 });
 
 export default withRouter(connect(mapStateToProps)(RenderTransaction));

@@ -38,7 +38,7 @@ class RenderOutput extends React.Component {
         const { name, action } = allegoryJSON;
         if (action instanceof allegory.OwnerAction) {
           const ownerAction = action;
-          if (ownerAction.oProxyProviders.length > 0) {
+          if (ownerAction.registrations.length > 0) {
             if (name) {
               return (
                 <>
@@ -80,7 +80,8 @@ class RenderOutput extends React.Component {
             className={`${addressStyle} embed-data word-wrap`}
             title={title}
             onClick={this.toggleEmbedDataVisiblity}>
-            OP_RETURN{renderAdditionalInfo()}
+            OP_RETURN
+            {/* {renderAdditionalInfo()} */}
             {/* {<span style={{ color: 'black' }}>&#9660;</span>} */}
           </span>
         </p>

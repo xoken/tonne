@@ -21,12 +21,12 @@ class WalletService {
     return await wallet.getBalance();
   }
 
-  async createSendTransaction(args) {
-    return await wallet.createSendTransaction(args);
+  async createTransaction(args) {
+    return await wallet.createTransaction(args);
   }
 
-  async createAllpaySendTransaction(args) {
-    return await allPay.createTransaction(args);
+  async createAllpayTransaction(args) {
+    return await allPay.createAllpayTransaction(args);
   }
 
   async getUsedAddresses() {

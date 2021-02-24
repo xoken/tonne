@@ -118,13 +118,13 @@ class SendTransaction extends React.Component {
       if (isAllpayName) {
         try {
           await dispatch(
-            walletActions.createAllpaySendTransaction({
+            walletActions.createAllpayTransaction({
               allpayName: receiverAddress,
               amountInSatoshi,
               feeRate: Number(feeRate),
             })
           );
-          this.props.history.push('/wallet/allpay/transaction');
+          this.setState({ isError: false, message: 'Transaction Successful' });
         } catch (error) {
           this.setState({
             isError: true,
@@ -134,7 +134,7 @@ class SendTransaction extends React.Component {
       } else {
         try {
           await dispatch(
-            walletActions.createSendTransaction({
+            walletActions.createTransaction({
               receiverAddress,
               amountInSatoshi,
               feeRate: Number(feeRate),
@@ -142,7 +142,10 @@ class SendTransaction extends React.Component {
           );
           this.setState({ isError: false, message: 'Transaction Successful' });
         } catch (error) {
-          this.setState({ isError: true, message: error.message });
+          this.setState({
+            isError: true,
+            message: error.response && error.response.data ? error.response.data : error.message,
+          });
         }
       }
     } else {

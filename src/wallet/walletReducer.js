@@ -67,7 +67,7 @@ export default createReducer(
         return newTransactions;
       })(),
     }),
-    [actions.createSendTransactionSuccess]: (state, { transaction }) => ({
+    [actions.createTransactionSuccess]: (state, { transaction }) => ({
       ...state,
       transactions: [transaction, ...state.transactions],
     }),

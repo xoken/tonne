@@ -44,24 +44,18 @@ export const buyName = data => async (dispatch, getState, { serviceInjector }) =
   }
 };
 
-export const registerName = ({ proxyURI, name, addressCount }) => async (
-  dispatch,
-  getState,
-  { serviceInjector }
-) => {
+export const registerName = ({ name }) => async (dispatch, getState, { serviceInjector }) => {
   dispatch(registerNameRequest());
   try {
     const { transaction, txBroadcast } = await serviceInjector(AllpayService).registerName({
-      proxyURI,
       name,
-      addressCount,
     });
     if (txBroadcast) {
       dispatch(registerNameSuccess());
       await dispatch(walletActions.getAllpayHandles());
       await dispatch(walletActions.getUnregisteredNames());
       await dispatch(walletActions.getBalance());
-      dispatch(walletActions.createSendTransactionSuccess({ transaction }));
+      dispatch(walletActions.createTransactionSuccess({ transaction }));
     } else {
       throw new Error('Failed to broadcast transaction');
     }
@@ -87,7 +81,7 @@ export const signRelayTransaction = data => async (dispatch, getState, { service
     );
     dispatch(signRelayTransactionSuccess());
     await dispatch(walletActions.getBalance());
-    dispatch(walletActions.createSendTransactionSuccess({ transaction }));
+    dispatch(walletActions.createTransactionSuccess({ transaction }));
     return { txBroadcast };
   } catch (error) {
     dispatch(signRelayTransactionFailure());
