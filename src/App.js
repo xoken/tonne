@@ -67,7 +67,15 @@ class App extends React.Component {
               </Switch>
             </Container>
           </main>
-          {this.props.location.pathname !== '/auth/success' && <Footer />}
+          {this.props.location.pathname !== '/auth/success' ? (
+            this.props.location.pathname !== '/' ? (
+              <Footer />
+            ) : (
+              ''
+            )
+          ) : (
+            ''
+          )}
         </>
       );
     } else {

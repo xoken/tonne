@@ -1,4 +1,5 @@
 import { addressAPI, blockAPI, chainAPI, transactionAPI } from 'allegory-allpay-sdk';
+import * as _ from 'lodash';
 
 export default class ExplorerHttpsReq {
   static async httpsreq(...reqparameter) {
@@ -75,14 +76,13 @@ export default class ExplorerHttpsReq {
           });
         break;
       case 'getTransactionsByTxIDs':
-        tobeReturned = transactionAPI
-          .getTransactionsByTxIDs(reqparameter[1])
-          .then(data => {
-            return data;
+        const chunkedTxIds = _.chunk(reqparameter[1], 20);
+        const data = await Promise.all(
+          chunkedTxIds.map(async chunkedTxId => {
+            return await transactionAPI.getTransactionsByTxIDs(chunkedTxId);
           })
-          .catch(err => {
-            console.log(err);
-          });
+        );
+        tobeReturned = data[0];
         break;
       default:
         console.log('typo in request');

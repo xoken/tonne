@@ -45,13 +45,13 @@ class PartiallySignTransaction extends React.Component {
       if (isError) {
         return (
           <div className='ui negative message'>
-            <p>{message}</p>
+            <p className='word-wrap'>{message}</p>
           </div>
         );
       } else {
         return (
           <div className='ui success message'>
-            <p>{message}</p>
+            <p className='word-wrap'>{message}</p>
           </div>
         );
       }
@@ -100,8 +100,6 @@ const mapStateToProps = state => ({
   inputs: state.allpay.inputs,
   ownOutputs: state.allpay.ownOutputs,
   snv: state.allpay.snv,
-  addressCommitment: state.allpay.addressCommitment,
-  utxoCommitment: state.allpay.utxoCommitment,
 });
 
 export default withRouter(connect(mapStateToProps)(PartiallySignTransaction));

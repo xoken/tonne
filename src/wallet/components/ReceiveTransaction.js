@@ -51,7 +51,7 @@ class ReceiveTransaction extends React.Component {
                 <h4>My AllPay handle</h4>
               </div>
             </div>
-            <Message color='yellow' className='allpay-receive-message'>
+            <Message color='yellow' className='modal-message'>
               <p>
                 AllPay enabled wallets can send you BSV directly to your AllPay handle
                 <b>{` "${allpayHandles[0]}" `}</b>. The addresses are generated from on-chain

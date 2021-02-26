@@ -35,25 +35,33 @@ class WalletHeader extends React.Component {
 
   renderAllpayAction() {
     const { allpayHandles, unregisteredNames } = this.props;
-    if (unregisteredNames && unregisteredNames.length > 0) {
-      return (
+    // if (unregisteredNames && unregisteredNames.length > 0) {
+    return (
+      <>
         <NavLink
           className='buyallpaybutton'
           activeClassName='buyallpaybuttonactive'
           to={`/wallet/allpay/register?progressTotalSteps=3&activeStep=1`}>
           Register AllPay Name
         </NavLink>
-      );
-    } else if (allpayHandles && allpayHandles.length <= 0) {
-      return (
         <NavLink
           className='buyallpaybutton'
           activeClassName='buyallpaybuttonactive'
           to={`/wallet/allpay/search`}>
           Buy AllPay Name
         </NavLink>
-      );
-    }
+      </>
+    );
+    // } else if (allpayHandles && allpayHandles.length === 0) {
+    //   return (
+    //     <NavLink
+    //       className='buyallpaybutton'
+    //       activeClassName='buyallpaybuttonactive'
+    //       to={`/wallet/allpay/search`}>
+    //       Buy AllPay Name
+    //     </NavLink>
+    //   );
+    // }
   }
 
   render() {
@@ -71,15 +79,16 @@ class WalletHeader extends React.Component {
                 )}
               </Grid.Column>
               <Grid.Column computer={8} tablet={8} mobile={8} floated='right'>
-                <div className='floatRightOnComp'>
+                <div className='buttonFloatRightOnComp'>
                   {this.renderAllpayAction()}
                   <Dropdown
                     button
-                    className='icon coral button'
-                    icon={null}
-                    text='Options'
+                    style={{ borderRadius: '100px' }}
+                    className='icon circular coral'
+                    icon='user'
                     additionPosition='top'
-                    pointing>
+                    direction='left'
+                    pointing='top right'>
                     <Dropdown.Menu>
                       <Dropdown.Item>
                         <NavLink

@@ -1,17 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import {
-  Button,
-  Checkbox,
-  Form,
-  Grid,
-  Header,
-  Input,
-  Message,
-  Modal,
-  Segment,
-} from 'semantic-ui-react';
+import { Button, Checkbox, Form, Grid, Header, Message, Modal } from 'semantic-ui-react';
 import * as allpayActions from '../allpayActions';
 import * as walletActions from '../../wallet/walletActions';
 import { utils } from 'allegory-allpay-sdk';
@@ -20,12 +10,9 @@ class ProxyRegistration extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedProxyProvider: undefined,
-      addressCount: process.env.REACT_APP_PROXY_DEFAULT_ADDRESS_COUNT || 64,
       unregisteredNames: [],
       showRegistrationOptions: this.props.outpoint?.name ? false : true,
       name: this.props.outpoint?.name || [],
-      proxyProviders: [{ name: 'Xoken Proxy Provider', proxyURI: process.env.REACT_APP_PROXY_URI }],
       skipRegistrationModal: false,
       message: '',
       isError: false,
@@ -54,9 +41,6 @@ class ProxyRegistration extends React.Component {
         })
       );
     }
-    this.setState({
-      selectedProxyProvider: this.state.proxyProviders[0],
-    });
     const { names } = await dispatch(walletActions.getUnregisteredNames());
     const unregisteredNames = names.map(unregisteredName => ({
       text: unregisteredName,
@@ -71,19 +55,13 @@ class ProxyRegistration extends React.Component {
   }
 
   onRegister = async () => {
-    const {
-      selectedProxyProvider: { proxyURI },
-      name,
-      addressCount,
-    } = this.state;
+    const { name } = this.state;
     if (name.length > 0) {
       const { dispatch } = this.props;
       try {
         await dispatch(
           allpayActions.registerName({
-            proxyURI,
             name: utils.codePointToName(name),
-            addressCount,
           })
         );
         this.props.history.push('/wallet/allpay/register-success');
@@ -109,12 +87,6 @@ class ProxyRegistration extends React.Component {
     this.props.history.push('/wallet');
   };
 
-  onSelect = proxyProvider => async () => {
-    this.setState({
-      selectedProxyProvider: proxyProvider,
-    });
-  };
-
   renderMessage() {
     const { isError, message } = this.state;
     if (message) {
@@ -131,19 +103,15 @@ class ProxyRegistration extends React.Component {
   }
 
   renderHeader() {
-    const { name, selectedProxyProvider } = this.state;
+    const { name } = this.state;
     return (
       <>
-        <Header as='h3' textAlign='center'>
+        <Header as='h3' textAlign='center' className='word-wrap'>
           Register{' '}
           {name.length > 0 ? (
             <span className='purplefontcolor'>{utils.codePointToName(name)} </span>
           ) : (
             <span className='purplefontcolor'>name</span>
-          )}{' '}
-          with AllPay service provider{' '}
-          {selectedProxyProvider && (
-            <span className='purplefontcolor'>{selectedProxyProvider.name}</span>
           )}
         </Header>
         <Header textAlign='center'>
@@ -160,7 +128,6 @@ class ProxyRegistration extends React.Component {
     const { dispatch } = this.props;
     const { showRegistrationOptions, unregisteredNames } = this.state;
     if (showRegistrationOptions) {
-      const { addressCount } = this.state;
       return (
         <>
           <Grid.Row>
@@ -180,62 +147,10 @@ class ProxyRegistration extends React.Component {
               />
             </Grid.Column>
           </Grid.Row>
-          <Grid.Row>
-            <Grid.Column width={3} verticalAlign='middle'>
-              No of Address
-            </Grid.Column>
-            <Grid.Column width={6}>
-              <Input
-                type='number'
-                className='form-control'
-                value={addressCount}
-                onChange={event => this.setState({ addressCount: event.target.value })}
-              />
-            </Grid.Column>
-          </Grid.Row>
-          {this.renderProxyProviders()}
         </>
       );
     }
     return null;
-  }
-
-  renderProxyProviders() {
-    const { selectedProxyProvider, proxyProviders } = this.state;
-    return (
-      <Grid.Row>
-        <Grid.Column>
-          {proxyProviders.map((proxyProvider, index) => {
-            const { name } = proxyProvider;
-            const isSelected = selectedProxyProvider?.name === name;
-            return (
-              <Segment key={index.toString()}>
-                <Grid>
-                  <Grid.Row>
-                    <Grid.Column width='13' verticalAlign='middle'>
-                      <Header as='h4'>{name}</Header>
-                    </Grid.Column>
-                    <Grid.Column width='3'>
-                      <div className='ui form'>
-                        <div className='field'>
-                          <Button
-                            disabled={isSelected}
-                            fluid
-                            className='coral'
-                            onClick={this.onSelect(proxyProvider)}>
-                            {isSelected ? 'Selected' : 'Select'}
-                          </Button>
-                        </div>
-                      </div>
-                    </Grid.Column>
-                  </Grid.Row>
-                </Grid>
-              </Segment>
-            );
-          })}
-        </Grid.Column>
-      </Grid.Row>
-    );
   }
 
   renderSkipModal() {
@@ -267,7 +182,7 @@ class ProxyRegistration extends React.Component {
     const { showRegistrationOptions } = this.state;
     return (
       <>
-        <Grid>
+        <Grid stackable>
           <Grid.Row>
             <Grid.Column>{this.renderHeader()}</Grid.Column>
           </Grid.Row>

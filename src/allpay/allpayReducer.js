@@ -15,8 +15,6 @@ const INITIAL_STATE = {
   inputs: null,
   ownOutputs: null,
   snv: null,
-  addressCommitment: null,
-  utxoCommitment: null,
 };
 
 export default createReducer(
@@ -73,8 +71,6 @@ export default createReducer(
       inputs: null,
       ownOutputs: null,
       snv: null,
-      addressCommitment: null,
-      utxoCommitment: null,
     }),
     // [allpayActions.registerNameSuccess]: (state, { psbt, inputs, ownOutputs }) => ({
     //   ...state,
@@ -86,8 +82,6 @@ export default createReducer(
       ...state,
       requestInProgress: false,
       snv: null,
-      addressCommitment: null,
-      utxoCommitment: null,
     }),
     [allpayActions.registerNameFailure]: state => ({
       ...state,
@@ -101,23 +95,16 @@ export default createReducer(
       ...state,
       requestInProgress: false,
       snv: null,
-      addressCommitment: null,
-      utxoCommitment: null,
     }),
     [allpayActions.signRelayTransactionFailure]: state => ({
       ...state,
       requestInProgress: false,
     }),
-    [walletActions.createAllpaySendTransactionSuccess]: (
-      state,
-      { psbt, inputs, ownOutputs, addressCommitment, utxoCommitment }
-    ) => ({
+    [walletActions.createAllpayTransactionSuccess]: (state, { psbt, inputs, ownOutputs }) => ({
       ...state,
       psbt,
       inputs,
       ownOutputs,
-      addressCommitment,
-      utxoCommitment,
     }),
     [authActions.logoutSuccess]: state => ({
       ...INITIAL_STATE,

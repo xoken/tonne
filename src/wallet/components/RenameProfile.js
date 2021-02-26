@@ -55,6 +55,16 @@ class RenameProfile extends React.Component {
         <Modal.Content>
           <Modal.Description>
             <Grid centered>
+              <Grid.Row>
+                <Grid.Column>
+                  <Message color='yellow' className='modal-message'>
+                    <p>
+                      The wallet profile name is independent of your AllPay handle where you receive
+                      payments. You can look up your AllPay handle in the Receive page
+                    </p>
+                  </Message>
+                </Grid.Column>
+              </Grid.Row>
               <Grid.Column textAlign='center' width={8}>
                 <div className='ui form'>
                   <div className='field'>

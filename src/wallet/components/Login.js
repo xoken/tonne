@@ -25,8 +25,7 @@ class Login extends React.Component {
         await dispatch(authActions.login(profileId, password));
         this.props.onSuccess();
       } catch (error) {
-        this.setState({ error });
-        throw error;
+        this.setState({ error: 'Login error: Enter correct password.' });
       }
     }
   };
@@ -59,7 +58,7 @@ class Login extends React.Component {
                   }
                 />
                 {error && (
-                  <div className='invalid-feedback' style={{ display: 'block' }}>
+                  <div className='redalert' style={{ display: 'block' }}>
                     {error}
                   </div>
                 )}
