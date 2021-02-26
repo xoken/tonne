@@ -110,17 +110,19 @@ class Header extends React.Component {
               <NavLink
                 to='/mail'
                 activeClassName='activeheader'
-                className='item headertabitems headerWallet'>
-                <Icon
-                  name='mail'
+                className='item headertabitems headerVoxMail'>
+                <img
+                  alt='voxMail'
+                  src={images.voxmail}
                   style={{
                     display: 'block',
                     height: 23,
                     width: 'auto',
                     borderRadius: '100px',
                   }}
+                  className='icon'
                 />
-                Mail
+                voxMail
               </NavLink>
               {/* <NavLink
                 to='/settings'

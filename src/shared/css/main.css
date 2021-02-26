@@ -6,7 +6,7 @@
   font-family: 'moonhouse';
   color: #922fdf;
   padding: 15px 0px 15px 0px;
-  font-size: 20px;
+  font-size: 37px;
   font-weight: 700 !important;
 }
 
@@ -731,9 +731,7 @@ transform: rotate(0deg) translate(inherit, inherit);
   .headerLogo {
     width: 150px;
   }
-  .tonneLogo {
-    font-size: 37px;
-  }
+
   .footerLeftCol {
     margin-left: 18%;
   }
@@ -761,14 +759,7 @@ transform: rotate(0deg) translate(inherit, inherit);
   .bars {
     margin-right: 0px !important;
   }
-  .headerWallet {
-    min-width: auto !important;
-    padding: 6px 12px 6px 12px !important;
-  }
-  .headerExplorer {
-    min-width: auto !important;
-    padding: 6px !important;
-  }
+
   .noPaddingTopBottomFormobiles {
     padding-top: 0px !important;
     padding-bottom: 0px !important;
@@ -842,6 +833,68 @@ transform: rotate(0deg) translate(inherit, inherit);
     display: none;
   }
 
+}
+@media screen and (max-width: 561px) {
+  .headerWallet {
+    min-width: auto !important;
+    padding: 6px 12px 6px 12px !important;
+  }
+  .headerExplorer {
+    min-width: auto !important;
+    padding: 6px !important;
+  }
+  .headerVoxMail{
+    min-width: auto !important;
+    padding: 6px !important;
+  }
+  .tonneLogo {
+    font-size: 20px;
+  }
+}
+
+@media screen and (max-width: 377px) {
+  .headerWallet {
+    min-width: auto !important;
+    padding: 3px 10px 3px 10px !important;
+    margin: 0px 3px 0px 0px !important;
+  }
+  .headerExplorer {
+    min-width: auto !important;
+    padding: 3px !important;
+    margin: 0px 3px 0px 0px !important;
+  }
+  .headerVoxMail{
+    min-width: auto !important;
+    padding: 3px !important;
+    margin: 0px !important;
+  }
+  .tonneLogo {
+    font-size: 17px;
+  }
+
+  .menuDropdown{
+    scale:78%;
+  }
+  .page-header > .container > .menu > .header {
+    margin-right:2px;
+  }
+  .page-header > .container > .menu > .right {
+    margin-left:0px !important;
+  }
+}
+
+@media screen and (max-width:335px){
+  .page-header > .container {
+    margin-left: 4px !important;
+  }
+  .menuDropdown{
+    scale:75%;
+  }
+  .headerWallet {
+    min-width: auto !important;
+    padding: 3px 8px 3px 8px !important;
+    margin: 0px 3px 0px 0px !important;
+  }
 }
 
 @media screen and (max-width: 991px) {
@@ -997,5 +1050,30 @@ body {
 .toFieldHighlight{
   padding: 5px;
   margin-bottom: 7px;
+  margin-top: 7px;
   display: inline-block;
+}
+
+.toField > input{
+  border: none !important;
+  overflow: auto !important;
+  outline: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+  resize: none !important;
+  padding:0px 17px 0px 17px;
+  vertical-align: middle;
+}
+
+.toFieldSpanEnvelope{
+  padding: 10px 0px 10px 0px;
+  border-bottom: 1px solid rgba(34,36,38,.15);
+  width:100% !important;
+}
+.toFieldSpanEnvelope:focus {
+  border-color: #85b7d9;
+  background: #fff;
+  color: rgba(0,0,0,.8);
+  box-shadow: none;
 }

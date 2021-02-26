@@ -10,6 +10,8 @@ import TextEditor from '../components/TextEditor';
 class SendMail extends React.Component {
   constructor(props) {
     super(props);
+    this.maxWidthRef = React.createRef();
+    this.toFieldWidthRef = React.createRef();
     this.state = {
       files: undefined,
       attachFileModal: false,
@@ -18,8 +20,11 @@ class SendMail extends React.Component {
       messageBodyField: '',
       errorMessage: '',
       toFieldHtml: undefined,
+      toFieldTemp: undefined,
+      toFieldWidth: undefined,
     };
   }
+  maxWidth = 0;
 
   onCancel = () => {
     this.props.onCancel();
@@ -72,6 +77,8 @@ class SendMail extends React.Component {
     window.addEventListener('dragover', this.onDragOverEnter);
     window.addEventListener('drop', this.onFileDrop);
     document.getElementById('files').addEventListener('dragleave', this.onDragLeave);
+    this.setState({ toFieldWidth: this.maxWidthRef.current.offsetWidth });
+    this.maxWidth = this.maxWidthRef.current.offsetWidth;
   }
 
   onDragOverEnter = event => {
@@ -149,11 +156,49 @@ class SendMail extends React.Component {
   };
 
   onToFieldChange = event => {
-    let tempToValue = event.target.value,
-      toValueHtml;
-    tempToValue = tempToValue.split(/[ ,]+/);
+    const { toField, toFieldRows } = this.state;
+    let eventTargetValue = event.target.value;
+    let maxWidthOfInput = this.maxWidthRef.current.offsetWidth;
+    let halfWidth = Math.floor(this.maxWidthRef.current.offsetWidth / 2);
+    let currentToFieldWidth = this.toFieldWidthRef.current.offsetWidth;
+    if (event.key === 'Enter' || event.key === 'Tab') {
+      eventTargetValue += ' ';
+    }
+    let tempToValue = toField,
+      temp = eventTargetValue.split(/[ ,\t]+/);
+    if (/[ ,]+/g.test(eventTargetValue)) {
+      updateToField(temp.length);
+      this.setState({
+        toField: tempToValue,
+        toFieldTemp: '',
+        toFieldWidth: halfWidth,
+      });
+      console.log('space');
+    } else {
+      updateToField(temp.length - 1);
+      this.setState({
+        toField: tempToValue,
+        toFieldTemp: eventTargetValue,
+      });
+
+      console.log('nospace');
+    }
+    function updateToField(tempLength) {
+      for (var i = 0; i < tempLength; i++) {
+        tempToValue.push(temp[i]);
+      }
+    }
+
     this.updateToValueHTML(tempToValue);
-    this.setState({ toField: tempToValue.join(', ') });
+    console.log(tempToValue[tempToValue.length]);
+    console.log(tempToValue[tempToValue.length - 1]);
+    console.log(tempToValue);
+
+    if (event.target.value.length * 10 > halfWidth && currentToFieldWidth < maxWidthOfInput) {
+      this.setState({
+        toFieldWidth: halfWidth + event.target.value.length * 9,
+      });
+    }
   };
 
   updateToValueHTML = tempToValue => {
@@ -178,11 +223,10 @@ class SendMail extends React.Component {
 
   onToFieldRemove = event => {
     let { toField } = this.state;
-    toField = toField.split(/[ ,]+/);
     let index = parseInt(event.target.id.replaceAll(/toField/g, ''));
     toField.splice(index, 1);
     this.updateToValueHTML(toField);
-    this.setState({ toField: toField.join(', ') });
+    this.setState({ toField: toField });
   };
 
   onSend = () => {
@@ -199,27 +243,42 @@ class SendMail extends React.Component {
       files,
       errorMessage,
       toField,
+      toFieldTemp,
       toFieldHtml,
       subjectField,
       messageBodyField,
+      toFieldWidth,
+      toFieldRows,
     } = this.state;
     console.log(messageBodyField);
     console.log(files);
+    console.log(toField);
+    console.log(subjectField);
     return (
       <>
         <Grid>
           <Grid.Row>
             <Grid.Column>
-              <Input
-                fluid
-                id='toField'
-                type='text'
-                value={toField}
-                className='form-control'
-                placeholder='To:'
-                onChange={this.onToFieldChange}
-              />
-              <div className='word-wrap'>{toFieldHtml}</div>
+              <span className='toFieldSpanEnvelope' style={{ width: this.maxWidth + 'px' }}>
+                <span ref={this.toFieldWidthRef}>
+                  <Input
+                    rows='1'
+                    id='toField'
+                    type='text'
+                    style={{ width: toFieldWidth + 'px' }}
+                    value={toFieldTemp}
+                    className='form-control toField'
+                    placeholder='To:'
+                    onChange={this.onToFieldChange}
+                    onKeyDown={event =>
+                      event.key === 'Enter' || event.key === 'Tab'
+                        ? this.onToFieldChange(event)
+                        : ''
+                    }
+                  />
+                </span>
+                <span className='word-wrap'>{toFieldHtml}</span>
+              </span>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
@@ -236,7 +295,7 @@ class SendMail extends React.Component {
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width='16'>
-              <span id='files' style={{ height: '300px' }}>
+              <span id='files' style={{ height: '300px' }} ref={this.maxWidthRef}>
                 <TextEditor onMessageBodyFieldChange={this.onMessageBodyFieldChange} />
               </span>
               {
@@ -285,8 +344,8 @@ class SendMail extends React.Component {
                   toField
                     ? subjectField
                       ? errorMessage
-                        ? ''
-                        : 'disabled'
+                        ? 'disabled'
+                        : ''
                       : 'disabled'
                     : 'disabled'
                 }

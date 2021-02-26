@@ -52,7 +52,6 @@ class ExplorerAddress extends React.Component {
       }
       this.arrayoftxs = Array.of(temparray);
       this.rjdecodedtx = await ExplorerHttpsReq.httpsreq('getTransactionsByTxIDs', this.arrayoftxs);
-
       this.pagearrayinit();
     }
   };
