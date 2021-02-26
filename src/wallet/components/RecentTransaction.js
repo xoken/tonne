@@ -103,6 +103,21 @@ class RecentTransaction extends React.Component {
           </Link>
         </Grid.Column>
       );
+    } else if (transaction.additionalInfo && transaction.additionalInfo.type === 'Allpay Send') {
+      return (
+        <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
+          <Icon name='dropdown' className='dropdownTriangle' />
+          <span className='monospace word-wrap recentTxidAddress'>
+            {`${transaction.additionalInfo.type} : `}
+            {this.renderAllPaySendInfo(transaction.additionalInfo.value)}
+          </span>{' '}
+          <Link to={'/explorer/transaction/' + transaction.txId}>
+            <span className='padding5px'>
+              <i className='walletLink'></i>
+            </span>
+          </Link>
+        </Grid.Column>
+      );
     } else {
       return (
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
@@ -115,6 +130,14 @@ class RecentTransaction extends React.Component {
           </Link>
         </Grid.Column>
       );
+    }
+  }
+
+  renderAllPaySendInfo({ senderInfo, recipientInfo }) {
+    if (senderInfo) {
+      return `From ${senderInfo}`;
+    } else if (recipientInfo) {
+      return `To ${recipientInfo}`;
     }
   }
 
