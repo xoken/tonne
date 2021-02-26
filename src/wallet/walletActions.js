@@ -129,7 +129,7 @@ export const createTransaction = args => async (dispatch, getState, { serviceInj
   try {
     const { transaction } = await serviceInjector(WalletService).createTransaction(args);
     await dispatch(getBalance());
-    dispatch(createTransactionSuccess({ transaction }));
+    dispatch(createTransactionSuccess({ transactions: [transaction] }));
   } catch (error) {
     dispatch(createTransactionFailure());
     throw error;
@@ -139,14 +139,10 @@ export const createTransaction = args => async (dispatch, getState, { serviceInj
 export const createAllpayTransaction = args => async (dispatch, getState, { serviceInjector }) => {
   dispatch(createAllpayTransactionRequest());
   try {
-    const { inputs, ownOutputs, psbt } = await serviceInjector(
-      WalletService
-    ).createAllpayTransaction(args);
+    const { transactions } = await serviceInjector(WalletService).createAllpayTransaction(args);
     dispatch(
-      createAllpayTransactionSuccess({
-        inputs,
-        ownOutputs,
-        psbt,
+      createTransactionSuccess({
+        transactions,
       })
     );
   } catch (error) {
