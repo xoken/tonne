@@ -135,9 +135,9 @@ class RecentTransaction extends React.Component {
 
   renderAllPaySendInfo({ senderInfo, recipientInfo }) {
     if (senderInfo) {
-      return `From ${senderInfo}`;
+      return `To ${senderInfo}`;
     } else if (recipientInfo) {
-      return `To ${recipientInfo}`;
+      return `From ${recipientInfo}`;
     }
   }
 

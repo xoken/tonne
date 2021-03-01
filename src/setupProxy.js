@@ -10,7 +10,7 @@ module.exports = function (app) {
   app.use(
     ['/v1'],
     createProxyMiddleware({
-      target: 'https://sb2.xoken.org:9091',
+      target: 'https://localhost:9091',
       secure: false,
     })
   );
