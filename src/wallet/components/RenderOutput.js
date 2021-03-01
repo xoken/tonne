@@ -1,9 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Grid } from 'semantic-ui-react';
-import { utils, allegory } from 'allegory-allpay-sdk';
+import { utils, allegory, getPushData } from 'allegory-allpay-sdk';
 import { Link } from 'react-router-dom';
-import images from '../../shared/images';
 
 class RenderOutput extends React.Component {
   constructor(props) {
@@ -18,7 +17,8 @@ class RenderOutput extends React.Component {
   };
 
   renderOutput() {
-    const { addressStyle, address, script, title, forTitleSection } = this.props;
+    const { addressStyle, address, script, title } = this.props;
+    const { showEmbedData } = this.state;
     if (address) {
       return (
         <p className='monospace word-wrap recentTxidAddressColumn'>
@@ -34,70 +34,70 @@ class RenderOutput extends React.Component {
       );
     } else if (script && script.startsWith('006a0f416c6c65676f72792f416c6c506179')) {
       function renderAdditionalInfo() {
-        const allegoryData = allegory.decodeCBORData(script);
-        const allegoryJSON = allegory.getAllegoryType(allegoryData);
-        const { name, action } = allegoryJSON;
-        if (action instanceof allegory.OwnerAction) {
-          const ownerAction = action;
-          if (ownerAction.oProxyProviders.length > 0) {
-            if (name) {
-              return (
-                <>
-                  {' '}
-                  Proxy registration : <i>{utils.codePointToName(name)}</i>{' '}
-                </>
-              );
+        const pushData = getPushData(script);
+        if (pushData.length >= 2) {
+          const allegoryData = allegory.getAllegoryType(pushData[1]);
+          if (allegoryData) {
+            const { name, action } = allegoryData;
+            if (action instanceof allegory.OwnerAction) {
+              const ownerAction = action;
+              if (ownerAction.registrations.length > 0) {
+                if (name) {
+                  return (
+                    <>
+                      Proxy registration : <i>{utils.codePointToName(name)}</i>{' '}
+                    </>
+                  );
+                }
+              } else {
+                return (
+                  <>
+                    Purchase : <i>{utils.codePointToName(name)}</i>{' '}
+                  </>
+                );
+              }
+            } else if (action instanceof allegory.ProducerAction) {
+              const producerAction = action;
+              if (producerAction.extensions.length > 0) {
+                const producerExtensions = producerAction.extensions.map(extension => {
+                  return {
+                    codePoint: extension.codePoint,
+                  };
+                });
+                const producerCodePoints = producerExtensions.map(({ codePoint }) => codePoint);
+                const namePurchased = utils.codePointToName([...name, ...producerCodePoints]);
+                return (
+                  <>
+                    Purchase: <i>{namePurchased}</i>{' '}
+                  </>
+                );
+              }
             }
-          } else {
-            return (
-              <>
-                {' '}
-                Purchase : <i>{utils.codePointToName(name)}</i>{' '}
-              </>
-            );
-          }
-        } else if (action instanceof allegory.ProducerAction) {
-          const producerAction = action;
-          if (producerAction.extensions.length > 0) {
-            const producerExtensions = producerAction.extensions.map(extension => {
-              return {
-                codePoint: extension.codePoint,
-              };
-            });
-            const producerCodePoints = producerExtensions.map(({ codePoint }) => codePoint);
-            const namePurchased = utils.codePointToName([...name, ...producerCodePoints]);
-            return (
-              <>
-                {' '}
-                Purchase: <i>{namePurchased}</i>{' '}
-              </>
-            );
           }
         }
       }
-      if (forTitleSection) {
-        return (
-          <p className='monospace'>
-            <span
-              className='word-wrap purplefontcolor paddingLeftRight14px fontWeightBold'
-              title={title}>
-              {renderAdditionalInfo()}
+      return (
+        <p className='monospace'>
+          <span
+            className={`${addressStyle} embed-data word-wrap`}
+            title={title}
+            onClick={this.toggleEmbedDataVisiblity}>
+            {`OP_RETURN `}
+            {renderAdditionalInfo()}
+            <span style={{ color: 'black' }}>
+              {showEmbedData ? <span>&#9660;</span> : <span>&#9654;</span>}
             </span>
-          </p>
-        );
-      } else {
-        return (
-          <p className='monospace'>
-            <span
-              className={`${addressStyle} embed-data word-wrap`}
-              title={title}
-              onClick={this.toggleEmbedDataVisiblity}>
-              OP_RETURN{renderAdditionalInfo()}
-              {<span style={{ color: 'black' }}>&#9660;</span>}
-            </span>
-          </p>
-        );
-      }
+          </span>
+        </p>
+      );
+    } else if (script) {
+      return (
+        <p className='monospace'>
+          <span className={`${addressStyle} embed-data word-wrap`} title={title}>
+            {script}
+          </span>
+        </p>
+      );
     }
     return null;
   }
@@ -107,42 +107,42 @@ class RenderOutput extends React.Component {
     const { showEmbedData } = this.state;
 
     if (showEmbedData) {
-      const allegoryData = allegory.decodeCBORData(script);
-      const allegoryJSON = allegory.getAllegoryType(allegoryData);
-      return (
-        <Grid.Row>
-          <Grid.Column width='16'>
-            <pre className={`monospace embed-data-json ${addressStyle}`} title={title}>
-              {JSON.stringify(allegoryJSON, null, 2)}
-            </pre>
-          </Grid.Column>
-        </Grid.Row>
-      );
+      const pushData = getPushData(script);
+      if (pushData.length >= 2) {
+        const allegoryData = allegory.getAllegoryType(pushData[1]);
+        if (allegoryData) {
+          return (
+            <Grid.Row>
+              <Grid.Column width='16'>
+                <pre className={`monospace embed-data-json ${addressStyle}`} title={title}>
+                  {JSON.stringify(allegoryData, null, 2)}
+                </pre>
+              </Grid.Column>
+            </Grid.Row>
+          );
+        }
+      }
     }
     return null;
   }
 
   render() {
-    const { key, valueStyle, value, forTitleSection } = this.props;
-    if (forTitleSection) {
-      return <span>{this.renderOutput()}</span>;
-    } else {
-      return (
-        <Grid key={key}>
-          <Grid.Row>
-            <Grid.Column computer='12' tablet='11' mobile='11'>
-              {this.renderOutput()}
-            </Grid.Column>
-            <Grid.Column computer='4' tablet='5' mobile='5' textAlign='right'>
-              <p className='monospace'>
-                <span className={valueStyle}>{utils.satoshiToBSV(value)}</span>
-              </p>
-            </Grid.Column>
-          </Grid.Row>
-          {this.renderEmbedData()}
-        </Grid>
-      );
-    }
+    const { key, valueStyle, value } = this.props;
+    return (
+      <Grid key={key}>
+        <Grid.Row>
+          <Grid.Column computer='12' tablet='11' mobile='11'>
+            {this.renderOutput()}
+          </Grid.Column>
+          <Grid.Column computer='4' tablet='5' mobile='5' textAlign='right'>
+            <p className='monospace'>
+              <span className={valueStyle}>{utils.satoshiToBSV(value)}</span>
+            </p>
+          </Grid.Column>
+        </Grid.Row>
+        {this.renderEmbedData()}
+      </Grid>
+    );
   }
 }
 

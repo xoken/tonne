@@ -37,14 +37,22 @@ class WalletHeader extends React.Component {
     const { allpayHandles, unregisteredNames } = this.props;
     if (unregisteredNames && unregisteredNames.length > 0) {
       return (
-        <NavLink
+        <>
+          <NavLink
+            className='buyallpaybutton'
+            activeClassName='buyallpaybuttonactive'
+            to={`/wallet/allpay/register?progressTotalSteps=3&activeStep=1`}>
+            Register AllPay Name
+          </NavLink>
+          {/* <NavLink
           className='buyallpaybutton'
           activeClassName='buyallpaybuttonactive'
-          to={`/wallet/allpay/register?progressTotalSteps=3&activeStep=1`}>
-          Register AllPay Name
-        </NavLink>
+          to={`/wallet/allpay/search`}>
+          Buy AllPay Name
+        </NavLink> */}
+        </>
       );
-    } else if (allpayHandles && allpayHandles.length <= 0) {
+    } else if (allpayHandles && allpayHandles.length === 0) {
       return (
         <NavLink
           className='buyallpaybutton'

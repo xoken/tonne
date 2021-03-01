@@ -25,8 +25,6 @@ class Login extends React.Component {
         await dispatch(authActions.login(profileId, password));
         this.props.onSuccess();
       } catch (error) {
-        // console.log(JSON.stringify(error.message));
-        //this.setState({ error: error.message });
         this.setState({ error: 'Login error: Enter correct password.' });
       }
     }

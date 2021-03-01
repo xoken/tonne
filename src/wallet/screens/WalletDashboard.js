@@ -63,7 +63,7 @@ class WalletDashboard extends React.Component {
     );
   }
 
-  runScript = () => {
+  runScript = async () => {
     wallet.runScript();
   };
 

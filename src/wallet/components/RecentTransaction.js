@@ -8,7 +8,6 @@ import { utils } from 'allegory-allpay-sdk';
 import RenderOutput from './RenderOutput';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
-import images from '../../shared/images';
 
 class RecentTransaction extends React.Component {
   constructor(props) {
@@ -84,85 +83,63 @@ class RecentTransaction extends React.Component {
     }
     this.setState({ activeIndex: newIndex });
   };
-  checkIfAllpayHandleOpReturn = () => {
-    return false;
-  };
-  titleSection = (txOuts, transaction) => {
-    let titlePicked = false;
-    let renderOutput = undefined;
-    renderOutput = txOuts.map((output, index) => {
-      if (
-        output.lockingScript &&
-        output.lockingScript.startsWith('006a0f416c6c65676f72792f416c6c506179')
-      ) {
-        titlePicked = true;
-        return (
-          <RenderOutput
-            key={index.toString()}
-            addressStyle={output.isNUTXO ? 'nUTXO' : ''}
-            address={output.address}
-            script={output.lockingScript}
-            title={output.isNUTXO ? 'Name UTXO' : undefined}
-            valueStyle={output.isMine ? 'credit' : ''}
-            value={output.value}
-            forTitleSection={true}
-          />
-        );
-      }
-    });
-    if (titlePicked) {
-      for (let op = 0; op < renderOutput.length; op++)
-        if (renderOutput[op]) {
-          return (
-            <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
-              <Icon name='dropdown' className='dropdownTriangle' />
-              {renderOutput[op]}
-            </Grid.Column>
-          );
-        }
-    }
-    if (!titlePicked && this.checkIfAllpayHandleOpReturn()) {
-      function determineToOrFromAllpay() {
-        return 'from';
-      }
+
+  renderTransactionHeader(transaction) {
+    if (
+      transaction.additionalInfo &&
+      (transaction.additionalInfo.type === 'Purchase' ||
+        transaction.additionalInfo.type === 'Proxy registration')
+    ) {
       return (
-        <>
-          <Grid.Column computer={1} tablet={2} mobile={4} className='recentTxidAddressColumn'>
-            <Icon name='dropdown' className='dropdownTriangle paddingLeftRight5px' />
-            <span className='purplefontcolor paddingLeftRight14px'>
-              {determineToOrFromAllpay() === 'to' ? (
-                <span className='toArrow'>&#129133; </span>
-              ) : (
-                <span className='fromArrow'>&#129134; </span>
-              )}{' '}
+        <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
+          <Icon name='dropdown' className='dropdownTriangle' />
+          <span className='monospace word-wrap recentTxidAddress'>
+            {`${transaction.additionalInfo.type} : ${transaction.additionalInfo.value}`}
+          </span>{' '}
+          <Link to={'/explorer/transaction/' + transaction.txId}>
+            <span className='padding10px'>
+              <i className='walletLink'></i>
             </span>
-          </Grid.Column>
-          <Grid.Column
-            computer={9}
-            tablet={7}
-            mobile={5}
-            className='recentTxidAddressColumn purplefontcolor'>
-            aa/allpayname
-          </Grid.Column>
-        </>
+          </Link>
+        </Grid.Column>
       );
-    } else if (!titlePicked) {
+    } else if (transaction.additionalInfo && transaction.additionalInfo.type === 'Allpay Send') {
       return (
-        <>
-          {' '}
-          <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
-            <Icon name='dropdown' className='dropdownTriangle' />
-            <span className='monospace word-wrap recentTxidAddress'>{transaction.txId}</span>{' '}
-            <Link to={'/explorer/transaction/' + transaction.txId}>
-              <span className='padding10px'>
-                <i className='walletLink'></i>
-              </span>
-            </Link>
-          </Grid.Column>
-        </>
+        <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
+          <Icon name='dropdown' className='dropdownTriangle' />
+          <span className='monospace word-wrap recentTxidAddress'>
+            {`${transaction.additionalInfo.type} : `}
+            {this.renderAllPaySendInfo(transaction.additionalInfo.value)}
+          </span>{' '}
+          <Link to={'/explorer/transaction/' + transaction.txId}>
+            <span className='padding10px'>
+              <i className='walletLink'></i>
+            </span>
+          </Link>
+        </Grid.Column>
+      );
+    } else {
+      return (
+        <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
+          <Icon name='dropdown' className='dropdownTriangle' />
+          <span className='monospace word-wrap recentTxidAddress'>{transaction.txId}</span>{' '}
+          <Link to={'/explorer/transaction/' + transaction.txId}>
+            <span className='padding10px'>
+              <i className='walletLink'></i>
+            </span>
+          </Link>
+        </Grid.Column>
       );
     }
-  };
+  }
+
+  renderAllPaySendInfo({ senderInfo, recipientInfo }) {
+    if (senderInfo) {
+      return `To ${senderInfo}`;
+    } else if (recipientInfo) {
+      return `From ${recipientInfo}`;
+    }
+  }
 
   renderTransaction() {
     const { activeIndex } = this.state;
@@ -218,7 +195,7 @@ class RecentTransaction extends React.Component {
                   index={index}
                   onClick={this.onTransactionTitleClick}>
                   <Grid>
-                    {this.titleSection(txOuts, transaction)}
+                    {this.renderTransactionHeader(transaction)}
                     <Grid.Column
                       computer={5}
                       tablet={5}
@@ -250,23 +227,19 @@ class RecentTransaction extends React.Component {
                 </Accordion.Title>
                 <Accordion.Content active={activeIndex.includes(index)}>
                   <Grid divided stackable columns='two'>
-                    {this.checkIfAllpayHandleOpReturn() ? (
-                      <Grid.Row className='paddingTop28px'>
-                        <Grid.Column width='16' className='recentTxidAddressColumn'>
-                          <span className='monospace word-wrap paddingLeftRight14px'>
-                            <span className='purplefontcolor fontWeightBold'>TxID : </span>
-                            {transaction.txId}
-                          </span>{' '}
-                          <Link to={'/explorer/transaction/' + transaction.txId}>
-                            <span className='padding10px'>
-                              <i className='walletLink'></i>
-                            </span>
-                          </Link>
-                        </Grid.Column>
-                      </Grid.Row>
-                    ) : (
-                      ''
-                    )}
+                    <Grid.Row className='paddingTop28px'>
+                      <Grid.Column width='16' className='recentTxidAddressColumn'>
+                        <span className='monospace word-wrap paddingLeftRight14px'>
+                          <span className='purplefontcolor fontWeightBold'>TxID : </span>
+                          {transaction.txId}
+                        </span>{' '}
+                        <Link to={'/explorer/transaction/' + transaction.txId}>
+                          <span className='padding10px'>
+                            <i className='walletLink'></i>
+                          </span>
+                        </Link>
+                      </Grid.Column>
+                    </Grid.Row>
                     <Grid.Row>
                       <Grid.Column>
                         <div className='paddingLeftRight14px'>
@@ -312,8 +285,6 @@ class RecentTransaction extends React.Component {
                           </Header>
                           {txOuts.map((output, index) => {
                             return (
-                              // <Grid key={output.outputIndex}>
-                              // <Grid.Column width='10'>
                               <RenderOutput
                                 key={index.toString()}
                                 addressStyle={output.isNUTXO ? 'nUTXO' : ''}
@@ -322,17 +293,7 @@ class RecentTransaction extends React.Component {
                                 title={output.isNUTXO ? 'Name UTXO' : undefined}
                                 valueStyle={output.isMine ? 'credit' : ''}
                                 value={output.value}
-                                forTitleSection={false}
                               />
-                              // </Grid.Column>
-                              // <Grid.Column width='6' textAlign='right'>
-                              // <p className='monospace'>
-                              // <span className={output.isMine ? 'credit' : ''}>
-                              // {utils.satoshiToBSV(output.value)}
-                              // </span>
-                              // </p>
-                              // </Grid.Column>
-                              // </Grid>
                             );
                           })}
                           <div className='ui right aligned grid'>

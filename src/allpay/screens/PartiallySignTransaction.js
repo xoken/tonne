@@ -100,8 +100,6 @@ const mapStateToProps = state => ({
   inputs: state.allpay.inputs,
   ownOutputs: state.allpay.ownOutputs,
   snv: state.allpay.snv,
-  addressCommitment: state.allpay.addressCommitment,
-  utxoCommitment: state.allpay.utxoCommitment,
 });
 
 export default withRouter(connect(mapStateToProps)(PartiallySignTransaction));
