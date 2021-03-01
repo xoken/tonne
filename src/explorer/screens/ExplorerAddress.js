@@ -29,7 +29,7 @@ class ExplorerAddress extends React.Component {
   batches;
   totalpagesavailable;
   currentbatchnum = 1;
-  nextcursor = '';
+  nextcursor = null;
   pagescontainer = [];
 
   initAddress = async () => {
@@ -52,8 +52,29 @@ class ExplorerAddress extends React.Component {
       }
       this.arrayoftxs = Array.of(temparray);
       this.rjdecodedtx = await ExplorerHttpsReq.httpsreq('getTransactionsByTxIDs', this.arrayoftxs);
-
       this.pagearrayinit();
+    }
+  };
+
+  calculateSatoshisForEachTx = valueSet => {
+    let inputSats = 0,
+      outputSats = 0;
+    for (let i = 0; i < Object.keys(valueSet.tx.txInps).length; i++) {
+      if (valueSet.tx.txInps[i].address === this.address) {
+        inputSats += valueSet.tx.txInps[i].value;
+      }
+    }
+    for (let index = 0; index < Object.keys(valueSet.tx.txOuts).length; index++) {
+      if (valueSet.tx.txOuts[index].address === this.address) {
+        outputSats += valueSet.tx.txOuts[index].value;
+      }
+    }
+    if (outputSats - inputSats > 0) {
+      return <span className='colorGreen'>+{(outputSats - inputSats).toString()}</span>;
+    } else if (outputSats - inputSats < 0) {
+      return <span className='colorRed'>{(outputSats - inputSats).toString()}</span>;
+    } else {
+      return 'No change in value';
     }
   };
 
@@ -84,18 +105,18 @@ class ExplorerAddress extends React.Component {
               <Grid.Column>
                 <Grid>
                   <Grid.Row columns={2}>
-                    <Grid.Column computer={2} mobile={2}>
+                    <Grid.Column computer={1} tablet={2} mobile={4}>
                       <b>Satoshis: </b>
                     </Grid.Column>
-                    <Grid.Column computer={14} mobile={14}>
-                      {this.addressCache[i].value}
+                    <Grid.Column computer={15} tablet={14} mobile={12}>
+                      {this.calculateSatoshisForEachTx(this.addressCache[i])}
                     </Grid.Column>
                   </Grid.Row>
                   <Grid.Row className='nopaddingtop'>
-                    <Grid.Column computer={1} tablet={2} mobile={3}>
+                    <Grid.Column computer={1} tablet={2} mobile={4}>
                       <b>Block:</b>
                     </Grid.Column>
-                    <Grid.Column computer={15} tablet={14} mobile={13}>
+                    <Grid.Column computer={15} tablet={14} mobile={12}>
                       <span className='tdwordbreak'>
                         <Link to={'/explorer/blockhash/' + this.addressCache[i].blockHash}>
                           {this.addressCache[i].blockHash}
@@ -329,6 +350,9 @@ class ExplorerAddress extends React.Component {
       var tempindex = 1;
       if (this.addressCache.length > this.outputsperpage) {
         this.totalpagesavailable = Math.ceil(this.addressCache.length / this.outputsperpage);
+        if (this.totalpagesavailable < this.fixedpagearrlength) {
+          this.nextcursor = null;
+        }
       } else {
         this.totalpagesavailable = 1;
       }
@@ -363,7 +387,7 @@ class ExplorerAddress extends React.Component {
         this.txCache[this.cachecounter] = this.rjdecodedtx.txs[i];
         this.cachecounter += 1;
       }
-      this.nextcursor = this.rjdecoded.nextCursor;
+      this.nextcursor = parseInt(this.rjdecoded.nextCursor);
     } else {
       this.nextcursor = null;
     }
@@ -375,15 +399,33 @@ class ExplorerAddress extends React.Component {
     if (this.nextcursor != null) {
       this.totalpagesavailable = Math.ceil(this.addressCache.length / this.outputsperpage);
       this.batches = Math.ceil(this.totalpagesavailable / this.fixedpagearrlength);
-      var pagenum = this.pagearray[this.pagearray.length - 1];
-      this.currentbatchnum = Math.ceil(this.pagearray[0] / this.fixedpagearrlength);
-      this.currentbatchnum += 1;
-      var numpagesincurbatch = Math.ceil(
-        (this.cachecounter - prevcounterval) / this.outputsperpage
-      );
-      for (var t = 0; t < numpagesincurbatch; t++) {
-        pagenum += 1;
-        this.pagearray[t] = pagenum;
+      if (this.currentbatchnum === this.batches) {
+        var pagenum = this.pagearray[this.pagearray.length - 1];
+        this.currentbatchnum = Math.ceil(this.pagearray[0] / this.fixedpagearrlength);
+        this.currentbatchnum += 1;
+        var numpagesincurbatch = Math.ceil(
+          (this.cachecounter - prevcounterval) / this.outputsperpage
+        );
+        for (var t = 0; t < numpagesincurbatch; t++) {
+          pagenum += 1;
+          this.pagearray[t] = pagenum;
+        }
+      } else {
+        this.currentbatchnum += 1;
+        var tindex = this.pagearray[this.pagearray.length - 1];
+
+        if (
+          this.pagearray[this.pagearray.length - 1] + this.fixedpagearrlength >
+          this.totalpagesavailable
+        ) {
+          this.pagearrlength = this.totalpagesavailable % this.fixedpagearrlength;
+        } else {
+          this.pagearrlength = this.fixedpagearrlength;
+        }
+        for (var t = 0; t < this.pagearrlength; t++) {
+          tindex += 1;
+          this.pagearray[t] = tindex;
+        }
       }
     }
     this.printpagination();
@@ -472,11 +514,17 @@ class ExplorerAddress extends React.Component {
     ) {
       this.currentbatchnum = Math.ceil(this.pagearray[0] / this.fixedpagearrlength);
       if (
-        this.pagearray[this.pagearray.length - 1] === this.totalpagesavailable &&
-        this.nextcursor != null
+        (this.pagearray[this.pagearray.length - 1] === this.totalpagesavailable &&
+          this.nextcursor != null &&
+          this.currentbatchnum === this.batches) ||
+        (this.nextcursor != null &&
+          this.pagearray[this.pagearray.length - 1] >=
+            this.totalpagesavailable - this.fixedpagearrlength)
       ) {
+        this.setState({ isLoading: true });
         this.rjdecoded = await ExplorerHttpsReq.httpsreq(
           'getOutputsByAddress',
+          this.address,
           100,
           this.nextcursor
         );
@@ -537,11 +585,24 @@ class ExplorerAddress extends React.Component {
   render() {
     return (
       <>
+        {this.state.isLoading ? (
+          <Loader
+            active
+            style={{
+              position: 'absolute',
+              top: '50%',
+              zIndex: '999',
+            }}
+          />
+        ) : (
+          ''
+        )}
         <Segment className='noborder'>
           <Button onClick={this.onBack} className='backspace'>
             Back
           </Button>
         </Segment>
+
         <div className='opacitywhileload'>
           <Segment.Group className='removesegmentborder'>
             <Segment>
@@ -557,7 +618,7 @@ class ExplorerAddress extends React.Component {
                 <div id='nooftransactions'></div>Transactions
               </h4>
             </Segment>
-            <Segment>{this.state.isLoading ? <Loader active /> : this.txlist}</Segment>
+            <Segment>{this.state.isLoading ? '' : this.txlist}</Segment>
             <Segment textAlign='center'>
               <nav aria-label='transactions navigation'>
                 <ul className='pagination justify-content-center' id='pagination'>
