@@ -118,6 +118,20 @@ class RecentTransaction extends React.Component {
           </Link>
         </Grid.Column>
       );
+    } else if (transaction.additionalInfo && transaction.additionalInfo.type === 'Allpay Meta Tx') {
+      return (
+        <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
+          <Icon name='dropdown' className='dropdownTriangle' />
+          <span className='monospace word-wrap recentTxidAddress'>
+            {transaction.additionalInfo.type}
+          </span>{' '}
+          <Link to={'/explorer/transaction/' + transaction.txId}>
+            <span className='padding10px'>
+              <i className='walletLink'></i>
+            </span>
+          </Link>
+        </Grid.Column>
+      );
     } else {
       return (
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
