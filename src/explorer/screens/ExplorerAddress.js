@@ -33,6 +33,7 @@ class ExplorerAddress extends React.Component {
   pagescontainer = [];
 
   initAddress = async () => {
+    this.setState({ isLoading: true });
     if (this.props.match.params.address !== undefined) {
       this.address = this.props.match.params.address;
     }
