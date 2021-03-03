@@ -3,9 +3,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Button, Grid, Input, Divider, Icon, TextArea, Modal } from 'semantic-ui-react';
+import { Button, Grid, Input, Divider, Icon, TextArea, Modal, Loader } from 'semantic-ui-react';
 import AttachFile from './AttachFile';
 import TextEditor from '../components/TextEditor';
+import * as mailActions from '../mailActions';
+import * as mailSelectors from '../mailSelectors';
 
 class SendMail extends React.Component {
   constructor(props) {
@@ -18,7 +20,8 @@ class SendMail extends React.Component {
       toField: [],
       subjectField: '',
       messageBodyField: '',
-      errorMessage: '',
+      message: '',
+      isError: false,
       toFieldHtml: undefined,
       toFieldTemp: undefined,
       toFieldWidth: undefined,
@@ -68,7 +71,7 @@ class SendMail extends React.Component {
     }
 
     if (totalSizeOfFiles > 10485760) {
-      this.setState({ errorMessage: 'Total size of all files cannot be larger than 10MB' });
+      this.setState({ message: 'Total size of all files cannot be larger than 10MB' });
     }
   };
 
@@ -109,7 +112,7 @@ class SendMail extends React.Component {
     }
 
     if (totalSizeOfFiles > 10485760) {
-      this.setState({ errorMessage: 'Total size of all files cannot be larger than 10MB' });
+      this.setState({ message: 'Total size of all files cannot be larger than 10MB' });
     }
     event.preventDefault();
   };
@@ -145,7 +148,7 @@ class SendMail extends React.Component {
       totalSizeOfFiles += tempFiles[i].size;
     }
     if (totalSizeOfFiles <= 10485760) {
-      this.setState({ files: tempFiles, errorMessage: '' });
+      this.setState({ files: tempFiles, message: '' });
     } else {
       this.setState({ files: tempFiles });
     }
@@ -173,15 +176,12 @@ class SendMail extends React.Component {
         toFieldTemp: '',
         toFieldWidth: halfWidth,
       });
-      console.log('space');
     } else {
       updateToField(temp.length - 1);
       this.setState({
         toField: tempToValue,
         toFieldTemp: eventTargetValue,
       });
-
-      console.log('nospace');
     }
     function updateToField(tempLength) {
       for (var i = 0; i < tempLength; i++) {
@@ -190,9 +190,6 @@ class SendMail extends React.Component {
     }
 
     this.updateToValueHTML(tempToValue);
-    console.log(tempToValue[tempToValue.length]);
-    console.log(tempToValue[tempToValue.length - 1]);
-    console.log(tempToValue);
 
     if (event.target.value.length * 10 > halfWidth && currentToFieldWidth < maxWidthOfInput) {
       this.setState({
@@ -229,19 +226,42 @@ class SendMail extends React.Component {
     this.setState({ toField: toField });
   };
 
-  onSend = () => {
+  onSend = async () => {
+    const { dispatch } = this.props;
     const { toField, subjectField, messageBodyField, files } = this.state;
     const formData = new FormData();
-    for (let i = 0; i < files.length; i++) {
-      formData.append('File', files[i], files[i].name);
+    if (files) {
+      for (let i = 0; i < files.length; i++) {
+        formData.append('File', files[i], files[i].name);
+      }
     }
-    //axios.post("", formData);
+    let filteredToField = toField.filter(function (addressName) {
+      return addressName !== '';
+    });
+
+    try {
+      await dispatch(
+        mailActions.createMailTransaction({
+          recipients: filteredToField,
+          threadId: null,
+          subject: subjectField,
+          body: messageBodyField,
+        })
+      );
+      this.setState({ isError: false, message: 'Mail Sent Successfully!' });
+    } catch (error) {
+      this.setState({
+        isError: true,
+        message: error.response && error.response.data ? error.response.data : error.message,
+      });
+    }
   };
 
   render() {
+    const { isLoadingMailTransactions } = this.props;
     const {
       files,
-      errorMessage,
+      message,
       toField,
       toFieldTemp,
       toFieldHtml,
@@ -249,11 +269,9 @@ class SendMail extends React.Component {
       messageBodyField,
       toFieldWidth,
       toFieldRows,
+      isError,
     } = this.state;
-    console.log(messageBodyField);
-    console.log(files);
-    console.log(toField);
-    console.log(subjectField);
+
     return (
       <>
         <Grid>
@@ -333,7 +351,8 @@ class SendMail extends React.Component {
           <Grid.Row>
             <Grid.Column>
               {files ? <Grid>{this.fileNameList()}</Grid> : ''}
-              <div style={{ color: 'red' }}>{errorMessage}</div>
+              <div className={isError ? 'colorRed' : 'colorGreen'}>{message}</div>
+              <center>{isLoadingMailTransactions ? <Loader active /> : null}</center>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row centered>
@@ -341,13 +360,7 @@ class SendMail extends React.Component {
               <Button
                 className='coral'
                 disabled={
-                  toField
-                    ? subjectField
-                      ? errorMessage
-                        ? 'disabled'
-                        : ''
-                      : 'disabled'
-                    : 'disabled'
+                  toField ? (subjectField ? (isError ? 'disabled' : '') : 'disabled') : 'disabled'
                 }
                 onClick={this.onSend}>
                 Send
@@ -368,6 +381,8 @@ SendMail.propTypes = {};
 
 SendMail.defaultProps = {};
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  isLoadingMailTransactions: mailSelectors.isLoadingMailTransactions(state),
+});
 
 export default withRouter(connect(mapStateToProps)(SendMail));

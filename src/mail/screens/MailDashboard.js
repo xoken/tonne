@@ -17,17 +17,33 @@ class MailDashboard extends React.Component {
       inboxSection: true,
       sendMailModal: false,
       toggleFullMailPane: false,
-      currentlyOpenMail: '',
+      currentlyOpenMailThreadId: '',
+      currentlyOpenMailData: null,
+      currentlyOpenSentMail: false,
+      currentlyOpenReceivedMail: false,
     };
   }
 
-  mailOnClick = currOpenMail => {
-    const { currentlyOpenMail, toggleFullMailPane } = this.state;
+  mailOnClick = (
+    currOpenMailThreadId,
+    currOpenMailData,
+    currOpenSentMail,
+    currOpenReceivedMail
+  ) => {
+    const { currentlyOpenMailThreadId, toggleFullMailPane } = this.state;
     if (toggleFullMailPane) {
-      this.setState({ currentlyOpenMail: currOpenMail });
+      this.setState({
+        currentlyOpenMailThreadId: currentlyOpenMailThreadId,
+        currentlyOpenMailData: currOpenMailData,
+        currentlyOpenSentMail: currOpenSentMail,
+        currentlyOpenReceivedMail: currOpenReceivedMail,
+      });
     } else {
       this.setState({
-        currentlyOpenMail: currOpenMail,
+        currentlyOpenMailThreadId: currentlyOpenMailThreadId,
+        currentlyOpenMailData: currOpenMailData,
+        currentlyOpenSentMail: currOpenSentMail,
+        currentlyOpenReceivedMail: currOpenReceivedMail,
         toggleFullMailPane: !toggleFullMailPane,
       });
     }
@@ -262,7 +278,7 @@ class MailDashboard extends React.Component {
     // if (!toggleFullMailPane) {
     //   this.setState({ currentlyOpenMail: '' });
     // }
-    this.setState({ toggleFullMailPane: !toggleFullMailPane, currentlyOpenMail: '' });
+    this.setState({ toggleFullMailPane: !toggleFullMailPane, currentlyOpenMailThreadId: '' });
   };
 
   // renderFullMail = () => {
@@ -353,7 +369,15 @@ class MailDashboard extends React.Component {
   // };
 
   render() {
-    const { sentMailSection, inboxSection, toggleFullMailPane } = this.state;
+    const {
+      sentMailSection,
+      inboxSection,
+      toggleFullMailPane,
+      currentlyOpenMailThreadId,
+      currentlyOpenMailData,
+      currentlyOpenSentMail,
+      currentlyOpenReceivedMail,
+    } = this.state;
     return (
       <>
         <Grid stackable>
@@ -413,7 +437,15 @@ class MailDashboard extends React.Component {
                 {
                   //this.renderFullMail()
                 }
-                {<RenderFullMail toggleFullMailPane={this.toggleFullMailPane} />}
+                {
+                  <RenderFullMail
+                    toggleFullMailPane={this.toggleFullMailPane}
+                    currentlyOpenMailThreadId={currentlyOpenMailThreadId}
+                    currentlyOpenMailData={currentlyOpenMailData}
+                    currentlyOpenSentMail={currentlyOpenSentMail}
+                    currentlyOpenReceivedMail={currentlyOpenReceivedMail}
+                  />
+                }
               </Grid.Column>
             ) : (
               ''

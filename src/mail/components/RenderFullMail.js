@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Button, Grid, Input, Divider, Icon, TextArea } from 'semantic-ui-react';
+import * as mailSelectors from '../mailSelectors';
 
 class RenderFullMail extends React.Component {
   constructor(props) {
@@ -11,6 +12,13 @@ class RenderFullMail extends React.Component {
   }
 
   renderFullMail = () => {
+    const {
+      currentlyOpenMailThreadId,
+      currentlyOpenMailData,
+      currentlyOpenSentMail,
+      currentlyOpenReceivedMail,
+    } = this.props;
+
     return (
       <Grid>
         <Grid.Row>
@@ -33,48 +41,27 @@ class RenderFullMail extends React.Component {
         </Grid.Row>
         <Grid.Row>
           <Grid.Column computer={8} mobile={8} floated='left'>
-            {
-              //allpayname
-            }
-            <span style={{ color: 'lightgrey' }}>aa/allpayname</span>
+            <span style={{ color: 'lightgrey' }} className='word-wrap'>
+              {currentlyOpenSentMail
+                ? currentlyOpenMailData.commonMetaData.recepient
+                : currentlyOpenMailData.commonMetaData.sender}
+            </span>
           </Grid.Column>
 
-          <Grid.Column computer={2} mobile={8} floated='right'>
-            {
-              //time
-            }
-            <span style={{ color: 'lightgrey', float: 'right' }}>10:10</span>
+          <Grid.Column computer={4} mobile={8} floated='right'>
+            <span style={{ color: 'lightgrey', float: 'right' }} className='word-wrap'>
+              {currentlyOpenMailData.createdAt}
+            </span>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row computer={16}>
           <Grid.Column computer='16' floated='left'>
-            {
-              //full subject
-            }
-            <b>Placeholder Subject line sdf sggs sfhfhs</b>
+            {currentlyOpenMailData.commonMetaData.subject}
           </Grid.Column>
         </Grid.Row>
         <Grid.Row computer={16}>
           <Grid.Column computer='16' floated='left'>
-            {
-              //full message
-            }
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-              dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-              mollit anim id est laborum
-            </p>
-            <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-              incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-              exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-              dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-              Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-              mollit anim id est laborum
-            </p>
+            {currentlyOpenMailData.body}
           </Grid.Column>
         </Grid.Row>
 
