@@ -6,6 +6,7 @@ import claimTwitterHandle from '../../claimTwitterHandle';
 import wallet from '../../wallet';
 import allpay from '../../allpay';
 import settings from '../../settings';
+import mail from '../../mail';
 
 // const walletPersistConfig = {
 //   key: 'wallet',
@@ -19,6 +20,7 @@ const appReducer = combineReducers({
   wallet: wallet.reducer,
   allpay: allpay.reducer,
   settings: settings.reducer,
+  mail: mail.reducer,
 });
 
 export default (state, action) => {
