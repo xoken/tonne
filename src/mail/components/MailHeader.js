@@ -1,5 +1,5 @@
 import React from 'react';
-import { withRouter, NavLink } from 'react-router-dom';
+import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { Dropdown, Modal, Grid } from 'semantic-ui-react';

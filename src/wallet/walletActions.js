@@ -209,3 +209,18 @@ export const clearUsedUnusedAddresses = () => (dispatch, getState, { serviceInje
     type: CLEAR_USED_UNUSED_ADDRESS,
   });
 };
+
+export const SHOW_RECEIVE_MODAL = 'SHOW_RECEIVE_MODAL';
+export const showReceiveModal = () => (dispatch, getState, { serviceInjector }) => {
+  dispatch(clearUsedUnusedAddresses());
+  dispatch({
+    type: SHOW_RECEIVE_MODAL,
+  });
+};
+
+export const HIDE_RECEIVE_MODAL = 'HIDE_RECEIVE_MODAL';
+export const hideReceiveModal = () => (dispatch, getState, { serviceInjector }) => {
+  dispatch({
+    type: HIDE_RECEIVE_MODAL,
+  });
+};

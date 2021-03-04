@@ -1,5 +1,4 @@
 import { addressAPI, blockAPI, chainAPI, transactionAPI, wallet } from 'allegory-allpay-sdk';
-import * as _ from 'lodash';
 
 export default class ExplorerHttpsReq {
   static async httpsreq(...reqparameter) {
