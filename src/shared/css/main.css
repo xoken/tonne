@@ -6,7 +6,7 @@
   font-family: 'moonhouse';
   color: #922fdf;
   padding: 15px 0px 15px 0px;
-  font-size: 20px;
+  font-size: 37px;
   font-weight: 700 !important;
 }
 
@@ -310,6 +310,42 @@
 .buyallpaybuttonactive {
   display: none !important;
 }
+.headerWalletButton {
+  background-color: #ff7f7f;
+  color: white;
+  padding: 8px 10px 8px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  position: relative;
+  margin-left: 0px;
+  margin-right: 10px;
+}
+.headerWalletButton:hover {
+  color: white;
+}
+.headerWalletButtonactive {
+  background-color: white;
+  color: #ff7f7f;
+  border-color: #ff7f7f;
+}
+.headerMailButton {
+  background-color: #ff7f7f;
+  color: white;
+  padding: 8px 10px 8px 10px;
+  border-radius: 4px;
+  font-weight: bold;
+  position: relative;
+  margin-left: 0px;
+  margin-right: 10px;
+}
+.headerMailButton:hover {
+  color: white;
+}
+.headerMailButtonactive {
+  background-color: white;
+  color: #ff7f7f;
+  border-color: #ff7f7f;
+}
 .ui.dropdown .menu > .item a,
 .ui.dropdown .menu > .item span {
   color: #922fdf;
@@ -528,6 +564,13 @@ input[type='number'] {
   background: url(../images/images/paper4.png) no-repeat center !important;
   /*animation: peachTurbulence2 ease 25s infinite;*/
 }
+.sentInboxToggle {
+  margin-left: 28%;
+}
+.rdw-editor-main {
+  height: 150px;
+  border: 1px solid rgba(34, 36, 38, 0.15);
+}
 @keyframes purpleTurbulence {
   0% {
     transform: rotate(0deg) translate(-100%, 60%);
@@ -686,9 +729,7 @@ input[type='number'] {
   .headerLogo {
     width: 150px;
   }
-  .tonneLogo {
-    font-size: 37px;
-  }
+
   .footerLeftCol {
     margin-left: 18%;
   }
@@ -716,14 +757,7 @@ input[type='number'] {
   .bars {
     margin-right: 0px !important;
   }
-  .headerWallet {
-    min-width: auto !important;
-    padding: 6px 12px 6px 12px !important;
-  }
-  .headerExplorer {
-    min-width: auto !important;
-    padding: 6px !important;
-  }
+
   .noPaddingTopBottomFormobiles {
     padding-top: 0px !important;
     padding-bottom: 0px !important;
@@ -795,6 +829,75 @@ input[type='number'] {
   }
   .peachPaperRocket2 {
     display: none;
+  }
+}
+@media screen and (max-width: 561px) {
+  .headerWallet {
+    min-width: auto !important;
+    padding: 6px 12px 6px 12px !important;
+  }
+  .headerExplorer {
+    min-width: auto !important;
+    padding: 6px !important;
+  }
+  .headerVoxMail {
+    min-width: auto !important;
+    padding: 6px !important;
+  }
+  .tonneLogo {
+    font-size: 20px;
+  }
+}
+
+@media screen and (max-width: 377px) {
+  .headerWallet {
+    min-width: auto !important;
+    padding: 3px 10px 3px 10px !important;
+    margin: 0px 3px 0px 0px !important;
+  }
+  .headerExplorer {
+    min-width: auto !important;
+    padding: 3px !important;
+    margin: 0px 3px 0px 0px !important;
+  }
+  .headerVoxMail {
+    min-width: auto !important;
+    padding: 3px !important;
+    margin: 0px !important;
+  }
+  .tonneLogo {
+    font-size: 17px;
+  }
+
+  .menuDropdown {
+    scale: 78%;
+  }
+  .page-header > .container > .menu > .header {
+    margin-right: 2px;
+  }
+  .page-header > .container > .menu > .right {
+    margin-left: 0px !important;
+  }
+}
+
+@media screen and (max-width: 335px) {
+  .page-header > .container {
+    margin-left: 4px !important;
+  }
+  .menuDropdown {
+    scale: 75%;
+  }
+  .headerWallet {
+    min-width: auto !important;
+    padding: 3px 8px 3px 8px !important;
+    margin: 0px 3px 0px 0px !important;
+  }
+}
+
+@media screen and (max-width: 991px) {
+  .sentInboxToggle {
+    margin-left: none;
+    float: right;
   }
 }
 
@@ -896,7 +999,7 @@ body {
   padding-top: 20px;
   padding-bottom: 20px;
 }
-.padding5px {
+.padding10px {
   padding: 10px;
 }
 .dropdownTriangle {
@@ -934,9 +1037,43 @@ body {
   padding-left: 5px !important;
   padding-right: 5px !important;
 }
-.colorRed{
-  color:red;
+.colorRed {
+  color: red;
 }
-.colorGreen{
-  color:green;
+.colorGreen {
+  color: green;
+}
+
+.toFieldHighlight {
+  padding: 5px;
+  margin-bottom: 7px;
+  margin-top: 7px;
+  display: inline-block;
+}
+
+.toField > input {
+  border: none !important;
+  overflow: auto !important;
+  outline: none !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+  resize: none !important;
+  padding: 0px 17px 0px 17px;
+  vertical-align: middle;
+}
+
+.toFieldSpanEnvelope {
+  padding: 10px 0px 10px 0px;
+  border-bottom: 1px solid rgba(34, 36, 38, 0.15);
+  width: 100% !important;
+}
+.toFieldSpanEnvelope:focus {
+  border-color: #85b7d9;
+  background: #fff;
+  color: rgba(0, 0, 0, 0.8);
+  box-shadow: none;
+}
+.hideEditorToolbar{
+  display: none !important;
 }

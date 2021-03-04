@@ -115,10 +115,7 @@ class ProxyRegistration extends React.Component {
           )}
         </Header>
         <Header textAlign='center'>
-          <Header.Subheader>
-            The proxy generates provably correct Bitcoin addresses on your behalf. The AllPay
-            protocol is completely trustless and secure.
-          </Header.Subheader>
+          <Header.Subheader>{/* Header message placeholder */}</Header.Subheader>
         </Header>
       </>
     );
@@ -204,7 +201,7 @@ class ProxyRegistration extends React.Component {
           <Grid.Row>
             <Grid.Column width='16' textAlign='center'>
               <Button className='coral' loading={requestInProgress} onClick={this.onRegister}>
-                Register
+                Continue
               </Button>
               <Button basic className='borderless' onClick={this.onToggle}>
                 Skip
