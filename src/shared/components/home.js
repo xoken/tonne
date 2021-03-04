@@ -87,7 +87,7 @@ class Home extends React.Component {
             <Container>
               <center>
                 <div className='ui placeholder segment homeSegment'>
-                  <div className='ui three column stackable center aligned grid'>
+                  <div className='ui four column stackable center aligned grid'>
                     <Grid.Row>
                       <div className='column'>
                         <div className='homeMainSection'>
@@ -152,6 +152,30 @@ class Home extends React.Component {
                             className='coral coralButton'
                             onClick={this.onClaimTwitterHandle}>
                             Claim on-chain
+                          </Button>
+                        </div>
+                      </div>
+                      <div className='column'>
+                        <div className='homeMainSection'>
+                          <div className='ui icon header purplefontcolor'>
+                            <img
+                              alt='voxMail'
+                              src={images.voxmail}
+                              className='icon'
+                              style={{
+                                display: 'block',
+                                height: 53,
+                                borderRadius: '100px',
+                                width: 'auto',
+                              }}
+                            />
+                            voxMail
+                          </div>
+                          <Button
+                            fluid
+                            className='coral coralButton'
+                            onClick={this.onClaimTwitterHandle}>
+                            Use voxMail
                           </Button>
                         </div>
                       </div>

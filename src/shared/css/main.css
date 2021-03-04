@@ -571,6 +571,15 @@ input[type='number'] {
   height: 150px;
   border: 1px solid rgba(34, 36, 38, 0.15);
 }
+.headerIcons{
+  display: block;
+  height: 26px !important;
+  width: 28px !important;
+  border-radius: 100px;
+  margin-right: 0px !important;
+  margin-left: 0px !important;
+  margin-bottom: 5px !important;
+}
 @keyframes purpleTurbulence {
   0% {
     transform: rotate(0deg) translate(-100%, 60%);

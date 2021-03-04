@@ -98,7 +98,7 @@ class RenderCombinedMails extends React.Component {
           <Grid.Row
             key={index.toString()}
             style={{ cursor: 'pointer' }}
-            onClick={() => this.props.mailOnClick(mailData.threadId, mail)}>
+            onClick={() => this.props.mailOnClick(mail)}>
             <Grid.Column
               style={{
                 boxShadow: '5px 5px 5px #fafafa',

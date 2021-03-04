@@ -17,28 +17,19 @@ class MailDashboard extends React.Component {
       inboxSection: true,
       sendMailModal: false,
       toggleFullMailPane: false,
-      currentlyOpenMailThreadId: '',
       currentlyOpenMailData: null,
-      currentlyOpenSentMail: false,
-      currentlyOpenReceivedMail: false,
     };
   }
 
-  mailOnClick = (
-    currOpenMailThreadId,
-    currOpenMailData,
-    currOpenSentMail,
-    currOpenReceivedMail
-  ) => {
-    const { currentlyOpenMailThreadId, toggleFullMailPane } = this.state;
+  mailOnClick = currOpenMailData => {
+    const { toggleFullMailPane } = this.state;
+
     if (toggleFullMailPane) {
       this.setState({
-        currentlyOpenMailThreadId: currentlyOpenMailThreadId,
         currentlyOpenMailData: currOpenMailData,
       });
     } else {
       this.setState({
-        currentlyOpenMailThreadId: currentlyOpenMailThreadId,
         currentlyOpenMailData: currOpenMailData,
 
         toggleFullMailPane: !toggleFullMailPane,
@@ -275,7 +266,7 @@ class MailDashboard extends React.Component {
     // if (!toggleFullMailPane) {
     //   this.setState({ currentlyOpenMail: '' });
     // }
-    this.setState({ toggleFullMailPane: !toggleFullMailPane, currentlyOpenMailThreadId: '' });
+    this.setState({ toggleFullMailPane: !toggleFullMailPane });
   };
 
   // renderFullMail = () => {
@@ -366,15 +357,7 @@ class MailDashboard extends React.Component {
   // };
 
   render() {
-    const {
-      sentMailSection,
-      inboxSection,
-      toggleFullMailPane,
-      currentlyOpenMailThreadId,
-      currentlyOpenMailData,
-      currentlyOpenSentMail,
-      currentlyOpenReceivedMail,
-    } = this.state;
+    const { sentMailSection, inboxSection, toggleFullMailPane, currentlyOpenMailData } = this.state;
     const { allpayHandles } = this.props;
     if (allpayHandles && allpayHandles.length === 0) {
       return (
@@ -452,7 +435,6 @@ class MailDashboard extends React.Component {
                 {
                   <RenderFullMail
                     toggleFullMailPane={this.toggleFullMailPane}
-                    currentlyOpenMailThreadId={currentlyOpenMailThreadId}
                     currentlyOpenMailData={currentlyOpenMailData}
                   />
                 }
