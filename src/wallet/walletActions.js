@@ -62,12 +62,16 @@ export const getTransactions = options => async (dispatch, getState, { serviceIn
       if (options.diff) {
         const { transactions } = await serviceInjector(WalletService).getTransactions(options);
         await dispatch(getBalance());
+        await dispatch(getAllpayHandles());
+        await dispatch(getUnregisteredNames());
         dispatch(getDiffTransactionsSuccess({ transactions }));
       } else {
         const { transactions, nextTransactionCursor } = await serviceInjector(
           WalletService
         ).getTransactions(options);
         await dispatch(getBalance());
+        await dispatch(getAllpayHandles());
+        await dispatch(getUnregisteredNames());
         dispatch(getTransactionsSuccess({ transactions, nextTransactionCursor }));
       }
     }
