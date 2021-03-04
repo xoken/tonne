@@ -97,7 +97,7 @@ class RecentTransaction extends React.Component {
             {`${transaction.additionalInfo.type} : ${transaction.additionalInfo.value}`}
           </span>{' '}
           <Link to={'/explorer/transaction/' + transaction.txId}>
-            <span className='padding5px'>
+            <span className='padding10px'>
               <i className='walletLink'></i>
             </span>
           </Link>
@@ -112,7 +112,21 @@ class RecentTransaction extends React.Component {
             {this.renderAllPaySendInfo(transaction.additionalInfo.value)}
           </span>{' '}
           <Link to={'/explorer/transaction/' + transaction.txId}>
-            <span className='padding5px'>
+            <span className='padding10px'>
+              <i className='walletLink'></i>
+            </span>
+          </Link>
+        </Grid.Column>
+      );
+    } else if (transaction.additionalInfo && transaction.additionalInfo.type === 'Allpay Meta Tx') {
+      return (
+        <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
+          <Icon name='dropdown' className='dropdownTriangle' />
+          <span className='monospace word-wrap recentTxidAddress'>
+            {transaction.additionalInfo.type}
+          </span>{' '}
+          <Link to={'/explorer/transaction/' + transaction.txId}>
+            <span className='padding10px'>
               <i className='walletLink'></i>
             </span>
           </Link>
@@ -124,7 +138,7 @@ class RecentTransaction extends React.Component {
           <Icon name='dropdown' className='dropdownTriangle' />
           <span className='monospace word-wrap recentTxidAddress'>{transaction.txId}</span>{' '}
           <Link to={'/explorer/transaction/' + transaction.txId}>
-            <span className='padding5px'>
+            <span className='padding10px'>
               <i className='walletLink'></i>
             </span>
           </Link>
@@ -234,7 +248,7 @@ class RecentTransaction extends React.Component {
                           {transaction.txId}
                         </span>{' '}
                         <Link to={'/explorer/transaction/' + transaction.txId}>
-                          <span className='padding5px'>
+                          <span className='padding10px'>
                             <i className='walletLink'></i>
                           </span>
                         </Link>
@@ -260,7 +274,7 @@ class RecentTransaction extends React.Component {
                                     <Link
                                       to={'/explorer/address/' + input.address}
                                       className='recentTxidAddress'>
-                                      <span className='padding5px'>
+                                      <span className='padding10px'>
                                         <i className='walletLink'></i>
                                       </span>
                                     </Link>
