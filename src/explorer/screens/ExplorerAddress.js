@@ -29,10 +29,11 @@ class ExplorerAddress extends React.Component {
   batches;
   totalpagesavailable;
   currentbatchnum = 1;
-  nextcursor = '';
+  nextcursor = null;
   pagescontainer = [];
 
   initAddress = async () => {
+    this.setState({ isLoading: true });
     if (this.props.match.params.address !== undefined) {
       this.address = this.props.match.params.address;
     }
@@ -350,6 +351,9 @@ class ExplorerAddress extends React.Component {
       var tempindex = 1;
       if (this.addressCache.length > this.outputsperpage) {
         this.totalpagesavailable = Math.ceil(this.addressCache.length / this.outputsperpage);
+        if (this.totalpagesavailable < this.fixedpagearrlength) {
+          this.nextcursor = null;
+        }
       } else {
         this.totalpagesavailable = 1;
       }
@@ -384,7 +388,7 @@ class ExplorerAddress extends React.Component {
         this.txCache[this.cachecounter] = this.rjdecodedtx.txs[i];
         this.cachecounter += 1;
       }
-      this.nextcursor = this.rjdecoded.nextCursor;
+      this.nextcursor = parseInt(this.rjdecoded.nextCursor);
     } else {
       this.nextcursor = null;
     }
@@ -396,15 +400,33 @@ class ExplorerAddress extends React.Component {
     if (this.nextcursor != null) {
       this.totalpagesavailable = Math.ceil(this.addressCache.length / this.outputsperpage);
       this.batches = Math.ceil(this.totalpagesavailable / this.fixedpagearrlength);
-      var pagenum = this.pagearray[this.pagearray.length - 1];
-      this.currentbatchnum = Math.ceil(this.pagearray[0] / this.fixedpagearrlength);
-      this.currentbatchnum += 1;
-      var numpagesincurbatch = Math.ceil(
-        (this.cachecounter - prevcounterval) / this.outputsperpage
-      );
-      for (var t = 0; t < numpagesincurbatch; t++) {
-        pagenum += 1;
-        this.pagearray[t] = pagenum;
+      if (this.currentbatchnum === this.batches) {
+        var pagenum = this.pagearray[this.pagearray.length - 1];
+        this.currentbatchnum = Math.ceil(this.pagearray[0] / this.fixedpagearrlength);
+        this.currentbatchnum += 1;
+        var numpagesincurbatch = Math.ceil(
+          (this.cachecounter - prevcounterval) / this.outputsperpage
+        );
+        for (var t = 0; t < numpagesincurbatch; t++) {
+          pagenum += 1;
+          this.pagearray[t] = pagenum;
+        }
+      } else {
+        this.currentbatchnum += 1;
+        var tindex = this.pagearray[this.pagearray.length - 1];
+
+        if (
+          this.pagearray[this.pagearray.length - 1] + this.fixedpagearrlength >
+          this.totalpagesavailable
+        ) {
+          this.pagearrlength = this.totalpagesavailable % this.fixedpagearrlength;
+        } else {
+          this.pagearrlength = this.fixedpagearrlength;
+        }
+        for (var t = 0; t < this.pagearrlength; t++) {
+          tindex += 1;
+          this.pagearray[t] = tindex;
+        }
       }
     }
     this.printpagination();
@@ -493,11 +515,17 @@ class ExplorerAddress extends React.Component {
     ) {
       this.currentbatchnum = Math.ceil(this.pagearray[0] / this.fixedpagearrlength);
       if (
-        this.pagearray[this.pagearray.length - 1] === this.totalpagesavailable &&
-        this.nextcursor != null
+        (this.pagearray[this.pagearray.length - 1] === this.totalpagesavailable &&
+          this.nextcursor != null &&
+          this.currentbatchnum === this.batches) ||
+        (this.nextcursor != null &&
+          this.pagearray[this.pagearray.length - 1] >=
+            this.totalpagesavailable - this.fixedpagearrlength)
       ) {
+        this.setState({ isLoading: true });
         this.rjdecoded = await ExplorerHttpsReq.httpsreq(
           'getOutputsByAddress',
+          this.address,
           100,
           this.nextcursor
         );
@@ -558,11 +586,24 @@ class ExplorerAddress extends React.Component {
   render() {
     return (
       <>
+        {this.state.isLoading ? (
+          <Loader
+            active
+            style={{
+              position: 'absolute',
+              top: '50%',
+              zIndex: '999',
+            }}
+          />
+        ) : (
+          ''
+        )}
         <Segment className='noborder'>
           <Button onClick={this.onBack} className='backspace'>
             Back
           </Button>
         </Segment>
+
         <div className='opacitywhileload'>
           <Segment.Group className='removesegmentborder'>
             <Segment>
@@ -578,7 +619,7 @@ class ExplorerAddress extends React.Component {
                 <div id='nooftransactions'></div>Transactions
               </h4>
             </Segment>
-            <Segment>{this.state.isLoading ? <Loader active /> : this.txlist}</Segment>
+            <Segment>{this.state.isLoading ? '' : this.txlist}</Segment>
             <Segment textAlign='center'>
               <nav aria-label='transactions navigation'>
                 <ul className='pagination justify-content-center' id='pagination'>
