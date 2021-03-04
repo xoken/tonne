@@ -35,15 +35,12 @@ class MailDashboard extends React.Component {
       this.setState({
         currentlyOpenMailThreadId: currentlyOpenMailThreadId,
         currentlyOpenMailData: currOpenMailData,
-        currentlyOpenSentMail: currOpenSentMail,
-        currentlyOpenReceivedMail: currOpenReceivedMail,
       });
     } else {
       this.setState({
         currentlyOpenMailThreadId: currentlyOpenMailThreadId,
         currentlyOpenMailData: currOpenMailData,
-        currentlyOpenSentMail: currOpenSentMail,
-        currentlyOpenReceivedMail: currOpenReceivedMail,
+
         toggleFullMailPane: !toggleFullMailPane,
       });
     }
@@ -442,8 +439,6 @@ class MailDashboard extends React.Component {
                     toggleFullMailPane={this.toggleFullMailPane}
                     currentlyOpenMailThreadId={currentlyOpenMailThreadId}
                     currentlyOpenMailData={currentlyOpenMailData}
-                    currentlyOpenSentMail={currentlyOpenSentMail}
-                    currentlyOpenReceivedMail={currentlyOpenReceivedMail}
                   />
                 }
               </Grid.Column>

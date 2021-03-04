@@ -2,18 +2,19 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Grid, Segment, Button } from 'semantic-ui-react';
+import { Grid, Segment, Button, Loader } from 'semantic-ui-react';
 import * as mailActions from '../mailActions';
 import * as mailSelectors from '../mailSelectors';
 
 class RenderCombinedMails extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { lastRefreshed: null, timeSinceLastRefreshed: null };
+    this.state = { lastRefreshed: null, timeSinceLastRefreshed: null, loading: false };
   }
   async componentDidMount() {
     const { mailTransactions, dispatch } = this.props;
     if (mailTransactions && Object.keys(mailTransactions).length === 0) {
+      this.setState({ loading: true });
       try {
         await dispatch(mailActions.getMailTransactions({ limit: 10 }));
         this.setState({ lastRefreshed: new Date() });
@@ -28,6 +29,7 @@ class RenderCombinedMails extends React.Component {
         this.autoRefreshTimer = setInterval(() => {
           // this.onRefresh();
         }, autoRefreshTimeInSecs);
+        this.setState({ loading: false });
       } catch (error) {
         console.log(error);
       }
@@ -61,6 +63,7 @@ class RenderCombinedMails extends React.Component {
   }
 
   combinedMailsSection() {
+    const { loading } = this.state;
     const { mailTransactions, dispatch } = this.props;
     // let combinedMails = [
     //   {
@@ -95,9 +98,7 @@ class RenderCombinedMails extends React.Component {
           <Grid.Row
             key={index.toString()}
             style={{ cursor: 'pointer' }}
-            onClick={() =>
-              this.props.mailOnClick(mailData.threadId, mailData, sentMail, receivedMail)
-            }>
+            onClick={() => this.props.mailOnClick(mailData.threadId, mail)}>
             <Grid.Column
               style={{
                 boxShadow: '5px 5px 5px #fafafa',
@@ -124,7 +125,7 @@ class RenderCombinedMails extends React.Component {
                   </Grid.Column>
                   <Grid.Column computer={4} mobile={8} floated='right'>
                     <span style={{ color: 'lightGrey', float: 'right' }} className='word-wrap'>
-                      {mailData.createdAt}
+                      {mail[0].createdAt}
                     </span>
                   </Grid.Column>
                 </Grid.Row>
@@ -142,7 +143,9 @@ class RenderCombinedMails extends React.Component {
         );
       });
     } else {
-      return (
+      return loading ? (
+        ''
+      ) : (
         <Grid>
           <Grid.Row>
             <Grid.Column width={16}>You have no mails.</Grid.Column>
@@ -152,8 +155,10 @@ class RenderCombinedMails extends React.Component {
     }
   }
   render() {
+    const { loading } = this.state;
     return (
       <>
+        {loading ? <Loader active /> : ''}
         {this.combinedMailsSection()}
         {this.renderPagination()}
       </>
