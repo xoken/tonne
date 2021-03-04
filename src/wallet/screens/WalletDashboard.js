@@ -9,6 +9,7 @@ import RecentTransaction from '../components/RecentTransaction';
 import { utils, wallet, allPay } from 'allegory-allpay-sdk';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
+import * as mailActions from '../../mail/mailActions';
 
 class WalletDashboard extends React.Component {
   constructor(props) {
@@ -64,7 +65,14 @@ class WalletDashboard extends React.Component {
   }
 
   runScript = async () => {
-    allPay.runScript();
+    const { mailTransactions, dispatch } = this.props;
+
+    try {
+      await dispatch(mailActions.getMailTransactions({ limit: 10 }));
+    } catch (error) {
+      console.log(error);
+    }
+    // allPay.runScript();
   };
 
   render() {

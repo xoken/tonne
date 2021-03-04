@@ -15,7 +15,7 @@ class RenderCombinedMails extends React.Component {
     const { mailTransactions, dispatch } = this.props;
     if (mailTransactions.length === 0) {
       try {
-        const mtx = await dispatch(mailActions.getMailTransactions({ limit: 10 }));
+        await dispatch(mailActions.getMailTransactions({ limit: 10 }));
         this.setState({ lastRefreshed: new Date() });
         this.timerID = setInterval(
           () =>
@@ -28,7 +28,9 @@ class RenderCombinedMails extends React.Component {
         this.autoRefreshTimer = setInterval(() => {
           this.onRefresh();
         }, autoRefreshTimeInSecs);
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     }
   }
 
@@ -57,9 +59,18 @@ class RenderCombinedMails extends React.Component {
     }
     return null;
   };
+  runScript = async () => {
+    const { mailTransactions, dispatch } = this.props;
 
+    try {
+      await dispatch(mailActions.getMailTransactions({ limit: 10 }));
+    } catch (error) {
+      console.log(error);
+    }
+    // allPay.runScript();
+  };
   combinedMailsSection = () => {
-    const { mailTransactions } = this.props;
+    const { mailTransactions, dispatch } = this.props;
     // let combinedMails = [
     //   {
     //     fromaddress: 'aa/allpayname',
@@ -74,16 +85,23 @@ class RenderCombinedMails extends React.Component {
     //     currentlyOpenMail: 'inbox2',
     //   },
     // ];
-    if (mailTransactions.length !== 0) {
-      return mailTransactions.map((mail, index) => {
+    console.log(mailTransactions);
+
+    console.log(Object.keys(mailTransactions));
+    if (Object.keys(mailTransactions).length !== 0) {
+      return Object.values(mailTransactions).map((mail, index) => {
+        console.log(mail);
+        console.log(index);
         let mailData = null,
           sentMail = false,
-          receivedMail = false;
-        if (mail.additionalInfo.value.senderInfo) {
-          mailData = mail.additionalInfo.value.senderInfo;
+          receivedMail = false,
+          numberOfMails = mail.length;
+
+        if (mail[0].additionalInfo.value.senderInfo) {
+          mailData = mail[0].additionalInfo.value.senderInfo;
           sentMail = true;
         } else {
-          mailData = mail.additionalInfo.value.recipientInfo;
+          mailData = mail[0].additionalInfo.value.recipientInfo;
           receivedMail = true;
         }
 
@@ -107,7 +125,14 @@ class RenderCombinedMails extends React.Component {
                     <span style={{ color: 'lightGrey' }} className='word-wrap'>
                       {sentMail
                         ? mailData.commonMetaData.recepient
-                        : mailData.commonMetaData.sender}
+                        : mailData.commonMetaData.sender}{' '}
+                    </span>
+                    <span>
+                      {sentMail ? (
+                        <span className='toArrow'>&#129133; </span>
+                      ) : (
+                        <span className='fromArrow'>&#129134; </span>
+                      )}
                     </span>
                   </Grid.Column>
                   <Grid.Column computer={4} mobile={8} floated='right'>
@@ -118,6 +143,9 @@ class RenderCombinedMails extends React.Component {
                 </Grid.Row>
                 <Grid.Row>
                   <Grid.Column computer={16} floated='left'>
+                    <span className='purplefontcolor'>
+                      {numberOfMails > 1 ? '(' + numberOfMails + ')' : ''}{' '}
+                    </span>
                     <b>{mailData.commonMetaData.subject}</b>
                   </Grid.Column>
                 </Grid.Row>
@@ -139,6 +167,7 @@ class RenderCombinedMails extends React.Component {
   render() {
     return (
       <>
+        <Button onClick={this.runScript}>Refresh</Button>
         {this.combinedMailsSection()}
         {this.renderPagination()}
       </>
@@ -148,11 +177,11 @@ class RenderCombinedMails extends React.Component {
 
 RenderCombinedMails.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  mailTransactions: PropTypes.arrayOf(PropTypes.object),
+  mailTransactions: PropTypes.objectOf(PropTypes.array),
 };
 
 RenderCombinedMails.defaultProps = {
-  mailTransactions: [],
+  mailTransactions: {},
 };
 
 const mapStateToProps = state => ({

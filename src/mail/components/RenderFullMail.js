@@ -4,6 +4,10 @@ import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Button, Grid, Input, Divider, Icon, TextArea } from 'semantic-ui-react';
 import * as mailSelectors from '../mailSelectors';
+import { EditorState, ContentState } from 'draft-js';
+import htmlToDraft from 'html-to-draftjs';
+import { Editor } from 'react-draft-wysiwyg';
+import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 class RenderFullMail extends React.Component {
   constructor(props) {
@@ -19,10 +23,14 @@ class RenderFullMail extends React.Component {
       currentlyOpenReceivedMail,
     } = this.props;
 
+    const blocksFromHtml = htmlToDraft(currentlyOpenMailData.body);
+    const { contentBlocks, entityMap } = blocksFromHtml;
+    const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
+    const editorState = EditorState.createWithContent(contentState);
     return (
       <Grid>
         <Grid.Row>
-          <Grid.Column computer={16} mobile={16} floated='right'>
+          <Grid.Column computer={16} mobile={16}>
             {
               //close pane
             }
@@ -44,7 +52,14 @@ class RenderFullMail extends React.Component {
             <span style={{ color: 'lightgrey' }} className='word-wrap'>
               {currentlyOpenSentMail
                 ? currentlyOpenMailData.commonMetaData.recepient
-                : currentlyOpenMailData.commonMetaData.sender}
+                : currentlyOpenMailData.commonMetaData.sender}{' '}
+            </span>
+            <span>
+              {currentlyOpenSentMail ? (
+                <span className='toArrow'>&#129133; </span>
+              ) : (
+                <span className='fromArrow'>&#129134; </span>
+              )}
             </span>
           </Grid.Column>
 
@@ -56,12 +71,20 @@ class RenderFullMail extends React.Component {
         </Grid.Row>
         <Grid.Row computer={16}>
           <Grid.Column computer='16' floated='left'>
-            {currentlyOpenMailData.commonMetaData.subject}
+            <b>{currentlyOpenMailData.commonMetaData.subject}</b>
           </Grid.Column>
         </Grid.Row>
         <Grid.Row computer={16}>
           <Grid.Column computer='16' floated='left'>
-            {currentlyOpenMailData.body}
+            <Editor
+              editorStyle={{
+                border: 'none',
+                height: 'auto',
+              }}
+              editorState={editorState}
+              toolbarClassName='hideEditorToolbar'
+              readOnly='readOnly'
+            />
           </Grid.Column>
         </Grid.Row>
 
@@ -77,7 +100,21 @@ class RenderFullMail extends React.Component {
   };
 
   render() {
-    return <>{this.renderFullMail()}</>;
+    return (
+      <>
+        {' '}
+        <Grid
+          style={{
+            boxShadow: '5px 5px 5px #fafafa',
+          }}>
+          <Grid.Row>
+            <Grid.Column computer={16} mobile={16} floated='right'>
+              {this.renderFullMail()}
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      </>
+    );
   }
 }
 
