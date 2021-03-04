@@ -33,29 +33,6 @@ class MailHeader extends React.Component {
     );
   }
 
-  renderAllpayAction() {
-    const { allpayHandles, unregisteredNames } = this.props;
-    if (unregisteredNames && unregisteredNames.length > 0) {
-      return (
-        <NavLink
-          className='buyallpaybutton'
-          activeClassName='buyallpaybuttonactive'
-          to={`/wallet/allpay/register?progressTotalSteps=3&activeStep=1`}>
-          Register AllPay Name
-        </NavLink>
-      );
-    } else if (allpayHandles && allpayHandles.length <= 0) {
-      return (
-        <NavLink
-          className='buyallpaybutton'
-          activeClassName='buyallpaybuttonactive'
-          to={`/wallet/allpay/search`}>
-          Buy AllPay Name
-        </NavLink>
-      );
-    }
-  }
-
   render() {
     const { profile } = this.props;
     if (profile) {
@@ -73,7 +50,6 @@ class MailHeader extends React.Component {
               <Grid.Column computer={2}></Grid.Column>
               <Grid.Column computer={7} tablet={8} mobile={8} floated='right'>
                 <div className='buttonFloatRightOnComp'>
-                  {this.renderAllpayAction()}
                   <Dropdown
                     button
                     style={{ borderRadius: '100px' }}
@@ -92,17 +68,6 @@ class MailHeader extends React.Component {
                     </Dropdown.Menu>
                   </Dropdown>
                 </div>
-
-                {/* <Dropdown
-              button
-              className='circular icon top left right floated profile'
-              icon='bell outline'
-              additionPosition='top'
-              pointing>
-              <Dropdown.Menu>
-                <Dropdown.Item text='' />
-              </Dropdown.Menu>
-            </Dropdown> */}
               </Grid.Column>
             </Grid.Row>
           </Grid>

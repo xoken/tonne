@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter, NavLink } from 'react-router-dom';
+import { withRouter, NavLink, Link } from 'react-router-dom';
 import { Grid, Button, Icon, Loader, Modal, Segment } from 'semantic-ui-react';
 import SendMail from '../components/SendMail';
 import RenderInbox from '../components/RenderInbox';
@@ -375,6 +375,21 @@ class MailDashboard extends React.Component {
       currentlyOpenSentMail,
       currentlyOpenReceivedMail,
     } = this.state;
+    const { allpayHandles } = this.props;
+    if (allpayHandles && allpayHandles.length === 0) {
+      return (
+        <Grid>
+          <Grid.Row>
+            <Grid.Column textAlign='center'>
+              <p>Please register an AllPay name to use voxMail</p>
+              <Link to='/wallet/dashboard' className='ui coral button'>
+                Continue
+              </Link>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      );
+    }
     return (
       <>
         <Grid stackable>
@@ -456,6 +471,8 @@ MailDashboard.propTypes = {};
 
 MailDashboard.defaultProps = {};
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  allpayHandles: state.wallet.allpayHandles,
+});
 
 export default withRouter(connect(mapStateToProps)(MailDashboard));
