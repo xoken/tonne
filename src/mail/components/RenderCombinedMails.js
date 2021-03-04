@@ -13,7 +13,7 @@ class RenderCombinedMails extends React.Component {
   }
   async componentDidMount() {
     const { mailTransactions, dispatch } = this.props;
-    if (mailTransactions.length === 0) {
+    if (mailTransactions && Object.keys(mailTransactions).length === 0) {
       try {
         await dispatch(mailActions.getMailTransactions({ limit: 10 }));
         this.setState({ lastRefreshed: new Date() });
@@ -26,7 +26,7 @@ class RenderCombinedMails extends React.Component {
         );
         const autoRefreshTimeInSecs = 1 * 60 * 1000;
         this.autoRefreshTimer = setInterval(() => {
-          this.onRefresh();
+          // this.onRefresh();
         }, autoRefreshTimeInSecs);
       } catch (error) {
         console.log(error);
@@ -46,7 +46,7 @@ class RenderCombinedMails extends React.Component {
     const { dispatch } = this.props;
     await dispatch(mailActions.getMailTransactions({ limit: 10 }));
   };
-  renderPagination = () => {
+  renderPagination() {
     const { nextTransactionCursor } = this.props;
     if (nextTransactionCursor) {
       return (
@@ -58,18 +58,9 @@ class RenderCombinedMails extends React.Component {
       );
     }
     return null;
-  };
-  runScript = async () => {
-    const { mailTransactions, dispatch } = this.props;
+  }
 
-    try {
-      await dispatch(mailActions.getMailTransactions({ limit: 10 }));
-    } catch (error) {
-      console.log(error);
-    }
-    // allPay.runScript();
-  };
-  combinedMailsSection = () => {
+  combinedMailsSection() {
     const { mailTransactions, dispatch } = this.props;
     // let combinedMails = [
     //   {
@@ -85,13 +76,8 @@ class RenderCombinedMails extends React.Component {
     //     currentlyOpenMail: 'inbox2',
     //   },
     // ];
-    console.log(mailTransactions);
-
-    console.log(Object.keys(mailTransactions));
     if (Object.keys(mailTransactions).length !== 0) {
       return Object.values(mailTransactions).map((mail, index) => {
-        console.log(mail);
-        console.log(index);
         let mailData = null,
           sentMail = false,
           receivedMail = false,
@@ -107,6 +93,7 @@ class RenderCombinedMails extends React.Component {
 
         return (
           <Grid.Row
+            key={index.toString()}
             style={{ cursor: 'pointer' }}
             onClick={() =>
               this.props.mailOnClick(mailData.threadId, mailData, sentMail, receivedMail)
@@ -163,11 +150,10 @@ class RenderCombinedMails extends React.Component {
         </Grid>
       );
     }
-  };
+  }
   render() {
     return (
       <>
-        <Button onClick={this.runScript}>Refresh</Button>
         {this.combinedMailsSection()}
         {this.renderPagination()}
       </>

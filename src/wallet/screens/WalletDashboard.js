@@ -64,16 +64,7 @@ class WalletDashboard extends React.Component {
     );
   }
 
-  runScript = async () => {
-    const { mailTransactions, dispatch } = this.props;
-
-    try {
-      await dispatch(mailActions.getMailTransactions({ limit: 10 }));
-    } catch (error) {
-      console.log(error);
-    }
-    // allPay.runScript();
-  };
+  runScript = async () => {};
 
   render() {
     const { isLoading, balance } = this.props;

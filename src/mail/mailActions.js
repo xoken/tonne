@@ -36,15 +36,11 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
         const { mailTransactions, nextTransactionCursor } = await serviceInjector(
           MailService
         ).getMailTransactions(options);
-        console.log(mailTransactions);
-
         dispatch(getDiffMailTransactionsSuccess({ mailTransactions, nextTransactionCursor }));
       } else {
         const { mailTransactions } = await serviceInjector(MailService).getMailTransactions(
           options
         );
-        console.log(mailTransactions);
-
         dispatch(getMailTransactionsSuccess({ mailTransactions }));
       }
     }
