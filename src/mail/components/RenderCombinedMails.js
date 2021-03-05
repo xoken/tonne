@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Grid, Segment, Button, Loader } from 'semantic-ui-react';
+import { Grid, Segment, Button, Loader, Icon } from 'semantic-ui-react';
 import * as mailActions from '../mailActions';
 import * as mailSelectors from '../mailSelectors';
 
@@ -26,7 +26,7 @@ class RenderCombinedMails extends React.Component {
             }),
           1000
         );
-        const autoRefreshTimeInSecs = 1 * 60 * 1000;
+        const autoRefreshTimeInSecs = 1 * 30 * 1000;
         this.autoRefreshTimer = setInterval(() => {
           this.onRefresh();
         }, autoRefreshTimeInSecs);
@@ -38,11 +38,13 @@ class RenderCombinedMails extends React.Component {
   }
 
   onRefresh = async () => {
+    this.setState({ loading: true });
     const { dispatch } = this.props;
     await dispatch(mailActions.getMailTransactions({ diff: true }));
     this.setState({
       lastRefreshed: new Date(),
       timeSinceLastRefreshed: new Date(),
+      loading: false,
     });
   };
 
@@ -113,7 +115,7 @@ class RenderCombinedMails extends React.Component {
               <Grid>
                 <Grid.Row>
                   <Grid.Column computer={8} mobile={8} floated='left'>
-                    <span style={{ color: 'lightGrey' }} className='word-wrap'>
+                    <span style={{ color: 'lightGrey' }} className='word-wrap purplefontcolor'>
                       {sentMail
                         ? mailData.commonMetaData.recepient
                         : mailData.commonMetaData.sender}{' '}
@@ -162,6 +164,21 @@ class RenderCombinedMails extends React.Component {
     const { loading } = this.state;
     return (
       <>
+        <div style={{ width: '100%' }}>
+          {' '}
+          <Button
+            floated='right'
+            circular
+            icon
+            style={{
+              marginRight: '0px',
+            }}
+            className='peach'
+            disabled={loading}
+            onClick={this.onRefresh}>
+            <Icon name='refresh' />
+          </Button>
+        </div>
         {loading ? <Loader active /> : ''}
         {this.combinedMailsSection()}
         {this.renderPagination()}
