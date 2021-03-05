@@ -1,6 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import { Button, Grid, Input, Divider, Icon, TextArea } from 'semantic-ui-react';
 import * as mailSelectors from '../mailSelectors';
@@ -182,7 +182,7 @@ class RenderFullMail extends React.Component {
         mailData = mail.additionalInfo.value.recipientInfo;
         receivedMail = true;
       }
-
+      console.log(mail);
       const blocksFromHtml = htmlToDraft(mailData.body);
       const { contentBlocks, entityMap } = blocksFromHtml;
       const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
@@ -191,11 +191,11 @@ class RenderFullMail extends React.Component {
         <Grid>
           <Grid.Row>
             <Grid.Column computer={8} mobile={8} floated='left'>
-              <span style={{ color: 'lightgrey' }} className='word-wrap'>
+              <span style={{ color: 'lightgrey' }} className='word-wrap purplefontcolor'>
                 {sentMail ? mailData.commonMetaData.recepient : mailData.commonMetaData.sender}{' '}
               </span>
               <span>
-                {mailData ? (
+                {sentMail ? (
                   <span className='toArrow'>&#129133; </span>
                 ) : (
                   <span className='fromArrow'>&#129134; </span>
@@ -227,13 +227,24 @@ class RenderFullMail extends React.Component {
               />
             </Grid.Column>
           </Grid.Row>
-
           <Grid.Row>
             <Grid.Column>
               {
                 //Attached files
               }
               <Divider />
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column className='recentTxidAddressColumn' style={{ marginBottom: '30px' }}>
+              <span className='monospace word-wrap recentTxidAddress'>
+                <span className='purplefontcolor'>TxID:</span> {mail.txId}
+              </span>{' '}
+              <Link to={'/explorer/transaction/' + mail.txId}>
+                <span className='padding10px'>
+                  <i className='walletLink'></i>
+                </span>
+              </Link>
             </Grid.Column>
           </Grid.Row>
         </Grid>
