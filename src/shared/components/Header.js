@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { NavLink, Link } from 'react-router-dom';
-import { Dropdown, Divider, Icon } from 'semantic-ui-react';
+import { Dropdown, Divider } from 'semantic-ui-react';
 import images from '../images';
 
 class Header extends React.Component {
@@ -80,13 +80,7 @@ class Header extends React.Component {
                 <img
                   alt='Bitcoin SV Explorer'
                   src={images.explorerLogo}
-                  style={{
-                    display: 'block',
-                    height: 23,
-                    width: 'auto',
-                    borderRadius: '100px',
-                  }}
-                  className='icon'
+                  className='icon headerIcons'
                 />
                 Explorer
               </NavLink>
@@ -94,34 +88,14 @@ class Header extends React.Component {
                 to='/wallet'
                 activeClassName='activeheader'
                 className='item headertabitems headerWallet'>
-                <img
-                  alt='Bitcoin SV Wallet'
-                  src={images.wallet}
-                  style={{
-                    display: 'block',
-                    height: 23,
-                    width: 'auto',
-                    borderRadius: '100px',
-                  }}
-                  className='icon'
-                />
+                <img alt='Bitcoin SV Wallet' src={images.wallet} className='icon headerIcons' />
                 Wallet
               </NavLink>
               <NavLink
                 to='/mail'
                 activeClassName='activeheader'
                 className='item headertabitems headerVoxMail'>
-                <img
-                  alt='voxMail'
-                  src={images.voxmail}
-                  style={{
-                    display: 'block',
-                    height: 23,
-                    width: 'auto',
-                    borderRadius: '100px',
-                  }}
-                  className='icon'
-                />
+                <img alt='voxMail' src={images.voxmail} className='icon headerIcons' />
                 voxMail
               </NavLink>
               {/* <NavLink

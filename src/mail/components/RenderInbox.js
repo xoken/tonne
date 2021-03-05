@@ -68,6 +68,7 @@ class Inbox extends React.Component {
       );
     });
   };
+
   render() {
     return <>{this.inboxSection()}</>;
   }

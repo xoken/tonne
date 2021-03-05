@@ -62,12 +62,16 @@ export const getTransactions = options => async (dispatch, getState, { serviceIn
       if (options.diff) {
         const { transactions } = await serviceInjector(WalletService).getTransactions(options);
         await dispatch(getBalance());
+        await dispatch(getAllpayHandles());
+        await dispatch(getUnregisteredNames());
         dispatch(getDiffTransactionsSuccess({ transactions }));
       } else {
         const { transactions, nextTransactionCursor } = await serviceInjector(
           WalletService
         ).getTransactions(options);
         await dispatch(getBalance());
+        await dispatch(getAllpayHandles());
+        await dispatch(getUnregisteredNames());
         dispatch(getTransactionsSuccess({ transactions, nextTransactionCursor }));
       }
     }
@@ -207,5 +211,20 @@ export const CLEAR_USED_UNUSED_ADDRESS = 'CLEAR_USED_UNUSED_ADDRESS';
 export const clearUsedUnusedAddresses = () => (dispatch, getState, { serviceInjector }) => {
   dispatch({
     type: CLEAR_USED_UNUSED_ADDRESS,
+  });
+};
+
+export const SHOW_RECEIVE_MODAL = 'SHOW_RECEIVE_MODAL';
+export const showReceiveModal = () => (dispatch, getState, { serviceInjector }) => {
+  dispatch(clearUsedUnusedAddresses());
+  dispatch({
+    type: SHOW_RECEIVE_MODAL,
+  });
+};
+
+export const HIDE_RECEIVE_MODAL = 'HIDE_RECEIVE_MODAL';
+export const hideReceiveModal = () => (dispatch, getState, { serviceInjector }) => {
+  dispatch({
+    type: HIDE_RECEIVE_MODAL,
   });
 };

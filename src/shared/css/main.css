@@ -295,17 +295,17 @@
   border-radius: 0px !important;
 }
 .buyallpaybutton {
-  background-color: #ff7f7f;
-  color: white;
-  padding: 8px 10px 8px 10px;
-  border-radius: 4px;
-  font-weight: bold;
-  position: relative;
-  margin-left: 0px;
-  margin-right: 10px;
+  background-color: #ff7f7f !important;
+  color: white !important;
+  padding: 8px 10px 8px 10px !important;
+  border-radius: 4px !important;
+  font-weight: bold !important;
+  position: relative !important;
+  margin-left: 0px !important;
+  margin-right: 10px !important;
 }
 .buyallpaybutton:hover {
-  color: white;
+  color: white !important;
 }
 .buyallpaybuttonactive {
   display: none !important;
@@ -459,8 +459,8 @@ input[type='number'] {
 .buttonFloatRightOnComp {
   float: right !important;
 }
-.ui.yellow.message.modal-message {
-  box-shadow: none;
+.modal-message {
+  box-shadow: none !important;
 }
 
 .introText {
@@ -570,6 +570,15 @@ input[type='number'] {
 .rdw-editor-main {
   height: 150px;
   border: 1px solid rgba(34, 36, 38, 0.15);
+}
+.headerIcons{
+  display: block;
+  height: 26px !important;
+  width: 28px !important;
+  border-radius: 100px;
+  margin-right: 0px !important;
+  margin-left: 0px !important;
+  margin-bottom: 5px !important;
 }
 @keyframes purpleTurbulence {
   0% {
@@ -1074,6 +1083,17 @@ body {
   color: rgba(0, 0, 0, 0.8);
   box-shadow: none;
 }
-.hideEditorToolbar{
+.hideEditorToolbar {
   display: none !important;
+}
+.transparent {
+  background: none !important;
+}
+.ui.basic.transparent-button {
+  padding: 0 !important;
+  margin: 0 !important;
+  color: #ff7f7f !important;
+}
+.ui.basic.transparent-button:hover {
+  color: #ff7f7f !important;
 }

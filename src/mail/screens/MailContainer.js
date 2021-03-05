@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import PrivateRoute from '../../shared/components/privateRoute';
 import MailHeader from '../components/MailHeader';
 import MailDashboard from './MailDashboard';
-import PublicRoute from '../../shared/components/publicRoute';
 
 class MailContainer extends React.Component {
   render() {

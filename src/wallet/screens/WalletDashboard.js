@@ -6,17 +6,15 @@ import { Button, Icon, Loader, Modal } from 'semantic-ui-react';
 import SendTransaction from '../components/SendTransaction';
 import ReceiveTransaction from '../components/ReceiveTransaction';
 import RecentTransaction from '../components/RecentTransaction';
-import { utils, wallet, allPay } from 'allegory-allpay-sdk';
+import { utils, wallet } from 'allegory-allpay-sdk';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
-import * as mailActions from '../../mail/mailActions';
 
 class WalletDashboard extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       sendTransactionModal: false,
-      receiveTransactionModal: false,
     };
   }
 
@@ -25,11 +23,14 @@ class WalletDashboard extends React.Component {
     this.setState({ sendTransactionModal: !sendTransactionModal });
   };
 
-  toggleReceiveTransactionModal = () => {
+  openReceiveTransactionModal = () => {
     const { dispatch } = this.props;
-    const { receiveTransactionModal } = this.state;
-    if (receiveTransactionModal) dispatch(walletActions.clearUsedUnusedAddresses());
-    this.setState({ receiveTransactionModal: !receiveTransactionModal });
+    dispatch(walletActions.showReceiveModal());
+  };
+
+  closeReceiveTransactionModal = () => {
+    const { dispatch } = this.props;
+    dispatch(walletActions.hideReceiveModal());
   };
 
   renderSendTransactionModal() {
@@ -47,18 +48,18 @@ class WalletDashboard extends React.Component {
   }
 
   renderReceiveTransactionModal() {
-    const { receiveTransactionModal } = this.state;
+    const { receiveModalVisiblity } = this.props;
     return (
-      <Modal className='receive-modal' open={receiveTransactionModal}>
-        <i className='close icon' onClick={this.toggleReceiveTransactionModal}></i>
+      <Modal className='receive-modal' open={receiveModalVisiblity}>
+        <i className='close icon' onClick={this.closeReceiveTransactionModal}></i>
         <Modal.Header className='purplefontcolor'>My Addresses</Modal.Header>
         <Modal.Content>
           <Modal.Description>
-            <ReceiveTransaction onClose={this.toggleReceiveTransactionModal} />
+            <ReceiveTransaction onClose={this.closeReceiveTransactionModal} />
           </Modal.Description>
         </Modal.Content>
         <Modal.Actions>
-          <Button className='peach' content='Close' onClick={this.toggleReceiveTransactionModal} />
+          <Button className='peach' content='Close' onClick={this.closeReceiveTransactionModal} />
         </Modal.Actions>
       </Modal>
     );
@@ -87,7 +88,7 @@ class WalletDashboard extends React.Component {
             <Button className='coral' onClick={this.toggleSendTransactionModal}>
               Send
             </Button>
-            <Button className='coral' onClick={this.toggleReceiveTransactionModal}>
+            <Button className='coral' onClick={this.openReceiveTransactionModal}>
               Receive
             </Button>
           </div>
@@ -112,6 +113,7 @@ WalletDashboard.defaultProps = {
 const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoadingTransactions(state),
   balance: walletSelectors.getBalance(state),
+  receiveModalVisiblity: state.wallet.receiveModalVisiblity,
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));

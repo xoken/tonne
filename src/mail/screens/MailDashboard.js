@@ -1,13 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter, NavLink } from 'react-router-dom';
+import { withRouter, NavLink, Link } from 'react-router-dom';
 import { Grid, Button, Icon, Loader, Modal, Segment } from 'semantic-ui-react';
 import SendMail from '../components/SendMail';
 import RenderInbox from '../components/RenderInbox';
 import RenderSentMails from '../components/RenderSentMails';
 import RenderCombinedMails from '../components/RenderCombinedMails';
 import RenderFullMail from '../components/RenderFullMail';
+import * as mailActions from '../mailActions';
+import * as mailSelectors from '../mailSelectors';
 
 class MailDashboard extends React.Component {
   constructor(props) {
@@ -17,28 +19,161 @@ class MailDashboard extends React.Component {
       inboxSection: true,
       sendMailModal: false,
       toggleFullMailPane: false,
-      currentlyOpenMailThreadId: '',
       currentlyOpenMailData: null,
-      currentlyOpenSentMail: false,
-      currentlyOpenReceivedMail: false,
+      lastRefreshed: null,
+      timeSinceLastRefreshed: null,
     };
   }
 
-  mailOnClick = (
-    currOpenMailThreadId,
-    currOpenMailData,
-    currOpenSentMail,
-    currOpenReceivedMail
-  ) => {
-    const { currentlyOpenMailThreadId, toggleFullMailPane } = this.state;
+  async componentDidMount() {
+    const { mailTransactions, dispatch } = this.props;
+    if (mailTransactions && Object.keys(mailTransactions).length === 0) {
+      try {
+        await dispatch(mailActions.getMailTransactions({ limit: 10 }));
+        this.setState({ lastRefreshed: new Date() });
+        this.timerID = setInterval(
+          () =>
+            this.setState({
+              timeSinceLastRefreshed: new Date(),
+            }),
+          1000
+        );
+        const autoRefreshTimeInSecs = 1 * 30 * 1000;
+        this.autoRefreshTimer = setInterval(() => {
+          this.onRefresh();
+        }, autoRefreshTimeInSecs);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+  }
+
+  onRefresh = async () => {
+    const { dispatch } = this.props;
+    await dispatch(mailActions.getMailTransactions({ diff: true }));
+    this.setState({
+      lastRefreshed: new Date(),
+      timeSinceLastRefreshed: new Date(),
+    });
+  };
+
+  onNextPage = async () => {
+    const { dispatch } = this.props;
+    await dispatch(mailActions.getMailTransactions({ limit: 10 }));
+  };
+
+  renderPagination() {
+    const { nextTransactionCursor } = this.props;
+    if (nextTransactionCursor) {
+      return (
+        <Segment basic textAlign='center'>
+          <Button className='coral' onClick={this.onNextPage}>
+            Next Page
+          </Button>
+        </Segment>
+      );
+    }
+    return null;
+  }
+
+  combinedMailsSection() {
+    const { mailTransactions, dispatch } = this.props;
+    // let combinedMails = [
+    //   {
+    //     fromaddress: 'aa/allpayname',
+    //     time: '10:10',
+    //     subject: 'Thank you for your interest in abc',
+    //     currentlyOpenMail: 'inbox1',
+    //   },
+    //   {
+    //     fromaddress: 'aa/allpayname',
+    //     time: '10:10',
+    //     subject: 'Thank you for buying a xyz',
+    //     currentlyOpenMail: 'inbox2',
+    //   },
+    // ];
+    if (Object.keys(mailTransactions).length !== 0) {
+      return Object.values(mailTransactions).map((mail, index) => {
+        let mailData = null,
+          sentMail = false,
+          receivedMail = false,
+          numberOfMails = mail.length;
+
+        if (mail[0].additionalInfo.value.senderInfo) {
+          mailData = mail[0].additionalInfo.value.senderInfo;
+          sentMail = true;
+        } else {
+          mailData = mail[0].additionalInfo.value.recipientInfo;
+          receivedMail = true;
+        }
+
+        return (
+          <Grid.Row
+            key={index.toString()}
+            style={{ cursor: 'pointer' }}
+            onClick={() => this.mailOnClick(mail)}>
+            <Grid.Column
+              style={{
+                boxShadow: '5px 5px 5px #fafafa',
+                paddingTop: '12px',
+                paddingBottom: '12px',
+                marginTop: '8px',
+                marginBottom: '8px',
+              }}>
+              <Grid>
+                <Grid.Row>
+                  <Grid.Column computer={8} mobile={8} floated='left'>
+                    <span style={{ color: 'lightGrey' }} className='word-wrap purplefontcolor'>
+                      {sentMail
+                        ? mailData.commonMetaData.recepient
+                        : mailData.commonMetaData.sender}{' '}
+                    </span>
+                    <span>
+                      {sentMail ? (
+                        <span className='toArrow'>&#129133; </span>
+                      ) : (
+                        <span className='fromArrow'>&#129134; </span>
+                      )}
+                    </span>
+                  </Grid.Column>
+                  <Grid.Column computer={4} mobile={8} floated='right'>
+                    <span style={{ color: 'lightGrey', float: 'right' }} className='word-wrap'>
+                      {mail[0].createdAt}
+                    </span>
+                  </Grid.Column>
+                </Grid.Row>
+                <Grid.Row>
+                  <Grid.Column computer={16} floated='left'>
+                    <span className='purplefontcolor'>
+                      {numberOfMails > 1 ? '(' + numberOfMails + ')' : ''}{' '}
+                    </span>
+                    <b>{mailData.commonMetaData.subject}</b>
+                  </Grid.Column>
+                </Grid.Row>
+              </Grid>
+            </Grid.Column>
+          </Grid.Row>
+        );
+      });
+    } else {
+      return (
+        <Grid>
+          <Grid.Row>
+            <Grid.Column width={16}>You have no mails.</Grid.Column>
+          </Grid.Row>
+        </Grid>
+      );
+    }
+  }
+
+  mailOnClick = currOpenMailData => {
+    const { toggleFullMailPane } = this.state;
     if (toggleFullMailPane) {
       this.setState({
-        currentlyOpenMailThreadId: currentlyOpenMailThreadId,
         currentlyOpenMailData: currOpenMailData,
       });
     } else {
       this.setState({
-        currentlyOpenMailThreadId: currentlyOpenMailThreadId,
         currentlyOpenMailData: currOpenMailData,
 
         toggleFullMailPane: !toggleFullMailPane,
@@ -64,7 +199,13 @@ class MailDashboard extends React.Component {
     const { sendMailModal } = this.state;
     return (
       <Modal open={sendMailModal}>
-        <Modal.Header className='purplefontcolor'>New Mail</Modal.Header>
+        <Modal.Header className='purplefontcolor'>
+          New Mail
+          <i
+            style={{ float: 'right', cursor: 'pointer' }}
+            className='close icon'
+            onClick={this.toggleSendMailModal}></i>
+        </Modal.Header>
         <Modal.Content>
           <Modal.Description>
             <SendMail onCancel={this.toggleSendMailModal} />
@@ -271,11 +412,11 @@ class MailDashboard extends React.Component {
   // };
 
   toggleFullMailPane = () => {
-    const { toggleFullMailPane } = this.state;
     // if (!toggleFullMailPane) {
     //   this.setState({ currentlyOpenMail: '' });
     // }
-    this.setState({ toggleFullMailPane: !toggleFullMailPane, currentlyOpenMailThreadId: '' });
+    const { toggleFullMailPane } = this.state;
+    this.setState({ toggleFullMailPane: !toggleFullMailPane });
   };
 
   // renderFullMail = () => {
@@ -366,96 +507,136 @@ class MailDashboard extends React.Component {
   // };
 
   render() {
-    const {
-      sentMailSection,
-      inboxSection,
-      toggleFullMailPane,
-      currentlyOpenMailThreadId,
-      currentlyOpenMailData,
-      currentlyOpenSentMail,
-      currentlyOpenReceivedMail,
-    } = this.state;
-    return (
-      <>
-        <Grid stackable>
-          <Grid.Row centered>
-            <Grid.Column computer={16} tablet={16} mobile={16}>
-              <Grid>
-                <Grid.Row verticalAlign='middle'>
-                  <Grid.Column computer={4} tablet={8} mobile={8} floated='left'>
-                    <Button className='peach' onClick={this.toggleSendMailModal}>
-                      Send Mail
-                    </Button>
-                  </Grid.Column>
-                  <Grid.Column computer={12} tablet={8} mobile={8}>
-                    {
-                      // <span className='sentInboxToggle'>
-                      //   <span
-                      //     className={inboxSection ? 'coral' : undefined}
-                      //     id='inbox'
-                      //     onClick={this.toggleFirstColumn}
-                      //     style={{ padding: '10px', cursor: 'pointer' }}>
-                      //     Inbox
-                      //   </span>
-                      //   <span
-                      //     className={sentMailSection ? 'coral' : undefined}
-                      //     id='sent'
-                      //     onClick={this.toggleFirstColumn}
-                      //     style={{ padding: '10px', cursor: 'pointer' }}>
-                      //     Sent
-                      //   </span>
-                      // </span>
-                    }
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
-            </Grid.Column>
-          </Grid.Row>
+    const { sentMailSection, inboxSection, toggleFullMailPane, currentlyOpenMailData } = this.state;
+    const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
+    if (
+      mailTransactions &&
+      Object.keys(mailTransactions).length === 0 &&
+      isLoadingMailTransactions
+    ) {
+      return <Loader active />;
+    } else if (allpayHandles && allpayHandles.length === 0) {
+      return (
+        <Grid>
           <Grid.Row>
-            <Grid.Column computer={toggleFullMailPane ? '6' : '16'}>
-              <Grid>
-                {
-                  // this.inboxSection()
-                  // this.sentMailSection()
-                  //this.combinedMailsSection()
-                }
-                {
-                  // inboxSection ? (
-                  //   <RenderInbox mailOnClick={this.mailOnClick} />
-                  // ) : (
-                  //   <RenderSentMails mailOnClick={this.mailOnClick} />
-                  // )
-                }
-                <RenderCombinedMails mailOnClick={this.mailOnClick} />
-              </Grid>
+            <Grid.Column textAlign='center'>
+              <p>Please register an AllPay name to use voxMail</p>
+              <Link to='/wallet/dashboard' className='ui coral button'>
+                Continue
+              </Link>
             </Grid.Column>
-            {toggleFullMailPane ? (
-              <Grid.Column computer='10'>
-                {
-                  //this.renderFullMail()
-                }
-                {
-                  <RenderFullMail
-                    toggleFullMailPane={this.toggleFullMailPane}
-                    currentlyOpenMailThreadId={currentlyOpenMailThreadId}
-                    currentlyOpenMailData={currentlyOpenMailData}
-                  />
-                }
-              </Grid.Column>
-            ) : (
-              ''
-            )}
           </Grid.Row>
         </Grid>
-        {this.renderSendMailModal()}
-      </>
-    );
+      );
+    } else {
+      return (
+        <>
+          <Grid stackable>
+            <Grid.Row centered>
+              <Grid.Column computer={16} tablet={16} mobile={16}>
+                <Grid>
+                  <Grid.Row verticalAlign='middle'>
+                    <Grid.Column computer={4} tablet={8} mobile={8} floated='left'>
+                      <Button className='peach' onClick={this.toggleSendMailModal}>
+                        Send Mail
+                      </Button>
+                    </Grid.Column>
+                    <Grid.Column computer={12} tablet={8} mobile={8}>
+                      {
+                        // <span className='sentInboxToggle'>
+                        //   <span
+                        //     className={inboxSection ? 'coral' : undefined}
+                        //     id='inbox'
+                        //     onClick={this.toggleFirstColumn}
+                        //     style={{ padding: '10px', cursor: 'pointer' }}>
+                        //     Inbox
+                        //   </span>
+                        //   <span
+                        //     className={sentMailSection ? 'coral' : undefined}
+                        //     id='sent'
+                        //     onClick={this.toggleFirstColumn}
+                        //     style={{ padding: '10px', cursor: 'pointer' }}>
+                        //     Sent
+                        //   </span>
+                        // </span>
+                      }
+                    </Grid.Column>
+                  </Grid.Row>
+                </Grid>
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column computer={toggleFullMailPane ? '6' : '16'}>
+                <Grid>
+                  {
+                    // this.inboxSection()
+                    // this.sentMailSection()
+                    //this.combinedMailsSection()
+                  }
+                  {
+                    // inboxSection ? (
+                    //   <RenderInbox mailOnClick={this.mailOnClick} />
+                    // ) : (
+                    //   <RenderSentMails mailOnClick={this.mailOnClick} />
+                    // )
+                  }
+                  {
+                    //<RenderCombinedMails mailOnClick={this.mailOnClick} />
+                  }
+                  <div style={{ width: '100%' }}>
+                    {' '}
+                    <Button
+                      floated='right'
+                      circular
+                      icon
+                      style={{
+                        marginRight: '0px',
+                      }}
+                      className='peach'
+                      disabled={isLoadingMailTransactions}
+                      onClick={this.onRefresh}>
+                      <Icon name='refresh' />
+                    </Button>
+                  </div>
+                  {this.combinedMailsSection()}
+                  {this.renderPagination()}
+                </Grid>
+              </Grid.Column>
+              {toggleFullMailPane ? (
+                <Grid.Column computer='10'>
+                  {
+                    //this.renderFullMail()
+                  }
+                  {
+                    <RenderFullMail
+                      toggleFullMailPane={this.toggleFullMailPane}
+                      currentlyOpenMailData={currentlyOpenMailData}
+                    />
+                  }
+                </Grid.Column>
+              ) : (
+                ''
+              )}
+            </Grid.Row>
+          </Grid>
+          {this.renderSendMailModal()}
+        </>
+      );
+    }
   }
 }
-MailDashboard.propTypes = {};
+MailDashboard.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  mailTransactions: PropTypes.objectOf(PropTypes.array),
+};
 
-MailDashboard.defaultProps = {};
+MailDashboard.defaultProps = { mailTransactions: {} };
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  allpayHandles: state.wallet.allpayHandles,
+  isLoadingMailTransactions: mailSelectors.isLoadingMailTransactions(state),
+  mailTransactions: mailSelectors.getMailTransactions(state),
+  nextTransactionCursor: state.mail.nextTransactionCursor,
+});
 
 export default withRouter(connect(mapStateToProps)(MailDashboard));

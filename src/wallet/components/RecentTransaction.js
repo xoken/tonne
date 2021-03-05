@@ -118,7 +118,11 @@ class RecentTransaction extends React.Component {
           </Link>
         </Grid.Column>
       );
-    } else if (transaction.additionalInfo && transaction.additionalInfo.type === 'Allpay Meta Tx') {
+    } else if (
+      transaction.additionalInfo &&
+      (transaction.additionalInfo.type === 'Allpay Meta Tx' ||
+        transaction.additionalInfo.type === 'voxMail Tx')
+    ) {
       return (
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle' />

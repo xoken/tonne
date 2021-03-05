@@ -3,6 +3,7 @@ import * as actions from './walletActions';
 import * as authActions from '../auth/authActions';
 
 const INITIAL_STATE = {
+  receiveModalVisiblity: false,
   isLoadingTransactions: false,
   transactions: [],
   nextTransactionCursor: null,
@@ -102,6 +103,14 @@ export default createReducer(
       ...state,
       usedAddresses: null,
       unusedAddresses: [],
+    }),
+    [actions.SHOW_RECEIVE_MODAL]: state => ({
+      ...state,
+      receiveModalVisiblity: true,
+    }),
+    [actions.HIDE_RECEIVE_MODAL]: state => ({
+      ...state,
+      receiveModalVisiblity: null,
     }),
     [authActions.logoutSuccess]: state => ({
       ...INITIAL_STATE,

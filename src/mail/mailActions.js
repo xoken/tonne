@@ -1,4 +1,5 @@
 import { createAction } from 'redux-act';
+import * as walletActions from '../wallet/walletActions';
 import MailService from './mailService';
 
 export const createMailTransactionRequest = createAction('CREATE_MAIL_TRANSACTION_REQUEST');
@@ -36,11 +37,15 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
         const { mailTransactions, nextTransactionCursor } = await serviceInjector(
           MailService
         ).getMailTransactions(options);
+        await dispatch(walletActions.getAllpayHandles());
+        await dispatch(walletActions.getUnregisteredNames());
         dispatch(getDiffMailTransactionsSuccess({ mailTransactions, nextTransactionCursor }));
       } else {
         const { mailTransactions } = await serviceInjector(MailService).getMailTransactions(
           options
         );
+        await dispatch(walletActions.getAllpayHandles());
+        await dispatch(walletActions.getUnregisteredNames());
         dispatch(getMailTransactionsSuccess({ mailTransactions }));
       }
     }

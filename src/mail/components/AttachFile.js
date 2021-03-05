@@ -16,6 +16,7 @@ class AttachFile extends React.Component {
     window.addEventListener('drop', this.onDragOverEnter);
     document.getElementById('files').addEventListener('dragleave', this.onDragLeave);
   }
+
   onCancel = () => {
     this.props.onCancel();
   };
@@ -23,6 +24,7 @@ class AttachFile extends React.Component {
   onDragOverEnter = event => {
     event.preventDefault();
   };
+
   onDragLeave = event => {
     this.setState({ className: 'drop-zone-hide' });
     event.stopPropagation();

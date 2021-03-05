@@ -112,7 +112,10 @@ class SendMail extends React.Component {
     }
 
     if (totalSizeOfFiles > 10485760) {
-      this.setState({ message: 'Total size of all files cannot be larger than 10MB' });
+      this.setState({
+        isError: true,
+        message: 'Total size of all files cannot be larger than 10MB',
+      });
     }
     event.preventDefault();
   };
@@ -148,7 +151,7 @@ class SendMail extends React.Component {
       totalSizeOfFiles += tempFiles[i].size;
     }
     if (totalSizeOfFiles <= 10485760) {
-      this.setState({ files: tempFiles, message: '' });
+      this.setState({ files: tempFiles, isError: false, message: '' });
     } else {
       this.setState({ files: tempFiles });
     }
@@ -248,7 +251,17 @@ class SendMail extends React.Component {
           body: messageBodyField,
         })
       );
-      this.setState({ isError: false, message: 'Mail Sent Successfully!' });
+      this.setState({
+        subjectField: null,
+        messageBodyField: null,
+        toField: null,
+        toFieldHtml: undefined,
+        toFieldTemp: undefined,
+        files: null,
+        isError: false,
+        message: 'Mail Sent Successfully!',
+      });
+      setTimeout(this.onCancel, 3000);
     } catch (error) {
       this.setState({
         isError: true,
@@ -258,7 +271,6 @@ class SendMail extends React.Component {
   };
 
   render() {
-    const { isLoadingMailTransactions } = this.props;
     const {
       files,
       message,
@@ -271,7 +283,6 @@ class SendMail extends React.Component {
       toFieldRows,
       isError,
     } = this.state;
-
     return (
       <>
         <Grid>
@@ -313,7 +324,7 @@ class SendMail extends React.Component {
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width='16'>
-              <span id='files' style={{ height: '300px' }} ref={this.maxWidthRef}>
+              <span id='files' style={{ height: '300px', display: 'block' }} ref={this.maxWidthRef}>
                 <TextEditor onMessageBodyFieldChange={this.onMessageBodyFieldChange} />
               </span>
               {
@@ -352,16 +363,13 @@ class SendMail extends React.Component {
             <Grid.Column>
               {files ? <Grid>{this.fileNameList()}</Grid> : ''}
               <div className={isError ? 'colorRed' : 'colorGreen'}>{message}</div>
-              <center>{isLoadingMailTransactions ? <Loader active /> : null}</center>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row centered>
             <Grid.Column>
               <Button
                 className='coral'
-                disabled={
-                  toField ? (subjectField ? (isError ? 'disabled' : '') : 'disabled') : 'disabled'
-                }
+                disabled={toField ? (subjectField ? (isError ? true : false) : true) : true}
                 onClick={this.onSend}>
                 Send
               </Button>
@@ -381,8 +389,6 @@ SendMail.propTypes = {};
 
 SendMail.defaultProps = {};
 
-const mapStateToProps = state => ({
-  isLoadingMailTransactions: mailSelectors.isLoadingMailTransactions(state),
-});
+const mapStateToProps = state => ({});
 
 export default withRouter(connect(mapStateToProps)(SendMail));

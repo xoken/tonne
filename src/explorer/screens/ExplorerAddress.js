@@ -407,7 +407,7 @@ class ExplorerAddress extends React.Component {
         var numpagesincurbatch = Math.ceil(
           (this.cachecounter - prevcounterval) / this.outputsperpage
         );
-        for (var t = 0; t < numpagesincurbatch; t++) {
+        for (let t = 0; t < numpagesincurbatch; t++) {
           pagenum += 1;
           this.pagearray[t] = pagenum;
         }
@@ -423,7 +423,7 @@ class ExplorerAddress extends React.Component {
         } else {
           this.pagearrlength = this.fixedpagearrlength;
         }
-        for (var t = 0; t < this.pagearrlength; t++) {
+        for (let t = 0; t < this.pagearrlength; t++) {
           tindex += 1;
           this.pagearray[t] = tindex;
         }

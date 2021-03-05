@@ -10,10 +10,18 @@ const INITIAL_STATE = {
 
 export default createReducer(
   {
+    [actions.createMailTransactionRequest]: state => ({
+      ...state,
+      isLoadingMailTransactions: true,
+    }),
     [actions.createMailTransactionSuccess]: (state, { transactions }) => ({
       ...state,
       sentMailTransactions: [...transactions, ...state.sentMailTransactions],
       isLoadingMailTransactions: false,
+    }),
+    [actions.getMailTransactionsRequest]: state => ({
+      ...state,
+      isLoadingMailTransactions: true,
     }),
     [actions.getMailTransactionsSuccess]: (state, { mailTransactions, nextTransactionCursor }) => ({
       ...state,
