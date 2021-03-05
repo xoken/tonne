@@ -186,13 +186,12 @@ class RenderFullMail extends React.Component {
         mailData = mail.additionalInfo.value.recipientInfo;
         receivedMail = true;
       }
-      console.log(mail);
       const blocksFromHtml = htmlToDraft(mailData.body);
       const { contentBlocks, entityMap } = blocksFromHtml;
       const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
       const editorState = EditorState.createWithContent(contentState);
       return (
-        <Grid>
+        <Grid key={index.toString()}>
           <Grid.Row>
             <Grid.Column computer={8} mobile={8} floated='left'>
               <span style={{ color: 'lightgrey' }} className='word-wrap purplefontcolor'>
