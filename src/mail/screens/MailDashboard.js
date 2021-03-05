@@ -20,8 +20,8 @@ class MailDashboard extends React.Component {
       sendMailModal: false,
       toggleFullMailPane: false,
       currentlyOpenMailData: null,
-      lastRefreshed: null,
-      timeSinceLastRefreshed: null,
+      // lastRefreshed: null,
+      // timeSinceLastRefreshed: null,
     };
   }
 
@@ -30,14 +30,14 @@ class MailDashboard extends React.Component {
     if (mailTransactions && Object.keys(mailTransactions).length === 0) {
       try {
         await dispatch(mailActions.getMailTransactions({ limit: 10 }));
-        this.setState({ lastRefreshed: new Date() });
-        this.timerID = setInterval(
-          () =>
-            this.setState({
-              timeSinceLastRefreshed: new Date(),
-            }),
-          1000
-        );
+        // this.setState({ lastRefreshed: new Date() });
+        // this.timerID = setInterval(
+        //   () =>
+        //     this.setState({
+        //       timeSinceLastRefreshed: new Date(),
+        //     }),
+        //   1000
+        // );
         const autoRefreshTimeInSecs = 1 * 30 * 1000;
         this.autoRefreshTimer = setInterval(() => {
           this.onRefresh();
@@ -51,10 +51,10 @@ class MailDashboard extends React.Component {
   onRefresh = async () => {
     const { dispatch } = this.props;
     await dispatch(mailActions.getMailTransactions({ diff: true }));
-    this.setState({
-      lastRefreshed: new Date(),
-      timeSinceLastRefreshed: new Date(),
-    });
+    // this.setState({
+    //   lastRefreshed: new Date(),
+    //   timeSinceLastRefreshed: new Date(),
+    // });
   };
 
   onNextPage = async () => {
@@ -623,6 +623,11 @@ class MailDashboard extends React.Component {
         </>
       );
     }
+  }
+
+  componentWillUnmount() {
+    // clearInterval(this.timerID);
+    clearInterval(this.autoRefreshTimer);
   }
 }
 MailDashboard.propTypes = {
