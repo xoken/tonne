@@ -76,7 +76,6 @@ export const getTransactions = options => async (dispatch, getState, { serviceIn
       }
     }
   } catch (error) {
-    console.log(error);
     dispatch(getTransactionsFailure());
     throw error;
   }

@@ -22,14 +22,12 @@ class MailDashboard extends React.Component {
       currentlyOpenMailData: null,
       lastRefreshed: null,
       timeSinceLastRefreshed: null,
-      loading: false,
     };
   }
 
   async componentDidMount() {
     const { mailTransactions, dispatch } = this.props;
     if (mailTransactions && Object.keys(mailTransactions).length === 0) {
-      this.setState({ loading: true });
       try {
         await dispatch(mailActions.getMailTransactions({ limit: 10 }));
         this.setState({ lastRefreshed: new Date() });
@@ -44,7 +42,6 @@ class MailDashboard extends React.Component {
         this.autoRefreshTimer = setInterval(() => {
           this.onRefresh();
         }, autoRefreshTimeInSecs);
-        this.setState({ loading: false });
       } catch (error) {
         console.log(error);
       }
@@ -52,19 +49,19 @@ class MailDashboard extends React.Component {
   }
 
   onRefresh = async () => {
-    this.setState({ loading: true });
     const { dispatch } = this.props;
     await dispatch(mailActions.getMailTransactions({ diff: true }));
     this.setState({
       lastRefreshed: new Date(),
       timeSinceLastRefreshed: new Date(),
-      loading: false,
     });
   };
+
   onNextPage = async () => {
     const { dispatch } = this.props;
     await dispatch(mailActions.getMailTransactions({ limit: 10 }));
   };
+
   renderPagination() {
     const { nextTransactionCursor } = this.props;
     if (nextTransactionCursor) {
@@ -80,7 +77,6 @@ class MailDashboard extends React.Component {
   }
 
   combinedMailsSection() {
-    const { loading } = this.state;
     const { mailTransactions, dispatch } = this.props;
     // let combinedMails = [
     //   {
@@ -160,9 +156,7 @@ class MailDashboard extends React.Component {
         );
       });
     } else {
-      return loading ? (
-        ''
-      ) : (
+      return (
         <Grid>
           <Grid.Row>
             <Grid.Column width={16}>You have no mails.</Grid.Column>
@@ -513,15 +507,15 @@ class MailDashboard extends React.Component {
   // };
 
   render() {
-    const {
-      sentMailSection,
-      inboxSection,
-      toggleFullMailPane,
-      currentlyOpenMailData,
-      loading,
-    } = this.state;
-    const { allpayHandles } = this.props;
-    if (allpayHandles && allpayHandles.length === 0) {
+    const { sentMailSection, inboxSection, toggleFullMailPane, currentlyOpenMailData } = this.state;
+    const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
+    if (
+      mailTransactions &&
+      Object.keys(mailTransactions).length === 0 &&
+      isLoadingMailTransactions
+    ) {
+      return <Loader active />;
+    } else if (allpayHandles && allpayHandles.length === 0) {
       return (
         <Grid>
           <Grid.Row>
@@ -534,101 +528,101 @@ class MailDashboard extends React.Component {
           </Grid.Row>
         </Grid>
       );
-    }
-    return (
-      <>
-        <Grid stackable>
-          <Grid.Row centered>
-            <Grid.Column computer={16} tablet={16} mobile={16}>
-              <Grid>
-                <Grid.Row verticalAlign='middle'>
-                  <Grid.Column computer={4} tablet={8} mobile={8} floated='left'>
-                    <Button className='peach' onClick={this.toggleSendMailModal}>
-                      Send Mail
-                    </Button>
-                  </Grid.Column>
-                  <Grid.Column computer={12} tablet={8} mobile={8}>
-                    {
-                      // <span className='sentInboxToggle'>
-                      //   <span
-                      //     className={inboxSection ? 'coral' : undefined}
-                      //     id='inbox'
-                      //     onClick={this.toggleFirstColumn}
-                      //     style={{ padding: '10px', cursor: 'pointer' }}>
-                      //     Inbox
-                      //   </span>
-                      //   <span
-                      //     className={sentMailSection ? 'coral' : undefined}
-                      //     id='sent'
-                      //     onClick={this.toggleFirstColumn}
-                      //     style={{ padding: '10px', cursor: 'pointer' }}>
-                      //     Sent
-                      //   </span>
-                      // </span>
-                    }
-                  </Grid.Column>
-                </Grid.Row>
-              </Grid>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column computer={toggleFullMailPane ? '6' : '16'}>
-              <Grid>
-                {
-                  // this.inboxSection()
-                  // this.sentMailSection()
-                  //this.combinedMailsSection()
-                }
-                {
-                  // inboxSection ? (
-                  //   <RenderInbox mailOnClick={this.mailOnClick} />
-                  // ) : (
-                  //   <RenderSentMails mailOnClick={this.mailOnClick} />
-                  // )
-                }
-                {
-                  //<RenderCombinedMails mailOnClick={this.mailOnClick} />
-                }
-                <div style={{ width: '100%' }}>
-                  {' '}
-                  <Button
-                    floated='right'
-                    circular
-                    icon
-                    style={{
-                      marginRight: '0px',
-                    }}
-                    className='peach'
-                    disabled={loading}
-                    onClick={this.onRefresh}>
-                    <Icon name='refresh' />
-                  </Button>
-                </div>
-                {loading ? <Loader active /> : ''}
-                {this.combinedMailsSection()}
-                {this.renderPagination()}
-              </Grid>
-            </Grid.Column>
-            {toggleFullMailPane ? (
-              <Grid.Column computer='10'>
-                {
-                  //this.renderFullMail()
-                }
-                {
-                  <RenderFullMail
-                    toggleFullMailPane={this.toggleFullMailPane}
-                    currentlyOpenMailData={currentlyOpenMailData}
-                  />
-                }
+    } else {
+      return (
+        <>
+          <Grid stackable>
+            <Grid.Row centered>
+              <Grid.Column computer={16} tablet={16} mobile={16}>
+                <Grid>
+                  <Grid.Row verticalAlign='middle'>
+                    <Grid.Column computer={4} tablet={8} mobile={8} floated='left'>
+                      <Button className='peach' onClick={this.toggleSendMailModal}>
+                        Send Mail
+                      </Button>
+                    </Grid.Column>
+                    <Grid.Column computer={12} tablet={8} mobile={8}>
+                      {
+                        // <span className='sentInboxToggle'>
+                        //   <span
+                        //     className={inboxSection ? 'coral' : undefined}
+                        //     id='inbox'
+                        //     onClick={this.toggleFirstColumn}
+                        //     style={{ padding: '10px', cursor: 'pointer' }}>
+                        //     Inbox
+                        //   </span>
+                        //   <span
+                        //     className={sentMailSection ? 'coral' : undefined}
+                        //     id='sent'
+                        //     onClick={this.toggleFirstColumn}
+                        //     style={{ padding: '10px', cursor: 'pointer' }}>
+                        //     Sent
+                        //   </span>
+                        // </span>
+                      }
+                    </Grid.Column>
+                  </Grid.Row>
+                </Grid>
               </Grid.Column>
-            ) : (
-              ''
-            )}
-          </Grid.Row>
-        </Grid>
-        {this.renderSendMailModal()}
-      </>
-    );
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column computer={toggleFullMailPane ? '6' : '16'}>
+                <Grid>
+                  {
+                    // this.inboxSection()
+                    // this.sentMailSection()
+                    //this.combinedMailsSection()
+                  }
+                  {
+                    // inboxSection ? (
+                    //   <RenderInbox mailOnClick={this.mailOnClick} />
+                    // ) : (
+                    //   <RenderSentMails mailOnClick={this.mailOnClick} />
+                    // )
+                  }
+                  {
+                    //<RenderCombinedMails mailOnClick={this.mailOnClick} />
+                  }
+                  <div style={{ width: '100%' }}>
+                    {' '}
+                    <Button
+                      floated='right'
+                      circular
+                      icon
+                      style={{
+                        marginRight: '0px',
+                      }}
+                      className='peach'
+                      disabled={isLoadingMailTransactions}
+                      onClick={this.onRefresh}>
+                      <Icon name='refresh' />
+                    </Button>
+                  </div>
+                  {this.combinedMailsSection()}
+                  {this.renderPagination()}
+                </Grid>
+              </Grid.Column>
+              {toggleFullMailPane ? (
+                <Grid.Column computer='10'>
+                  {
+                    //this.renderFullMail()
+                  }
+                  {
+                    <RenderFullMail
+                      toggleFullMailPane={this.toggleFullMailPane}
+                      currentlyOpenMailData={currentlyOpenMailData}
+                    />
+                  }
+                </Grid.Column>
+              ) : (
+                ''
+              )}
+            </Grid.Row>
+          </Grid>
+          {this.renderSendMailModal()}
+        </>
+      );
+    }
   }
 }
 MailDashboard.propTypes = {

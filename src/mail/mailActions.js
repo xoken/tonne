@@ -44,7 +44,6 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
         const { mailTransactions } = await serviceInjector(MailService).getMailTransactions(
           options
         );
-        console.log(mailTransactions);
         await dispatch(walletActions.getAllpayHandles());
         await dispatch(walletActions.getUnregisteredNames());
         dispatch(getMailTransactionsSuccess({ mailTransactions }));

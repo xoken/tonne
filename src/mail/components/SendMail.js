@@ -271,7 +271,6 @@ class SendMail extends React.Component {
   };
 
   render() {
-    const { isLoadingMailTransactions } = this.props;
     const {
       files,
       message,
@@ -364,7 +363,6 @@ class SendMail extends React.Component {
             <Grid.Column>
               {files ? <Grid>{this.fileNameList()}</Grid> : ''}
               <div className={isError ? 'colorRed' : 'colorGreen'}>{message}</div>
-              <center>{isLoadingMailTransactions ? <Loader active /> : null}</center>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row centered>
@@ -391,8 +389,6 @@ SendMail.propTypes = {};
 
 SendMail.defaultProps = {};
 
-const mapStateToProps = state => ({
-  isLoadingMailTransactions: mailSelectors.isLoadingMailTransactions(state),
-});
+const mapStateToProps = state => ({});
 
 export default withRouter(connect(mapStateToProps)(SendMail));
