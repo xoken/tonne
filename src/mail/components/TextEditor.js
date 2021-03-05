@@ -16,7 +16,7 @@ class TextEditor extends React.Component {
     };
   }
 
-  onEditorStateChange: Function = editorState => {
+  onEditorStateChange = editorState => {
     const { onMessageBodyFieldChange } = this.props;
     this.setState({
       editorState,

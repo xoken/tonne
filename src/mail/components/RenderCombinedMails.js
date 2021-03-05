@@ -11,6 +11,7 @@ class RenderCombinedMails extends React.Component {
     super(props);
     this.state = { lastRefreshed: null, timeSinceLastRefreshed: null, loading: false };
   }
+
   async componentDidMount() {
     const { mailTransactions, dispatch } = this.props;
     if (mailTransactions && Object.keys(mailTransactions).length === 0) {
@@ -27,7 +28,7 @@ class RenderCombinedMails extends React.Component {
         );
         const autoRefreshTimeInSecs = 1 * 60 * 1000;
         this.autoRefreshTimer = setInterval(() => {
-          // this.onRefresh();
+          this.onRefresh();
         }, autoRefreshTimeInSecs);
         this.setState({ loading: false });
       } catch (error) {
@@ -44,10 +45,12 @@ class RenderCombinedMails extends React.Component {
       timeSinceLastRefreshed: new Date(),
     });
   };
+
   onNextPage = async () => {
     const { dispatch } = this.props;
     await dispatch(mailActions.getMailTransactions({ limit: 10 }));
   };
+
   renderPagination() {
     const { nextTransactionCursor } = this.props;
     if (nextTransactionCursor) {
@@ -154,6 +157,7 @@ class RenderCombinedMails extends React.Component {
       );
     }
   }
+
   render() {
     const { loading } = this.state;
     return (

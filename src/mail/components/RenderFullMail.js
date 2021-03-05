@@ -21,19 +21,23 @@ class RenderFullMail extends React.Component {
       message: '',
     };
   }
+
   componentDidMount() {
     window.addEventListener('dragenter', this.onDragOverEnter);
     window.addEventListener('dragover', this.onDragOverEnter);
     window.addEventListener('drop', this.onFileDrop);
     document.getElementById('file-attach').addEventListener('dragleave', this.onDragLeave);
   }
+
   onDragOverEnter = event => {
     event.preventDefault();
   };
+
   onDragLeave = event => {
     event.stopPropagation();
     event.preventDefault();
   };
+
   onFileDrop = event => {
     const { files } = this.state;
     const newFiles = event.dataTransfer.files;

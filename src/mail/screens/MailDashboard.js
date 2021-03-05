@@ -23,7 +23,6 @@ class MailDashboard extends React.Component {
 
   mailOnClick = currOpenMailData => {
     const { toggleFullMailPane } = this.state;
-
     if (toggleFullMailPane) {
       this.setState({
         currentlyOpenMailData: currOpenMailData,
@@ -262,10 +261,10 @@ class MailDashboard extends React.Component {
   // };
 
   toggleFullMailPane = () => {
-    const { toggleFullMailPane } = this.state;
     // if (!toggleFullMailPane) {
     //   this.setState({ currentlyOpenMail: '' });
     // }
+    const { toggleFullMailPane } = this.state;
     this.setState({ toggleFullMailPane: !toggleFullMailPane });
   };
 
