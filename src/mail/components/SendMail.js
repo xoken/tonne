@@ -125,7 +125,7 @@ class SendMail extends React.Component {
     if (files) {
       return Array.from(files).map((file, index) => {
         return (
-          <Grid.Row>
+          <Grid.Row key={index.toString()}>
             <Grid.Column>
               <b>{file.name} </b>
               <span
@@ -206,7 +206,7 @@ class SendMail extends React.Component {
     toValueHtml = tempToValue.map((toAddress, index) => {
       if (toAddress) {
         return (
-          <>
+          <span key={index.toString()}>
             <span className='peach toFieldHighlight'>{toAddress}</span>
             <span
               style={{ color: 'blue', cursor: 'pointer', margin: '0px 15px 0px 5px' }}
@@ -214,7 +214,7 @@ class SendMail extends React.Component {
               onClick={this.onToFieldRemove}>
               x
             </span>
-          </>
+          </span>
         );
       }
     });
@@ -252,12 +252,12 @@ class SendMail extends React.Component {
         })
       );
       this.setState({
-        subjectField: null,
-        messageBodyField: null,
-        toField: null,
+        subjectField: '',
+        messageBodyField: '',
+        toField: [],
         toFieldHtml: undefined,
         toFieldTemp: undefined,
-        files: null,
+        files: undefined,
         isError: false,
         message: 'Mail Sent Successfully!',
       });
