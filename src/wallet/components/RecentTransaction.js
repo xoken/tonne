@@ -16,7 +16,6 @@ class RecentTransaction extends React.Component {
       lastRefreshed: null,
       timeSinceLastRefreshed: null,
       activeIndex: [],
-      transactionDetails: {},
     };
   }
 

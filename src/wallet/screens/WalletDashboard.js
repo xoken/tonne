@@ -6,7 +6,7 @@ import { Button, Icon, Loader, Modal } from 'semantic-ui-react';
 import SendTransaction from '../components/SendTransaction';
 import ReceiveTransaction from '../components/ReceiveTransaction';
 import RecentTransaction from '../components/RecentTransaction';
-import { utils, wallet } from 'allegory-allpay-sdk';
+import { utils } from 'allegory-allpay-sdk';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
 

@@ -1,5 +1,6 @@
 import { createReducer } from 'redux-act';
 import * as actions from './mailActions';
+import * as authActions from '../auth/authActions';
 
 const INITIAL_STATE = {
   mailTransactions: {},
@@ -34,6 +35,9 @@ export default createReducer(
       ...state,
       mailTransactions: { ...mailTransactions, ...state.mailTransactions },
       isLoadingMailTransactions: false,
+    }),
+    [authActions.logoutSuccess]: state => ({
+      ...INITIAL_STATE,
     }),
   },
   INITIAL_STATE
