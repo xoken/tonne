@@ -610,6 +610,7 @@ class MailDashboard extends React.Component {
                   {
                     <RenderFullMail
                       toggleFullMailPane={this.toggleFullMailPane}
+                      threadId={currentlyOpenMailData[0].threadId}
                       currentlyOpenMailData={currentlyOpenMailData}
                     />
                   }

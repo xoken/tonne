@@ -92,29 +92,21 @@ class RecentTransaction extends React.Component {
       return (
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle' />
-          <span className='monospace word-wrap recentTxidAddress'>
+          <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
             {`${transaction.additionalInfo.type} : ${transaction.additionalInfo.value}`}
-          </span>{' '}
-          <Link to={'/explorer/transaction/' + transaction.txId}>
-            <span className='padding10px'>
-              <i className='walletLink'></i>
-            </span>
-          </Link>
+          </span>
         </Grid.Column>
       );
     } else if (transaction.additionalInfo && transaction.additionalInfo.type === 'Allpay Send') {
       return (
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
-          <Icon name='dropdown' className='dropdownTriangle' />
-          <span className='monospace word-wrap recentTxidAddress'>
-            {`${transaction.additionalInfo.type} : `}
+          <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
+          <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold marginTopNeg3px'>
+            {
+              // `${transaction.additionalInfo.type} : `
+            }
             {this.renderAllPaySendInfo(transaction.additionalInfo.value)}
-          </span>{' '}
-          <Link to={'/explorer/transaction/' + transaction.txId}>
-            <span className='padding10px'>
-              <i className='walletLink'></i>
-            </span>
-          </Link>
+          </span>
         </Grid.Column>
       );
     } else if (
@@ -124,21 +116,16 @@ class RecentTransaction extends React.Component {
     ) {
       return (
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
-          <Icon name='dropdown' className='dropdownTriangle' />
-          <span className='monospace word-wrap recentTxidAddress'>
+          <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
+          <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
             {transaction.additionalInfo.type}
-          </span>{' '}
-          <Link to={'/explorer/transaction/' + transaction.txId}>
-            <span className='padding10px'>
-              <i className='walletLink'></i>
-            </span>
-          </Link>
+          </span>
         </Grid.Column>
       );
     } else {
       return (
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
-          <Icon name='dropdown' className='dropdownTriangle' />
+          <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
           <span className='monospace word-wrap recentTxidAddress'>{transaction.txId}</span>{' '}
           <Link to={'/explorer/transaction/' + transaction.txId}>
             <span className='padding10px'>
@@ -152,9 +139,17 @@ class RecentTransaction extends React.Component {
 
   renderAllPaySendInfo({ senderInfo, recipientInfo }) {
     if (senderInfo) {
-      return `To ${senderInfo}`;
+      return (
+        <span>
+          {senderInfo} <span className='toArrow'>&#129133; </span>
+        </span>
+      );
     } else if (recipientInfo) {
-      return `From ${recipientInfo}`;
+      return (
+        <span>
+          {recipientInfo} <span className='fromArrow'>&#129134; </span>
+        </span>
+      );
     }
   }
 
@@ -244,19 +239,23 @@ class RecentTransaction extends React.Component {
                 </Accordion.Title>
                 <Accordion.Content active={activeIndex.includes(index)}>
                   <Grid divided stackable columns='two'>
-                    <Grid.Row className='paddingTop28px'>
-                      <Grid.Column width='16' className='recentTxidAddressColumn'>
-                        <span className='monospace word-wrap paddingLeftRight14px'>
-                          <span className='purplefontcolor fontWeightBold'>TxID : </span>
-                          {transaction.txId}
-                        </span>{' '}
-                        <Link to={'/explorer/transaction/' + transaction.txId}>
-                          <span className='padding10px'>
-                            <i className='walletLink'></i>
-                          </span>
-                        </Link>
-                      </Grid.Column>
-                    </Grid.Row>
+                    {!transaction.additionalInfo ? (
+                      ''
+                    ) : (
+                      <Grid.Row className='paddingTop28px'>
+                        <Grid.Column width='16' className='recentTxidAddressColumn'>
+                          <span className='monospace word-wrap paddingLeftRight14px'>
+                            <span className='purplefontcolor fontWeightBold'>TxID : </span>
+                            {transaction.txId}
+                          </span>{' '}
+                          <Link to={'/explorer/transaction/' + transaction.txId}>
+                            <span className='padding10px'>
+                              <i className='walletLink'></i>
+                            </span>
+                          </Link>
+                        </Grid.Column>
+                      </Grid.Row>
+                    )}
                     <Grid.Row>
                       <Grid.Column>
                         <div className='paddingLeftRight14px'>

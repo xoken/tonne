@@ -8,6 +8,7 @@ import AttachFile from './AttachFile';
 import TextEditor from '../components/TextEditor';
 import * as mailActions from '../mailActions';
 import * as mailSelectors from '../mailSelectors';
+import { allPay } from 'allegory-allpay-sdk';
 
 class SendMail extends React.Component {
   constructor(props) {
@@ -80,8 +81,15 @@ class SendMail extends React.Component {
     window.addEventListener('dragover', this.onDragOverEnter);
     window.addEventListener('drop', this.onFileDrop);
     document.getElementById('files').addEventListener('dragleave', this.onDragLeave);
-    this.setState({ toFieldWidth: this.maxWidthRef.current.offsetWidth });
+    this.setState({ toFieldWidth: this.maxWidthRef.current.offsetWidth - 27 });
     this.maxWidth = this.maxWidthRef.current.offsetWidth;
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('dragenter', this.onDragOverEnter);
+    window.removeEventListener('dragover', this.onDragOverEnter);
+    window.removeEventListener('drop', this.onFileDrop);
+    document.getElementById('file-attach').removeEventListener('dragleave', this.onDragLeave);
   }
 
   onDragOverEnter = event => {
@@ -162,10 +170,10 @@ class SendMail extends React.Component {
   };
 
   onToFieldChange = event => {
-    const { toField, toFieldRows } = this.state;
+    const { toField, toFieldRows, toFieldTemp } = this.state;
     let eventTargetValue = event.target.value;
     let maxWidthOfInput = this.maxWidthRef.current.offsetWidth;
-    let halfWidth = Math.floor(this.maxWidthRef.current.offsetWidth / 2);
+    let fourthWidth = Math.floor(this.maxWidthRef.current.offsetWidth / 4);
     let currentToFieldWidth = this.toFieldWidthRef.current.offsetWidth;
     if (event.key === 'Enter' || event.key === 'Tab') {
       eventTargetValue += ' ';
@@ -177,13 +185,17 @@ class SendMail extends React.Component {
       this.setState({
         toField: tempToValue,
         toFieldTemp: '',
-        toFieldWidth: halfWidth,
+        toFieldWidth: fourthWidth,
+        isError: false,
+        message: '',
       });
     } else {
       updateToField(temp.length - 1);
       this.setState({
         toField: tempToValue,
         toFieldTemp: eventTargetValue,
+        isError: false,
+        message: '',
       });
     }
     function updateToField(tempLength) {
@@ -194,10 +206,16 @@ class SendMail extends React.Component {
 
     this.updateToValueHTML(tempToValue);
 
-    if (event.target.value.length * 10 > halfWidth && currentToFieldWidth < maxWidthOfInput) {
-      this.setState({
-        toFieldWidth: halfWidth + event.target.value.length * 9,
-      });
+    if (event.target.value.length * 10 > fourthWidth && currentToFieldWidth < maxWidthOfInput) {
+      if (event.target.value.length * 9 >= maxWidthOfInput - 27) {
+        this.setState({
+          toFieldWidth: maxWidthOfInput - 27,
+        });
+      } else {
+        this.setState({
+          toFieldWidth: event.target.value.length * 9,
+        });
+      }
     }
   };
 
@@ -226,47 +244,75 @@ class SendMail extends React.Component {
     let index = parseInt(event.target.id.replaceAll(/toField/g, ''));
     toField.splice(index, 1);
     this.updateToValueHTML(toField);
-    this.setState({ toField: toField });
+    if (toField.length > 0) {
+      this.setState({ toField: toField });
+    } else {
+      this.setState({
+        toField: toField,
+        isError: true,
+        message: 'To Field/recipients field is empty',
+      });
+    }
   };
 
   onSend = async () => {
     const { dispatch } = this.props;
-    const { toField, subjectField, messageBodyField, files } = this.state;
+    const { toField, subjectField, messageBodyField, files, toFieldTemp } = this.state;
+    let filteredToField = [];
     const formData = new FormData();
     if (files) {
       for (let i = 0; i < files.length; i++) {
         formData.append('File', files[i], files[i].name);
       }
     }
-    let filteredToField = toField.filter(function (addressName) {
-      return addressName !== '';
-    });
+    if (toField.length > 0) {
+      filteredToField = toField.filter(function (addressName) {
+        return addressName !== '';
+      });
+      if (filteredToField.length !== 0) {
+        try {
+          await dispatch(
+            mailActions.createMailTransaction({
+              recipients: filteredToField,
+              threadId: null,
+              subject: subjectField,
+              body: messageBodyField,
+            })
+          );
+          this.setState({
+            subjectField: null,
+            messageBodyField: null,
+            toField: null,
+            toFieldHtml: undefined,
+            toFieldTemp: undefined,
+            files: null,
+            isError: false,
+            message: 'Mail Sent Successfully!',
+          });
+          setTimeout(this.onCancel, 3000);
+        } catch (error) {
+          this.setState({
+            isError: true,
+            message: error.response && error.response.data ? error.response.data : error.message,
+          });
+        }
+      }
+    } else {
+      this.setState({ isError: true, message: 'One or more fields are empty' });
+    }
+  };
 
-    try {
-      await dispatch(
-        mailActions.createMailTransaction({
-          recipients: filteredToField,
-          threadId: null,
-          subject: subjectField,
-          body: messageBodyField,
-        })
-      );
+  onToFieldBlur = () => {
+    const { toFieldTemp, toField } = this.state;
+    let tempToField = toField;
+    if (toFieldTemp) {
+      tempToField.push(toFieldTemp);
       this.setState({
-        subjectField: '',
-        messageBodyField: '',
-        toField: [],
-        toFieldHtml: undefined,
-        toFieldTemp: undefined,
-        files: undefined,
-        isError: false,
-        message: 'Mail Sent Successfully!',
+        toField: tempToField,
+        toFieldTemp: '',
+        toFieldWidth: Math.floor(this.maxWidthRef.current.offsetWidth / 4),
       });
-      setTimeout(this.onCancel, 3000);
-    } catch (error) {
-      this.setState({
-        isError: true,
-        message: error.response && error.response.data ? error.response.data : error.message,
-      });
+      this.updateToValueHTML(tempToField);
     }
   };
 
@@ -289,6 +335,7 @@ class SendMail extends React.Component {
           <Grid.Row>
             <Grid.Column>
               <span className='toFieldSpanEnvelope' style={{ width: this.maxWidth + 'px' }}>
+                <span>To:</span>
                 <span ref={this.toFieldWidthRef}>
                   <Input
                     rows='1'
@@ -297,13 +344,13 @@ class SendMail extends React.Component {
                     style={{ width: toFieldWidth + 'px' }}
                     value={toFieldTemp}
                     className='form-control toField'
-                    placeholder='To:'
                     onChange={this.onToFieldChange}
                     onKeyDown={event =>
                       event.key === 'Enter' || event.key === 'Tab'
                         ? this.onToFieldChange(event)
                         : ''
                     }
+                    onBlur={this.onToFieldBlur}
                   />
                 </span>
                 <span className='word-wrap'>{toFieldHtml}</span>
@@ -325,7 +372,10 @@ class SendMail extends React.Component {
           <Grid.Row>
             <Grid.Column width='16'>
               <span id='files' style={{ height: '300px', display: 'block' }} ref={this.maxWidthRef}>
-                <TextEditor onMessageBodyFieldChange={this.onMessageBodyFieldChange} />
+                <TextEditor
+                  toolbarHidden={false}
+                  onMessageBodyFieldChange={this.onMessageBodyFieldChange}
+                />
               </span>
               {
                 // <TextArea

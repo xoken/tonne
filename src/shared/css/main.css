@@ -1097,3 +1097,12 @@ body {
 .ui.basic.transparent-button:hover {
   color: #ff7f7f !important;
 }
+.displayBlock{
+  display: block;
+}
+.visibilityHidden{
+  visibility:hidden !important;
+}
+.marginTopNeg3px{
+  margin-top: -3px;
+}
