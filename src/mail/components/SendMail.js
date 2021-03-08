@@ -171,7 +171,8 @@ class SendMail extends React.Component {
 
   onToFieldChange = event => {
     const { toField, toFieldRows, toFieldTemp } = this.state;
-    let eventTargetValue = event.target.value;
+    let eventTargetValue = event.target.value.toLowerCase();
+    let uniqueRecipients = [];
     let maxWidthOfInput = this.maxWidthRef.current.offsetWidth;
     let fourthWidth = Math.floor(this.maxWidthRef.current.offsetWidth / 4);
     let currentToFieldWidth = this.toFieldWidthRef.current.offsetWidth;
@@ -183,7 +184,7 @@ class SendMail extends React.Component {
     if (/[ ,]+/g.test(eventTargetValue)) {
       updateToField(temp.length);
       this.setState({
-        toField: tempToValue,
+        toField: uniqueRecipients,
         toFieldTemp: '',
         toFieldWidth: fourthWidth,
         isError: false,
@@ -192,7 +193,7 @@ class SendMail extends React.Component {
     } else {
       updateToField(temp.length - 1);
       this.setState({
-        toField: tempToValue,
+        toField: uniqueRecipients,
         toFieldTemp: eventTargetValue,
         isError: false,
         message: '',
@@ -202,9 +203,12 @@ class SendMail extends React.Component {
       for (var i = 0; i < tempLength; i++) {
         tempToValue.push(temp[i]);
       }
+      uniqueRecipients = tempToValue.filter(function (item, position, self) {
+        return self.indexOf(item) == position;
+      });
     }
 
-    this.updateToValueHTML(tempToValue);
+    this.updateToValueHTML(uniqueRecipients);
 
     if (event.target.value.length * 10 > fourthWidth && currentToFieldWidth < maxWidthOfInput) {
       if (event.target.value.length * 9 >= maxWidthOfInput - 27) {

@@ -417,14 +417,11 @@ class RenderFullMail extends React.Component {
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-            <Grid.Column>
-              {
-                //Attached files
-              }
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column className='recentTxidAddressColumn' style={{ marginBottom: '30px' }}>
+            <Grid.Column
+              className='recentTxidAddressColumn'
+              computer={16}
+              mobile={16}
+              style={{ borderTop: '1px solid #fafafa', borderBottom: '1px solid #fafafa' }}>
               <span className='monospace word-wrap recentTxidAddress'>
                 <span className='purplefontcolor'>TxID:</span> {mail.txId}
               </span>{' '}
@@ -463,6 +460,7 @@ class RenderFullMail extends React.Component {
                   padding: '8px',
                   color: 'red',
                   float: 'right',
+                  marginBottom: '20px',
                 }}
                 onClick={this.props.toggleFullMailPane}>
                 X

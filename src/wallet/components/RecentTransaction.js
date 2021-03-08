@@ -25,6 +25,7 @@ class RecentTransaction extends React.Component {
       try {
         await dispatch(walletActions.getTransactions({ limit: 10 }));
         await dispatch(walletActions.updateTransactionsConfirmations());
+        await dispatch(walletActions.getUsedAddresses());
         this.setState({ lastRefreshed: new Date() });
         this.timerID = setInterval(
           () =>
@@ -93,7 +94,8 @@ class RecentTransaction extends React.Component {
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle' />
           <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
-            {`${transaction.additionalInfo.type} : ${transaction.additionalInfo.value}`}
+            {`${transaction.additionalInfo.type} : ${transaction.additionalInfo.value}`}{' '}
+            {this.renderAllPaySendInfo(transaction.additionalInfo.value)}
           </span>
         </Grid.Column>
       );
@@ -118,7 +120,10 @@ class RecentTransaction extends React.Component {
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
           <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
-            {transaction.additionalInfo.type}
+            {transaction.additionalInfo.type}{' '}
+            {transaction.additionalInfo.value
+              ? this.renderAllPaySendInfo(transaction.additionalInfo.value)
+              : ''}
           </span>
         </Grid.Column>
       );
@@ -132,6 +137,7 @@ class RecentTransaction extends React.Component {
               <i className='walletLink'></i>
             </span>
           </Link>
+          {this.transactionSentReceived(transaction)}
         </Grid.Column>
       );
     }
@@ -139,18 +145,102 @@ class RecentTransaction extends React.Component {
 
   renderAllPaySendInfo({ senderInfo, recipientInfo }) {
     if (senderInfo) {
-      return (
-        <span>
-          {senderInfo} <span className='toArrow'>&#129133; </span>
-        </span>
-      );
+      if (typeof senderInfo === 'object') {
+        return (
+          <span>
+            {senderInfo.commonMetaData.recepient} <span className='toArrow'>&#129133; </span>
+          </span>
+        );
+      } else {
+        return (
+          <span>
+            {senderInfo} <span className='toArrow'>&#129133; </span>
+          </span>
+        );
+      }
     } else if (recipientInfo) {
+      if (typeof recipientInfo === 'object') {
+        return (
+          <span>
+            {recipientInfo.commonMetaData.sender} <span className='fromArrow'>&#129134; </span>
+          </span>
+        );
+      }
       return (
         <span>
           {recipientInfo} <span className='fromArrow'>&#129134; </span>
         </span>
       );
     }
+  }
+
+  transactionSentReceived(transaction) {
+    const { usedAddresses, unusedAddresses } = this.props;
+    console.log(unusedAddresses);
+
+    let inputs = false,
+      outputs = false,
+      returnArray = [];
+    // console.log(transaction);
+    if (usedAddresses) {
+      for (let i = 0; i < transaction.inputs.length; i++) {
+        for (let y = 0; y < usedAddresses.length; y++) {
+          if (transaction.inputs[i].address === usedAddresses[y].address) {
+            console.log(inputs);
+            inputs = true;
+            break;
+          } else if (unusedAddresses.length > 0) {
+            if (transaction.inputs[i].address === unusedAddresses[y]) {
+              console.log(inputs);
+              inputs = true;
+              break;
+            }
+          }
+        }
+
+        if (inputs) {
+          break;
+        }
+      }
+    }
+    if (inputs) {
+      console.log('input is present');
+      returnArray.push(
+        <span>
+          <span className='toArrow'>&#129133; </span>
+        </span>
+      );
+    }
+    if (usedAddresses) {
+      for (let i = 0; i < transaction.outputs.length; i++) {
+        for (let y = 0; y < usedAddresses.length; y++) {
+          if (transaction.outputs[i].address === usedAddresses[y].address) {
+            console.log(outputs);
+            outputs = true;
+            break;
+          } else if (unusedAddresses.length > 0) {
+            if (transaction.outputs[i].address === unusedAddresses[y]) {
+              console.log(outputs);
+              outputs = true;
+              break;
+            }
+          }
+        }
+        if (outputs) {
+          break;
+        }
+      }
+    }
+    if (outputs) {
+      console.log('output is present');
+      debugger;
+      returnArray.push(
+        <span>
+          <span className='fromArrow'>&#129134; </span>
+        </span>
+      );
+    }
+    return returnArray;
   }
 
   renderTransaction() {
@@ -414,6 +504,8 @@ const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoadingTransactions(state),
   transactions: walletSelectors.getTransactions(state),
   nextTransactionCursor: state.wallet.nextTransactionCursor,
+  usedAddresses: state.wallet.usedAddresses,
+  unusedAddresses: state.wallet.unusedAddresses,
 });
 
 export default withRouter(connect(mapStateToProps)(RecentTransaction));
