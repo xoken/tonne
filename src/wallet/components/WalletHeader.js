@@ -108,18 +108,16 @@ class WalletHeader extends React.Component {
           to={`/wallet/allpay/search`}>
           Buy AllPay Name
         </NavLink> */}
+          <Button className='buyallpaybutton' onClick={this.onBuyAllpayName}>
+            Buy AllPay Name
+          </Button>
         </>
       );
     } else if (allpayHandles && allpayHandles.length === 0) {
       return (
-        <>
-          <Button
-            className='buyallpaybutton'
-            activeClassName='buyallpaybuttonactive'
-            onClick={this.onBuyAllpayName}>
-            Buy AllPay Name
-          </Button>
-        </>
+        <Button className='buyallpaybutton' onClick={this.onBuyAllpayName}>
+          Buy AllPay Name
+        </Button>
       );
     }
   }
