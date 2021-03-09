@@ -95,7 +95,10 @@ class RecentTransaction extends React.Component {
           <Icon name='dropdown' className='dropdownTriangle' />
           <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
             {`${transaction.additionalInfo.type} : ${transaction.additionalInfo.value}`}{' '}
-            {this.renderAllPaySendInfo(transaction.additionalInfo.value)}
+            {
+              // this.renderAllPaySendInfo(transaction.additionalInfo.value)
+            }
+            {this.toFromArrow(transaction)}
           </span>
         </Grid.Column>
       );
@@ -129,7 +132,7 @@ class RecentTransaction extends React.Component {
       );
     } else {
       return (
-        <Grid.Column computer={9} mobile={8} className='recentTxidAddressColumn'>
+        <Grid.Column computer={10} mobile={8} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
           <span className='monospace word-wrap recentTxidAddress'>{transaction.txId}</span>{' '}
           <Link to={'/explorer/transaction/' + transaction.txId}>
@@ -137,7 +140,10 @@ class RecentTransaction extends React.Component {
               <i className='walletLink'></i>
             </span>
           </Link>
-          {this.transactionSentReceived(transaction)}
+          {
+            //this.transactionSentReceived(transaction)
+          }
+          {this.toFromArrow(transaction)}
         </Grid.Column>
       );
     }
@@ -180,71 +186,34 @@ class RecentTransaction extends React.Component {
     return returnArray;
   }
 
-  transactionSentReceived(transaction) {
-    const { usedAddresses, unusedAddresses } = this.props;
-    console.log(unusedAddresses);
-
-    let inputs = false,
-      outputs = false,
-      returnArray = [];
-    // console.log(transaction);
-    if (usedAddresses) {
-      for (let i = 0; i < transaction.inputs.length; i++) {
-        for (let y = 0; y < usedAddresses.length; y++) {
-          if (transaction.inputs[i].address === usedAddresses[y].address) {
-            console.log(inputs);
-            inputs = true;
-            break;
-          } else if (unusedAddresses.length > 0) {
-            if (transaction.inputs[i].address === unusedAddresses[y]) {
-              console.log(inputs);
-              inputs = true;
-              break;
-            }
-          }
+  toFromArrow(transaction) {
+    const { inputs: txInps, outputs: txOuts } = transaction;
+    let returnArray = [];
+    let breakException = {};
+    try {
+      txInps.forEach(input => {
+        if (input.isMine) {
+          returnArray.push(
+            <span>
+              <span className='toArrow'>&#129133; </span>{' '}
+            </span>
+          );
+          throw breakException;
         }
-
-        if (inputs) {
-          break;
+      });
+    } catch (e) {}
+    try {
+      txOuts.forEach(output => {
+        if (output.isMine) {
+          returnArray.push(
+            <span>
+              <span className='fromArrow'>&#129134; </span>{' '}
+            </span>
+          );
+          throw breakException;
         }
-      }
-    }
-    if (inputs) {
-      console.log('input is present');
-      returnArray.push(
-        <span>
-          <span className='toArrow'>&#129133; </span>{' '}
-        </span>
-      );
-    }
-    if (usedAddresses) {
-      for (let i = 0; i < transaction.outputs.length; i++) {
-        for (let y = 0; y < usedAddresses.length; y++) {
-          if (transaction.outputs[i].address === usedAddresses[y].address) {
-            console.log(outputs);
-            outputs = true;
-            break;
-          } else if (unusedAddresses.length > 0) {
-            if (transaction.outputs[i].address === unusedAddresses[y]) {
-              console.log(outputs);
-              outputs = true;
-              break;
-            }
-          }
-        }
-        if (outputs) {
-          break;
-        }
-      }
-    }
-    if (outputs) {
-      console.log('output is present');
-      returnArray.push(
-        <span>
-          <span className='fromArrow'>&#129134; </span>{' '}
-        </span>
-      );
-    }
+      });
+    } catch (e) {}
     return returnArray;
   }
 

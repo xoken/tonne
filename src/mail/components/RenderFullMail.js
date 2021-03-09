@@ -15,16 +15,16 @@ class RenderFullMail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      replyMessageBodyField: null,
+      replyMessageBodyField: '',
       files: null,
       isError: false,
       message: '',
       replyField: false,
       replyAll: false,
-      subject: null,
-      toField: null,
-      toAllField: null,
-      toAllFieldHtml: null,
+      subject: '',
+      toField: '',
+      toAllField: [],
+      toAllFieldHtml: [],
       threadId: null,
       sentMail: false,
     };
@@ -82,13 +82,13 @@ class RenderFullMail extends React.Component {
 
         this.setState({
           sentMail: true,
-          replyMessageBodyField: null,
+          replyMessageBodyField: '',
           files: null,
           isError: false,
           message: '',
           replyField: false,
           replyAll: false,
-          toAllFieldHtml: null,
+          toAllFieldHtml: [],
           threadId: threadId,
           toAllField:
             currentlyOpenMailData[0].additionalInfo.value.senderInfo.commonMetaData.recepient,
@@ -104,13 +104,13 @@ class RenderFullMail extends React.Component {
         );
         this.setState({
           sentMail: false,
-          replyMessageBodyField: null,
+          replyMessageBodyField: '',
           files: null,
           isError: false,
           message: '',
           replyField: false,
           replyAll: false,
-          toAllFieldHtml: null,
+          toAllFieldHtml: [],
           threadId: threadId,
           toAllField: recipientList,
           toField:
@@ -321,7 +321,7 @@ class RenderFullMail extends React.Component {
         })
       );
       this.setState({
-        replyMessageBodyField: null,
+        replyMessageBodyField: '',
         files: null,
         isError: false,
         message: 'Mail Sent Successfully!',

@@ -16,16 +16,16 @@ class SendMail extends React.Component {
     this.maxWidthRef = React.createRef();
     this.toFieldWidthRef = React.createRef();
     this.state = {
-      files: undefined,
+      files: null,
       attachFileModal: false,
       toField: [],
       subjectField: '',
       messageBodyField: '',
       message: '',
       isError: false,
-      toFieldHtml: undefined,
-      toFieldTemp: undefined,
-      toFieldWidth: undefined,
+      toFieldHtml: [],
+      toFieldTemp: '',
+      toFieldWidth: 0,
     };
   }
   maxWidth = 0;
@@ -284,11 +284,11 @@ class SendMail extends React.Component {
             })
           );
           this.setState({
-            subjectField: null,
-            messageBodyField: null,
-            toField: null,
-            toFieldHtml: undefined,
-            toFieldTemp: undefined,
+            subjectField: '',
+            messageBodyField: '',
+            toField: [],
+            toFieldHtml: [],
+            toFieldTemp: '',
             files: null,
             isError: false,
             message: 'Mail Sent Successfully!',
