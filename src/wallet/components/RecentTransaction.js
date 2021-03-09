@@ -25,6 +25,7 @@ class RecentTransaction extends React.Component {
       try {
         await dispatch(walletActions.getTransactions({ limit: 10 }));
         await dispatch(walletActions.updateTransactionsConfirmations());
+        await dispatch(walletActions.getUsedAddresses());
         this.setState({ lastRefreshed: new Date() });
         this.timerID = setInterval(
           () =>
@@ -93,7 +94,11 @@ class RecentTransaction extends React.Component {
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle' />
           <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
-            {`${transaction.additionalInfo.type} : ${transaction.additionalInfo.value}`}
+            {`${transaction.additionalInfo.type} : ${transaction.additionalInfo.value}`}{' '}
+            {
+              // this.renderAllPaySendInfo(transaction.additionalInfo.value)
+            }
+            {this.toFromArrow(transaction)}
           </span>
         </Grid.Column>
       );
@@ -101,7 +106,7 @@ class RecentTransaction extends React.Component {
       return (
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
-          <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold marginTopNeg3px'>
+          <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
             {
               // `${transaction.additionalInfo.type} : `
             }
@@ -119,12 +124,15 @@ class RecentTransaction extends React.Component {
           <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
           <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
             {transaction.additionalInfo.type}
+            {transaction.additionalInfo.value
+              ? this.renderAllPaySendInfo(transaction.additionalInfo.value)
+              : ''}
           </span>
         </Grid.Column>
       );
     } else {
       return (
-        <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
+        <Grid.Column computer={10} mobile={8} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
           <span className='monospace word-wrap recentTxidAddress'>{transaction.txId}</span>{' '}
           <Link to={'/explorer/transaction/' + transaction.txId}>
@@ -132,25 +140,81 @@ class RecentTransaction extends React.Component {
               <i className='walletLink'></i>
             </span>
           </Link>
+          {
+            //this.transactionSentReceived(transaction)
+          }
+          {this.toFromArrow(transaction)}
         </Grid.Column>
       );
     }
   }
 
   renderAllPaySendInfo({ senderInfo, recipientInfo }) {
+    let returnArray = [];
     if (senderInfo) {
-      return (
-        <span>
-          {senderInfo} <span className='toArrow'>&#129133; </span>
-        </span>
-      );
-    } else if (recipientInfo) {
-      return (
-        <span>
-          {recipientInfo} <span className='fromArrow'>&#129134; </span>
-        </span>
-      );
+      if (typeof senderInfo === 'object') {
+        returnArray.push(
+          <span>
+            {' : '}
+            {senderInfo.commonMetaData.recepient} <span className='toArrow'>&#129133; </span>{' '}
+          </span>
+        );
+      } else {
+        returnArray.push(
+          <span>
+            {senderInfo} <span className='toArrow'>&#129133; </span>{' '}
+          </span>
+        );
+      }
     }
+    if (recipientInfo) {
+      if (typeof recipientInfo === 'object') {
+        returnArray.push(
+          <span>
+            {' : '}
+            {recipientInfo.commonMetaData.sender} <span className='fromArrow'>&#129134; </span>{' '}
+          </span>
+        );
+      } else {
+        returnArray.push(
+          <span>
+            {recipientInfo} <span className='fromArrow'>&#129134; </span>{' '}
+          </span>
+        );
+      }
+    }
+    return returnArray;
+  }
+
+  toFromArrow(transaction) {
+    const { inputs: txInps, outputs: txOuts } = transaction;
+    let returnArray = [];
+    let breakException = {};
+    try {
+      txInps.forEach(input => {
+        if (input.isMine) {
+          returnArray.push(
+            <span>
+              <span className='toArrow'>&#129133; </span>{' '}
+            </span>
+          );
+          throw breakException;
+        }
+      });
+    } catch (e) {}
+    try {
+      txOuts.forEach(output => {
+        if (output.isMine) {
+          returnArray.push(
+            <span>
+              <span className='fromArrow'>&#129134; </span>{' '}
+            </span>
+          );
+          throw breakException;
+        }
+      });
+    } catch (e) {}
+    return returnArray;
   }
 
   renderTransaction() {
@@ -414,6 +478,8 @@ const mapStateToProps = state => ({
   isLoading: walletSelectors.isLoadingTransactions(state),
   transactions: walletSelectors.getTransactions(state),
   nextTransactionCursor: state.wallet.nextTransactionCursor,
+  usedAddresses: state.wallet.usedAddresses,
+  unusedAddresses: state.wallet.unusedAddresses,
 });
 
 export default withRouter(connect(mapStateToProps)(RecentTransaction));

@@ -15,16 +15,16 @@ class RenderFullMail extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      replyMessageBodyField: null,
+      replyMessageBodyField: '',
       files: null,
       isError: false,
       message: '',
       replyField: false,
       replyAll: false,
-      subject: null,
-      toField: null,
-      toAllField: null,
-      toAllFieldHtml: null,
+      subject: '',
+      toField: '',
+      toAllField: [],
+      toAllFieldHtml: [],
       threadId: null,
       sentMail: false,
     };
@@ -82,13 +82,13 @@ class RenderFullMail extends React.Component {
 
         this.setState({
           sentMail: true,
-          replyMessageBodyField: null,
+          replyMessageBodyField: '',
           files: null,
           isError: false,
           message: '',
           replyField: false,
           replyAll: false,
-          toAllFieldHtml: null,
+          toAllFieldHtml: [],
           threadId: threadId,
           toAllField:
             currentlyOpenMailData[0].additionalInfo.value.senderInfo.commonMetaData.recepient,
@@ -104,13 +104,13 @@ class RenderFullMail extends React.Component {
         );
         this.setState({
           sentMail: false,
-          replyMessageBodyField: null,
+          replyMessageBodyField: '',
           files: null,
           isError: false,
           message: '',
           replyField: false,
           replyAll: false,
-          toAllFieldHtml: null,
+          toAllFieldHtml: [],
           threadId: threadId,
           toAllField: recipientList,
           toField:
@@ -321,7 +321,7 @@ class RenderFullMail extends React.Component {
         })
       );
       this.setState({
-        replyMessageBodyField: null,
+        replyMessageBodyField: '',
         files: null,
         isError: false,
         message: 'Mail Sent Successfully!',
@@ -359,6 +359,7 @@ class RenderFullMail extends React.Component {
 
   renderFullMail = () => {
     const { currentlyOpenMailData } = this.props;
+    let paddingLeft = 0;
     return currentlyOpenMailData.map((mail, index) => {
       let mailData = null,
         sentMail = false,
@@ -376,67 +377,71 @@ class RenderFullMail extends React.Component {
       const { contentBlocks, entityMap } = blocksFromHtml;
       const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
       const editorState = EditorState.createWithContent(contentState);
-      return (
-        <Grid key={index.toString()}>
-          <Grid.Row>
-            <Grid.Column computer={8} mobile={8} floated='left'>
-              <span style={{ color: 'lightgrey' }} className='word-wrap purplefontcolor'>
-                {sentMail ? mailData.commonMetaData.recepient : mailData.commonMetaData.sender}{' '}
-              </span>
-              <span>
-                {sentMail ? (
-                  <span className='toArrow'>&#129133; </span>
-                ) : (
-                  <span className='fromArrow'>&#129134; </span>
-                )}
-              </span>
-            </Grid.Column>
+      if (index !== 0) {
+        paddingLeft += 10;
+      }
 
-            <Grid.Column computer={4} mobile={8} floated='right'>
-              <span style={{ color: 'lightgrey', float: 'right' }} className='word-wrap'>
-                {mail.createdAt}
-              </span>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row computer={16}>
-            <Grid.Column computer='16' floated='left'>
-              <b>{mailData.commonMetaData.subject}</b>
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row computer={16}>
-            <Grid.Column computer='16' floated='left'>
-              <Editor
-                editorStyle={{
-                  border: 'none',
-                  height: 'auto',
-                }}
-                editorState={editorState}
-                toolbarClassName='hideEditorToolbar'
-                readOnly='readOnly'
-              />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              {
-                //Attached files
-              }
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column className='recentTxidAddressColumn' style={{ marginBottom: '30px' }}>
-              <span className='monospace word-wrap recentTxidAddress'>
-                <span className='purplefontcolor'>TxID:</span> {mail.txId}
-              </span>{' '}
-              <Link to={'/explorer/transaction/' + mail.txId}>
-                <span className='padding10px'>
-                  <i className='walletLink'></i>
+      return (
+        <div key={index.toString()} className='fullMailBorder'>
+          <Grid
+            className={index !== 0 ? 'fullMailBorder' : ''}
+            style={{ marginLeft: paddingLeft + 'px' }}>
+            <Grid.Row>
+              <Grid.Column computer={8} mobile={8} floated='left'>
+                <span style={{ color: 'lightgrey' }} className='word-wrap purplefontcolor'>
+                  {sentMail ? mailData.commonMetaData.recepient : mailData.commonMetaData.sender}{' '}
                 </span>
-              </Link>
-              <Divider />
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
+                <span>
+                  {sentMail ? (
+                    <span className='toArrow'>&#129133; </span>
+                  ) : (
+                    <span className='fromArrow'>&#129134; </span>
+                  )}
+                </span>
+              </Grid.Column>
+
+              <Grid.Column computer={4} mobile={8} floated='right'>
+                <span style={{ color: 'lightgrey', float: 'right' }} className='word-wrap'>
+                  {mail.createdAt.slice(0, 19).replace('T', ' ')}
+                </span>
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row computer={16}>
+              <Grid.Column computer='16' floated='left'>
+                <b>{mailData.commonMetaData.subject}</b>
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row computer={16}>
+              <Grid.Column computer='16' floated='left'>
+                <Editor
+                  editorStyle={{
+                    border: 'none',
+                    height: 'auto',
+                  }}
+                  editorState={editorState}
+                  toolbarClassName='hideEditorToolbar'
+                  readOnly='readOnly'
+                />
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column
+                className='recentTxidAddressColumn'
+                computer={16}
+                mobile={16}
+                style={{ borderTop: '1px solid #fafafa', borderBottom: '1px solid #fafafa' }}>
+                <span className='monospace word-wrap recentTxidAddress'>
+                  <span className='purplefontcolor'>TxID:</span> {mail.txId}
+                </span>{' '}
+                <Link to={'/explorer/transaction/' + mail.txId}>
+                  <span className='padding10px'>
+                    <i className='walletLink'></i>
+                  </span>
+                </Link>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
+        </div>
       );
     });
   };
@@ -456,44 +461,47 @@ class RenderFullMail extends React.Component {
               {
                 //close pane
               }
-              <span
+              <div
                 style={{
                   color: 'lightgrey',
                   cursor: 'pointer',
                   padding: '8px',
                   color: 'red',
                   float: 'right',
+                  marginBottom: '20px',
                 }}
                 onClick={this.props.toggleFullMailPane}>
                 X
-              </span>
+              </div>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
             <Grid.Column computer={16} mobile={16}>
               {this.renderFullMail()}
-              <button
-                onClick={this.replyFieldToggle}
-                style={{
-                  padding: '10px',
-                  cursor: 'pointer',
-                  border: '0px',
-                  color: 'blue',
-                  backgroundColor: 'transparent',
-                }}>
-                Reply
-              </button>
-              <button
-                onClick={this.replyAllFieldToggle}
-                style={{
-                  padding: '10px',
-                  cursor: 'pointer',
-                  border: '0px',
-                  color: 'blue',
-                  backgroundColor: 'transparent',
-                }}>
-                Reply All
-              </button>
+              <div style={{ margin: '20px 0px 20px 0px' }}>
+                <button
+                  onClick={this.replyFieldToggle}
+                  style={{
+                    padding: '10px',
+                    cursor: 'pointer',
+                    border: '0px',
+                    color: 'blue',
+                    backgroundColor: 'transparent',
+                  }}>
+                  Reply
+                </button>
+                <button
+                  onClick={this.replyAllFieldToggle}
+                  style={{
+                    padding: '10px',
+                    cursor: 'pointer',
+                    border: '0px',
+                    color: 'blue',
+                    backgroundColor: 'transparent',
+                  }}>
+                  Reply All
+                </button>
+              </div>
               <br />
               {replyField ? this.replyAllToField() : ''}
               <div className={replyField ? 'displayBlock' : 'visibilityHidden'}>
