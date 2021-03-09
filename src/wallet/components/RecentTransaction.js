@@ -103,7 +103,7 @@ class RecentTransaction extends React.Component {
       return (
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
-          <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold marginTopNeg3px'>
+          <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
             {
               // `${transaction.additionalInfo.type} : `
             }
@@ -120,7 +120,7 @@ class RecentTransaction extends React.Component {
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
           <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
-            {transaction.additionalInfo.type}{' '}
+            {transaction.additionalInfo.type}
             {transaction.additionalInfo.value
               ? this.renderAllPaySendInfo(transaction.additionalInfo.value)
               : ''}
@@ -129,7 +129,7 @@ class RecentTransaction extends React.Component {
       );
     } else {
       return (
-        <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
+        <Grid.Column computer={9} mobile={8} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
           <span className='monospace word-wrap recentTxidAddress'>{transaction.txId}</span>{' '}
           <Link to={'/explorer/transaction/' + transaction.txId}>
@@ -144,34 +144,40 @@ class RecentTransaction extends React.Component {
   }
 
   renderAllPaySendInfo({ senderInfo, recipientInfo }) {
+    let returnArray = [];
     if (senderInfo) {
       if (typeof senderInfo === 'object') {
-        return (
+        returnArray.push(
           <span>
-            {senderInfo.commonMetaData.recepient} <span className='toArrow'>&#129133; </span>
+            {' : '}
+            {senderInfo.commonMetaData.recepient} <span className='toArrow'>&#129133; </span>{' '}
           </span>
         );
       } else {
-        return (
+        returnArray.push(
           <span>
-            {senderInfo} <span className='toArrow'>&#129133; </span>
+            {senderInfo} <span className='toArrow'>&#129133; </span>{' '}
           </span>
         );
       }
-    } else if (recipientInfo) {
-      if (typeof recipientInfo === 'object') {
-        return (
-          <span>
-            {recipientInfo.commonMetaData.sender} <span className='fromArrow'>&#129134; </span>
-          </span>
-        );
-      }
-      return (
-        <span>
-          {recipientInfo} <span className='fromArrow'>&#129134; </span>
-        </span>
-      );
     }
+    if (recipientInfo) {
+      if (typeof recipientInfo === 'object') {
+        returnArray.push(
+          <span>
+            {' : '}
+            {recipientInfo.commonMetaData.sender} <span className='fromArrow'>&#129134; </span>{' '}
+          </span>
+        );
+      } else {
+        returnArray.push(
+          <span>
+            {recipientInfo} <span className='fromArrow'>&#129134; </span>{' '}
+          </span>
+        );
+      }
+    }
+    return returnArray;
   }
 
   transactionSentReceived(transaction) {
@@ -207,7 +213,7 @@ class RecentTransaction extends React.Component {
       console.log('input is present');
       returnArray.push(
         <span>
-          <span className='toArrow'>&#129133; </span>
+          <span className='toArrow'>&#129133; </span>{' '}
         </span>
       );
     }
@@ -233,10 +239,9 @@ class RecentTransaction extends React.Component {
     }
     if (outputs) {
       console.log('output is present');
-      debugger;
       returnArray.push(
         <span>
-          <span className='fromArrow'>&#129134; </span>
+          <span className='fromArrow'>&#129134; </span>{' '}
         </span>
       );
     }

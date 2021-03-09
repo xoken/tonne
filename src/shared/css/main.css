@@ -73,7 +73,7 @@
   font-family: 'Inconsolata', monospace !important;
 }
 .ui.accordion .title .dropdown.icon {
-  vertical-align: middle;
+  vertical-align: initial !important;
 }
 .credit {
   color: #28a745 !important;
@@ -908,6 +908,9 @@ input[type='number'] {
     margin-left: none;
     float: right;
   }
+  .recentTxidAddress{
+    padding-left: 0px !important;
+  }
 }
 
 @media screen and (max-width: 706px) {
@@ -964,9 +967,9 @@ body {
 .walletLink {
   scale: 66%;
   box-sizing: border-box;
-  position: absolute;
-  top: 50%;
-  display: block;
+  position: relative;
+  display: inline-block;
+  vertical-align: middle;
   transform: rotate(-45deg) scale(var(--ggs, 1));
   width: 7px;
   height: 2px;
@@ -998,11 +1001,10 @@ body {
   right: -6px;
 }
 .recentTxidAddress {
-  padding-left: 10px !important;
-  padding-right: 15px !important;
+  padding-left: 10px;
 }
 .recentTxidAddressColumn {
-  display: inline-flex !important;
+  display: inline !important;
 }
 .paddingTopBottom20px {
   padding-top: 20px;
@@ -1103,6 +1105,6 @@ body {
 .visibilityHidden{
   visibility:hidden !important;
 }
-.marginTopNeg3px{
-  margin-top: -3px;
+.fullMailBorder{
+  border-left:2px solid #fafafa;
 }

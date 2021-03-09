@@ -35,7 +35,18 @@ export const createMailTransaction = args => async (dispatch, getState, { servic
     const mailTransactionsGroupByThreadId = _.groupBy(mailTransactions, mailTransaction => {
       return mailTransaction.threadId;
     });
-    dispatch(createMailTransactionSuccess({ mailTransactions: mailTransactionsGroupByThreadId }));
+
+    console.log(
+      mailTransactionsGroupByThreadId[Object.keys(mailTransactionsGroupByThreadId[0])[0]]
+    );
+    let mailTxsArray =
+      mailTransactionsGroupByThreadId[Object.keys(mailTransactionsGroupByThreadId[0])[0]];
+    console.log(mailTxsArray);
+    dispatch(
+      createMailTransactionSuccess({
+        mailTransactions: [mailTxsArray],
+      })
+    );
   } catch (error) {
     dispatch(createMailTransactionFailure());
     throw error;
@@ -53,16 +64,16 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
         options.startkey = startkey;
       }
       if (options.diff) {
-        const { mailTransactions, nextTransactionCursor } = await serviceInjector(
-          MailService
-        ).getMailTransactions(options);
-        await dispatch(walletActions.getAllpayHandles());
-        await dispatch(walletActions.getUnregisteredNames());
-        dispatch(getDiffMailTransactionsSuccess({ mailTransactions, nextTransactionCursor }));
-      } else {
         const { mailTransactions } = await serviceInjector(MailService).getMailTransactions(
           options
         );
+        await dispatch(walletActions.getAllpayHandles());
+        await dispatch(walletActions.getUnregisteredNames());
+        dispatch(getDiffMailTransactionsSuccess({ mailTransactions }));
+      } else {
+        const { mailTransactions, nextTransactionCursor } = await serviceInjector(
+          MailService
+        ).getMailTransactions(options);
         await dispatch(walletActions.getAllpayHandles());
         await dispatch(walletActions.getUnregisteredNames());
         dispatch(getMailTransactionsSuccess({ mailTransactions }));

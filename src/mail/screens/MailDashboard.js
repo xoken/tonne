@@ -98,6 +98,7 @@ class MailDashboard extends React.Component {
           sentMail = false,
           receivedMail = false,
           numberOfMails = mail.length;
+        console.log(mail);
 
         if (mail[0].additionalInfo.value.senderInfo) {
           mailData = mail[0].additionalInfo.value.senderInfo;
@@ -138,7 +139,7 @@ class MailDashboard extends React.Component {
                   </Grid.Column>
                   <Grid.Column computer={4} mobile={8} floated='right'>
                     <span style={{ color: 'lightGrey', float: 'right' }} className='word-wrap'>
-                      {mail[0].createdAt}
+                      {mail[0].createdAt.slice(0, 19).replace('T', ' ')}
                     </span>
                   </Grid.Column>
                 </Grid.Row>
