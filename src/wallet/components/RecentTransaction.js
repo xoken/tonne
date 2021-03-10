@@ -92,7 +92,7 @@ class RecentTransaction extends React.Component {
     ) {
       return (
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
-          <Icon name='dropdown' className='dropdownTriangle' />
+          <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
           <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
             {`${transaction.additionalInfo.type} : ${transaction.additionalInfo.value}`}{' '}
             {
@@ -155,8 +155,8 @@ class RecentTransaction extends React.Component {
       if (typeof senderInfo === 'object') {
         returnArray.push(
           <span>
-            {' '}
-            <span className='toArrow'>&#129133; </span>{' '}
+            {' : '}
+            {senderInfo.commonMetaData.recepient} <span className='toArrow'>&#129133; </span>{' '}
           </span>
         );
       } else {
