@@ -155,8 +155,8 @@ class RecentTransaction extends React.Component {
       if (typeof senderInfo === 'object') {
         returnArray.push(
           <span>
-            {' : '}
-            {senderInfo.commonMetaData.recepient} <span className='toArrow'>&#129133; </span>{' '}
+            {' '}
+            <span className='toArrow'>&#129133; </span>{' '}
           </span>
         );
       } else {
@@ -166,6 +166,7 @@ class RecentTransaction extends React.Component {
           </span>
         );
       }
+      return returnArray;
     }
     if (recipientInfo) {
       if (typeof recipientInfo === 'object') {
@@ -182,8 +183,8 @@ class RecentTransaction extends React.Component {
           </span>
         );
       }
+      return returnArray;
     }
-    return returnArray;
   }
 
   toFromArrow(transaction) {
@@ -202,6 +203,9 @@ class RecentTransaction extends React.Component {
         }
       });
     } catch (e) {}
+    if (returnArray.length > 0) {
+      return returnArray;
+    }
     try {
       txOuts.forEach(output => {
         if (output.isMine) {
