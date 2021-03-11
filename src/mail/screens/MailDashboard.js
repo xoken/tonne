@@ -47,6 +47,7 @@ class MailDashboard extends React.Component {
         console.log(error);
       }
     }
+    this.getWindowWidth();
     window.addEventListener('resize', this.getWindowWidth);
   }
 
