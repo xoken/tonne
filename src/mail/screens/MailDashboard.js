@@ -20,6 +20,7 @@ class MailDashboard extends React.Component {
       sendMailModal: false,
       toggleFullMailPane: false,
       currentlyOpenMailData: null,
+      windowWidth: null,
       // lastRefreshed: null,
       // timeSinceLastRefreshed: null,
     };
@@ -46,6 +47,11 @@ class MailDashboard extends React.Component {
         console.log(error);
       }
     }
+    window.addEventListener('resize', this.getWindowWidth);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.getWindowWidth);
   }
 
   onRefresh = async () => {
@@ -213,6 +219,28 @@ class MailDashboard extends React.Component {
           </Modal.Description>
         </Modal.Content>
       </Modal>
+    );
+  }
+
+  renderFullMailModal() {
+    const { toggleFullMailPane } = this.state;
+    return (
+      <Grid.Column>
+        <Modal open={toggleFullMailPane}>
+          <Modal.Header className='purplefontcolor'>
+            New Mail
+            <i
+              style={{ float: 'right', cursor: 'pointer' }}
+              className='close icon'
+              onClick={this.toggleFullMailPane}></i>
+          </Modal.Header>
+          <Modal.Content>
+            <Modal.Description>
+              <RenderFullMail onCancel={this.toggleFullMailPane} />
+            </Modal.Description>
+          </Modal.Content>
+        </Modal>
+      </Grid.Column>
     );
   }
 
@@ -507,8 +535,19 @@ class MailDashboard extends React.Component {
   //   }
   // };
 
+  getWindowWidth() {
+    const { innerWidth: width } = window;
+    this.setState({ windowWidth: parseInt(width) });
+  }
+
   render() {
-    const { sentMailSection, inboxSection, toggleFullMailPane, currentlyOpenMailData } = this.state;
+    const {
+      sentMailSection,
+      inboxSection,
+      toggleFullMailPane,
+      currentlyOpenMailData,
+      windowWidth,
+    } = this.state;
     const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
     if (
       mailTransactions &&
@@ -604,18 +643,22 @@ class MailDashboard extends React.Component {
                 </Grid>
               </Grid.Column>
               {toggleFullMailPane ? (
-                <Grid.Column computer='10'>
-                  {
-                    //this.renderFullMail()
-                  }
-                  {
-                    <RenderFullMail
-                      toggleFullMailPane={this.toggleFullMailPane}
-                      threadId={currentlyOpenMailData[0].threadId}
-                      currentlyOpenMailData={currentlyOpenMailData}
-                    />
-                  }
-                </Grid.Column>
+                windowWidth >= 770 ? (
+                  <Grid.Column computer='10'>
+                    {
+                      //this.renderFullMail()
+                    }
+                    {
+                      <RenderFullMail
+                        toggleFullMailPane={this.toggleFullMailPane}
+                        threadId={currentlyOpenMailData[0].threadId}
+                        currentlyOpenMailData={currentlyOpenMailData}
+                      />
+                    }
+                  </Grid.Column>
+                ) : (
+                  this.renderFullMailModal
+                )
               ) : (
                 ''
               )}

@@ -94,7 +94,8 @@ class RecentTransaction extends React.Component {
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
           <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
-            {`${transaction.additionalInfo.type} : ${transaction.additionalInfo.value}`}{' '}
+            {`${transaction.additionalInfo.type} : ${transaction.additionalInfo.value}`}
+            {' : '}
             {
               // this.renderAllPaySendInfo(transaction.additionalInfo.value)
             }
