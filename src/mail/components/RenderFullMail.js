@@ -430,7 +430,7 @@ class RenderFullMail extends React.Component {
                 computer={16}
                 mobile={16}
                 style={{ borderTop: '1px solid #fafafa', borderBottom: '1px solid #fafafa' }}>
-                <span className='monospace word-wrap recentTxidAddress'>
+                <span className='monospace word-wrap'>
                   <span className='purplefontcolor'>TxID:</span> {mail.txId}
                 </span>{' '}
                 <Link to={'/explorer/transaction/' + mail.txId}>
