@@ -65,7 +65,9 @@ class WalletDashboard extends React.Component {
     );
   }
 
-  runScript = async () => {};
+  runScript = async () => {
+    wallet.runScript();
+  };
 
   render() {
     const { isLoading, balance } = this.props;

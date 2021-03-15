@@ -25,9 +25,11 @@ class TextEditor extends React.Component {
   };
 
   render() {
+    const { toolbarHidden } = this.props;
     const { editorState } = this.state;
     return (
       <Editor
+        toolbarHidden={toolbarHidden}
         editorState={editorState}
         placeholder='Type your message & drop files here...'
         wrapperClassName='demo-wrapper'

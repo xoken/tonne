@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import { withRouter, NavLink, Link } from 'react-router-dom';
 import { Grid, Button, Icon, Loader, Modal, Segment } from 'semantic-ui-react';
 import SendMail from '../components/SendMail';
-import RenderInbox from '../components/RenderInbox';
-import RenderSentMails from '../components/RenderSentMails';
-import RenderCombinedMails from '../components/RenderCombinedMails';
+// import RenderInbox from '../components/RenderInbox';
+// import RenderSentMails from '../components/RenderSentMails';
+// import RenderCombinedMails from '../components/RenderCombinedMails';
 import RenderFullMail from '../components/RenderFullMail';
 import * as mailActions from '../mailActions';
 import * as mailSelectors from '../mailSelectors';
@@ -20,8 +20,9 @@ class MailDashboard extends React.Component {
       sendMailModal: false,
       toggleFullMailPane: false,
       currentlyOpenMailData: null,
-      lastRefreshed: null,
-      timeSinceLastRefreshed: null,
+      windowWidth: null,
+      // lastRefreshed: null,
+      // timeSinceLastRefreshed: null,
     };
   }
 
@@ -30,14 +31,14 @@ class MailDashboard extends React.Component {
     if (mailTransactions && Object.keys(mailTransactions).length === 0) {
       try {
         await dispatch(mailActions.getMailTransactions({ limit: 10 }));
-        this.setState({ lastRefreshed: new Date() });
-        this.timerID = setInterval(
-          () =>
-            this.setState({
-              timeSinceLastRefreshed: new Date(),
-            }),
-          1000
-        );
+        // this.setState({ lastRefreshed: new Date() });
+        // this.timerID = setInterval(
+        //   () =>
+        //     this.setState({
+        //       timeSinceLastRefreshed: new Date(),
+        //     }),
+        //   1000
+        // );
         const autoRefreshTimeInSecs = 1 * 30 * 1000;
         this.autoRefreshTimer = setInterval(() => {
           this.onRefresh();
@@ -46,15 +47,21 @@ class MailDashboard extends React.Component {
         console.log(error);
       }
     }
+    this.getWindowWidth();
+    window.addEventListener('resize', this.getWindowWidth);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.getWindowWidth);
   }
 
   onRefresh = async () => {
     const { dispatch } = this.props;
     await dispatch(mailActions.getMailTransactions({ diff: true }));
-    this.setState({
-      lastRefreshed: new Date(),
-      timeSinceLastRefreshed: new Date(),
-    });
+    // this.setState({
+    //   lastRefreshed: new Date(),
+    //   timeSinceLastRefreshed: new Date(),
+    // });
   };
 
   onNextPage = async () => {
@@ -98,6 +105,7 @@ class MailDashboard extends React.Component {
           sentMail = false,
           receivedMail = false,
           numberOfMails = mail.length;
+        console.log(mail);
 
         if (mail[0].additionalInfo.value.senderInfo) {
           mailData = mail[0].additionalInfo.value.senderInfo;
@@ -138,7 +146,7 @@ class MailDashboard extends React.Component {
                   </Grid.Column>
                   <Grid.Column computer={4} mobile={8} floated='right'>
                     <span style={{ color: 'lightGrey', float: 'right' }} className='word-wrap'>
-                      {mail[0].createdAt}
+                      {new Date(mail[0].createdAt).toISOString().slice(0, 19).replace('T', ' ')}
                     </span>
                   </Grid.Column>
                 </Grid.Row>
@@ -212,6 +220,28 @@ class MailDashboard extends React.Component {
           </Modal.Description>
         </Modal.Content>
       </Modal>
+    );
+  }
+
+  renderFullMailModal() {
+    const { toggleFullMailPane } = this.state;
+    return (
+      <Grid.Column>
+        <Modal open={toggleFullMailPane}>
+          <Modal.Header className='purplefontcolor'>
+            New Mail
+            <i
+              style={{ float: 'right', cursor: 'pointer' }}
+              className='close icon'
+              onClick={this.toggleFullMailPane}></i>
+          </Modal.Header>
+          <Modal.Content>
+            <Modal.Description>
+              <RenderFullMail onCancel={this.toggleFullMailPane} />
+            </Modal.Description>
+          </Modal.Content>
+        </Modal>
+      </Grid.Column>
     );
   }
 
@@ -506,8 +536,19 @@ class MailDashboard extends React.Component {
   //   }
   // };
 
+  getWindowWidth() {
+    const { innerWidth: width } = window;
+    this.setState({ windowWidth: parseInt(width) });
+  }
+
   render() {
-    const { sentMailSection, inboxSection, toggleFullMailPane, currentlyOpenMailData } = this.state;
+    const {
+      sentMailSection,
+      inboxSection,
+      toggleFullMailPane,
+      currentlyOpenMailData,
+      windowWidth,
+    } = this.state;
     const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
     if (
       mailTransactions &&
@@ -603,17 +644,22 @@ class MailDashboard extends React.Component {
                 </Grid>
               </Grid.Column>
               {toggleFullMailPane ? (
-                <Grid.Column computer='10'>
-                  {
-                    //this.renderFullMail()
-                  }
-                  {
-                    <RenderFullMail
-                      toggleFullMailPane={this.toggleFullMailPane}
-                      currentlyOpenMailData={currentlyOpenMailData}
-                    />
-                  }
-                </Grid.Column>
+                windowWidth >= 770 ? (
+                  <Grid.Column computer='10'>
+                    {
+                      //this.renderFullMail()
+                    }
+                    {
+                      <RenderFullMail
+                        toggleFullMailPane={this.toggleFullMailPane}
+                        threadId={currentlyOpenMailData[0].threadId}
+                        currentlyOpenMailData={currentlyOpenMailData}
+                      />
+                    }
+                  </Grid.Column>
+                ) : (
+                  this.renderFullMailModal
+                )
               ) : (
                 ''
               )}
@@ -623,6 +669,11 @@ class MailDashboard extends React.Component {
         </>
       );
     }
+  }
+
+  componentWillUnmount() {
+    // clearInterval(this.timerID);
+    clearInterval(this.autoRefreshTimer);
   }
 }
 MailDashboard.propTypes = {

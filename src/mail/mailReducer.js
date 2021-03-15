@@ -1,11 +1,11 @@
 import { createReducer } from 'redux-act';
 import * as actions from './mailActions';
+import * as authActions from '../auth/authActions';
 
 const INITIAL_STATE = {
   mailTransactions: {},
   nextTransactionCursor: null,
   isLoadingMailTransactions: false,
-  sentMailTransactions: [],
 };
 
 export default createReducer(
@@ -14,9 +14,9 @@ export default createReducer(
       ...state,
       isLoadingMailTransactions: true,
     }),
-    [actions.createMailTransactionSuccess]: (state, { transactions }) => ({
+    [actions.createMailTransactionSuccess]: (state, { mailTransactions }) => ({
       ...state,
-      sentMailTransactions: [...transactions, ...state.sentMailTransactions],
+      mailTransactions: { ...mailTransactions, ...state.mailTransactions },
       isLoadingMailTransactions: false,
     }),
     [actions.getMailTransactionsRequest]: state => ({
@@ -34,6 +34,9 @@ export default createReducer(
       ...state,
       mailTransactions: { ...mailTransactions, ...state.mailTransactions },
       isLoadingMailTransactions: false,
+    }),
+    [authActions.logoutSuccess]: state => ({
+      ...INITIAL_STATE,
     }),
   },
   INITIAL_STATE
