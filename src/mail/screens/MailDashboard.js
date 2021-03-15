@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter, NavLink, Link } from 'react-router-dom';
+import { withRouter, Link } from 'react-router-dom';
 import { Grid, Button, Icon, Loader, Modal, Segment } from 'semantic-ui-react';
 import SendMail from '../components/SendMail';
 // import RenderInbox from '../components/RenderInbox';
@@ -10,6 +10,7 @@ import SendMail from '../components/SendMail';
 import RenderFullMail from '../components/RenderFullMail';
 import * as mailActions from '../mailActions';
 import * as mailSelectors from '../mailSelectors';
+import { format } from 'date-fns';
 
 class MailDashboard extends React.Component {
   constructor(props) {
@@ -53,6 +54,8 @@ class MailDashboard extends React.Component {
 
   componentWillUnmount() {
     window.removeEventListener('resize', this.getWindowWidth);
+    // clearInterval(this.timerID);
+    clearInterval(this.autoRefreshTimer);
   }
 
   onRefresh = async () => {
@@ -84,7 +87,74 @@ class MailDashboard extends React.Component {
   }
 
   combinedMailsSection() {
-    const { mailTransactions, dispatch } = this.props;
+    const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
+    if (isLoadingMailTransactions) {
+      return <Loader active />;
+    }
+    let welcomeMail = [
+      {
+        txId: null,
+        blockHeight: null,
+        additionalInfo: {
+          type: 'voxMail Tx',
+          value: {
+            senderInfo: null,
+            recipientInfo: {
+              commonMetaData: {
+                sender: ['Tonne Team'],
+                recepient: [''],
+                subject: 'Welcome to voxMail!',
+                attachmentTypes: ['text/html'],
+              },
+              body: "<p>Hi, thanks for using voxMail. You're awesome!</p>\n",
+              threadId: 'welcomemail',
+            },
+          },
+        },
+        inputs: [
+          {
+            address: 'welcomemail',
+            isMine: true,
+            isNUTXO: false,
+            txInputIndex: 1,
+            outputTxHash: 'welcomemail',
+            value: 0,
+          },
+        ],
+        outputs: [
+          {
+            address: null,
+            isMine: false,
+            isNUTXO: false,
+            lockingScript: 'welcomemail',
+            outputIndex: 0,
+            value: 0,
+          },
+          {
+            address: null,
+            isMine: false,
+            isNUTXO: false,
+            lockingScript: 'welcomemail',
+            outputIndex: 1,
+            value: 0,
+          },
+          {
+            address: 'welcomemail',
+            isMine: true,
+            isNUTXO: false,
+            lockingScript: 'welcomemail',
+            outputIndex: 2,
+            value: 0,
+          },
+        ],
+        fees: 0,
+        confirmation: null,
+        createdAt: new Date().toString(),
+        _id: 'transaction-01',
+        _rev: '00',
+        threadId: 'welcomemail',
+      },
+    ];
     // let combinedMails = [
     //   {
     //     fromaddress: 'aa/allpayname',
@@ -103,17 +173,16 @@ class MailDashboard extends React.Component {
       return Object.values(mailTransactions).map((mail, index) => {
         let mailData = null,
           sentMail = false,
-          receivedMail = false,
           numberOfMails = mail.length;
-        console.log(mail);
 
         if (mail[0].additionalInfo.value.senderInfo) {
           mailData = mail[0].additionalInfo.value.senderInfo;
           sentMail = true;
         } else {
           mailData = mail[0].additionalInfo.value.recipientInfo;
-          receivedMail = true;
+          sentMail = false;
         }
+        let dateTime = format(new Date(mail[0].createdAt), 'dd-MM-yyyy hh:mm:ss');
 
         return (
           <Grid.Row
@@ -146,7 +215,7 @@ class MailDashboard extends React.Component {
                   </Grid.Column>
                   <Grid.Column computer={4} mobile={8} floated='right'>
                     <span style={{ color: 'lightGrey', float: 'right' }} className='word-wrap'>
-                      {new Date(mail[0].createdAt).toISOString().slice(0, 19).replace('T', ' ')}
+                      {dateTime}
                     </span>
                   </Grid.Column>
                 </Grid.Row>
@@ -165,11 +234,40 @@ class MailDashboard extends React.Component {
       });
     } else {
       return (
-        <Grid>
-          <Grid.Row>
-            <Grid.Column width={16}>You have no mails.</Grid.Column>
-          </Grid.Row>
-        </Grid>
+        <Grid.Row style={{ cursor: 'pointer' }} onClick={() => this.mailOnClick(welcomeMail)}>
+          <Grid.Column
+            style={{
+              boxShadow: '5px 5px 5px #fafafa',
+              paddingTop: '12px',
+              paddingBottom: '12px',
+              marginTop: '8px',
+              marginBottom: '8px',
+            }}>
+            <Grid>
+              <Grid.Row>
+                <Grid.Column computer={8} mobile={8} floated='left'>
+                  <span style={{ color: 'lightGrey' }} className='word-wrap purplefontcolor'>
+                    {welcomeMail[0].additionalInfo.value.recipientInfo.commonMetaData.sender}{' '}
+                  </span>
+                  <span>
+                    <span className='fromArrow'>&#129134; </span>
+                  </span>
+                </Grid.Column>
+                <Grid.Column computer={4} mobile={8} floated='right'>
+                  <span style={{ color: 'lightGrey', float: 'right' }} className='word-wrap'>
+                    {welcomeMail[0].createdAt}
+                  </span>
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row>
+                <Grid.Column computer={16} floated='left'>
+                  <span className='purplefontcolor'></span>
+                  <b>{welcomeMail[0].additionalInfo.value.recipientInfo.commonMetaData.subject}</b>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+          </Grid.Column>
+        </Grid.Row>
       );
     }
   }
@@ -189,14 +287,14 @@ class MailDashboard extends React.Component {
     }
   };
 
-  toggleFirstColumn = event => {
-    const { sentMailSection, inboxSection } = this.state;
-    if (event.target.id === 'sent') {
-      this.setState({ sentMailSection: true, inboxSection: false });
-    } else {
-      this.setState({ sentMailSection: false, inboxSection: true });
-    }
-  };
+  // toggleFirstColumn = event => {
+  //   const { sentMailSection, inboxSection } = this.state;
+  //   if (event.target.id === 'sent') {
+  //     this.setState({ sentMailSection: true, inboxSection: false });
+  //   } else {
+  //     this.setState({ sentMailSection: false, inboxSection: true });
+  //   }
+  // };
 
   toggleSendMailModal = () => {
     const { sendMailModal } = this.state;
@@ -224,20 +322,18 @@ class MailDashboard extends React.Component {
   }
 
   renderFullMailModal() {
-    const { toggleFullMailPane } = this.state;
+    const { toggleFullMailPane, currentlyOpenMailData } = this.state;
     return (
       <Grid.Column>
         <Modal open={toggleFullMailPane}>
-          <Modal.Header className='purplefontcolor'>
-            New Mail
-            <i
-              style={{ float: 'right', cursor: 'pointer' }}
-              className='close icon'
-              onClick={this.toggleFullMailPane}></i>
-          </Modal.Header>
+          <Modal.Header className='purplefontcolor'></Modal.Header>
           <Modal.Content>
             <Modal.Description>
-              <RenderFullMail onCancel={this.toggleFullMailPane} />
+              <RenderFullMail
+                toggleFullMailPane={this.toggleFullMailPane}
+                threadId={currentlyOpenMailData[0].threadId}
+                currentlyOpenMailData={currentlyOpenMailData}
+              />
             </Modal.Description>
           </Modal.Content>
         </Modal>
@@ -536,26 +632,22 @@ class MailDashboard extends React.Component {
   //   }
   // };
 
-  getWindowWidth() {
+  getWindowWidth = () => {
     const { innerWidth: width } = window;
     this.setState({ windowWidth: parseInt(width) });
-  }
+  };
 
   render() {
     const {
-      sentMailSection,
-      inboxSection,
+      // sentMailSection,
+      // inboxSection,
       toggleFullMailPane,
       currentlyOpenMailData,
       windowWidth,
     } = this.state;
     const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
-    if (
-      mailTransactions &&
-      Object.keys(mailTransactions).length === 0 &&
-      isLoadingMailTransactions
-    ) {
-      return <Loader active />;
+    if (mailTransactions && Object.keys(mailTransactions).length === 0) {
+      return this.combinedMailsSection();
     } else if (allpayHandles && allpayHandles.length === 0) {
       return (
         <Grid>
@@ -658,7 +750,7 @@ class MailDashboard extends React.Component {
                     }
                   </Grid.Column>
                 ) : (
-                  this.renderFullMailModal
+                  this.renderFullMailModal()
                 )
               ) : (
                 ''
@@ -669,11 +761,6 @@ class MailDashboard extends React.Component {
         </>
       );
     }
-  }
-
-  componentWillUnmount() {
-    // clearInterval(this.timerID);
-    clearInterval(this.autoRefreshTimer);
   }
 }
 MailDashboard.propTypes = {

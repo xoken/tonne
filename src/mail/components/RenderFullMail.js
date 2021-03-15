@@ -1,15 +1,14 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { Button, Grid, Input, Divider, Icon, TextArea } from 'semantic-ui-react';
-import * as mailSelectors from '../mailSelectors';
+import { Button, Grid, Input, Icon } from 'semantic-ui-react';
 import { EditorState, ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
 import { Editor } from 'react-draft-wysiwyg';
 import TextEditor from '../components/TextEditor';
 import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import * as mailActions from '../mailActions';
+import { format } from 'date-fns';
 
 class RenderFullMail extends React.Component {
   constructor(props) {
@@ -39,8 +38,7 @@ class RenderFullMail extends React.Component {
       this.setState({
         sentMail: true,
         threadId: threadId,
-        toAllField:
-          currentlyOpenMailData[0].additionalInfo.value.senderInfo.commonMetaData.recepient,
+        toAllField: recipientList,
         toField:
           currentlyOpenMailData[0].additionalInfo.value.senderInfo.commonMetaData.recepient[0],
         subject: currentlyOpenMailData[0].additionalInfo.value.senderInfo.commonMetaData.subject,
@@ -120,7 +118,6 @@ class RenderFullMail extends React.Component {
         });
       }
     }
-    console.log('updated');
   }
 
   onDragOverEnter = event => {
@@ -380,6 +377,7 @@ class RenderFullMail extends React.Component {
       if (index !== 0) {
         paddingLeft += 10;
       }
+      let dateTime = format(new Date(mail.createdAt), 'dd-MM-yyyy hh:mm:ss');
 
       return (
         <div key={index.toString()} className='fullMailBorder'>
@@ -402,7 +400,7 @@ class RenderFullMail extends React.Component {
 
               <Grid.Column computer={4} mobile={8} floated='right'>
                 <span style={{ color: 'lightgrey', float: 'right' }} className='word-wrap'>
-                  {new Date(mail.createdAt).toISOString().slice(0, 19).replace('T', ' ')}
+                  {dateTime}
                 </span>
               </Grid.Column>
             </Grid.Row>
@@ -430,14 +428,20 @@ class RenderFullMail extends React.Component {
                 computer={16}
                 mobile={16}
                 style={{ borderTop: '1px solid #fafafa', borderBottom: '1px solid #fafafa' }}>
-                <span className='monospace word-wrap'>
-                  <span className='purplefontcolor'>TxID:</span> {mail.txId}
-                </span>{' '}
-                <Link to={'/explorer/transaction/' + mail.txId}>
-                  <span className='padding10px'>
-                    <i className='walletLink'></i>
-                  </span>
-                </Link>
+                {mail.txId ? (
+                  <>
+                    <span className='monospace word-wrap'>
+                      <span className='purplefontcolor'>TxID:</span> {mail.txId}
+                    </span>{' '}
+                    <Link to={'/explorer/transaction/' + mail.txId}>
+                      <span className='padding10px'>
+                        <i className='walletLink'></i>
+                      </span>
+                    </Link>
+                  </>
+                ) : (
+                  ''
+                )}
               </Grid.Column>
             </Grid.Row>
           </Grid>
