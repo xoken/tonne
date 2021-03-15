@@ -35,18 +35,9 @@ export const createMailTransaction = args => async (dispatch, getState, { servic
     const mailTransactionsGroupByThreadId = _.groupBy(mailTransactions, mailTransaction => {
       return mailTransaction.threadId;
     });
-
-    console.log(
-      mailTransactionsGroupByThreadId[Object.keys(mailTransactionsGroupByThreadId[0])[0]]
-    );
-    debugger;
-    let mailTxsArray =
-      mailTransactionsGroupByThreadId[Object.keys(mailTransactionsGroupByThreadId[0])[0]];
-    console.log(mailTxsArray);
-    debugger;
     dispatch(
       createMailTransactionSuccess({
-        mailTransactions: [mailTxsArray],
+        mailTransactions: mailTransactionsGroupByThreadId,
       })
     );
   } catch (error) {

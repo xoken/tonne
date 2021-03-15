@@ -146,7 +146,7 @@ class MailDashboard extends React.Component {
                   </Grid.Column>
                   <Grid.Column computer={4} mobile={8} floated='right'>
                     <span style={{ color: 'lightGrey', float: 'right' }} className='word-wrap'>
-                      {mail[0].createdAt.slice(0, 19).replace('T', ' ')}
+                      {new Date(mail[0].createdAt).toISOString().slice(0, 19).replace('T', ' ')}
                     </span>
                   </Grid.Column>
                 </Grid.Row>
