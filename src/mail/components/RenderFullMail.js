@@ -120,7 +120,6 @@ class RenderFullMail extends React.Component {
         });
       }
     }
-    console.log('updated');
   }
 
   onDragOverEnter = event => {

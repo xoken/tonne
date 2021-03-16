@@ -105,7 +105,6 @@ class MailDashboard extends React.Component {
           sentMail = false,
           receivedMail = false,
           numberOfMails = mail.length;
-        console.log(mail);
 
         if (mail[0].additionalInfo.value.senderInfo) {
           mailData = mail[0].additionalInfo.value.senderInfo;
