@@ -16,7 +16,7 @@ class SendMail extends React.Component {
     this.maxWidthRef = React.createRef();
     this.toFieldWidthRef = React.createRef();
     this.state = {
-      files: null,
+      files: [],
       attachFileModal: false,
       toField: [],
       subjectField: '',
@@ -55,24 +55,14 @@ class SendMail extends React.Component {
 
   onFilesAttach = event => {
     const { files } = this.state;
-    const newFiles = event.target.files;
-    let tempFiles = Array.from(newFiles),
-      updatedFiles = [],
-      totalSizeOfFiles = 0;
-
-    if (files) {
-      updatedFiles = Array.from(files);
-    }
-    for (var z = 0; z < tempFiles.length; z++) {
-      updatedFiles.push(tempFiles[z]);
-    }
-    this.setState({ files: updatedFiles });
-    for (let i = 0; i < updatedFiles.length; i++) {
-      totalSizeOfFiles += parseInt(updatedFiles[i].size);
-    }
-
-    if (totalSizeOfFiles > 10485760) {
+    const newFiles = [...files, ...event.target.files];
+    const fileSize = newFiles.reduce((acc, currFile) => {
+      return acc + currFile.size;
+    }, 0);
+    if (fileSize > 10485760) {
       this.setState({ message: 'Total size of all files cannot be larger than 10MB' });
+    } else {
+      this.setState({ files: newFiles });
     }
   };
 
@@ -89,7 +79,7 @@ class SendMail extends React.Component {
     window.removeEventListener('dragenter', this.onDragOverEnter);
     window.removeEventListener('dragover', this.onDragOverEnter);
     window.removeEventListener('drop', this.onFileDrop);
-    document.getElementById('file-attach').removeEventListener('dragleave', this.onDragLeave);
+    document.getElementById('email-attachments').removeEventListener('dragleave', this.onDragLeave);
   }
 
   onDragOverEnter = event => {
@@ -263,12 +253,6 @@ class SendMail extends React.Component {
     const { dispatch } = this.props;
     const { toField, subjectField, messageBodyField, files, toFieldTemp } = this.state;
     let filteredToField = [];
-    const formData = new FormData();
-    if (files) {
-      for (let i = 0; i < files.length; i++) {
-        formData.append('File', files[i], files[i].name);
-      }
-    }
     if (toField.length > 0) {
       filteredToField = toField.filter(function (addressName) {
         return addressName !== '';
@@ -281,6 +265,7 @@ class SendMail extends React.Component {
               threadId: null,
               subject: subjectField,
               body: messageBodyField,
+              attachments: files,
             })
           );
           this.setState({
@@ -394,20 +379,12 @@ class SendMail extends React.Component {
                 // />
               }
               <br />
-              <label htmlFor='file-attach'>
-                <Icon
-                  name='paperclip'
-                  size='large'
-                  style={{ cursor: 'pointer' }}
-                  //  onClick={this.toggleAttachFileModal}
-                />
+              <label htmlFor='email-attachments'>
+                <Icon name='paperclip' size='large' />
               </label>
-
               <Input
-                id='file-attach'
-                style={{ display: 'none' }}
+                id='email-attachments'
                 type='file'
-                icon='paperclip'
                 multiple='multiple'
                 onChange={this.onFilesAttach}
               />
