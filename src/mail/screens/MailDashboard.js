@@ -646,9 +646,7 @@ class MailDashboard extends React.Component {
       windowWidth,
     } = this.state;
     const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
-    if (mailTransactions && Object.keys(mailTransactions).length === 0) {
-      return this.combinedMailsSection();
-    } else if (allpayHandles && allpayHandles.length === 0) {
+    if (allpayHandles && allpayHandles.length === 0) {
       return (
         <Grid>
           <Grid.Row>
@@ -661,6 +659,8 @@ class MailDashboard extends React.Component {
           </Grid.Row>
         </Grid>
       );
+    } else if (mailTransactions && Object.keys(mailTransactions).length === 0) {
+      return this.combinedMailsSection();
     } else {
       return (
         <>

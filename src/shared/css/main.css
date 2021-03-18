@@ -965,12 +965,11 @@ body {
 }
 
 .walletLink {
-  scale: 66%;
   box-sizing: border-box;
   position: relative;
   display: inline-block;
   vertical-align: middle;
-  transform: rotate(-45deg) scale(var(--ggs, 1));
+  transform: rotate(-45deg) scale(0.7);
   width: 7px;
   height: 2px;
   background: currentColor;
