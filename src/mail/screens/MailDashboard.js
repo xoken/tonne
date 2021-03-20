@@ -88,73 +88,7 @@ class MailDashboard extends React.Component {
 
   combinedMailsSection() {
     const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
-    if (isLoadingMailTransactions) {
-      return <Loader active />;
-    }
-    let welcomeMail = [
-      {
-        txId: null,
-        blockHeight: null,
-        additionalInfo: {
-          type: 'voxMail Tx',
-          value: {
-            senderInfo: null,
-            recipientInfo: {
-              commonMetaData: {
-                sender: ['Tonne Team'],
-                recepient: [''],
-                subject: 'Welcome to voxMail!',
-                attachmentTypes: ['text/html'],
-              },
-              body: "<p>Hi, thanks for using voxMail. You're awesome!</p>\n",
-              threadId: 'welcomemail',
-            },
-          },
-        },
-        inputs: [
-          {
-            address: 'welcomemail',
-            isMine: true,
-            isNUTXO: false,
-            txInputIndex: 1,
-            outputTxHash: 'welcomemail',
-            value: 0,
-          },
-        ],
-        outputs: [
-          {
-            address: null,
-            isMine: false,
-            isNUTXO: false,
-            lockingScript: 'welcomemail',
-            outputIndex: 0,
-            value: 0,
-          },
-          {
-            address: null,
-            isMine: false,
-            isNUTXO: false,
-            lockingScript: 'welcomemail',
-            outputIndex: 1,
-            value: 0,
-          },
-          {
-            address: 'welcomemail',
-            isMine: true,
-            isNUTXO: false,
-            lockingScript: 'welcomemail',
-            outputIndex: 2,
-            value: 0,
-          },
-        ],
-        fees: 0,
-        confirmation: null,
-        createdAt: new Date().toString(),
-        _id: 'transaction-01',
-        _rev: '00',
-        threadId: 'welcomemail',
-      },
-    ];
+
     // let combinedMails = [
     //   {
     //     fromaddress: 'aa/allpayname',
@@ -233,6 +167,70 @@ class MailDashboard extends React.Component {
         );
       });
     } else {
+      let welcomeMail = [
+        {
+          txId: null,
+          blockHeight: null,
+          additionalInfo: {
+            type: 'voxMail Tx',
+            value: {
+              senderInfo: null,
+              recipientInfo: {
+                commonMetaData: {
+                  sender: ['Tonne Team'],
+                  recepient: [''],
+                  subject: 'Welcome to voxMail!',
+                  attachmentTypes: ['text/html'],
+                },
+                body: "<p>Hi, thanks for using voxMail. You're awesome!</p>\n",
+                threadId: 'welcomemail',
+              },
+            },
+          },
+          inputs: [
+            {
+              address: 'welcomemail',
+              isMine: true,
+              isNUTXO: false,
+              txInputIndex: 1,
+              outputTxHash: 'welcomemail',
+              value: 0,
+            },
+          ],
+          outputs: [
+            {
+              address: null,
+              isMine: false,
+              isNUTXO: false,
+              lockingScript: 'welcomemail',
+              outputIndex: 0,
+              value: 0,
+            },
+            {
+              address: null,
+              isMine: false,
+              isNUTXO: false,
+              lockingScript: 'welcomemail',
+              outputIndex: 1,
+              value: 0,
+            },
+            {
+              address: 'welcomemail',
+              isMine: true,
+              isNUTXO: false,
+              lockingScript: 'welcomemail',
+              outputIndex: 2,
+              value: 0,
+            },
+          ],
+          fees: 0,
+          confirmation: null,
+          createdAt: new Date().toString(),
+          _id: 'transaction-01',
+          _rev: '00',
+          threadId: 'welcomemail',
+        },
+      ];
       let dateTime = format(new Date(welcomeMail[0].createdAt), 'dd-MM-yyyy hh:mm:ss');
       return (
         <Grid.Row style={{ cursor: 'pointer' }} onClick={() => this.mailOnClick(welcomeMail)}>
@@ -646,6 +644,7 @@ class MailDashboard extends React.Component {
       currentlyOpenMailData,
       windowWidth,
     } = this.state;
+    console.log(windowWidth);
     const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
     if (allpayHandles && allpayHandles.length === 0) {
       return (
@@ -735,7 +734,7 @@ class MailDashboard extends React.Component {
                 </Grid>
               </Grid.Column>
               {toggleFullMailPane ? (
-                windowWidth >= 770 ? (
+                windowWidth >= 770 || !windowWidth ? (
                   <Grid.Column computer='10'>
                     {
                       //this.renderFullMail()

@@ -8,6 +8,15 @@ const INITIAL_STATE = {
   isLoadingMailTransactions: false,
 };
 
+function updateExistingThreadIdValue(newMailTx, existingMailTx) {
+  let tempExistingMailTx = existingMailTx;
+  let tempVal = Object.values(newMailTx)[0];
+  tempExistingMailTx[Object.keys(newMailTx)[0]] = tempVal.concat(
+    existingMailTx[Object.keys(newMailTx)[0]]
+  );
+  return tempExistingMailTx;
+}
+
 export default createReducer(
   {
     [actions.createMailTransactionRequest]: state => ({
@@ -16,7 +25,11 @@ export default createReducer(
     }),
     [actions.createMailTransactionSuccess]: (state, { mailTransactions }) => ({
       ...state,
-      mailTransactions: { ...mailTransactions, ...state.mailTransactions },
+      mailTransactions: Object.keys(state.mailTransactions).includes(
+        Object.keys(mailTransactions)[0]
+      )
+        ? updateExistingThreadIdValue(mailTransactions, state.mailTransactions)
+        : { ...mailTransactions, ...state.mailTransactions },
       isLoadingMailTransactions: false,
     }),
     [actions.getMailTransactionsRequest]: state => ({

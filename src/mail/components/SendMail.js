@@ -150,7 +150,12 @@ class SendMail extends React.Component {
   };
 
   onMessageBodyFieldChange = content => {
-    this.setState({ messageBodyField: content });
+    const { isError } = this.state;
+    if (isError) {
+      this.setState({ messageBodyField: content, isError: false, message: '' });
+    } else {
+      this.setState({ messageBodyField: content });
+    }
   };
 
   onToFieldChange = event => {
@@ -281,7 +286,7 @@ class SendMail extends React.Component {
             message: 'Mail Sent Successfully!',
           });
 
-          closeModalTimer = setTimeout(this.onCancel, 5000);
+          closeModalTimer = setTimeout(this.onCancel, 1500);
         } catch (error) {
           clearTimeout(closeModalTimer);
           closeModalTimer = 0;
