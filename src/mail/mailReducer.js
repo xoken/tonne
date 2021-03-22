@@ -9,12 +9,15 @@ const INITIAL_STATE = {
 };
 
 function updateExistingThreadIdValue(newMailTx, existingMailTx) {
-  let tempExistingMailTx = existingMailTx;
+  let tempExistingMailTx = existingMailTx,
+    existingThreadArray = existingMailTx[Object.keys(newMailTx)[0]];
   let tempVal = Object.values(newMailTx)[0];
-  tempExistingMailTx[Object.keys(newMailTx)[0]] = tempVal.concat(
-    existingMailTx[Object.keys(newMailTx)[0]]
+  let updatedNewObject = {};
+  delete tempExistingMailTx[Object.keys(newMailTx)[0]];
+  updatedNewObject[Object.keys(newMailTx)[0]] = Object.values(newMailTx)[0].concat(
+    existingThreadArray
   );
-  return tempExistingMailTx;
+  return { ...updatedNewObject, ...tempExistingMailTx };
 }
 
 export default createReducer(

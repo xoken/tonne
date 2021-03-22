@@ -76,17 +76,17 @@ class RenderFullMail extends React.Component {
       });
     }
 
-    window.addEventListener('dragenter', this.onDragOverEnter);
-    window.addEventListener('dragover', this.onDragOverEnter);
-    window.addEventListener('drop', this.onFileDrop);
-    document.getElementById('file-attach').addEventListener('dragleave', this.onDragLeave);
+    // window.addEventListener('dragenter', this.onDragOverEnter);
+    // window.addEventListener('dragover', this.onDragOverEnter);
+    // window.addEventListener('drop', this.onFileDrop);
+    // document.getElementById('file-attach').addEventListener('dragleave', this.onDragLeave);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('dragenter', this.onDragOverEnter);
-    window.removeEventListener('dragover', this.onDragOverEnter);
-    window.removeEventListener('drop', this.onFileDrop);
-    document.getElementById('file-attach').removeEventListener('dragleave', this.onDragLeave);
+    // window.removeEventListener('dragenter', this.onDragOverEnter);
+    // window.removeEventListener('dragover', this.onDragOverEnter);
+    // window.removeEventListener('drop', this.onFileDrop);
+    // document.getElementById('file-attach').removeEventListener('dragleave', this.onDragLeave);
   }
 
   componentDidUpdate() {
@@ -575,29 +575,31 @@ class RenderFullMail extends React.Component {
                     onClick={this.onReplyFieldClose}></i>
                 </div>
                 <br />
-                <div id='replyFiles' style={{ height: '300px' }}>
+                <div id='replyFiles' style={{ minHeight: '20%' }}>
                   <TextEditor
                     toolbarHidden={!replyField}
                     onMessageBodyFieldChange={this.onMessageBodyFieldChange}
                   />
                 </div>
-                <label htmlFor='file-attach'>
-                  <Icon
-                    name='paperclip'
-                    size='large'
-                    style={{ cursor: 'pointer' }}
-                    //  onClick={this.toggleAttachFileModal}
-                  />
-                </label>
-
-                <Input
-                  id='file-attach'
-                  style={{ display: 'none' }}
-                  type='file'
-                  icon='paperclip'
-                  multiple='multiple'
-                  onChange={this.onFilesAttach}
-                />
+                {
+                  // <label htmlFor='file-attach'>
+                  //   <Icon
+                  //     name='paperclip'
+                  //     size='large'
+                  //     style={{ cursor: 'pointer' }}
+                  //     //  onClick={this.toggleAttachFileModal}
+                  //   />
+                  // </label>
+                  //
+                  // <Input
+                  //   id='file-attach'
+                  //   style={{ display: 'none' }}
+                  //   type='file'
+                  //   icon='paperclip'
+                  //   multiple='multiple'
+                  //   onChange={this.onFilesAttach}
+                  // />
+                }
                 <div className='colorRed'>{isError ? message : ''}</div>
 
                 <br />

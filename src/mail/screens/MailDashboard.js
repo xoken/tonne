@@ -88,7 +88,7 @@ class MailDashboard extends React.Component {
 
   combinedMailsSection() {
     const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
-
+    const { currentlyOpenMailData, toggleFullMailPane } = this.state;
     // let combinedMails = [
     //   {
     //     fromaddress: 'aa/allpayname',
@@ -103,7 +103,20 @@ class MailDashboard extends React.Component {
     //     currentlyOpenMail: 'inbox2',
     //   },
     // ];
+
     if (Object.keys(mailTransactions).length !== 0) {
+      if (
+        toggleFullMailPane &&
+        Object.keys(mailTransactions).includes(currentlyOpenMailData[0].threadId)
+      ) {
+        if (
+          mailTransactions[currentlyOpenMailData[0].threadId].length > currentlyOpenMailData.length
+        ) {
+          this.setState({
+            currentlyOpenMailData: mailTransactions[currentlyOpenMailData[0].threadId],
+          });
+        }
+      }
       return Object.values(mailTransactions).map((mail, index) => {
         let mailData = null,
           sentMail = false,
@@ -644,7 +657,7 @@ class MailDashboard extends React.Component {
       currentlyOpenMailData,
       windowWidth,
     } = this.state;
-    console.log(windowWidth);
+
     const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
     if (allpayHandles && allpayHandles.length === 0) {
       return (
