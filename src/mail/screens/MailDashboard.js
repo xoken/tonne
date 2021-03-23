@@ -59,7 +59,8 @@ class MailDashboard extends React.Component {
   }
 
   componentDidUpdate() {
-    const { toggleFullMailPane, mailTransactions, currentlyOpenMailData } = this.state;
+    const { mailTransactions } = this.props;
+    const { toggleFullMailPane, currentlyOpenMailData } = this.state;
     if (mailTransactions && Object.keys(mailTransactions).length !== 0) {
       if (
         toggleFullMailPane &&
