@@ -35,9 +35,21 @@ class RenderFullMail extends React.Component {
     if (currentlyOpenMailData[0].additionalInfo.value.senderInfo) {
       let recipientList = [];
       currentlyOpenMailData.map(openMailData => {
-        openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
-          recipientList.push(recepient);
-        });
+        if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
+          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
+            recipientList.push(recepient);
+          });
+        }
+        if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
+          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+            recepient => {
+              recipientList.push(recepient);
+            }
+          );
+        }
+        if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.sender) {
+          recipientList.push(openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender);
+        }
       });
       let seen = {};
       let uniqueRecipients = recipientList.filter(function (item) {
@@ -55,14 +67,21 @@ class RenderFullMail extends React.Component {
     } else {
       let recipientList = [];
       currentlyOpenMailData.map(openMailData => {
-        openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(recepient => {
-          recipientList.push(recepient);
-        });
-        Array.of(openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender).map(
-          sender => {
-            recipientList.push(sender);
-          }
-        );
+        if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
+          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+            recepient => {
+              recipientList.push(recepient);
+            }
+          );
+        }
+        if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
+          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
+            recipientList.push(recepient);
+          });
+        }
+        if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.sender) {
+          recipientList.push(openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender);
+        }
       });
 
       let seen = {};
@@ -98,9 +117,23 @@ class RenderFullMail extends React.Component {
       if (currentlyOpenMailData[0].additionalInfo.value.senderInfo) {
         let recipientList = [];
         currentlyOpenMailData.map(openMailData => {
-          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
-            recipientList.push(recepient);
-          });
+          if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
+            openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
+              recipientList.push(recepient);
+            });
+          }
+          if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
+            openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+              recepient => {
+                recipientList.push(recepient);
+              }
+            );
+          }
+          if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.sender) {
+            recipientList.push(
+              openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender
+            );
+          }
         });
         let seen = {};
         let uniqueRecipients = recipientList.filter(function (item) {
@@ -124,16 +157,23 @@ class RenderFullMail extends React.Component {
       } else {
         let recipientList = [];
         currentlyOpenMailData.map(openMailData => {
-          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
-            recepient => {
+          if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
+            openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+              recepient => {
+                recipientList.push(recepient);
+              }
+            );
+          }
+          if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
+            openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
               recipientList.push(recepient);
-            }
-          );
-          Array.of(openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender).map(
-            sender => {
-              recipientList.push(sender);
-            }
-          );
+            });
+          }
+          if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.sender) {
+            recipientList.push(
+              openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender
+            );
+          }
         });
 
         let seen = {};
@@ -236,9 +276,21 @@ class RenderFullMail extends React.Component {
       uniqueRecipients = [];
     if (sentMail) {
       currentlyOpenMailData.map(openMailData => {
-        openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
-          recipientList.push(recepient);
-        });
+        if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
+          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
+            recipientList.push(recepient);
+          });
+        }
+        if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
+          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+            recepient => {
+              recipientList.push(recepient);
+            }
+          );
+        }
+        if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.sender) {
+          recipientList.push(openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender);
+        }
       });
       let seen = {};
       uniqueRecipients = recipientList.filter(function (item) {
@@ -246,12 +298,21 @@ class RenderFullMail extends React.Component {
       });
     } else {
       currentlyOpenMailData.map(openMailData => {
-        openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(recepient => {
-          recipientList.push(recepient);
-        });
-        openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender.map(sender => {
-          recipientList.push(sender);
-        });
+        if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
+          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+            recepient => {
+              recipientList.push(recepient);
+            }
+          );
+        }
+        if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
+          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
+            recipientList.push(recepient);
+          });
+        }
+        if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.sender) {
+          recipientList.push(openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender);
+        }
       });
 
       let seen = {};
