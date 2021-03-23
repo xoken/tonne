@@ -138,6 +138,7 @@ class SendTransaction extends React.Component {
               receiverAddress,
               amountInSatoshi,
               feeRate: Number(feeRate),
+              relay: true,
             })
           );
           this.setState({ isError: false, message: 'Transaction Successful' });
