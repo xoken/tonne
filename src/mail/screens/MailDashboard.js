@@ -233,6 +233,7 @@ class MailDashboard extends React.Component {
         );
       });
     } else {
+      let dateTime = format(new Date(welcomeMail[0].createdAt), 'dd-MM-yyyy hh:mm:ss');
       return (
         <Grid.Row style={{ cursor: 'pointer' }} onClick={() => this.mailOnClick(welcomeMail)}>
           <Grid.Column
@@ -255,7 +256,7 @@ class MailDashboard extends React.Component {
                 </Grid.Column>
                 <Grid.Column computer={4} mobile={8} floated='right'>
                   <span style={{ color: 'lightGrey', float: 'right' }} className='word-wrap'>
-                    {welcomeMail[0].createdAt}
+                    {dateTime}
                   </span>
                 </Grid.Column>
               </Grid.Row>
@@ -659,8 +660,6 @@ class MailDashboard extends React.Component {
           </Grid.Row>
         </Grid>
       );
-    } else if (mailTransactions && Object.keys(mailTransactions).length === 0) {
-      return this.combinedMailsSection();
     } else {
       return (
         <>
