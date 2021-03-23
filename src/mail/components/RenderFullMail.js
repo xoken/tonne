@@ -26,6 +26,7 @@ class RenderFullMail extends React.Component {
       toAllFieldHtml: null,
       threadId: null,
       sentMail: false,
+      isWelcomeMail: false,
     };
   }
 
@@ -57,9 +58,11 @@ class RenderFullMail extends React.Component {
         openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(recepient => {
           recipientList.push(recepient);
         });
-        openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender.map(sender => {
-          recipientList.push(sender);
-        });
+        Array.of(openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender).map(
+          sender => {
+            recipientList.push(sender);
+          }
+        );
       });
 
       let seen = {};
@@ -126,9 +129,11 @@ class RenderFullMail extends React.Component {
               recipientList.push(recepient);
             }
           );
-          openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender.map(sender => {
-            recipientList.push(sender);
-          });
+          Array.of(openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender).map(
+            sender => {
+              recipientList.push(sender);
+            }
+          );
         });
 
         let seen = {};
@@ -422,6 +427,7 @@ class RenderFullMail extends React.Component {
         mailData = mail.additionalInfo.value.recipientInfo;
         receivedMail = true;
       }
+
       const blocksFromHtml = htmlToDraft(mailData.body);
       const { contentBlocks, entityMap } = blocksFromHtml;
       const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
@@ -503,7 +509,7 @@ class RenderFullMail extends React.Component {
   };
 
   render() {
-    const { currentlyOpenMailThreadId } = this.props;
+    const { threadId } = this.props;
     const { isError, replyMessageBodyField, message, replyField } = this.state;
     return (
       <>
@@ -534,82 +540,88 @@ class RenderFullMail extends React.Component {
           <Grid.Row>
             <Grid.Column computer={16} mobile={16}>
               {this.renderFullMail()}
-              <div style={{ margin: '20px 0px 20px 0px' }}>
-                <button
-                  onClick={this.replyFieldToggle}
-                  style={{
-                    padding: '10px',
-                    cursor: 'pointer',
-                    border: '0px',
-                    color: 'blue',
-                    backgroundColor: 'transparent',
-                  }}>
-                  Reply
-                </button>
-                <button
-                  onClick={this.replyAllFieldToggle}
-                  style={{
-                    padding: '10px',
-                    cursor: 'pointer',
-                    border: '0px',
-                    color: 'blue',
-                    backgroundColor: 'transparent',
-                  }}>
-                  Reply All
-                </button>
-              </div>
-              <div className='colorGreen'>{isError ? '' : message}</div>
-              <br />
-              {replyField ? this.replyAllToField() : ''}
-              <div className={replyField ? 'displayBlock' : 'visibilityHidden'}>
-                <div
-                  style={{
-                    width: '100%',
-                    display: 'block',
-                    marginTop: '20px',
-                    marginBottom: '20px',
-                  }}>
-                  <i
-                    style={{ float: 'right', cursor: 'pointer' }}
-                    className='close icon'
-                    onClick={this.onReplyFieldClose}></i>
-                </div>
-                <br />
-                <div id='replyFiles' style={{ minHeight: '20%' }}>
-                  <TextEditor
-                    toolbarHidden={!replyField}
-                    onMessageBodyFieldChange={this.onMessageBodyFieldChange}
-                  />
-                </div>
-                {
-                  // <label htmlFor='file-attach'>
-                  //   <Icon
-                  //     name='paperclip'
-                  //     size='large'
-                  //     style={{ cursor: 'pointer' }}
-                  //     //  onClick={this.toggleAttachFileModal}
-                  //   />
-                  // </label>
-                  //
-                  // <Input
-                  //   id='file-attach'
-                  //   style={{ display: 'none' }}
-                  //   type='file'
-                  //   icon='paperclip'
-                  //   multiple='multiple'
-                  //   onChange={this.onFilesAttach}
-                  // />
-                }
-                <div className='colorRed'>{isError ? message : ''}</div>
+              {threadId !== 'welcomemail' ? (
+                <>
+                  <div style={{ margin: '20px 0px 20px 0px' }}>
+                    <button
+                      onClick={this.replyFieldToggle}
+                      style={{
+                        padding: '10px',
+                        cursor: 'pointer',
+                        border: '0px',
+                        color: 'blue',
+                        backgroundColor: 'transparent',
+                      }}>
+                      Reply
+                    </button>
+                    <button
+                      onClick={this.replyAllFieldToggle}
+                      style={{
+                        padding: '10px',
+                        cursor: 'pointer',
+                        border: '0px',
+                        color: 'blue',
+                        backgroundColor: 'transparent',
+                      }}>
+                      Reply All
+                    </button>
+                  </div>
+                  <div className='colorGreen'>{isError ? '' : message}</div>
+                  <br />
+                  {replyField ? this.replyAllToField() : ''}
+                  <div className={replyField ? 'displayBlock' : 'visibilityHidden'}>
+                    <div
+                      style={{
+                        width: '100%',
+                        display: 'block',
+                        marginTop: '20px',
+                        marginBottom: '20px',
+                      }}>
+                      <i
+                        style={{ float: 'right', cursor: 'pointer' }}
+                        className='close icon'
+                        onClick={this.onReplyFieldClose}></i>
+                    </div>
+                    <br />
+                    <div id='replyFiles' style={{ minHeight: '20%' }}>
+                      <TextEditor
+                        toolbarHidden={!replyField}
+                        onMessageBodyFieldChange={this.onMessageBodyFieldChange}
+                      />
+                    </div>
+                    {
+                      // <label htmlFor='file-attach'>
+                      //   <Icon
+                      //     name='paperclip'
+                      //     size='large'
+                      //     style={{ cursor: 'pointer' }}
+                      //     //  onClick={this.toggleAttachFileModal}
+                      //   />
+                      // </label>
+                      //
+                      // <Input
+                      //   id='file-attach'
+                      //   style={{ display: 'none' }}
+                      //   type='file'
+                      //   icon='paperclip'
+                      //   multiple='multiple'
+                      //   onChange={this.onFilesAttach}
+                      // />
+                    }
+                    <div className='colorRed'>{isError ? message : ''}</div>
 
-                <br />
-                <Button
-                  className='coral'
-                  disabled={replyMessageBodyField ? (isError ? true : false) : true}
-                  onClick={this.onReply}>
-                  Send
-                </Button>
-              </div>
+                    <br />
+                    <Button
+                      className='coral'
+                      disabled={replyMessageBodyField ? (isError ? true : false) : true}
+                      onClick={this.onReply}>
+                      Send
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                ''
+              )}
             </Grid.Column>
           </Grid.Row>
         </Grid>
