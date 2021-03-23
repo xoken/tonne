@@ -58,6 +58,24 @@ class MailDashboard extends React.Component {
     clearInterval(this.autoRefreshTimer);
   }
 
+  componentDidUpdate() {
+    const { toggleFullMailPane, mailTransactions, currentlyOpenMailData } = this.state;
+    if (mailTransactions && Object.keys(mailTransactions).length !== 0) {
+      if (
+        toggleFullMailPane &&
+        Object.keys(mailTransactions).includes(currentlyOpenMailData[0].threadId)
+      ) {
+        if (
+          mailTransactions[currentlyOpenMailData[0].threadId].length > currentlyOpenMailData.length
+        ) {
+          this.setState({
+            currentlyOpenMailData: mailTransactions[currentlyOpenMailData[0].threadId],
+          });
+        }
+      }
+    }
+  }
+
   onRefresh = async () => {
     const { dispatch } = this.props;
     await dispatch(mailActions.getMailTransactions({ diff: true }));
@@ -105,18 +123,6 @@ class MailDashboard extends React.Component {
     // ];
 
     if (Object.keys(mailTransactions).length !== 0) {
-      if (
-        toggleFullMailPane &&
-        Object.keys(mailTransactions).includes(currentlyOpenMailData[0].threadId)
-      ) {
-        if (
-          mailTransactions[currentlyOpenMailData[0].threadId].length > currentlyOpenMailData.length
-        ) {
-          this.setState({
-            currentlyOpenMailData: mailTransactions[currentlyOpenMailData[0].threadId],
-          });
-        }
-      }
       return Object.values(mailTransactions).map((mail, index) => {
         let mailData = null,
           sentMail = false,
