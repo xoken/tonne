@@ -292,13 +292,14 @@ class MailDashboard extends React.Component {
         toggleFullMailPane: !toggleFullMailPane,
       });
     }
-
-    try {
-      await dispatch(
-        mailActions.updateMailReadUnread({ ...currOpenMailData[0], ...{ isReadMail: true } })
-      );
-    } catch (e) {
-      console.log(e);
+    if (currOpenMailData[0].txId) {
+      try {
+        await dispatch(
+          mailActions.updateMailReadUnread({ ...currOpenMailData[0], ...{ isReadMail: true } })
+        );
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
