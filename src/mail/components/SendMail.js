@@ -2,9 +2,7 @@ import React from 'react';
 //import axios from 'axios';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { Button, Grid, Input, Divider, Icon, TextArea, Modal, Loader } from 'semantic-ui-react';
-import AttachFile from './AttachFile';
+import { Button, Grid, Input, Icon, Loader } from 'semantic-ui-react';
 import TextEditor from '../components/TextEditor';
 import * as mailActions from '../mailActions';
 import * as mailSelectors from '../mailSelectors';
@@ -33,20 +31,6 @@ class SendMail extends React.Component {
   onCancel = () => {
     this.props.onCancel();
   };
-
-  renderAttachFileModal() {
-    const { attachFileModal } = this.state;
-    return (
-      <Modal open={attachFileModal}>
-        <Modal.Header className='purplefontcolor'>Attach Files</Modal.Header>
-        <Modal.Content>
-          <Modal.Description>
-            <AttachFile onCancel={this.toggleAttachFileModal} />
-          </Modal.Description>
-        </Modal.Content>
-      </Modal>
-    );
-  }
 
   toggleAttachFileModal = () => {
     const { attachFileModal } = this.state;
@@ -77,19 +61,19 @@ class SendMail extends React.Component {
   };
 
   componentDidMount() {
-    window.addEventListener('dragenter', this.onDragOverEnter);
-    window.addEventListener('dragover', this.onDragOverEnter);
-    window.addEventListener('drop', this.onFileDrop);
-    document.getElementById('files').addEventListener('dragleave', this.onDragLeave);
+    // window.addEventListener('dragenter', this.onDragOverEnter);
+    // window.addEventListener('dragover', this.onDragOverEnter);
+    // window.addEventListener('drop', this.onFileDrop);
+    // document.getElementById('files').addEventListener('dragleave', this.onDragLeave);
     this.setState({ toFieldWidth: this.maxWidthRef.current.offsetWidth - 27 });
     this.maxWidth = this.maxWidthRef.current.offsetWidth;
   }
 
   componentWillUnmount() {
-    window.removeEventListener('dragenter', this.onDragOverEnter);
-    window.removeEventListener('dragover', this.onDragOverEnter);
-    window.removeEventListener('drop', this.onFileDrop);
-    document.getElementById('file-attach').removeEventListener('dragleave', this.onDragLeave);
+    // window.removeEventListener('dragenter', this.onDragOverEnter);
+    // window.removeEventListener('dragover', this.onDragOverEnter);
+    // window.removeEventListener('drop', this.onFileDrop);
+    // document.getElementById('file-attach').removeEventListener('dragleave', this.onDragLeave);
   }
 
   onDragOverEnter = event => {
@@ -166,7 +150,12 @@ class SendMail extends React.Component {
   };
 
   onMessageBodyFieldChange = content => {
-    this.setState({ messageBodyField: content });
+    const { isError } = this.state;
+    if (isError) {
+      this.setState({ messageBodyField: content, isError: false, message: '' });
+    } else {
+      this.setState({ messageBodyField: content });
+    }
   };
 
   onToFieldChange = event => {
@@ -260,9 +249,10 @@ class SendMail extends React.Component {
   };
 
   onSend = async () => {
-    const { dispatch } = this.props;
+    const { dispatch, isLoadingMailTransactions } = this.props;
     const { toField, subjectField, messageBodyField, files, toFieldTemp } = this.state;
-    let filteredToField = [];
+    let filteredToField = [],
+      closeModalTimer = 0;
     const formData = new FormData();
     if (files) {
       for (let i = 0; i < files.length; i++) {
@@ -273,6 +263,7 @@ class SendMail extends React.Component {
       filteredToField = toField.filter(function (addressName) {
         return addressName !== '';
       });
+
       if (filteredToField.length !== 0) {
         try {
           await dispatch(
@@ -283,6 +274,7 @@ class SendMail extends React.Component {
               body: messageBodyField,
             })
           );
+
           this.setState({
             subjectField: '',
             messageBodyField: '',
@@ -293,8 +285,11 @@ class SendMail extends React.Component {
             isError: false,
             message: 'Mail Sent Successfully!',
           });
-          setTimeout(this.onCancel, 3000);
+
+          closeModalTimer = setTimeout(this.onCancel, 1500);
         } catch (error) {
+          clearTimeout(closeModalTimer);
+          closeModalTimer = 0;
           this.setState({
             isError: true,
             message: error.response && error.response.data ? error.response.data : error.message,
@@ -333,6 +328,7 @@ class SendMail extends React.Component {
       toFieldRows,
       isError,
     } = this.state;
+    const { isLoadingMailTransactions } = this.props;
     return (
       <>
         <Grid>
@@ -375,7 +371,10 @@ class SendMail extends React.Component {
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width='16'>
-              <span id='files' style={{ height: '300px', display: 'block' }} ref={this.maxWidthRef}>
+              <span
+                id='files'
+                style={{ minHeight: '20%', display: 'block' }}
+                ref={this.maxWidthRef}>
                 <TextEditor
                   toolbarHidden={false}
                   onMessageBodyFieldChange={this.onMessageBodyFieldChange}
@@ -394,28 +393,32 @@ class SendMail extends React.Component {
                 // />
               }
               <br />
-              <label htmlFor='file-attach'>
-                <Icon
-                  name='paperclip'
-                  size='large'
-                  style={{ cursor: 'pointer' }}
-                  //  onClick={this.toggleAttachFileModal}
-                />
-              </label>
-
-              <Input
-                id='file-attach'
-                style={{ display: 'none' }}
-                type='file'
-                icon='paperclip'
-                multiple='multiple'
-                onChange={this.onFilesAttach}
-              />
+              {
+                // <label htmlFor='file-attach'>
+                //   <Icon
+                //     name='paperclip'
+                //     size='large'
+                //     style={{ cursor: 'pointer' }}
+                //     //  onClick={this.toggleAttachFileModal}
+                //   />
+                // </label>
+                // <Input
+                //   id='file-attach'
+                //   style={{ display: 'none' }}
+                //   type='file'
+                //   icon='paperclip'
+                //   multiple='multiple'
+                //   onChange={this.onFilesAttach}
+                // />
+              }
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
             <Grid.Column>
-              {files ? <Grid>{this.fileNameList()}</Grid> : ''}
+              {isLoadingMailTransactions ? <Loader active /> : ''}
+              {
+                // files ? <Grid>{this.fileNameList()}</Grid> : ''
+              }
               <div className={isError ? 'colorRed' : 'colorGreen'}>{message}</div>
             </Grid.Column>
           </Grid.Row>
@@ -433,7 +436,6 @@ class SendMail extends React.Component {
             </Grid.Column>
           </Grid.Row>
         </Grid>
-        {this.renderAttachFileModal()}
       </>
     );
   }
@@ -443,6 +445,8 @@ SendMail.propTypes = {};
 
 SendMail.defaultProps = {};
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  isLoadingMailTransactions: mailSelectors.isLoadingMailTransactions(state),
+});
 
 export default withRouter(connect(mapStateToProps)(SendMail));

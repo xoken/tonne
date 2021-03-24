@@ -44,8 +44,6 @@ class Home extends React.Component {
   onScrollEvent = () => {
     let rowOneOffsetTop = this.rowOneShow.current.offsetTop;
     let rowTwoOffsetTop = this.rowTwoShow.current.offsetTop;
-    console.log(rowOneOffsetTop);
-    console.log(rowTwoOffsetTop);
     const pageYOffset = window.pageYOffset;
     const fortyPercentOfWindowHeight = (window.innerHeight * 40) / 100;
     if (pageYOffset >= rowOneOffsetTop - fortyPercentOfWindowHeight) {
