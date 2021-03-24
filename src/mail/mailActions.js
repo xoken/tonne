@@ -11,6 +11,8 @@ export const getMailTransactionsRequest = createAction('GET_MAIL_TRANSACTIONS_RE
 export const getMailTransactionsSuccess = createAction('GET_MAIL_TRANSACTIONS_SUCCESS');
 export const getMailTransactionsFailure = createAction('GET_MAIL_TRANSACTIONS_FAILURE');
 
+export const addToReadMailsListSuccess = createAction('ADD_TO_READ_MAILS_LIST_SUCCESS');
+
 export const getDiffMailTransactionsSuccess = createAction('GET_MAIL_TRANSACTIONS_DIFF_SUCCESS');
 
 export const createMailTransaction = args => async (dispatch, getState, { serviceInjector }) => {
@@ -74,6 +76,17 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
     }
   } catch (error) {
     dispatch(getMailTransactionsFailure());
+    throw error;
+  }
+};
+
+export const addToReadMailsList = (threadId, txid, allpayHandle) => async (dispatch, getState) => {
+  try {
+    let readMail = {};
+    readMail[allpayHandle + txid] = { threadId: threadId, txid: txid, allpayHandle: allpayHandle };
+    dispatch(addToReadMailsListSuccess({ readMail }));
+  } catch (error) {
+    console.log(error);
     throw error;
   }
 };

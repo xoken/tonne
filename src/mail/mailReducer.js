@@ -51,6 +51,10 @@ export default createReducer(
       mailTransactions: { ...mailTransactions, ...state.mailTransactions },
       isLoadingMailTransactions: false,
     }),
+    [actions.addToReadMailsListSuccess]: (state, { readMail }) => ({
+      ...state,
+      readMailsList: { ...readMail, ...state.readMailsList },
+    }),
     [authActions.logoutSuccess]: state => ({
       ...INITIAL_STATE,
     }),
