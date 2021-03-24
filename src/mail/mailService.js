@@ -1,4 +1,4 @@
-import { allPay, wallet } from 'allegory-allpay-sdk';
+import { allPay, wallet, persist } from 'allegory-allpay-sdk';
 
 class MailService {
   constructor(store) {
@@ -9,6 +9,9 @@ class MailService {
   }
   async getMailTransactions(options) {
     return await wallet.getMailTransactions(options);
+  }
+  async updateMailReadUnread(transaction) {
+    await persist.updateMailReadUnread(transaction);
   }
 }
 

@@ -11,5 +11,3 @@ export const getMailTransactions = createSelector(
   [getMail],
   ({ mailTransactions }) => mailTransactions
 );
-
-export const getReadMailsList = createSelector([getMail], ({ readMailsList }) => readMailsList);

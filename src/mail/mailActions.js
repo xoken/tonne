@@ -80,11 +80,13 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
   }
 };
 
-export const addToReadMailsList = (threadId, txid, allpayHandle) => async (dispatch, getState) => {
+export const updateMailReadUnread = transaction => async (
+  dispatch,
+  getState,
+  { serviceInjector }
+) => {
   try {
-    let readMail = {};
-    readMail[allpayHandle + txid] = { threadId: threadId, txid: txid, allpayHandle: allpayHandle };
-    dispatch(addToReadMailsListSuccess({ readMail }));
+    await serviceInjector(MailService).updateMailReadUnread(transaction);
   } catch (error) {
     console.log(error);
     throw error;

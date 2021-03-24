@@ -106,12 +106,7 @@ class MailDashboard extends React.Component {
   }
 
   combinedMailsSection() {
-    const {
-      allpayHandles,
-      mailTransactions,
-      isLoadingMailTransactions,
-      readMailsList,
-    } = this.props;
+    const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
     const { currentlyOpenMailData, toggleFullMailPane } = this.state;
     if (Object.keys(mailTransactions).length !== 0) {
       return Object.values(mailTransactions).map((mail, index) => {
@@ -128,25 +123,13 @@ class MailDashboard extends React.Component {
         }
         let dateTime = format(new Date(mail[0].createdAt), 'dd-MM-yyyy hh:mm:ss');
 
-        let isReadMail = false;
-        if (readMailsList) {
-          Object.values(readMailsList).map(readMail => {
-            if (
-              readMail.threadId === mail[0].threadId &&
-              readMail.txid === mail[0].txId &&
-              readMail.allpayHandle === allpayHandles[0]
-            ) {
-              isReadMail = true;
-            }
-          });
-        }
         return (
           <Grid.Row
             key={index.toString()}
             style={{ cursor: 'pointer' }}
             onClick={() => this.mailOnClick(mail)}>
             <Grid.Column
-              className={isReadMail ? 'readMail' : 'unreadMail'}
+              className={mail[0].isReadMail ? 'readMail' : 'unreadMail'}
               style={{
                 boxShadow: '5px 5px 5px #fafafa',
                 paddingTop: '12px',
@@ -297,7 +280,7 @@ class MailDashboard extends React.Component {
 
   mailOnClick = async currOpenMailData => {
     const { toggleFullMailPane } = this.state;
-    const { dispatch, allpayHandles } = this.props;
+    const { dispatch } = this.props;
     if (toggleFullMailPane) {
       this.setState({
         currentlyOpenMailData: currOpenMailData,
@@ -312,11 +295,7 @@ class MailDashboard extends React.Component {
 
     try {
       await dispatch(
-        mailActions.addToReadMailsList(
-          currOpenMailData[0].threadId,
-          currOpenMailData[0].txId,
-          allpayHandles[0]
-        )
+        mailActions.updateMailReadUnread({ ...currOpenMailData[0], ...{ isReadMail: true } })
       );
     } catch (e) {
       console.log(e);
@@ -514,14 +493,13 @@ MailDashboard.propTypes = {
   mailTransactions: PropTypes.objectOf(PropTypes.array),
 };
 
-MailDashboard.defaultProps = { mailTransactions: {}, readMailsList: {} };
+MailDashboard.defaultProps = { mailTransactions: {} };
 
 const mapStateToProps = state => ({
   allpayHandles: state.wallet.allpayHandles,
   isLoadingMailTransactions: mailSelectors.isLoadingMailTransactions(state),
   mailTransactions: mailSelectors.getMailTransactions(state),
   nextTransactionCursor: state.mail.nextTransactionCursor,
-  readMailsList: mailSelectors.getReadMailsList(state),
 });
 
 export default withRouter(connect(mapStateToProps)(MailDashboard));
