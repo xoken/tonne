@@ -109,7 +109,7 @@ class RecentTransaction extends React.Component {
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
           <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
-            {this.renderAllPaySendInfo(transaction.additionalInfo.value, transaction.txId)}
+            {this.renderAllPaySendInfo(transaction.additionalInfo.value)}
           </span>
         </Grid.Column>
       );
@@ -124,7 +124,7 @@ class RecentTransaction extends React.Component {
           <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
             {transaction.additionalInfo.type}
             {transaction.additionalInfo.value
-              ? this.renderAllPaySendInfo(transaction.additionalInfo.value, transaction.txId)
+              ? this.renderAllPaySendInfo(transaction.additionalInfo.value)
               : ''}
           </span>
         </Grid.Column>
@@ -145,7 +145,7 @@ class RecentTransaction extends React.Component {
     }
   }
 
-  renderAllPaySendInfo({ senderInfo, recipientInfo }, txId) {
+  renderAllPaySendInfo({ senderInfo, recipientInfo }) {
     if (senderInfo) {
       if (typeof senderInfo === 'object') {
         return (
@@ -176,9 +176,8 @@ class RecentTransaction extends React.Component {
           </span>
         );
       }
-    } else {
-      return null;
     }
+    return null;
   }
 
   renderToFromArrow(transaction) {
