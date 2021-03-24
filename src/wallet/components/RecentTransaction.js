@@ -94,24 +94,22 @@ class RecentTransaction extends React.Component {
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
           <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
-            {`${transaction.additionalInfo.type} : ${transaction.additionalInfo.value}`}
-            {' : '}
-            {
-              // this.renderAllPaySendInfo(transaction.additionalInfo.value)
-            }
-            {this.toFromArrow(transaction)}
+            {`${transaction.additionalInfo.type} : ${transaction.additionalInfo.value} `}
+            {this.renderToFromArrow(transaction)}
           </span>
         </Grid.Column>
       );
-    } else if (transaction.additionalInfo && transaction.additionalInfo.type === 'Allpay Send') {
+    } else if (
+      transaction.additionalInfo &&
+      transaction.additionalInfo.type === 'Allpay Send' &&
+      (transaction.additionalInfo.value.senderInfo ||
+        transaction.additionalInfo.value.recipientInfo)
+    ) {
       return (
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
           <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
-            {
-              // `${transaction.additionalInfo.type} : `
-            }
-            {this.renderAllPaySendInfo(transaction.additionalInfo.value)}
+            {this.renderAllPaySendInfo(transaction.additionalInfo.value, transaction.txId)}
           </span>
         </Grid.Column>
       );
@@ -126,7 +124,7 @@ class RecentTransaction extends React.Component {
           <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
             {transaction.additionalInfo.type}
             {transaction.additionalInfo.value
-              ? this.renderAllPaySendInfo(transaction.additionalInfo.value)
+              ? this.renderAllPaySendInfo(transaction.additionalInfo.value, transaction.txId)
               : ''}
           </span>
         </Grid.Column>
@@ -141,62 +139,57 @@ class RecentTransaction extends React.Component {
               <i className='walletLink'></i>
             </span>
           </Link>
-          {
-            //this.transactionSentReceived(transaction)
-          }
-          {this.toFromArrow(transaction)}
+          {this.renderToFromArrow(transaction)}
         </Grid.Column>
       );
     }
   }
 
-  renderAllPaySendInfo({ senderInfo, recipientInfo }) {
-    let returnArray = [];
+  renderAllPaySendInfo({ senderInfo, recipientInfo }, txId) {
     if (senderInfo) {
       if (typeof senderInfo === 'object') {
-        returnArray.push(
+        return (
           <span>
             {' : '}
             {senderInfo.commonMetaData.recepient} <span className='toArrow'>&#129133; </span>{' '}
           </span>
         );
       } else {
-        returnArray.push(
+        return (
           <span>
             {senderInfo} <span className='toArrow'>&#129133; </span>{' '}
           </span>
         );
       }
-      return returnArray;
-    }
-    if (recipientInfo) {
+    } else if (recipientInfo) {
       if (typeof recipientInfo === 'object') {
-        returnArray.push(
+        return (
           <span>
             {' : '}
             {recipientInfo.commonMetaData.sender} <span className='fromArrow'>&#129134; </span>{' '}
           </span>
         );
       } else {
-        returnArray.push(
+        return (
           <span>
             {recipientInfo} <span className='fromArrow'>&#129134; </span>{' '}
           </span>
         );
       }
-      return returnArray;
+    } else {
+      return null;
     }
   }
 
-  toFromArrow(transaction) {
+  renderToFromArrow(transaction) {
     const { inputs: txInps, outputs: txOuts } = transaction;
     let returnArray = [];
     let breakException = {};
     try {
-      txInps.forEach(input => {
+      txInps.forEach((input, index) => {
         if (input.isMine) {
           returnArray.push(
-            <span>
+            <span key={index.toString()}>
               <span className='toArrow'>&#129133; </span>{' '}
             </span>
           );
@@ -208,10 +201,10 @@ class RecentTransaction extends React.Component {
       return returnArray;
     }
     try {
-      txOuts.forEach(output => {
+      txOuts.forEach((output, index) => {
         if (output.isMine) {
           returnArray.push(
-            <span>
+            <span key={index.toString()}>
               <span className='fromArrow'>&#129134; </span>{' '}
             </span>
           );
