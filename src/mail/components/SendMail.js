@@ -61,19 +61,19 @@ class SendMail extends React.Component {
   };
 
   componentDidMount() {
-    window.addEventListener('dragenter', this.onDragOverEnter);
-    window.addEventListener('dragover', this.onDragOverEnter);
-    window.addEventListener('drop', this.onFileDrop);
-    document.getElementById('files').addEventListener('dragleave', this.onDragLeave);
+    // window.addEventListener('dragenter', this.onDragOverEnter);
+    // window.addEventListener('dragover', this.onDragOverEnter);
+    // window.addEventListener('drop', this.onFileDrop);
+    // document.getElementById('files').addEventListener('dragleave', this.onDragLeave);
     this.setState({ toFieldWidth: this.maxWidthRef.current.offsetWidth - 27 });
     this.maxWidth = this.maxWidthRef.current.offsetWidth;
   }
 
   componentWillUnmount() {
-    window.removeEventListener('dragenter', this.onDragOverEnter);
-    window.removeEventListener('dragover', this.onDragOverEnter);
-    window.removeEventListener('drop', this.onFileDrop);
-    document.getElementById('file-attach').removeEventListener('dragleave', this.onDragLeave);
+    // window.removeEventListener('dragenter', this.onDragOverEnter);
+    // window.removeEventListener('dragover', this.onDragOverEnter);
+    // window.removeEventListener('drop', this.onFileDrop);
+    // document.getElementById('file-attach').removeEventListener('dragleave', this.onDragLeave);
   }
 
   onDragOverEnter = event => {
@@ -150,7 +150,12 @@ class SendMail extends React.Component {
   };
 
   onMessageBodyFieldChange = content => {
-    this.setState({ messageBodyField: content });
+    const { isError } = this.state;
+    if (isError) {
+      this.setState({ messageBodyField: content, isError: false, message: '' });
+    } else {
+      this.setState({ messageBodyField: content });
+    }
   };
 
   onToFieldChange = event => {
@@ -281,7 +286,7 @@ class SendMail extends React.Component {
             message: 'Mail Sent Successfully!',
           });
 
-          closeModalTimer = setTimeout(this.onCancel, 5000);
+          closeModalTimer = setTimeout(this.onCancel, 1500);
         } catch (error) {
           clearTimeout(closeModalTimer);
           closeModalTimer = 0;
@@ -366,7 +371,10 @@ class SendMail extends React.Component {
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width='16'>
-              <span id='files' style={{ height: '300px', display: 'block' }} ref={this.maxWidthRef}>
+              <span
+                id='files'
+                style={{ minHeight: '20%', display: 'block' }}
+                ref={this.maxWidthRef}>
                 <TextEditor
                   toolbarHidden={false}
                   onMessageBodyFieldChange={this.onMessageBodyFieldChange}
@@ -385,29 +393,32 @@ class SendMail extends React.Component {
                 // />
               }
               <br />
-              <label htmlFor='file-attach'>
-                <Icon
-                  name='paperclip'
-                  size='large'
-                  style={{ cursor: 'pointer' }}
-                  //  onClick={this.toggleAttachFileModal}
-                />
-              </label>
-
-              <Input
-                id='file-attach'
-                style={{ display: 'none' }}
-                type='file'
-                icon='paperclip'
-                multiple='multiple'
-                onChange={this.onFilesAttach}
-              />
+              {
+                // <label htmlFor='file-attach'>
+                //   <Icon
+                //     name='paperclip'
+                //     size='large'
+                //     style={{ cursor: 'pointer' }}
+                //     //  onClick={this.toggleAttachFileModal}
+                //   />
+                // </label>
+                // <Input
+                //   id='file-attach'
+                //   style={{ display: 'none' }}
+                //   type='file'
+                //   icon='paperclip'
+                //   multiple='multiple'
+                //   onChange={this.onFilesAttach}
+                // />
+              }
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
             <Grid.Column>
               {isLoadingMailTransactions ? <Loader active /> : ''}
-              {files ? <Grid>{this.fileNameList()}</Grid> : ''}
+              {
+                // files ? <Grid>{this.fileNameList()}</Grid> : ''
+              }
               <div className={isError ? 'colorRed' : 'colorGreen'}>{message}</div>
             </Grid.Column>
           </Grid.Row>

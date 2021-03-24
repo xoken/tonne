@@ -23,61 +23,122 @@ class RenderFullMail extends React.Component {
       subject: '',
       toField: '',
       toAllField: [],
-      toAllFieldHtml: [],
+      toAllFieldHtml: null,
       threadId: null,
       sentMail: false,
+      isWelcomeMail: false,
     };
   }
 
   componentDidMount() {
     const { currentlyOpenMailData, threadId } = this.props;
     if (currentlyOpenMailData[0].additionalInfo.value.senderInfo) {
-      let recipientList =
-        currentlyOpenMailData[0].additionalInfo.value.senderInfo.commonMetaData.recepient;
+      let recipientList = [];
+      currentlyOpenMailData.map(openMailData => {
+        if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
+          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
+            recipientList.push(recepient);
+          });
+        }
+        if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
+          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+            recepient => {
+              recipientList.push(recepient);
+            }
+          );
+        }
+        if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.sender) {
+          recipientList.push(openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender);
+        }
+      });
+      let seen = {};
+      let uniqueRecipients = recipientList.filter(function (item) {
+        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+      });
 
       this.setState({
         sentMail: true,
         threadId: threadId,
-        toAllField: recipientList,
+        toAllField: uniqueRecipients,
         toField:
           currentlyOpenMailData[0].additionalInfo.value.senderInfo.commonMetaData.recepient[0],
         subject: currentlyOpenMailData[0].additionalInfo.value.senderInfo.commonMetaData.subject,
       });
     } else {
-      let recipientList =
-        currentlyOpenMailData[0].additionalInfo.value.recipientInfo.commonMetaData.recepient;
-      recipientList.push(
-        currentlyOpenMailData[0].additionalInfo.value.recipientInfo.commonMetaData.sender
-      );
+      let recipientList = [];
+      currentlyOpenMailData.map(openMailData => {
+        if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
+          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+            recepient => {
+              recipientList.push(recepient);
+            }
+          );
+        }
+        if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
+          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
+            recipientList.push(recepient);
+          });
+        }
+        if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.sender) {
+          recipientList.push(openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender);
+        }
+      });
+
+      let seen = {};
+      let uniqueRecipients = recipientList.filter(function (item) {
+        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+      });
+
       this.setState({
         sentMail: false,
         threadId: threadId,
-        toAllField: recipientList,
+        toAllField: uniqueRecipients,
         toField: currentlyOpenMailData[0].additionalInfo.value.recipientInfo.commonMetaData.sender,
         subject: currentlyOpenMailData[0].additionalInfo.value.recipientInfo.commonMetaData.subject,
       });
     }
 
-    window.addEventListener('dragenter', this.onDragOverEnter);
-    window.addEventListener('dragover', this.onDragOverEnter);
-    window.addEventListener('drop', this.onFileDrop);
-    document.getElementById('file-attach').addEventListener('dragleave', this.onDragLeave);
+    // window.addEventListener('dragenter', this.onDragOverEnter);
+    // window.addEventListener('dragover', this.onDragOverEnter);
+    // window.addEventListener('drop', this.onFileDrop);
+    // document.getElementById('file-attach').addEventListener('dragleave', this.onDragLeave);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('dragenter', this.onDragOverEnter);
-    window.removeEventListener('dragover', this.onDragOverEnter);
-    window.removeEventListener('drop', this.onFileDrop);
-    document.getElementById('file-attach').removeEventListener('dragleave', this.onDragLeave);
+    // window.removeEventListener('dragenter', this.onDragOverEnter);
+    // window.removeEventListener('dragover', this.onDragOverEnter);
+    // window.removeEventListener('drop', this.onFileDrop);
+    // document.getElementById('file-attach').removeEventListener('dragleave', this.onDragLeave);
   }
 
   componentDidUpdate() {
     if (this.props.threadId !== this.state.threadId) {
       const { currentlyOpenMailData, threadId } = this.props;
       if (currentlyOpenMailData[0].additionalInfo.value.senderInfo) {
-        let recipientList =
-          currentlyOpenMailData[0].additionalInfo.value.senderInfo.commonMetaData.recepient;
-
+        let recipientList = [];
+        currentlyOpenMailData.map(openMailData => {
+          if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
+            openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
+              recipientList.push(recepient);
+            });
+          }
+          if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
+            openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+              recepient => {
+                recipientList.push(recepient);
+              }
+            );
+          }
+          if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.sender) {
+            recipientList.push(
+              openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender
+            );
+          }
+        });
+        let seen = {};
+        let uniqueRecipients = recipientList.filter(function (item) {
+          return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+        });
         this.setState({
           sentMail: true,
           replyMessageBodyField: '',
@@ -86,20 +147,39 @@ class RenderFullMail extends React.Component {
           message: '',
           replyField: false,
           replyAll: false,
-          toAllFieldHtml: [],
+          toAllFieldHtml: null,
           threadId: threadId,
-          toAllField:
-            currentlyOpenMailData[0].additionalInfo.value.senderInfo.commonMetaData.recepient,
+          toAllField: uniqueRecipients,
           toField:
             currentlyOpenMailData[0].additionalInfo.value.senderInfo.commonMetaData.recepient[0],
           subject: currentlyOpenMailData[0].additionalInfo.value.senderInfo.commonMetaData.subject,
         });
       } else {
-        let recipientList =
-          currentlyOpenMailData[0].additionalInfo.value.recipientInfo.commonMetaData.recepient;
-        recipientList.push(
-          currentlyOpenMailData[0].additionalInfo.value.recipientInfo.commonMetaData.sender
-        );
+        let recipientList = [];
+        currentlyOpenMailData.map(openMailData => {
+          if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
+            openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+              recepient => {
+                recipientList.push(recepient);
+              }
+            );
+          }
+          if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
+            openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
+              recipientList.push(recepient);
+            });
+          }
+          if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.sender) {
+            recipientList.push(
+              openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender
+            );
+          }
+        });
+
+        let seen = {};
+        let uniqueRecipients = recipientList.filter(function (item) {
+          return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+        });
         this.setState({
           sentMail: false,
           replyMessageBodyField: '',
@@ -108,9 +188,9 @@ class RenderFullMail extends React.Component {
           message: '',
           replyField: false,
           replyAll: false,
-          toAllFieldHtml: [],
+          toAllFieldHtml: null,
           threadId: threadId,
-          toAllField: recipientList,
+          toAllField: uniqueRecipients,
           toField:
             currentlyOpenMailData[0].additionalInfo.value.recipientInfo.commonMetaData.sender,
           subject:
@@ -192,19 +272,56 @@ class RenderFullMail extends React.Component {
   onReplyFieldClose = () => {
     const { sentMail, toAllField } = this.state;
     const { currentlyOpenMailData } = this.props;
-    let recipientList = [];
+    let recipientList = [],
+      uniqueRecipients = [];
     if (sentMail) {
-      recipientList =
-        currentlyOpenMailData[0].additionalInfo.value.senderInfo.commonMetaData.recepient;
+      currentlyOpenMailData.map(openMailData => {
+        if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
+          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
+            recipientList.push(recepient);
+          });
+        }
+        if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
+          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+            recepient => {
+              recipientList.push(recepient);
+            }
+          );
+        }
+        if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.sender) {
+          recipientList.push(openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender);
+        }
+      });
+      let seen = {};
+      uniqueRecipients = recipientList.filter(function (item) {
+        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+      });
     } else {
-      recipientList =
-        currentlyOpenMailData[0].additionalInfo.value.recipientInfo.commonMetaData.recepient;
-      recipientList.push(
-        currentlyOpenMailData[0].additionalInfo.value.recipientInfo.commonMetaData.sender
-      );
+      currentlyOpenMailData.map(openMailData => {
+        if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
+          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+            recepient => {
+              recipientList.push(recepient);
+            }
+          );
+        }
+        if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
+          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
+            recipientList.push(recepient);
+          });
+        }
+        if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.sender) {
+          recipientList.push(openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender);
+        }
+      });
+
+      let seen = {};
+      uniqueRecipients = recipientList.filter(function (item) {
+        return seen.hasOwnProperty(item) ? false : (seen[item] = true);
+      });
     }
-    this.updateToValueHTML(recipientList);
-    this.setState({ replyField: false, toAllField: recipientList });
+    this.updateToValueHTML(uniqueRecipients);
+    this.setState({ replyField: false, toAllField: uniqueRecipients });
   };
 
   replyAllToField = () => {
@@ -233,7 +350,7 @@ class RenderFullMail extends React.Component {
     toValueHtml = tempToValue.map((toAddress, index) => {
       if (toAddress) {
         return (
-          <>
+          <span key={index.toString()}>
             <span className='peach toFieldHighlight'>{toAddress}</span>
             {tempToValue.length > 1 ? (
               <span
@@ -245,7 +362,7 @@ class RenderFullMail extends React.Component {
             ) : (
               ''
             )}
-          </>
+          </span>
         );
       }
     });
@@ -323,6 +440,7 @@ class RenderFullMail extends React.Component {
         isError: false,
         message: 'Mail Sent Successfully!',
       });
+      this.onReplyFieldClose();
     } catch (error) {
       this.setState({
         isError: true,
@@ -370,6 +488,7 @@ class RenderFullMail extends React.Component {
         mailData = mail.additionalInfo.value.recipientInfo;
         receivedMail = true;
       }
+
       const blocksFromHtml = htmlToDraft(mailData.body);
       const { contentBlocks, entityMap } = blocksFromHtml;
       const contentState = ContentState.createFromBlockArray(contentBlocks, entityMap);
@@ -451,7 +570,7 @@ class RenderFullMail extends React.Component {
   };
 
   render() {
-    const { currentlyOpenMailThreadId } = this.props;
+    const { threadId } = this.props;
     const { isError, replyMessageBodyField, message, replyField } = this.state;
     return (
       <>
@@ -482,79 +601,88 @@ class RenderFullMail extends React.Component {
           <Grid.Row>
             <Grid.Column computer={16} mobile={16}>
               {this.renderFullMail()}
-              <div style={{ margin: '20px 0px 20px 0px' }}>
-                <button
-                  onClick={this.replyFieldToggle}
-                  style={{
-                    padding: '10px',
-                    cursor: 'pointer',
-                    border: '0px',
-                    color: 'blue',
-                    backgroundColor: 'transparent',
-                  }}>
-                  Reply
-                </button>
-                <button
-                  onClick={this.replyAllFieldToggle}
-                  style={{
-                    padding: '10px',
-                    cursor: 'pointer',
-                    border: '0px',
-                    color: 'blue',
-                    backgroundColor: 'transparent',
-                  }}>
-                  Reply All
-                </button>
-              </div>
-              <br />
-              {replyField ? this.replyAllToField() : ''}
-              <div className={replyField ? 'displayBlock' : 'visibilityHidden'}>
-                <div
-                  style={{
-                    width: '100%',
-                    display: 'block',
-                    marginTop: '20px',
-                    marginBottom: '20px',
-                  }}>
-                  <i
-                    style={{ float: 'right', cursor: 'pointer' }}
-                    className='close icon'
-                    onClick={this.onReplyFieldClose}></i>
-                </div>
-                <br />
-                <div id='replyFiles' style={{ height: '300px' }}>
-                  <TextEditor
-                    toolbarHidden={!replyField}
-                    onMessageBodyFieldChange={this.onMessageBodyFieldChange}
-                  />
-                </div>
-                <label htmlFor='file-attach'>
-                  <Icon
-                    name='paperclip'
-                    size='large'
-                    style={{ cursor: 'pointer' }}
-                    //  onClick={this.toggleAttachFileModal}
-                  />
-                </label>
+              {threadId !== 'welcomemail' ? (
+                <>
+                  <div style={{ margin: '20px 0px 20px 0px' }}>
+                    <button
+                      onClick={this.replyFieldToggle}
+                      style={{
+                        padding: '10px',
+                        cursor: 'pointer',
+                        border: '0px',
+                        color: 'blue',
+                        backgroundColor: 'transparent',
+                      }}>
+                      Reply
+                    </button>
+                    <button
+                      onClick={this.replyAllFieldToggle}
+                      style={{
+                        padding: '10px',
+                        cursor: 'pointer',
+                        border: '0px',
+                        color: 'blue',
+                        backgroundColor: 'transparent',
+                      }}>
+                      Reply All
+                    </button>
+                  </div>
+                  <div className='colorGreen'>{isError ? '' : message}</div>
+                  <br />
+                  {replyField ? this.replyAllToField() : ''}
+                  <div className={replyField ? 'displayBlock' : 'visibilityHidden'}>
+                    <div
+                      style={{
+                        width: '100%',
+                        display: 'block',
+                        marginTop: '20px',
+                        marginBottom: '20px',
+                      }}>
+                      <i
+                        style={{ float: 'right', cursor: 'pointer' }}
+                        className='close icon'
+                        onClick={this.onReplyFieldClose}></i>
+                    </div>
+                    <br />
+                    <div id='replyFiles' style={{ minHeight: '20%' }}>
+                      <TextEditor
+                        toolbarHidden={!replyField}
+                        onMessageBodyFieldChange={this.onMessageBodyFieldChange}
+                      />
+                    </div>
+                    {
+                      // <label htmlFor='file-attach'>
+                      //   <Icon
+                      //     name='paperclip'
+                      //     size='large'
+                      //     style={{ cursor: 'pointer' }}
+                      //     //  onClick={this.toggleAttachFileModal}
+                      //   />
+                      // </label>
+                      //
+                      // <Input
+                      //   id='file-attach'
+                      //   style={{ display: 'none' }}
+                      //   type='file'
+                      //   icon='paperclip'
+                      //   multiple='multiple'
+                      //   onChange={this.onFilesAttach}
+                      // />
+                    }
+                    <div className='colorRed'>{isError ? message : ''}</div>
 
-                <Input
-                  id='file-attach'
-                  style={{ display: 'none' }}
-                  type='file'
-                  icon='paperclip'
-                  multiple='multiple'
-                  onChange={this.onFilesAttach}
-                />
-                <div className={isError ? 'colorRed' : 'colorGreen'}>{message}</div>
-
-                <br />
-                <Button
-                  className='coral'
-                  disabled={replyMessageBodyField ? (isError ? true : false) : true}
-                  onClick={this.onReply}>
-                  Send
-                </Button>
-              </div>
+                    <br />
+                    <Button
+                      className='coral'
+                      disabled={replyMessageBodyField ? (isError ? true : false) : true}
+                      onClick={this.onReply}>
+                      Send
+                    </Button>
+                  </div>
+                </>
+              ) : (
+                ''
+              )}
             </Grid.Column>
           </Grid.Row>
         </Grid>

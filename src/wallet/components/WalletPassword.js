@@ -3,12 +3,12 @@ import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as authActions from '../../auth/authActions';
-import { Button, Input, Grid, Header } from 'semantic-ui-react';
+import { Button, Input, Grid, Header, Loader } from 'semantic-ui-react';
 
 class WalletPassword extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { password: '', confirmPassword: '' };
+    this.state = { password: '', confirmPassword: '', isLoading: false };
   }
 
   handleNext = async event => {
@@ -16,7 +16,9 @@ class WalletPassword extends React.Component {
     const { dispatch } = this.props;
     const { password } = this.state;
     try {
+      this.setState({ isLoading: true });
       await dispatch(authActions.createProfile(password));
+      this.setState({ isLoading: false });
       this.props.onSuccess();
     } catch (error) {
       throw error;
@@ -24,7 +26,7 @@ class WalletPassword extends React.Component {
   };
 
   renderPasswordMatchStatus() {
-    const { password, confirmPassword } = this.state;
+    const { password, confirmPassword, isLoading } = this.state;
     if (confirmPassword) {
       if (password !== confirmPassword) {
         return <div className='redalert'>Passwords do not match.</div>;
@@ -38,7 +40,7 @@ class WalletPassword extends React.Component {
             </Grid.Row>
             <Grid.Row>
               <Grid.Column textAlign='center'>
-                <Button className='coral'>Next</Button>
+                {isLoading ? <Loader active /> : <Button className='coral'>Next</Button>}
               </Grid.Column>
             </Grid.Row>
           </>

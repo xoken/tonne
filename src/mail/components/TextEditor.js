@@ -29,7 +29,7 @@ class TextEditor extends React.Component {
       <Editor
         toolbarHidden={toolbarHidden}
         editorState={editorState}
-        placeholder='Type your message & drop files here...'
+        placeholder='Type your message here...'
         wrapperClassName='demo-wrapper'
         editorClassName='demo-editor'
         onEditorStateChange={this.onEditorStateChange}
