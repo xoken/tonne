@@ -108,20 +108,6 @@ class MailDashboard extends React.Component {
   combinedMailsSection() {
     const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
     const { currentlyOpenMailData, toggleFullMailPane } = this.state;
-    // let combinedMails = [
-    //   {
-    //     fromaddress: 'aa/allpayname',
-    //     time: '10:10',
-    //     subject: 'Thank you for your interest in abc',
-    //     currentlyOpenMail: 'inbox1',
-    //   },
-    //   {
-    //     fromaddress: 'aa/allpayname',
-    //     time: '10:10',
-    //     subject: 'Thank you for buying a xyz',
-    //     currentlyOpenMail: 'inbox2',
-    //   },
-    // ];
 
     if (Object.keys(mailTransactions).length !== 0) {
       return Object.values(mailTransactions).map((mail, index) => {
@@ -144,6 +130,7 @@ class MailDashboard extends React.Component {
             style={{ cursor: 'pointer' }}
             onClick={() => this.mailOnClick(mail)}>
             <Grid.Column
+              className={mail[0].isReadMail ? 'readMail' : 'unreadMail'}
               style={{
                 boxShadow: '5px 5px 5px #fafafa',
                 paddingTop: '12px',
@@ -255,6 +242,7 @@ class MailDashboard extends React.Component {
       return (
         <Grid.Row style={{ cursor: 'pointer' }} onClick={() => this.mailOnClick(welcomeMail)}>
           <Grid.Column
+            className='unreadMail'
             style={{
               boxShadow: '5px 5px 5px #fafafa',
               paddingTop: '12px',
@@ -291,8 +279,9 @@ class MailDashboard extends React.Component {
     }
   }
 
-  mailOnClick = currOpenMailData => {
-    const { toggleFullMailPane } = this.state;
+  mailOnClick = async currOpenMailData => {
+    const { toggleFullMailPane, updated } = this.state;
+    const { dispatch } = this.props;
     if (toggleFullMailPane) {
       this.setState({
         currentlyOpenMailData: currOpenMailData,
@@ -303,6 +292,16 @@ class MailDashboard extends React.Component {
 
         toggleFullMailPane: !toggleFullMailPane,
       });
+    }
+    if (currOpenMailData[0].txId && !currOpenMailData[0].isReadMail) {
+      try {
+        await dispatch(
+          mailActions.updateTransaction({ ...currOpenMailData[0], ...{ isReadMail: true } })
+        );
+        this.onRefresh();
+      } catch (e) {
+        console.log(e);
+      }
     }
   };
 
@@ -360,296 +359,10 @@ class MailDashboard extends React.Component {
     );
   }
 
-  // sentMailSection = () => {
-  //   const { sentMailSection, toggleFullMailPane } = this.state;
-  //   let sentmail = [
-  //     {
-  //       toaddress: 'aa/allpayname',
-  //       time: '10:10',
-  //       subject: 'welcome to',
-  //       currentlyOpenMail: 'sent1',
-  //     },
-  //     { toaddress: 'aa/allpayname', time: '10:10', subject: 'Welcome', currentlyOpenMail: 'sent2' },
-  //   ];
-  //
-  //   if (sentMailSection) {
-  //     return sentmail.map((mail, index) => {
-  //       return (
-  //         <Grid.Row
-  //           style={{ cursor: 'pointer' }}
-  //           onClick={
-  //             toggleFullMailPane
-  //               ? event => this.setState({ currentlyOpenMail: mail.currentlyOpenMail })
-  //               : event =>
-  //                   this.setState({
-  //                     currentlyOpenMail: mail.currentlyOpenMail,
-  //                     toggleFullMailPane: !toggleFullMailPane,
-  //                   })
-  //           }>
-  //           <Grid.Column
-  //             style={{
-  //               boxShadow: '5px 5px 5px #fafafa',
-  //               paddingTop: '12px',
-  //               paddingBottom: '12px',
-  //               marginTop: '8px',
-  //               marginBottom: '8px',
-  //             }}>
-  //             <Grid>
-  //               <Grid.Row>
-  //                 <Grid.Column computer={8} mobile={8} floated='left'>
-  //                   <span style={{ color: 'lightGrey' }}>{mail.toaddress}</span>
-  //                 </Grid.Column>
-  //                 <Grid.Column computer={2} mobile={8} floated='right'>
-  //                   <span style={{ color: 'lightGrey', float: 'right' }}>{mail.time}</span>
-  //                 </Grid.Column>
-  //               </Grid.Row>
-  //               <Grid.Row>
-  //                 <Grid.Column computer={16} floated='left'>
-  //                   <b>{mail.subject}</b>
-  //                 </Grid.Column>
-  //               </Grid.Row>
-  //             </Grid>
-  //           </Grid.Column>
-  //         </Grid.Row>
-  //       );
-  //     });
-  //   } else {
-  //     return;
-  //   }
-  // };
-  // inboxSection = () => {
-  //   const { inboxSection, currentlyOpenMail, toggleFullMailPane } = this.state;
-  //   let inbox = [
-  //     {
-  //       fromaddress: 'aa/allpayname',
-  //       time: '10:10',
-  //       subject: 'Thank you for your interest in abc',
-  //       currentlyOpenMail: 'inbox1',
-  //     },
-  //     {
-  //       fromaddress: 'aa/allpayname',
-  //       time: '10:10',
-  //       subject: 'Thank you for buying a xyz',
-  //       currentlyOpenMail: 'inbox2',
-  //     },
-  //   ];
-  //   if (inboxSection) {
-  //     return inbox.map((mail, index) => {
-  //       return (
-  //         <Grid.Row
-  //           style={{ cursor: 'pointer' }}
-  //           onClick={
-  //             toggleFullMailPane
-  //               ? event => this.setState({ currentlyOpenMail: mail.currentlyOpenMail })
-  //               : event =>
-  //                   this.setState({
-  //                     currentlyOpenMail: mail.currentlyOpenMail,
-  //                     toggleFullMailPane: !toggleFullMailPane,
-  //                   })
-  //           }>
-  //           <Grid.Column
-  //             style={{
-  //               boxShadow: '5px 5px 5px #fafafa',
-  //               paddingTop: '12px',
-  //               paddingBottom: '12px',
-  //               marginTop: '8px',
-  //               marginBottom: '8px',
-  //             }}>
-  //             <Grid>
-  //               <Grid.Row>
-  //                 <Grid.Column computer={8} mobile={8} floated='left'>
-  //                   {
-  //                     //allpayname
-  //                   }
-  //                   <span style={{ color: 'lightGrey' }}>{mail.fromaddress}</span>
-  //                 </Grid.Column>
-  //                 <Grid.Column computer={2} mobile={8} floated='right'>
-  //                   {
-  //                     //time
-  //                   }
-  //                   <span style={{ color: 'lightGrey', float: 'right' }}>{mail.time}</span>
-  //                 </Grid.Column>
-  //               </Grid.Row>
-  //               <Grid.Row>
-  //                 <Grid.Column computer={16} floated='left'>
-  //                   {
-  //                     //full Subject:
-  //                   }
-  //                   <b>{mail.subject}</b>
-  //                 </Grid.Column>
-  //               </Grid.Row>
-  //             </Grid>
-  //           </Grid.Column>
-  //         </Grid.Row>
-  //       );
-  //     });
-  //   } else {
-  //     return;
-  //   }
-  // };
-
-  // combinedMailsSection = () => {
-  //   const { currentlyOpenMail, toggleFullMailPane } = this.state;
-  //   let combinedMails = [
-  //     {
-  //       fromaddress: 'aa/allpayname',
-  //       time: '10:10',
-  //       subject: 'Thank you for your interest in abc',
-  //       currentlyOpenMail: 'inbox1',
-  //     },
-  //     {
-  //       fromaddress: 'aa/allpayname',
-  //       time: '10:10',
-  //       subject: 'Thank you for buying a xyz',
-  //       currentlyOpenMail: 'inbox2',
-  //     },
-  //   ];
-
-  //   return combinedMails.map((mail, index) => {
-  //     return (
-  //       <Grid.Row
-  //         style={{ cursor: 'pointer' }}
-  //         onClick={
-  //           toggleFullMailPane
-  //             ? event => this.setState({ currentlyOpenMail: mail.currentlyOpenMail })
-  //             : event =>
-  //                 this.setState({
-  //                   currentlyOpenMail: mail.currentlyOpenMail,
-  //                   toggleFullMailPane: !toggleFullMailPane,
-  //                 })
-  //         }>
-  //         <Grid.Column
-  //           style={{
-  //             boxShadow: '5px 5px 5px #fafafa',
-  //             paddingTop: '12px',
-  //             paddingBottom: '12px',
-  //             marginTop: '8px',
-  //             marginBottom: '8px',
-  //           }}>
-  //           <Grid>
-  //             <Grid.Row>
-  //               <Grid.Column computer={8} mobile={8} floated='left'>
-  //                 {
-  //                   //allpayname
-  //                 }
-  //                 <span style={{ color: 'lightGrey' }}>{mail.fromaddress}</span>
-  //               </Grid.Column>
-  //               <Grid.Column computer={2} mobile={8} floated='right'>
-  //                 {
-  //                   //time
-  //                 }
-  //                 <span style={{ color: 'lightGrey', float: 'right' }}>{mail.time}</span>
-  //               </Grid.Column>
-  //             </Grid.Row>
-  //             <Grid.Row>
-  //               <Grid.Column computer={16} floated='left'>
-  //                 {
-  //                   //full Subject:
-  //                 }
-  //                 <b>{mail.subject}</b>
-  //               </Grid.Column>
-  //             </Grid.Row>
-  //           </Grid>
-  //         </Grid.Column>
-  //       </Grid.Row>
-  //     );
-  //   });
-  // };
-
   toggleFullMailPane = () => {
-    // if (!toggleFullMailPane) {
-    //   this.setState({ currentlyOpenMail: '' });
-    // }
     const { toggleFullMailPane } = this.state;
     this.setState({ toggleFullMailPane: !toggleFullMailPane });
   };
-
-  // renderFullMail = () => {
-  //   const { toggleFullMailPane, currentlyOpenMail } = this.state;
-  //   if (!toggleFullMailPane && currentlyOpenMail) {
-  //     this.setState({ toggleFullMailPane: true });
-  //   }
-  //   console.log(toggleFullMailPane);
-  //   console.log(currentlyOpenMail);
-  //   if (toggleFullMailPane && currentlyOpenMail) {
-  //     return (
-  //       <Grid>
-  //         <Grid.Row>
-  //           <Grid.Column computer={16} mobile={16} floated='right'>
-  //             {
-  //               //close pane
-  //             }
-  //             <span
-  //               style={{
-  //                 color: 'lightgrey',
-  //                 cursor: 'pointer',
-  //                 padding: '8px',
-  //                 color: 'red',
-  //                 float: 'right',
-  //               }}
-  //               onClick={this.toggleFullMailPane}>
-  //               X
-  //             </span>
-  //           </Grid.Column>
-  //         </Grid.Row>
-  //         <Grid.Row>
-  //           <Grid.Column computer={8} mobile={8} floated='left'>
-  //             {
-  //               //allpayname
-  //             }
-  //             <span style={{ color: 'lightgrey' }}>aa/allpayname</span>
-  //           </Grid.Column>
-  //
-  //           <Grid.Column computer={2} mobile={8} floated='right'>
-  //             {
-  //               //time
-  //             }
-  //             <span style={{ color: 'lightgrey', float: 'right' }}>10:10</span>
-  //           </Grid.Column>
-  //         </Grid.Row>
-  //         <Grid.Row computer={16}>
-  //           <Grid.Column computer='16' floated='left'>
-  //             {
-  //               //full subject
-  //             }
-  //             <b>Placeholder Subject line sdf sggs sfhfhs</b>
-  //           </Grid.Column>
-  //         </Grid.Row>
-  //         <Grid.Row computer={16}>
-  //           <Grid.Column computer='16' floated='left'>
-  //             {
-  //               //full message
-  //             }
-  //             <p>
-  //               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-  //               incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-  //               exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-  //               irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-  //               pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-  //               deserunt mollit anim id est laborum
-  //             </p>
-  //             <p>
-  //               Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-  //               incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
-  //               exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute
-  //               irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-  //               pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia
-  //               deserunt mollit anim id est laborum
-  //             </p>
-  //           </Grid.Column>
-  //         </Grid.Row>
-  //
-  //         <Grid.Row>
-  //           <Grid.Column>
-  //             {
-  //               //Attached files
-  //             }
-  //           </Grid.Column>
-  //         </Grid.Row>
-  //       </Grid>
-  //     );
-  //   }
-  // };
 
   getWindowWidth = () => {
     const { innerWidth: width } = window;
@@ -666,6 +379,9 @@ class MailDashboard extends React.Component {
     } = this.state;
 
     const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
+    if (allpayHandles && allpayHandles.length === 0 && isLoadingMailTransactions) {
+      return <Loader active />;
+    }
     if (allpayHandles && allpayHandles.length === 0) {
       return (
         <Grid>
@@ -756,9 +472,6 @@ class MailDashboard extends React.Component {
               {toggleFullMailPane ? (
                 windowWidth >= 770 || !windowWidth ? (
                   <Grid.Column computer='10'>
-                    {
-                      //this.renderFullMail()
-                    }
                     {
                       <RenderFullMail
                         toggleFullMailPane={this.toggleFullMailPane}

@@ -11,6 +11,8 @@ export const getMailTransactionsRequest = createAction('GET_MAIL_TRANSACTIONS_RE
 export const getMailTransactionsSuccess = createAction('GET_MAIL_TRANSACTIONS_SUCCESS');
 export const getMailTransactionsFailure = createAction('GET_MAIL_TRANSACTIONS_FAILURE');
 
+export const updateTransactionSuccess = createAction('UPDATE_TRANSACTION_SUCCESS');
+
 export const getDiffMailTransactionsSuccess = createAction('GET_MAIL_TRANSACTIONS_DIFF_SUCCESS');
 
 export const createMailTransaction = args => async (dispatch, getState, { serviceInjector }) => {
@@ -74,6 +76,16 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
     }
   } catch (error) {
     dispatch(getMailTransactionsFailure());
+    throw error;
+  }
+};
+
+export const updateTransaction = transaction => async (dispatch, getState, { serviceInjector }) => {
+  try {
+    const updatedTransaction = await serviceInjector(MailService).updateTransaction(transaction);
+    dispatch(updateTransactionSuccess(updatedTransaction));
+  } catch (error) {
+    console.log(error);
     throw error;
   }
 };
