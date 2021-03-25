@@ -80,13 +80,10 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
   }
 };
 
-export const updateMailReadUnread = transaction => async (
-  dispatch,
-  getState,
-  { serviceInjector }
-) => {
+export const updateTransaction = transaction => async (dispatch, getState, { serviceInjector }) => {
   try {
-    await serviceInjector(MailService).updateMailReadUnread(transaction);
+    await serviceInjector(MailService).updateTransaction(transaction);
+    await getMailTransactions({ diff: true });
   } catch (error) {
     console.log(error);
     throw error;

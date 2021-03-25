@@ -108,6 +108,7 @@ class MailDashboard extends React.Component {
   combinedMailsSection() {
     const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
     const { currentlyOpenMailData, toggleFullMailPane } = this.state;
+
     if (Object.keys(mailTransactions).length !== 0) {
       return Object.values(mailTransactions).map((mail, index) => {
         let mailData = null,
@@ -292,10 +293,10 @@ class MailDashboard extends React.Component {
         toggleFullMailPane: !toggleFullMailPane,
       });
     }
-    if (currOpenMailData[0].txId) {
+    if (currOpenMailData[0].txId && !currOpenMailData[0].isReadMail) {
       try {
         await dispatch(
-          mailActions.updateMailReadUnread({ ...currOpenMailData[0], ...{ isReadMail: true } })
+          mailActions.updateTransaction({ ...currOpenMailData[0], ...{ isReadMail: true } })
         );
       } catch (e) {
         console.log(e);

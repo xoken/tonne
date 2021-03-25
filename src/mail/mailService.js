@@ -10,8 +10,8 @@ class MailService {
   async getMailTransactions(options) {
     return await wallet.getMailTransactions(options);
   }
-  async updateMailReadUnread(transaction) {
-    await persist.updateMailReadUnread(transaction);
+  async updateTransaction(transaction) {
+    await persist.updateTransaction(transaction);
   }
 }
 
