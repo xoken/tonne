@@ -280,7 +280,7 @@ class MailDashboard extends React.Component {
   }
 
   mailOnClick = async currOpenMailData => {
-    const { toggleFullMailPane } = this.state;
+    const { toggleFullMailPane, updated } = this.state;
     const { dispatch } = this.props;
     if (toggleFullMailPane) {
       this.setState({
@@ -298,6 +298,7 @@ class MailDashboard extends React.Component {
         await dispatch(
           mailActions.updateTransaction({ ...currOpenMailData[0], ...{ isReadMail: true } })
         );
+        this.onRefresh();
       } catch (e) {
         console.log(e);
       }
@@ -378,6 +379,9 @@ class MailDashboard extends React.Component {
     } = this.state;
 
     const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
+    if (allpayHandles && allpayHandles.length === 0 && isLoadingMailTransactions) {
+      return <Loader active />;
+    }
     if (allpayHandles && allpayHandles.length === 0) {
       return (
         <Grid>
