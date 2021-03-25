@@ -9,6 +9,7 @@ import SendMail from '../components/SendMail';
 // import RenderCombinedMails from '../components/RenderCombinedMails';
 import RenderFullMail from '../components/RenderFullMail';
 import * as mailActions from '../mailActions';
+import * as walletActions from '../../wallet/walletActions';
 import * as mailSelectors from '../mailSelectors';
 import { format } from 'date-fns';
 
@@ -32,6 +33,7 @@ class MailDashboard extends React.Component {
     if (mailTransactions && Object.keys(mailTransactions).length === 0) {
       try {
         await dispatch(mailActions.getMailTransactions({ limit: 10 }));
+        await dispatch(walletActions.updateTransactionsConfirmations());
         // this.setState({ lastRefreshed: new Date() });
         // this.timerID = setInterval(
         //   () =>
@@ -40,7 +42,7 @@ class MailDashboard extends React.Component {
         //     }),
         //   1000
         // );
-        const autoRefreshTimeInSecs = 1 * 30 * 1000;
+        const autoRefreshTimeInSecs = 1 * 60 * 1000;
         this.autoRefreshTimer = setInterval(() => {
           this.onRefresh();
         }, autoRefreshTimeInSecs);
@@ -80,6 +82,7 @@ class MailDashboard extends React.Component {
   onRefresh = async () => {
     const { dispatch } = this.props;
     await dispatch(mailActions.getMailTransactions({ diff: true }));
+    await dispatch(walletActions.updateTransactionsConfirmations());
     // this.setState({
     //   lastRefreshed: new Date(),
     //   timeSinceLastRefreshed: new Date(),

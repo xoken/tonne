@@ -23,7 +23,7 @@ function updateExistingThreadIdValue(newMailTx, existingMailTx) {
 function updateMailTransaction(updatedtransaction, mailTransactions) {
   let tempMailTransactions = mailTransactions;
   Object.values(tempMailTransactions[updatedtransaction.threadId]).map((transaction, index) => {
-    if (transaction._id === updatedtransaction._id) {
+    if (transaction.txId === updatedtransaction.txId) {
       tempMailTransactions[updatedtransaction.threadId][index] = updatedtransaction;
     }
   });
