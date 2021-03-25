@@ -58,7 +58,11 @@ export default createReducer(
     }),
     [actions.getDiffMailTransactionsSuccess]: (state, { mailTransactions }) => ({
       ...state,
-      mailTransactions: { ...mailTransactions, ...state.mailTransactions },
+      mailTransactions: Object.keys(state.mailTransactions).includes(
+        Object.keys(mailTransactions)[0]
+      )
+        ? updateExistingThreadIdValue(mailTransactions, state.mailTransactions)
+        : { ...mailTransactions, ...state.mailTransactions },
       isLoadingMailTransactions: false,
     }),
     [actions.updateTransactionSuccess]: (state, updatedTransaction) => ({
