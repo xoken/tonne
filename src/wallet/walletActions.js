@@ -52,7 +52,7 @@ export const getAllpayHandlesFailure = createAction('GET_ALLPAY_HANDLES_FAILURE'
 export const getTransactions = options => async (dispatch, getState, { serviceInjector }) => {
   try {
     const {
-      wallet: { nextTransactionCursor: startkey, isLoadingTransactions },
+      wallet: { nextTransactionCursor: startkey, isLoadingTransactions, transactions },
     } = getState();
     if (!isLoadingTransactions) {
       dispatch(getTransactionsRequest());
@@ -60,11 +60,14 @@ export const getTransactions = options => async (dispatch, getState, { serviceIn
         options.startkey = startkey;
       }
       if (options.diff) {
-        const { transactions } = await serviceInjector(WalletService).getTransactions(options);
+        options.endkey = transactions.length > 0 ? transactions[0]._id : null;
+        const { transactions: diffTransactions } = await serviceInjector(
+          WalletService
+        ).getTransactions(options);
         await dispatch(getBalance());
         await dispatch(getAllpayHandles());
         await dispatch(getUnregisteredNames());
-        dispatch(getDiffTransactionsSuccess({ transactions }));
+        dispatch(getDiffTransactionsSuccess({ transactions: diffTransactions }));
       } else {
         const { transactions, nextTransactionCursor } = await serviceInjector(
           WalletService

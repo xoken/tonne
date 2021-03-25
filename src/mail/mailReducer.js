@@ -20,6 +20,16 @@ function updateExistingThreadIdValue(newMailTx, existingMailTx) {
   return { ...updatedNewObject, ...tempExistingMailTx };
 }
 
+function updateMailTransaction(updatedtransaction, mailTransactions) {
+  let tempMailTransactions = mailTransactions;
+  Object.values(tempMailTransactions[updatedtransaction.threadId]).map((transaction, index) => {
+    if (transaction.txId === updatedtransaction.txId) {
+      tempMailTransactions[updatedtransaction.threadId][index] = updatedtransaction;
+    }
+  });
+  return tempMailTransactions;
+}
+
 export default createReducer(
   {
     [actions.createMailTransactionRequest]: state => ({
@@ -48,8 +58,16 @@ export default createReducer(
     }),
     [actions.getDiffMailTransactionsSuccess]: (state, { mailTransactions }) => ({
       ...state,
-      mailTransactions: { ...mailTransactions, ...state.mailTransactions },
+      mailTransactions: Object.keys(state.mailTransactions).includes(
+        Object.keys(mailTransactions)[0]
+      )
+        ? updateExistingThreadIdValue(mailTransactions, state.mailTransactions)
+        : { ...mailTransactions, ...state.mailTransactions },
       isLoadingMailTransactions: false,
+    }),
+    [actions.updateTransactionSuccess]: (state, updatedTransaction) => ({
+      ...state,
+      mailTransactions: updateMailTransaction(updatedTransaction, state.mailTransactions),
     }),
     [authActions.logoutSuccess]: state => ({
       ...INITIAL_STATE,

@@ -1107,3 +1107,9 @@ body {
 .fullMailBorder{
   border-left:2px solid #fafafa;
 }
+.readMail{
+  background-color: #fafafa;
+}
+.unreadMail{
+  background-color: white;
+}
