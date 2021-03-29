@@ -9,7 +9,7 @@ import SendMail from '../components/SendMail';
 // import RenderCombinedMails from '../components/RenderCombinedMails';
 import RenderFullMail from '../components/RenderFullMail';
 import * as mailActions from '../mailActions';
-import * as walletActions from '../../wallet/walletActions';
+import * as walletSelectors from '../../wallet/walletSelectors';
 import * as mailSelectors from '../mailSelectors';
 import { format } from 'date-fns';
 
@@ -29,8 +29,8 @@ class MailDashboard extends React.Component {
   }
 
   async componentDidMount() {
-    const { mailTransactions, dispatch } = this.props;
-    if (mailTransactions && Object.keys(mailTransactions).length === 0) {
+    const { transactions, dispatch } = this.props;
+    if (transactions.length === 0) {
       try {
         await dispatch(mailActions.getMailTransactions({}));
         // this.setState({ lastRefreshed: new Date() });
@@ -509,6 +509,7 @@ const mapStateToProps = state => ({
   allpayHandles: state.wallet.allpayHandles,
   isLoadingMailTransactions: mailSelectors.isLoadingMailTransactions(state),
   mailTransactions: mailSelectors.getMailTransactions(state),
+  transactions: walletSelectors.getTransactions(state),
   nextTransactionCursor: state.mail.nextTransactionCursor,
 });
 
