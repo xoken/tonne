@@ -60,7 +60,7 @@ export const getTransactions = options => async (dispatch, getState, { serviceIn
         options.startkey = startkey;
       }
       if (options.diff) {
-        options.endkey = transactions.length > 0 ? transactions[0]._id : null;
+        options.endkey = transactions.length > 0 ? transactions[0].txId : null;
         const { transactions: diffTransactions } = await serviceInjector(
           WalletService
         ).getTransactions(options);
