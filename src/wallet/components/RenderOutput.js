@@ -45,7 +45,7 @@ class RenderOutput extends React.Component {
                 if (name) {
                   return (
                     <>
-                      Proxy registration : <i>{utils.codePointToName(name)}</i>{' '}
+                      AllPay registration : <i>{utils.codePointToName(name)}</i>{' '}
                     </>
                   );
                 }

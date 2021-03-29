@@ -88,7 +88,7 @@ class RecentTransaction extends React.Component {
     if (
       transaction.additionalInfo &&
       (transaction.additionalInfo.type === 'Purchase' ||
-        transaction.additionalInfo.type === 'Proxy registration')
+        transaction.additionalInfo.type === 'AllPay registration')
     ) {
       return (
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
