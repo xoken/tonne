@@ -24,6 +24,7 @@ class SendMail extends React.Component {
       toFieldHtml: [],
       toFieldTemp: '',
       toFieldWidth: 0,
+      isLoading: false,
     };
   }
   maxWidth = 0;
@@ -266,6 +267,7 @@ class SendMail extends React.Component {
 
       if (filteredToField.length !== 0) {
         try {
+          this.setState({ isLoading: true });
           await dispatch(
             mailActions.createMailTransaction({
               recipients: filteredToField,
@@ -276,6 +278,7 @@ class SendMail extends React.Component {
           );
 
           this.setState({
+            isLoading: false,
             subjectField: '',
             messageBodyField: '',
             toField: [],
@@ -327,6 +330,7 @@ class SendMail extends React.Component {
       toFieldWidth,
       toFieldRows,
       isError,
+      isLoading,
     } = this.state;
     const { isLoadingMailTransactions } = this.props;
     return (
@@ -415,7 +419,6 @@ class SendMail extends React.Component {
           </Grid.Row>
           <Grid.Row>
             <Grid.Column>
-              {isLoadingMailTransactions ? <Loader active /> : ''}
               {
                 // files ? <Grid>{this.fileNameList()}</Grid> : ''
               }
@@ -424,12 +427,16 @@ class SendMail extends React.Component {
           </Grid.Row>
           <Grid.Row centered>
             <Grid.Column>
-              <Button
-                className='coral'
-                disabled={toField ? (subjectField ? (isError ? true : false) : true) : true}
-                onClick={this.onSend}>
-                Send
-              </Button>
+              {isLoading ? (
+                <Loader active />
+              ) : (
+                <Button
+                  className='coral'
+                  disabled={toField ? (subjectField ? (isError ? true : false) : true) : true}
+                  onClick={this.onSend}>
+                  Send
+                </Button>
+              )}{' '}
               <Button className='peach' onClick={this.onCancel}>
                 Cancel
               </Button>

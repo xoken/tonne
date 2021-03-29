@@ -123,7 +123,11 @@ class MailDashboard extends React.Component {
           mailData = mail[0].additionalInfo.value.recipientInfo;
           sentMail = false;
         }
-        let dateTime = format(new Date(mail[0].createdAt), 'dd-MM-yyyy hh:mm:ss');
+
+        let dateTime = null;
+        if (mail[0].createdAt) {
+          dateTime = format(new Date(mail[0].createdAt), 'dd-MM-yyyy hh:mm:ss');
+        }
 
         return (
           <Grid.Row
