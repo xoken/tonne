@@ -37,6 +37,8 @@ export const createMailTransaction = args => async (dispatch, getState, { servic
     const mailTransactionsGroupByThreadId = _.groupBy(mailTransactions, mailTransaction => {
       return mailTransaction.threadId;
     });
+    await dispatch(walletActions.getBalance());
+    dispatch(walletActions.createTransactionSuccess({ transactions: transactions }));
     dispatch(
       createMailTransactionSuccess({
         mailTransactions: mailTransactionsGroupByThreadId,
@@ -52,6 +54,7 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
   try {
     const {
       mail: { nextTransactionCursor: startkey, isLoadingMailTransactions },
+      wallet: { transactions },
     } = getState();
     if (!isLoadingMailTransactions) {
       dispatch(getMailTransactionsRequest());
@@ -59,19 +62,20 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
         options.startkey = startkey;
       }
       if (options.diff) {
+        options.endkey = transactions.length > 0 ? transactions[0].txId : null;
+        await dispatch(walletActions.getTransactions({ diff: true }));
+        await dispatch(walletActions.updateTransactionsConfirmations());
         const { mailTransactions } = await serviceInjector(MailService).getMailTransactions(
           options
         );
-        await dispatch(walletActions.getAllpayHandles());
-        await dispatch(walletActions.getUnregisteredNames());
         dispatch(getDiffMailTransactionsSuccess({ mailTransactions }));
       } else {
+        await dispatch(walletActions.getTransactions({ limit: 10 }));
+        await dispatch(walletActions.updateTransactionsConfirmations());
         const { mailTransactions, nextTransactionCursor } = await serviceInjector(
           MailService
         ).getMailTransactions(options);
-        await dispatch(walletActions.getAllpayHandles());
-        await dispatch(walletActions.getUnregisteredNames());
-        dispatch(getMailTransactionsSuccess({ mailTransactions }));
+        dispatch(getMailTransactionsSuccess({ mailTransactions, nextTransactionCursor }));
       }
     }
   } catch (error) {

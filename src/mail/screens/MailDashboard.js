@@ -33,7 +33,6 @@ class MailDashboard extends React.Component {
     if (mailTransactions && Object.keys(mailTransactions).length === 0) {
       try {
         await dispatch(mailActions.getMailTransactions({}));
-        await dispatch(walletActions.updateTransactionsConfirmations());
         // this.setState({ lastRefreshed: new Date() });
         // this.timerID = setInterval(
         //   () =>
@@ -82,31 +81,30 @@ class MailDashboard extends React.Component {
   onRefresh = async () => {
     const { dispatch } = this.props;
     await dispatch(mailActions.getMailTransactions({ diff: true }));
-    await dispatch(walletActions.updateTransactionsConfirmations());
     // this.setState({
     //   lastRefreshed: new Date(),
     //   timeSinceLastRefreshed: new Date(),
     // });
   };
 
-  onNextPage = async () => {
-    const { dispatch } = this.props;
-    await dispatch(mailActions.getMailTransactions({ limit: 10 }));
-  };
+  // onNextPage = async () => {
+  //   const { dispatch } = this.props;
+  //   await dispatch(mailActions.getMailTransactions({ limit: 10 }));
+  // };
 
-  renderPagination() {
-    const { nextTransactionCursor } = this.props;
-    if (nextTransactionCursor) {
-      return (
-        <Segment basic textAlign='center'>
-          <Button className='coral' onClick={this.onNextPage}>
-            Next Page
-          </Button>
-        </Segment>
-      );
-    }
-    return null;
-  }
+  // renderPagination() {
+  //   const { nextTransactionCursor } = this.props;
+  //   if (nextTransactionCursor) {
+  //     return (
+  //       <Segment basic textAlign='center'>
+  //         <Button className='coral' onClick={this.onNextPage}>
+  //           Next Page
+  //         </Button>
+  //       </Segment>
+  //     );
+  //   }
+  //   return null;
+  // }
 
   combinedMailsSection() {
     const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
@@ -301,7 +299,6 @@ class MailDashboard extends React.Component {
         await dispatch(
           mailActions.updateTransaction({ ...currOpenMailData[0], ...{ isReadMail: true } })
         );
-        this.onRefresh();
       } catch (e) {
         console.log(e);
       }
@@ -469,7 +466,7 @@ class MailDashboard extends React.Component {
                     </Button>
                   </div>
                   {this.combinedMailsSection()}
-                  {this.renderPagination()}
+                  {/* {this.renderPagination()} */}
                 </Grid>
               </Grid.Column>
               {toggleFullMailPane ? (
