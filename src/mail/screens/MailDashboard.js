@@ -32,7 +32,7 @@ class MailDashboard extends React.Component {
     const { mailTransactions, dispatch } = this.props;
     if (mailTransactions && Object.keys(mailTransactions).length === 0) {
       try {
-        await dispatch(mailActions.getMailTransactions({ limit: 10 }));
+        await dispatch(mailActions.getMailTransactions({}));
         await dispatch(walletActions.updateTransactionsConfirmations());
         // this.setState({ lastRefreshed: new Date() });
         // this.timerID = setInterval(
