@@ -9,7 +9,7 @@ import SendMail from '../components/SendMail';
 // import RenderCombinedMails from '../components/RenderCombinedMails';
 import RenderFullMail from '../components/RenderFullMail';
 import * as mailActions from '../mailActions';
-import * as walletActions from '../../wallet/walletActions';
+import * as walletSelectors from '../../wallet/walletSelectors';
 import * as mailSelectors from '../mailSelectors';
 import { format } from 'date-fns';
 
@@ -29,11 +29,10 @@ class MailDashboard extends React.Component {
   }
 
   async componentDidMount() {
-    const { mailTransactions, dispatch } = this.props;
-    if (mailTransactions && Object.keys(mailTransactions).length === 0) {
+    const { transactions, dispatch } = this.props;
+    if (transactions.length === 0) {
       try {
-        await dispatch(mailActions.getMailTransactions({ limit: 10 }));
-        await dispatch(walletActions.updateTransactionsConfirmations());
+        await dispatch(mailActions.getMailTransactions({}));
         // this.setState({ lastRefreshed: new Date() });
         // this.timerID = setInterval(
         //   () =>
@@ -82,31 +81,30 @@ class MailDashboard extends React.Component {
   onRefresh = async () => {
     const { dispatch } = this.props;
     await dispatch(mailActions.getMailTransactions({ diff: true }));
-    await dispatch(walletActions.updateTransactionsConfirmations());
     // this.setState({
     //   lastRefreshed: new Date(),
     //   timeSinceLastRefreshed: new Date(),
     // });
   };
 
-  onNextPage = async () => {
-    const { dispatch } = this.props;
-    await dispatch(mailActions.getMailTransactions({ limit: 10 }));
-  };
+  // onNextPage = async () => {
+  //   const { dispatch } = this.props;
+  //   await dispatch(mailActions.getMailTransactions({ limit: 10 }));
+  // };
 
-  renderPagination() {
-    const { nextTransactionCursor } = this.props;
-    if (nextTransactionCursor) {
-      return (
-        <Segment basic textAlign='center'>
-          <Button className='coral' onClick={this.onNextPage}>
-            Next Page
-          </Button>
-        </Segment>
-      );
-    }
-    return null;
-  }
+  // renderPagination() {
+  //   const { nextTransactionCursor } = this.props;
+  //   if (nextTransactionCursor) {
+  //     return (
+  //       <Segment basic textAlign='center'>
+  //         <Button className='coral' onClick={this.onNextPage}>
+  //           Next Page
+  //         </Button>
+  //       </Segment>
+  //     );
+  //   }
+  //   return null;
+  // }
 
   combinedMailsSection() {
     const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
@@ -125,7 +123,11 @@ class MailDashboard extends React.Component {
           mailData = mail[0].additionalInfo.value.recipientInfo;
           sentMail = false;
         }
-        let dateTime = format(new Date(mail[0].createdAt), 'dd-MM-yyyy hh:mm:ss');
+
+        let dateTime = null;
+        if (mail[0].createdAt) {
+          dateTime = format(new Date(mail[0].createdAt), 'dd-MM-yyyy hh:mm:ss');
+        }
 
         return (
           <Grid.Row
@@ -301,7 +303,6 @@ class MailDashboard extends React.Component {
         await dispatch(
           mailActions.updateTransaction({ ...currOpenMailData[0], ...{ isReadMail: true } })
         );
-        this.onRefresh();
       } catch (e) {
         console.log(e);
       }
@@ -469,12 +470,16 @@ class MailDashboard extends React.Component {
                     </Button>
                   </div>
                   {this.combinedMailsSection()}
-                  {this.renderPagination()}
+                  {/* {this.renderPagination()} */}
                 </Grid>
               </Grid.Column>
               {toggleFullMailPane ? (
                 windowWidth >= 770 || !windowWidth ? (
-                  <Grid.Column computer='10'>
+                  <Grid.Column
+                    computer='10'
+                    style={{
+                      boxShadow: '5px 5px 5px #fafafa',
+                    }}>
                     {
                       <RenderFullMail
                         toggleFullMailPane={this.toggleFullMailPane}
@@ -508,6 +513,7 @@ const mapStateToProps = state => ({
   allpayHandles: state.wallet.allpayHandles,
   isLoadingMailTransactions: mailSelectors.isLoadingMailTransactions(state),
   mailTransactions: mailSelectors.getMailTransactions(state),
+  transactions: walletSelectors.getTransactions(state),
   nextTransactionCursor: state.mail.nextTransactionCursor,
 });
 
