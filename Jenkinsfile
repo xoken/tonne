@@ -19,18 +19,15 @@ pipeline {
     stage('Clean') {
       steps {
         dir(path: 'allegory-allpay-sdk') {
-          sh 'ls -a'
           sh 'rm -rf node_modules'
         }
 
         dir(path: 'tonne') {
-          sh 'ls -a'
           sh 'rm -rf node_modules'
           sh 'rm -rf build'
           sh 'rm -rf tonne-web-regtest'
           sh 'rm -rf tonne-web-testnet'
           sh 'rm -rf *.zip'
-          sh 'ls -a'
         }
       }
     }
@@ -38,15 +35,11 @@ pipeline {
     stage('Build') {
       steps {
         dir(path: 'allegory-allpay-sdk') {
-          sh 'ls -a'
           sh 'npm install'
           sh 'npm run build'
-          sh 'ls -a'
         }
         dir(path: 'tonne') {
-          sh 'ls -a'
           sh 'npm install'
-          sh 'ls -a'
         }
       }
     }
@@ -63,33 +56,21 @@ pipeline {
 
             echo '****** Starting Regtest Web Build ******'
             dir(path: 'tonne') {
-              sh 'ls -a'
               sh 'npm run build:regtest'
-              sh 'ls -a'
               sh 'mv build tonne-web-regtest'
-              sh 'ls -a'
               sh 'git log -n 1 >> commit.log'
-              sh 'ls -a'
               sh 'mv commit.log tonne-web-regtest'
-              sh 'ls -a'
               sh 'zip -r tonne-"$(basename $(git symbolic-ref HEAD))"-web-regtest.zip tonne-web-regtest'
-              sh 'ls -a'
             }
             archiveArtifacts(artifacts: 'tonne/tonne-*.zip', followSymlinks: true)
 
             echo '****** Starting Testnet Web Build ******'
             dir(path: 'tonne') {
-              sh 'ls -a'
               sh 'npm run build:testnet'
-              sh 'ls -a'
               sh 'mv build tonne-web-testnet'
-              sh 'ls -a'
               sh 'git log -n 1 >> commit.log'
-              sh 'ls -a'
               sh 'mv commit.log tonne-web-testnet'
-              sh 'ls -a'
               sh 'zip -r tonne-"$(basename $(git symbolic-ref HEAD))"-web-testnet.zip tonne-web-testnet'
-              sh 'ls -a'
             }
             archiveArtifacts(artifacts: 'tonne/tonne-*.zip', followSymlinks: true)
           // } else {
