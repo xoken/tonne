@@ -1,6 +1,7 @@
 import { createAction } from 'redux-act';
 import * as walletActions from '../wallet/walletActions';
 import AuthService from './authService';
+import { sleep } from '../shared/utils';
 
 export const getProfileRequest = createAction('GET_PROFILE_REQUEST');
 export const getProfileSuccess = createAction('GET_PROFILE_SUCCESS');
@@ -119,11 +120,20 @@ export const login = (profileId, password) => async (dispatch, getState, { servi
 };
 
 export const logout = () => async (dispatch, getState, { serviceInjector }) => {
-  dispatch(logoutRequest());
-  try {
-    await serviceInjector(AuthService).logout();
-    dispatch(logoutSuccess());
-  } catch (error) {
-    dispatch(logoutFailure());
+  const {
+    wallet: { isLoadingTransactions },
+    mail: { isLoadingMailTransactions },
+  } = getState();
+  if (!isLoadingTransactions && !isLoadingMailTransactions) {
+    dispatch(logoutRequest());
+    try {
+      await serviceInjector(AuthService).logout();
+      dispatch(logoutSuccess());
+    } catch (error) {
+      dispatch(logoutFailure());
+    }
+  } else {
+    await sleep(1000);
+    dispatch(logout());
   }
 };
