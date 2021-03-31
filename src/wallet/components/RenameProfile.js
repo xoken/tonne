@@ -65,7 +65,7 @@ class RenameProfile extends React.Component {
                   </Message>
                 </Grid.Column>
               </Grid.Row>
-              <Grid.Column textAlign='center' width={8}>
+              <Grid.Column textAlign='center' computer={8} mobile={16}>
                 <div className='ui form'>
                   <div className='field'>
                     <label>

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import { Button, Grid, Input, Icon } from 'semantic-ui-react';
+import { Button, Grid, Input, Icon, Loader } from 'semantic-ui-react';
 import { EditorState, ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
 import { Editor } from 'react-draft-wysiwyg';
@@ -27,6 +27,7 @@ class RenderFullMail extends React.Component {
       threadId: null,
       sentMail: false,
       isWelcomeMail: false,
+      isLoading: false,
     };
   }
 
@@ -426,6 +427,7 @@ class RenderFullMail extends React.Component {
     // }
 
     try {
+      this.setState({ isLoading: true });
       await dispatch(
         mailActions.createMailTransaction({
           recipients: replyAll ? toAllField : Array.of(toField),
@@ -435,6 +437,7 @@ class RenderFullMail extends React.Component {
         })
       );
       this.setState({
+        isLoading: false,
         replyMessageBodyField: '',
         files: null,
         isError: false,
@@ -496,8 +499,10 @@ class RenderFullMail extends React.Component {
       if (index !== 0) {
         paddingLeft += 10;
       }
-      let dateTime = format(new Date(mail.createdAt), 'dd-MM-yyyy hh:mm:ss');
-
+      let dateTime = null;
+      if (mail.createdAt) {
+        dateTime = format(new Date(mail.createdAt), 'dd-MM-yyyy hh:mm:ss');
+      }
       return (
         <div key={index.toString()} className='fullMailBorder'>
           <Grid
@@ -571,12 +576,11 @@ class RenderFullMail extends React.Component {
 
   render() {
     const { threadId } = this.props;
-    const { isError, replyMessageBodyField, message, replyField } = this.state;
+    const { isError, replyMessageBodyField, message, replyField, isLoading } = this.state;
     return (
       <>
         <Grid
           style={{
-            boxShadow: '5px 5px 5px #fafafa',
             marginBottom: '30px',
           }}>
           <Grid.Row>
@@ -670,14 +674,17 @@ class RenderFullMail extends React.Component {
                       // />
                     }
                     <div className='colorRed'>{isError ? message : ''}</div>
-
                     <br />
-                    <Button
-                      className='coral'
-                      disabled={replyMessageBodyField ? (isError ? true : false) : true}
-                      onClick={this.onReply}>
-                      Send
-                    </Button>
+                    {isLoading ? (
+                      <Loader active />
+                    ) : (
+                      <Button
+                        className='coral'
+                        disabled={replyMessageBodyField ? (isError ? true : false) : true}
+                        onClick={this.onReply}>
+                        Send
+                      </Button>
+                    )}{' '}
                   </div>
                 </>
               ) : (

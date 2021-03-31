@@ -34,7 +34,6 @@ export default createReducer(
   {
     [actions.createMailTransactionRequest]: state => ({
       ...state,
-      isLoadingMailTransactions: true,
     }),
     [actions.createMailTransactionSuccess]: (state, { mailTransactions }) => ({
       ...state,
@@ -43,7 +42,6 @@ export default createReducer(
       )
         ? updateExistingThreadIdValue(mailTransactions, state.mailTransactions)
         : { ...mailTransactions, ...state.mailTransactions },
-      isLoadingMailTransactions: false,
     }),
     [actions.getMailTransactionsRequest]: state => ({
       ...state,
@@ -63,6 +61,10 @@ export default createReducer(
       )
         ? updateExistingThreadIdValue(mailTransactions, state.mailTransactions)
         : { ...mailTransactions, ...state.mailTransactions },
+      isLoadingMailTransactions: false,
+    }),
+    [actions.getMailTransactionsFailure]: state => ({
+      ...state,
       isLoadingMailTransactions: false,
     }),
     [actions.updateTransactionSuccess]: (state, updatedTransaction) => ({
