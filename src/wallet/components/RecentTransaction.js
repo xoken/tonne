@@ -131,7 +131,7 @@ class RecentTransaction extends React.Component {
       );
     } else {
       return (
-        <Grid.Column computer={10} mobile={8} className='recentTxidAddressColumn'>
+        <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
           <span className='monospace word-wrap recentTxidAddress'>{transaction.txId}</span>{' '}
           <Link to={'/explorer/transaction/' + transaction.txId}>

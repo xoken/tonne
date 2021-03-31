@@ -581,7 +581,6 @@ class RenderFullMail extends React.Component {
       <>
         <Grid
           style={{
-            boxShadow: '5px 5px 5px #fafafa',
             marginBottom: '30px',
           }}>
           <Grid.Row>

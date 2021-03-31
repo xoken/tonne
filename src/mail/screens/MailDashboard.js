@@ -475,7 +475,11 @@ class MailDashboard extends React.Component {
               </Grid.Column>
               {toggleFullMailPane ? (
                 windowWidth >= 770 || !windowWidth ? (
-                  <Grid.Column computer='10'>
+                  <Grid.Column
+                    computer='10'
+                    style={{
+                      boxShadow: '5px 5px 5px #fafafa',
+                    }}>
                     {
                       <RenderFullMail
                         toggleFullMailPane={this.toggleFullMailPane}
