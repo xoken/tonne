@@ -305,15 +305,17 @@ class RecentTransaction extends React.Component {
                     ) : (
                       <Grid.Row className='paddingTop28px'>
                         <Grid.Column width='16' className='recentTxidAddressColumn'>
-                          <span className='monospace word-wrap paddingLeftRight14px'>
-                            <span className='purplefontcolor fontWeightBold'>TxID : </span>
-                            {transaction.txId}
-                          </span>{' '}
-                          <Link to={'/explorer/transaction/' + transaction.txId}>
-                            <span className='padding10px'>
-                              <i className='walletLink'></i>
-                            </span>
-                          </Link>
+                          <div className='paddingLeftRight14px'>
+                            <span className='monospace word-wrap'>
+                              <span className='purplefontcolor fontWeightBold'>TxID : </span>
+                              {transaction.txId}
+                            </span>{' '}
+                            <Link to={'/explorer/transaction/' + transaction.txId}>
+                              <span className='padding10px'>
+                                <i className='walletLink'></i>
+                              </span>
+                            </Link>
+                          </div>
                         </Grid.Column>
                       </Grid.Row>
                     )}
