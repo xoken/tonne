@@ -8,6 +8,7 @@ import { utils } from 'allegory-allpay-sdk';
 import RenderOutput from './RenderOutput';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
+import images from '../../shared/images';
 
 class RecentTransaction extends React.Component {
   constructor(props) {
@@ -151,13 +152,14 @@ class RecentTransaction extends React.Component {
         return (
           <span>
             {' : '}
-            {senderInfo.commonMetaData.recepient} <span className='toArrow'>&#129133; </span>{' '}
+            {senderInfo.commonMetaData.recepient}{' '}
+            <img alt='To' src={images.yellowArrow} className='toFromIcons' />{' '}
           </span>
         );
       } else {
         return (
           <span>
-            {senderInfo} <span className='toArrow'>&#129133; </span>{' '}
+            {senderInfo} <img alt='To' src={images.yellowArrow} className='toFromIcons' />{' '}
           </span>
         );
       }
@@ -166,13 +168,14 @@ class RecentTransaction extends React.Component {
         return (
           <span>
             {' : '}
-            {recipientInfo.commonMetaData.sender} <span className='fromArrow'>&#129134; </span>{' '}
+            {recipientInfo.commonMetaData.sender}{' '}
+            <img alt='From' src={images.greenArrow} className='toFromIcons' />{' '}
           </span>
         );
       } else {
         return (
           <span>
-            {recipientInfo} <span className='fromArrow'>&#129134; </span>{' '}
+            {recipientInfo} <img alt='From' src={images.greenArrow} className='toFromIcons' />{' '}
           </span>
         );
       }
@@ -189,7 +192,7 @@ class RecentTransaction extends React.Component {
         if (input.isMine) {
           returnArray.push(
             <span key={index.toString()}>
-              <span className='toArrow'>&#129133; </span>{' '}
+              <img alt='To' src={images.yellowArrow} className='toFromIcons' />{' '}
             </span>
           );
           throw breakException;
@@ -204,7 +207,7 @@ class RecentTransaction extends React.Component {
         if (output.isMine) {
           returnArray.push(
             <span key={index.toString()}>
-              <span className='fromArrow'>&#129134; </span>{' '}
+              <img alt='From' src={images.greenArrow} className='toFromIcons' />{' '}
             </span>
           );
           throw breakException;

@@ -12,6 +12,7 @@ import * as mailActions from '../mailActions';
 import * as walletSelectors from '../../wallet/walletSelectors';
 import * as mailSelectors from '../mailSelectors';
 import { format } from 'date-fns';
+import images from '../../shared/images';
 
 class MailDashboard extends React.Component {
   constructor(props) {
@@ -33,6 +34,7 @@ class MailDashboard extends React.Component {
     if (transactions.length === 0) {
       try {
         await dispatch(mailActions.getMailTransactions({}));
+        console.log('getMail');
         // this.setState({ lastRefreshed: new Date() });
         // this.timerID = setInterval(
         //   () =>
@@ -153,9 +155,9 @@ class MailDashboard extends React.Component {
                     </span>
                     <span>
                       {sentMail ? (
-                        <span className='toArrow'>&#129133; </span>
+                        <img alt='To' src={images.yellowArrow} className='toFromIcons' />
                       ) : (
-                        <span className='fromArrow'>&#129134; </span>
+                        <img alt='From' src={images.greenArrow} className='toFromIcons' />
                       )}
                     </span>
                   </Grid.Column>
@@ -262,7 +264,7 @@ class MailDashboard extends React.Component {
                     {welcomeMail[0].additionalInfo.value.recipientInfo.commonMetaData.sender}{' '}
                   </span>
                   <span>
-                    <span className='fromArrow'>&#129134; </span>
+                    <img alt='From' src={images.greenArrow} className='toFromIcons' />
                   </span>
                 </Grid.Column>
                 <Grid.Column computer={4} mobile={8} floated='right'>
@@ -299,6 +301,7 @@ class MailDashboard extends React.Component {
       });
     }
     if (currOpenMailData[0].txId && !currOpenMailData[0].isReadMail) {
+      debugger;
       try {
         await dispatch(
           mailActions.updateTransaction({ ...currOpenMailData[0], ...{ isReadMail: true } })

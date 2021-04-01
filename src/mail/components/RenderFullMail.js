@@ -9,6 +9,7 @@ import TextEditor from '../components/TextEditor';
 import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import * as mailActions from '../mailActions';
 import { format } from 'date-fns';
+import images from '../../shared/images';
 
 class RenderFullMail extends React.Component {
   constructor(props) {
@@ -515,9 +516,9 @@ class RenderFullMail extends React.Component {
                 </span>
                 <span>
                   {sentMail ? (
-                    <span className='toArrow'>&#129133; </span>
+                    <img alt='To' src={images.yellowArrow} className='toFromIcons' />
                   ) : (
-                    <span className='fromArrow'>&#129134; </span>
+                    <img alt='From' src={images.greenArrow} className='toFromIcons' />
                   )}
                 </span>
               </Grid.Column>
