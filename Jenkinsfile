@@ -27,6 +27,7 @@ pipeline {
           sh 'rm -rf build'
           sh 'rm -rf tonne-web-regtest'
           sh 'rm -rf tonne-web-testnet'
+          sh 'rm -rf *.zip'
         }
       }
     }

@@ -11,6 +11,8 @@ export const getMailTransactionsRequest = createAction('GET_MAIL_TRANSACTIONS_RE
 export const getMailTransactionsSuccess = createAction('GET_MAIL_TRANSACTIONS_SUCCESS');
 export const getMailTransactionsFailure = createAction('GET_MAIL_TRANSACTIONS_FAILURE');
 
+export const updateTransactionSuccess = createAction('UPDATE_TRANSACTION_SUCCESS');
+
 export const getDiffMailTransactionsSuccess = createAction('GET_MAIL_TRANSACTIONS_DIFF_SUCCESS');
 
 export const createMailTransaction = args => async (dispatch, getState, { serviceInjector }) => {
@@ -35,6 +37,8 @@ export const createMailTransaction = args => async (dispatch, getState, { servic
     const mailTransactionsGroupByThreadId = _.groupBy(mailTransactions, mailTransaction => {
       return mailTransaction.threadId;
     });
+    await dispatch(walletActions.getBalance());
+    dispatch(walletActions.createTransactionSuccess({ transactions: transactions }));
     dispatch(
       createMailTransactionSuccess({
         mailTransactions: mailTransactionsGroupByThreadId,
@@ -50,30 +54,42 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
   try {
     const {
       mail: { nextTransactionCursor: startkey, isLoadingMailTransactions },
+      wallet: { transactions, isLoadingTransactions },
     } = getState();
-    if (!isLoadingMailTransactions) {
+    if (!isLoadingMailTransactions && !isLoadingTransactions) {
       dispatch(getMailTransactionsRequest());
       if (startkey) {
         options.startkey = startkey;
       }
       if (options.diff) {
+        options.endkey = transactions.length > 0 ? transactions[0].txId : null;
+        await dispatch(walletActions.getTransactions({ diff: true }));
+        await dispatch(walletActions.updateTransactionsConfirmations());
         const { mailTransactions } = await serviceInjector(MailService).getMailTransactions(
           options
         );
-        await dispatch(walletActions.getAllpayHandles());
-        await dispatch(walletActions.getUnregisteredNames());
         dispatch(getDiffMailTransactionsSuccess({ mailTransactions }));
       } else {
+        await dispatch(walletActions.getTransactions({ limit: 10 }));
+        await dispatch(walletActions.updateTransactionsConfirmations());
         const { mailTransactions, nextTransactionCursor } = await serviceInjector(
           MailService
         ).getMailTransactions(options);
-        await dispatch(walletActions.getAllpayHandles());
-        await dispatch(walletActions.getUnregisteredNames());
-        dispatch(getMailTransactionsSuccess({ mailTransactions }));
+        dispatch(getMailTransactionsSuccess({ mailTransactions, nextTransactionCursor }));
       }
     }
   } catch (error) {
     dispatch(getMailTransactionsFailure());
+    throw error;
+  }
+};
+
+export const updateTransaction = transaction => async (dispatch, getState, { serviceInjector }) => {
+  try {
+    const updatedTransaction = await serviceInjector(MailService).updateTransaction(transaction);
+    dispatch(updateTransactionSuccess(updatedTransaction));
+  } catch (error) {
+    console.log(error);
     throw error;
   }
 };

@@ -8,6 +8,7 @@ import { utils } from 'allegory-allpay-sdk';
 import RenderOutput from './RenderOutput';
 import * as walletActions from '../walletActions';
 import * as walletSelectors from '../walletSelectors';
+import images from '../../shared/images';
 
 class RecentTransaction extends React.Component {
   constructor(props) {
@@ -88,29 +89,27 @@ class RecentTransaction extends React.Component {
     if (
       transaction.additionalInfo &&
       (transaction.additionalInfo.type === 'Purchase' ||
-        transaction.additionalInfo.type === 'Proxy registration')
+        transaction.additionalInfo.type === 'AllPay registration')
     ) {
       return (
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
           <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
-            {`${transaction.additionalInfo.type} : ${transaction.additionalInfo.value}`}
-            {' : '}
-            {
-              // this.renderAllPaySendInfo(transaction.additionalInfo.value)
-            }
-            {this.toFromArrow(transaction)}
+            {`${transaction.additionalInfo.type} : ${transaction.additionalInfo.value} `}
+            {this.renderToFromArrow(transaction)}
           </span>
         </Grid.Column>
       );
-    } else if (transaction.additionalInfo && transaction.additionalInfo.type === 'Allpay Send') {
+    } else if (
+      transaction.additionalInfo &&
+      transaction.additionalInfo.type === 'Allpay Send' &&
+      (transaction.additionalInfo.value.senderInfo ||
+        transaction.additionalInfo.value.recipientInfo)
+    ) {
       return (
         <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
           <span className='monospace word-wrap recentTxidAddress purplefontcolor fontWeightBold'>
-            {
-              // `${transaction.additionalInfo.type} : `
-            }
             {this.renderAllPaySendInfo(transaction.additionalInfo.value)}
           </span>
         </Grid.Column>
@@ -133,7 +132,7 @@ class RecentTransaction extends React.Component {
       );
     } else {
       return (
-        <Grid.Column computer={10} mobile={8} className='recentTxidAddressColumn'>
+        <Grid.Column computer={10} mobile={9} className='recentTxidAddressColumn'>
           <Icon name='dropdown' className='dropdownTriangle purplefontcolor' />
           <span className='monospace word-wrap recentTxidAddress'>{transaction.txId}</span>{' '}
           <Link to={'/explorer/transaction/' + transaction.txId}>
@@ -141,63 +140,59 @@ class RecentTransaction extends React.Component {
               <i className='walletLink'></i>
             </span>
           </Link>
-          {
-            //this.transactionSentReceived(transaction)
-          }
-          {this.toFromArrow(transaction)}
+          {this.renderToFromArrow(transaction)}
         </Grid.Column>
       );
     }
   }
 
   renderAllPaySendInfo({ senderInfo, recipientInfo }) {
-    let returnArray = [];
     if (senderInfo) {
       if (typeof senderInfo === 'object') {
-        returnArray.push(
+        return (
           <span>
             {' : '}
-            {senderInfo.commonMetaData.recepient} <span className='toArrow'>&#129133; </span>{' '}
+            {senderInfo.commonMetaData.recepient}{' '}
+            <img alt='To' src={images.yellowArrow} className='toFromIcons' />{' '}
           </span>
         );
       } else {
-        returnArray.push(
+        return (
           <span>
-            {senderInfo} <span className='toArrow'>&#129133; </span>{' '}
+            {senderInfo} <img alt='To' src={images.yellowArrow} className='toFromIcons' />{' '}
           </span>
         );
       }
-      return returnArray;
-    }
-    if (recipientInfo) {
+    } else if (recipientInfo) {
       if (typeof recipientInfo === 'object') {
-        returnArray.push(
+        return (
           <span>
             {' : '}
-            {recipientInfo.commonMetaData.sender} <span className='fromArrow'>&#129134; </span>{' '}
+            {recipientInfo.commonMetaData.sender}{' '}
+            <img alt='From' src={images.greenArrow} className='toFromIcons' />{' '}
           </span>
         );
       } else {
-        returnArray.push(
+        return (
           <span>
-            {recipientInfo} <span className='fromArrow'>&#129134; </span>{' '}
+            {recipientInfo} <img alt='From' src={images.greenArrow} className='toFromIcons' />{' '}
           </span>
         );
       }
-      return returnArray;
     }
+    return null;
   }
 
-  toFromArrow(transaction) {
+  renderToFromArrow(transaction) {
     const { inputs: txInps, outputs: txOuts } = transaction;
     let returnArray = [];
     let breakException = {};
     try {
-      txInps.forEach(input => {
+      txInps.forEach((input, index) => {
         if (input.isMine) {
           returnArray.push(
-            <span>
-              <span className='toArrow'>&#129133; </span>{' '}
+            <span key={index.toString()}>
+              <img alt='To' src={images.yellowArrow} className='toFromIcons' />{' '}
             </span>
           );
           throw breakException;
@@ -208,11 +203,11 @@ class RecentTransaction extends React.Component {
       return returnArray;
     }
     try {
-      txOuts.forEach(output => {
+      txOuts.forEach((output, index) => {
         if (output.isMine) {
           returnArray.push(
-            <span>
-              <span className='fromArrow'>&#129134; </span>{' '}
+            <span key={index.toString()}>
+              <img alt='From' src={images.greenArrow} className='toFromIcons' />{' '}
             </span>
           );
           throw breakException;
@@ -313,15 +308,17 @@ class RecentTransaction extends React.Component {
                     ) : (
                       <Grid.Row className='paddingTop28px'>
                         <Grid.Column width='16' className='recentTxidAddressColumn'>
-                          <span className='monospace word-wrap paddingLeftRight14px'>
-                            <span className='purplefontcolor fontWeightBold'>TxID : </span>
-                            {transaction.txId}
-                          </span>{' '}
-                          <Link to={'/explorer/transaction/' + transaction.txId}>
-                            <span className='padding10px'>
-                              <i className='walletLink'></i>
-                            </span>
-                          </Link>
+                          <div className='paddingLeftRight14px'>
+                            <span className='monospace word-wrap'>
+                              <span className='purplefontcolor fontWeightBold'>TxID : </span>
+                              {transaction.txId}
+                            </span>{' '}
+                            <Link to={'/explorer/transaction/' + transaction.txId}>
+                              <span className='padding10px'>
+                                <i className='walletLink'></i>
+                              </span>
+                            </Link>
+                          </div>
                         </Grid.Column>
                       </Grid.Row>
                     )}

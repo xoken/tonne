@@ -430,7 +430,7 @@ class ExplorerDashboard extends React.Component {
             </Grid>
             <Grid>
               <Grid.Row>
-                <Grid.Column textAlign='center'>
+                <Grid.Column textAlign='center' style={{ overflow: 'auto' }}>
                   <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
                 </Grid.Column>
               </Grid.Row>

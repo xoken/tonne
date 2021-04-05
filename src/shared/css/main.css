@@ -965,12 +965,11 @@ body {
 }
 
 .walletLink {
-  scale: 66%;
   box-sizing: border-box;
   position: relative;
   display: inline-block;
   vertical-align: middle;
-  transform: rotate(-45deg) scale(var(--ggs, 1));
+  transform: rotate(-45deg) scale(0.7);
   width: 7px;
   height: 2px;
   background: currentColor;
@@ -1107,4 +1106,15 @@ body {
 }
 .fullMailBorder{
   border-left:2px solid #fafafa;
+}
+.readMail{
+  background-color: #fafafa;
+}
+.unreadMail{
+  background-color: white;
+}
+.toFromIcons{
+  display: inline;
+  width:30px;
+  vertical-align: middle;
 }

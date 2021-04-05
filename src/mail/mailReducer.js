@@ -8,16 +8,40 @@ const INITIAL_STATE = {
   isLoadingMailTransactions: false,
 };
 
+function updateExistingThreadIdValue(newMailTx, existingMailTx) {
+  let tempExistingMailTx = existingMailTx,
+    existingThreadArray = existingMailTx[Object.keys(newMailTx)[0]];
+  let tempVal = Object.values(newMailTx)[0];
+  let updatedNewObject = {};
+  delete tempExistingMailTx[Object.keys(newMailTx)[0]];
+  updatedNewObject[Object.keys(newMailTx)[0]] = Object.values(newMailTx)[0].concat(
+    existingThreadArray
+  );
+  return { ...updatedNewObject, ...tempExistingMailTx };
+}
+
+function updateMailTransaction(updatedtransaction, mailTransactions) {
+  let tempMailTransactions = mailTransactions;
+  Object.values(tempMailTransactions[updatedtransaction.threadId]).map((transaction, index) => {
+    if (transaction.txId === updatedtransaction.txId) {
+      tempMailTransactions[updatedtransaction.threadId][index] = updatedtransaction;
+    }
+  });
+  return tempMailTransactions;
+}
+
 export default createReducer(
   {
     [actions.createMailTransactionRequest]: state => ({
       ...state,
-      isLoadingMailTransactions: true,
     }),
     [actions.createMailTransactionSuccess]: (state, { mailTransactions }) => ({
       ...state,
-      mailTransactions: { ...mailTransactions, ...state.mailTransactions },
-      isLoadingMailTransactions: false,
+      mailTransactions: Object.keys(state.mailTransactions).includes(
+        Object.keys(mailTransactions)[0]
+      )
+        ? updateExistingThreadIdValue(mailTransactions, state.mailTransactions)
+        : { ...mailTransactions, ...state.mailTransactions },
     }),
     [actions.getMailTransactionsRequest]: state => ({
       ...state,
@@ -32,8 +56,20 @@ export default createReducer(
     }),
     [actions.getDiffMailTransactionsSuccess]: (state, { mailTransactions }) => ({
       ...state,
-      mailTransactions: { ...mailTransactions, ...state.mailTransactions },
+      mailTransactions: Object.keys(state.mailTransactions).includes(
+        Object.keys(mailTransactions)[0]
+      )
+        ? updateExistingThreadIdValue(mailTransactions, state.mailTransactions)
+        : { ...mailTransactions, ...state.mailTransactions },
       isLoadingMailTransactions: false,
+    }),
+    [actions.getMailTransactionsFailure]: state => ({
+      ...state,
+      isLoadingMailTransactions: false,
+    }),
+    [actions.updateTransactionSuccess]: (state, updatedTransaction) => ({
+      ...state,
+      mailTransactions: updateMailTransaction(updatedTransaction, state.mailTransactions),
     }),
     [authActions.logoutSuccess]: state => ({
       ...INITIAL_STATE,

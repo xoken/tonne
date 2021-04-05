@@ -12,6 +12,8 @@ const images = {
   paperRockets: require('./images/paper1.png'),
   strange: require('./images/strange.png'),
   voxmail: require('./images/voxmail.png'),
+  greenArrow: require('./images/greenarrow.png'),
+  yellowArrow: require('./images/yellowarrow.png'),
 };
 
 export default images;

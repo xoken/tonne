@@ -1,11 +1,9 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { EditorState, convertToRaw } from 'draft-js';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Editor } from 'react-draft-wysiwyg';
 import draftToHtml from 'draftjs-to-html';
-import htmlToDraft from 'html-to-draftjs';
-import { Grid } from 'semantic-ui-react';
 import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 
 class TextEditor extends React.Component {
@@ -31,7 +29,7 @@ class TextEditor extends React.Component {
       <Editor
         toolbarHidden={toolbarHidden}
         editorState={editorState}
-        placeholder='Type your message & drop files here...'
+        placeholder='Type your message here...'
         wrapperClassName='demo-wrapper'
         editorClassName='demo-editor'
         onEditorStateChange={this.onEditorStateChange}

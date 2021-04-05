@@ -17,6 +17,16 @@ class NewWallet extends React.Component {
     this.mndupl = [];
   }
 
+  componentDidMount() {
+    const { bip39Mnemonic, dispatch } = this.props;
+    if (!bip39Mnemonic) {
+      dispatch(authActions.generateMnemonic());
+      this.setState({ continue: true });
+    } else {
+      this.setState({ continue: true });
+    }
+  }
+
   generateMnemonic = () => {
     const { dispatch } = this.props;
     dispatch(authActions.generateMnemonic());
@@ -43,13 +53,9 @@ class NewWallet extends React.Component {
   renderContinue() {
     if (this.state.continue) {
       return (
-        <Grid.Row>
-          <Grid.Column textAlign='center'>
-            <Button className='coral' onClick={this.onContinue}>
-              Continue
-            </Button>
-          </Grid.Column>
-        </Grid.Row>
+        <Button className='coral' onClick={this.onContinue}>
+          Continue
+        </Button>
       );
     }
   }
@@ -111,12 +117,12 @@ class NewWallet extends React.Component {
         </Grid.Row>
         <Grid.Row>
           <Grid.Column textAlign='center'>
-            <Button className='coral' onClick={this.generateMnemonic}>
-              Generate Mnemonic
+            <Button basic className='borderless' onClick={this.generateMnemonic}>
+              Generate Fresh Mnemonic
             </Button>
+            {this.renderContinue()}
           </Grid.Column>
         </Grid.Row>
-        {this.renderContinue()}
       </Grid>
     );
   }

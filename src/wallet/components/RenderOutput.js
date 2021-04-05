@@ -45,7 +45,7 @@ class RenderOutput extends React.Component {
                 if (name) {
                   return (
                     <>
-                      Proxy registration : <i>{utils.codePointToName(name)}</i>{' '}
+                      AllPay registration : <i>{utils.codePointToName(name)}</i>{' '}
                     </>
                   );
                 }
@@ -59,13 +59,15 @@ class RenderOutput extends React.Component {
             } else if (action instanceof allegory.ProducerAction) {
               const producerAction = action;
               if (producerAction.extensions.length > 0) {
-                const producerExtensions = producerAction.extensions.map(extension => {
-                  return {
-                    codePoint: extension.codePoint,
-                  };
+                const ownerExtensions = producerAction.extensions.filter(extension => {
+                  if (extension instanceof allegory.OwnerExtension) {
+                    return true;
+                  } else {
+                    return false;
+                  }
                 });
-                const producerCodePoints = producerExtensions.map(({ codePoint }) => codePoint);
-                const namePurchased = utils.codePointToName([...name, ...producerCodePoints]);
+                const ownerCodePoints = ownerExtensions.map(({ codePoint }) => codePoint);
+                const namePurchased = utils.codePointToName([...name, ...ownerCodePoints]);
                 return (
                   <>
                     Purchase: <i>{namePurchased}</i>{' '}

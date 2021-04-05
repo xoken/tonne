@@ -10,6 +10,9 @@ class MailService {
   async getMailTransactions(options) {
     return await wallet.getMailTransactions(options);
   }
+  async updateTransaction(transaction) {
+    return await wallet.updateTransaction(transaction);
+  }
 }
 
 export default MailService;
