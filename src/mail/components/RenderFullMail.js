@@ -359,8 +359,12 @@ class RenderFullMail extends React.Component {
 
   updateToValueHTML = tempToValue => {
     let toValueHtml;
-    toValueHtml = tempToValue.forEach((toAddress, index) => {
-      if (toAddress) {
+    toValueHtml = tempToValue
+      .filter(toAddress => {
+        if (toAddress) return true;
+        return false;
+      })
+      .map((toAddress, index) => {
         return (
           <span key={index.toString()}>
             <span className='peach toFieldHighlight'>{toAddress}</span>
@@ -376,8 +380,7 @@ class RenderFullMail extends React.Component {
             )}
           </span>
         );
-      }
-    });
+      });
     this.setState({ toAllFieldHtml: toValueHtml });
   };
 
