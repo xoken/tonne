@@ -50,19 +50,19 @@ class SendMail extends React.Component {
   };
 
   componentDidMount() {
-    // window.addEventListener('dragenter', this.onDragOverEnter);
-    // window.addEventListener('dragover', this.onDragOverEnter);
-    // window.addEventListener('drop', this.onFileDrop);
-    // document.getElementById('files').addEventListener('dragleave', this.onDragLeave);
+    window.addEventListener('dragenter', this.onDragOverEnter);
+    window.addEventListener('dragover', this.onDragOverEnter);
+    window.addEventListener('drop', this.onFileDrop);
+    document.getElementById('files').addEventListener('dragleave', this.onDragLeave);
     this.setState({ toFieldWidth: this.maxWidthRef.current.offsetWidth - 27 });
     this.maxWidth = this.maxWidthRef.current.offsetWidth;
   }
 
   componentWillUnmount() {
-    // window.removeEventListener('dragenter', this.onDragOverEnter);
-    // window.removeEventListener('dragover', this.onDragOverEnter);
-    // window.removeEventListener('drop', this.onFileDrop);
-    // document.getElementById('email-attachments').removeEventListener('dragleave', this.onDragLeave);
+    window.removeEventListener('dragenter', this.onDragOverEnter);
+    window.removeEventListener('dragover', this.onDragOverEnter);
+    window.removeEventListener('drop', this.onFileDrop);
+    document.getElementById('files').removeEventListener('dragleave', this.onDragLeave);
   }
 
   onDragOverEnter = event => {
@@ -203,8 +203,12 @@ class SendMail extends React.Component {
 
   updateToValueHTML = tempToValue => {
     let toValueHtml;
-    toValueHtml = tempToValue.forEach((toAddress, index) => {
-      if (toAddress) {
+    toValueHtml = tempToValue
+      .filter(toAddress => {
+        if (toAddress) return true;
+        return false;
+      })
+      .map((toAddress, index) => {
         return (
           <span key={index.toString()}>
             <span className='peach toFieldHighlight'>{toAddress}</span>
@@ -216,8 +220,7 @@ class SendMail extends React.Component {
             </span>
           </span>
         );
-      }
-    });
+      });
     this.setState({ toFieldHtml: toValueHtml });
   };
 
@@ -309,6 +312,7 @@ class SendMail extends React.Component {
 
   render() {
     const {
+      files,
       message,
       toField,
       toFieldTemp,
@@ -369,11 +373,17 @@ class SendMail extends React.Component {
                   onMessageBodyFieldChange={this.onMessageBodyFieldChange}
                 />
               </span>
-              <label htmlFor='email-attachments'>
-                <Icon name='paperclip' size='large' />
+
+              <label htmlFor='file-attach'>
+                <Icon
+                  name='paperclip'
+                  size='large'
+                  style={{ cursor: 'pointer', display: 'block', marginTop: '30px' }}
+                />
               </label>
               <Input
-                id='email-attachments'
+                id='file-attach'
+                style={{ display: 'none' }}
                 type='file'
                 multiple='multiple'
                 onChange={this.onFilesAttach}
@@ -383,6 +393,8 @@ class SendMail extends React.Component {
           <Grid.Row>
             <Grid.Column>
               <div className={isError ? 'colorRed' : 'colorGreen'}>{message}</div>
+
+              {files ? <Grid>{this.fileNameList()}</Grid> : ''}
             </Grid.Column>
           </Grid.Row>
           <Grid.Row centered>

@@ -25,6 +25,8 @@ class MailDashboard extends React.Component {
 
   async componentDidMount() {
     const { mailTransactions, dispatch } = this.props;
+    this.getWindowWidth();
+    window.addEventListener('resize', this.getWindowWidth);
     if (Object.keys(mailTransactions).length === 0) {
       try {
         await dispatch(mailActions.getMailTransactions({}));
@@ -36,8 +38,6 @@ class MailDashboard extends React.Component {
         console.log(error);
       }
     }
-    this.getWindowWidth();
-    window.addEventListener('resize', this.getWindowWidth);
   }
 
   componentWillUnmount() {

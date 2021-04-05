@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import { Button, Grid, Loader } from 'semantic-ui-react';
+import { Button, Grid, Loader, Icon, Input } from 'semantic-ui-react';
 import { EditorState, ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
 import { Editor } from 'react-draft-wysiwyg';
@@ -103,17 +103,17 @@ class RenderFullMail extends React.Component {
       });
     }
 
-    // window.addEventListener('dragenter', this.onDragOverEnter);
-    // window.addEventListener('dragover', this.onDragOverEnter);
-    // window.addEventListener('drop', this.onFileDrop);
-    // document.getElementById('file-attach').addEventListener('dragleave', this.onDragLeave);
+    window.addEventListener('dragenter', this.onDragOverEnter);
+    window.addEventListener('dragover', this.onDragOverEnter);
+    window.addEventListener('drop', this.onFileDrop);
+    document.getElementById('replyFiles').addEventListener('dragleave', this.onDragLeave);
   }
 
   componentWillUnmount() {
-    // window.removeEventListener('dragenter', this.onDragOverEnter);
-    // window.removeEventListener('dragover', this.onDragOverEnter);
-    // window.removeEventListener('drop', this.onFileDrop);
-    // document.getElementById('file-attach').removeEventListener('dragleave', this.onDragLeave);
+    window.removeEventListener('dragenter', this.onDragOverEnter);
+    window.removeEventListener('dragover', this.onDragOverEnter);
+    window.removeEventListener('drop', this.onFileDrop);
+    document.getElementById('replyFiles').removeEventListener('dragleave', this.onDragLeave);
   }
 
   componentDidUpdate() {
@@ -250,7 +250,7 @@ class RenderFullMail extends React.Component {
     if (files) {
       return Array.from(files).map((file, index) => {
         return (
-          <Grid.Row>
+          <Grid.Row key={index.toString()}>
             <Grid.Column>
               <b>{file.name} </b>
               <span
@@ -359,8 +359,12 @@ class RenderFullMail extends React.Component {
 
   updateToValueHTML = tempToValue => {
     let toValueHtml;
-    toValueHtml = tempToValue.forEach((toAddress, index) => {
-      if (toAddress) {
+    toValueHtml = tempToValue
+      .filter(toAddress => {
+        if (toAddress) return true;
+        return false;
+      })
+      .map((toAddress, index) => {
         return (
           <span key={index.toString()}>
             <span className='peach toFieldHighlight'>{toAddress}</span>
@@ -376,8 +380,7 @@ class RenderFullMail extends React.Component {
             )}
           </span>
         );
-      }
-    });
+      });
     this.setState({ toAllFieldHtml: toValueHtml });
   };
 
@@ -573,7 +576,7 @@ class RenderFullMail extends React.Component {
 
   render() {
     const { threadId } = this.props;
-    const { isError, replyMessageBodyField, message, replyField, isLoading } = this.state;
+    const { isError, files, replyMessageBodyField, message, replyField, isLoading } = this.state;
     return (
       <>
         <Grid
@@ -646,8 +649,23 @@ class RenderFullMail extends React.Component {
                         toolbarHidden={!replyField}
                         onMessageBodyFieldChange={this.onMessageBodyFieldChange}
                       />
+                      <label htmlFor='file-attach'>
+                        <Icon
+                          name='paperclip'
+                          size='large'
+                          style={{ cursor: 'pointer', display: 'block', marginTop: '30px' }}
+                        />
+                      </label>
+                      <Input
+                        id='file-attach'
+                        style={{ display: 'none' }}
+                        type='file'
+                        multiple='multiple'
+                        onChange={this.onFilesAttach}
+                      />
                     </div>
                     <div className='colorRed'>{isError ? message : ''}</div>
+                    {files ? <Grid>{this.fileNameList()}</Grid> : ''}
                     <br />
                     {isLoading ? (
                       <Loader active />
