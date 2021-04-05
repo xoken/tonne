@@ -148,7 +148,7 @@ class SendMail extends React.Component {
   };
 
   onToFieldChange = event => {
-    const { toField, toFieldRows, toFieldTemp } = this.state;
+    const { toField } = this.state;
     let eventTargetValue = event.target.value.toLowerCase();
     let uniqueRecipients = [];
     let maxWidthOfInput = this.maxWidthRef.current.offsetWidth;
@@ -182,7 +182,7 @@ class SendMail extends React.Component {
         tempToValue.push(temp[i]);
       }
       uniqueRecipients = tempToValue.filter(function (item, position, self) {
-        return self.indexOf(item) == position;
+        return self.indexOf(item) === position;
       });
     }
 
@@ -203,7 +203,7 @@ class SendMail extends React.Component {
 
   updateToValueHTML = tempToValue => {
     let toValueHtml;
-    toValueHtml = tempToValue.map((toAddress, index) => {
+    toValueHtml = tempToValue.forEach((toAddress, index) => {
       if (toAddress) {
         return (
           <span key={index.toString()}>
@@ -238,8 +238,8 @@ class SendMail extends React.Component {
   };
 
   onSend = async () => {
-    const { dispatch, isLoadingMailTransactions } = this.props;
-    const { toField, subjectField, messageBodyField, files, toFieldTemp } = this.state;
+    const { dispatch } = this.props;
+    const { toField, subjectField, messageBodyField, files } = this.state;
     let filteredToField = [],
       closeModalTimer = 0;
     const formData = new FormData();
@@ -309,19 +309,15 @@ class SendMail extends React.Component {
 
   render() {
     const {
-      files,
       message,
       toField,
       toFieldTemp,
       toFieldHtml,
       subjectField,
-      messageBodyField,
       toFieldWidth,
-      toFieldRows,
       isError,
       isLoading,
     } = this.state;
-    const { isLoadingMailTransactions } = this.props;
     return (
       <>
         <Grid>

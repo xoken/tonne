@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import { Button, Grid, Input, Icon, Loader } from 'semantic-ui-react';
+import { Button, Grid, Loader } from 'semantic-ui-react';
 import { EditorState, ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
 import { Editor } from 'react-draft-wysiwyg';
@@ -35,14 +35,16 @@ class RenderFullMail extends React.Component {
     const { currentlyOpenMailData, threadId } = this.props;
     if (currentlyOpenMailData[0].additionalInfo.value.senderInfo) {
       let recipientList = [];
-      currentlyOpenMailData.map(openMailData => {
+      currentlyOpenMailData.forEach(openMailData => {
         if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
-          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
-            recipientList.push(recepient);
-          });
+          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.forEach(
+            recepient => {
+              recipientList.push(recepient);
+            }
+          );
         }
         if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
-          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.forEach(
             recepient => {
               recipientList.push(recepient);
             }
@@ -67,18 +69,20 @@ class RenderFullMail extends React.Component {
       });
     } else {
       let recipientList = [];
-      currentlyOpenMailData.map(openMailData => {
+      currentlyOpenMailData.forEach(openMailData => {
         if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
-          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.forEach(
             recepient => {
               recipientList.push(recepient);
             }
           );
         }
         if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
-          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
-            recipientList.push(recepient);
-          });
+          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.forEach(
+            recepient => {
+              recipientList.push(recepient);
+            }
+          );
         }
         if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.sender) {
           recipientList.push(openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender);
@@ -117,14 +121,16 @@ class RenderFullMail extends React.Component {
       const { currentlyOpenMailData, threadId } = this.props;
       if (currentlyOpenMailData[0].additionalInfo.value.senderInfo) {
         let recipientList = [];
-        currentlyOpenMailData.map(openMailData => {
+        currentlyOpenMailData.forEach(openMailData => {
           if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
-            openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
-              recipientList.push(recepient);
-            });
+            openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.forEach(
+              recepient => {
+                recipientList.push(recepient);
+              }
+            );
           }
           if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
-            openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+            openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.forEach(
               recepient => {
                 recipientList.push(recepient);
               }
@@ -157,18 +163,20 @@ class RenderFullMail extends React.Component {
         });
       } else {
         let recipientList = [];
-        currentlyOpenMailData.map(openMailData => {
+        currentlyOpenMailData.forEach(openMailData => {
           if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
-            openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+            openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.forEach(
               recepient => {
                 recipientList.push(recepient);
               }
             );
           }
           if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
-            openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
-              recipientList.push(recepient);
-            });
+            openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.forEach(
+              recepient => {
+                recipientList.push(recepient);
+              }
+            );
           }
           if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.sender) {
             recipientList.push(
@@ -259,11 +267,10 @@ class RenderFullMail extends React.Component {
   };
 
   replyFieldToggle = () => {
-    const { replyField, toField } = this.state;
     this.setState({ replyField: true, replyAll: false });
   };
   replyAllFieldToggle = () => {
-    const { replyField, toAllField, replyAll } = this.state;
+    const { toAllField, replyAll } = this.state;
     if (!replyAll) {
       this.updateToValueHTML(toAllField);
     }
@@ -271,19 +278,21 @@ class RenderFullMail extends React.Component {
   };
 
   onReplyFieldClose = () => {
-    const { sentMail, toAllField } = this.state;
+    const { sentMail } = this.state;
     const { currentlyOpenMailData } = this.props;
     let recipientList = [],
       uniqueRecipients = [];
     if (sentMail) {
-      currentlyOpenMailData.map(openMailData => {
+      currentlyOpenMailData.forEach(openMailData => {
         if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
-          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
-            recipientList.push(recepient);
-          });
+          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.forEach(
+            recepient => {
+              recipientList.push(recepient);
+            }
+          );
         }
         if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
-          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.forEach(
             recepient => {
               recipientList.push(recepient);
             }
@@ -298,18 +307,20 @@ class RenderFullMail extends React.Component {
         return seen.hasOwnProperty(item) ? false : (seen[item] = true);
       });
     } else {
-      currentlyOpenMailData.map(openMailData => {
+      currentlyOpenMailData.forEach(openMailData => {
         if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.recepient) {
-          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.map(
+          openMailData.additionalInfo.value.recipientInfo.commonMetaData.recepient.forEach(
             recepient => {
               recipientList.push(recepient);
             }
           );
         }
         if (openMailData.additionalInfo.value.senderInfo?.commonMetaData?.recepient) {
-          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.map(recepient => {
-            recipientList.push(recepient);
-          });
+          openMailData.additionalInfo.value.senderInfo.commonMetaData.recepient.forEach(
+            recepient => {
+              recipientList.push(recepient);
+            }
+          );
         }
         if (openMailData.additionalInfo.value.recipientInfo?.commonMetaData?.sender) {
           recipientList.push(openMailData.additionalInfo.value.recipientInfo.commonMetaData.sender);
@@ -348,7 +359,7 @@ class RenderFullMail extends React.Component {
 
   updateToValueHTML = tempToValue => {
     let toValueHtml;
-    toValueHtml = tempToValue.map((toAddress, index) => {
+    toValueHtml = tempToValue.forEach((toAddress, index) => {
       if (toAddress) {
         return (
           <span key={index.toString()}>
@@ -395,7 +406,6 @@ class RenderFullMail extends React.Component {
   };
 
   onMessageBodyFieldChange = content => {
-    const { isError } = this.state;
     if (content.length > 8) {
       this.setState({ replyMessageBodyField: content, isError: false, message: '' });
     } else {
@@ -470,16 +480,13 @@ class RenderFullMail extends React.Component {
     let paddingLeft = 0;
     return currentlyOpenMailData.map((mail, index) => {
       let mailData = null,
-        sentMail = false,
-        receivedMail = false,
-        numberOfMails = mail.length;
+        sentMail = false;
 
       if (mail.additionalInfo.value.senderInfo) {
         mailData = mail.additionalInfo.value.senderInfo;
         sentMail = true;
       } else {
         mailData = mail.additionalInfo.value.recipientInfo;
-        receivedMail = true;
       }
 
       const blocksFromHtml = htmlToDraft(mailData.body);
@@ -577,7 +584,6 @@ class RenderFullMail extends React.Component {
             <Grid.Column computer={16} mobile={16} floated='right'>
               <div
                 style={{
-                  color: 'lightgrey',
                   cursor: 'pointer',
                   padding: '8px',
                   color: 'red',

@@ -11,7 +11,6 @@ const INITIAL_STATE = {
 function updateExistingThreadIdValue(newMailTx, existingMailTx) {
   let tempExistingMailTx = existingMailTx,
     existingThreadArray = existingMailTx[Object.keys(newMailTx)[0]];
-  let tempVal = Object.values(newMailTx)[0];
   let updatedNewObject = {};
   delete tempExistingMailTx[Object.keys(newMailTx)[0]];
   updatedNewObject[Object.keys(newMailTx)[0]] = Object.values(newMailTx)[0].concat(
@@ -22,7 +21,7 @@ function updateExistingThreadIdValue(newMailTx, existingMailTx) {
 
 function updateMailTransaction(updatedtransaction, mailTransactions) {
   let tempMailTransactions = mailTransactions;
-  Object.values(tempMailTransactions[updatedtransaction.threadId]).map((transaction, index) => {
+  Object.values(tempMailTransactions[updatedtransaction.threadId]).forEach((transaction, index) => {
     if (transaction.txId === updatedtransaction.txId) {
       tempMailTransactions[updatedtransaction.threadId][index] = updatedtransaction;
     }

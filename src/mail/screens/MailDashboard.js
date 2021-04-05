@@ -2,11 +2,10 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import { Grid, Button, Icon, Loader, Modal, Segment } from 'semantic-ui-react';
+import { Grid, Button, Icon, Loader, Modal } from 'semantic-ui-react';
 import SendMail from '../components/SendMail';
 import RenderFullMail from '../components/RenderFullMail';
 import * as mailActions from '../mailActions';
-import * as walletSelectors from '../../wallet/walletSelectors';
 import * as mailSelectors from '../mailSelectors';
 import { format } from 'date-fns';
 import images from '../../shared/images';
@@ -25,7 +24,7 @@ class MailDashboard extends React.Component {
   }
 
   async componentDidMount() {
-    const { transactions, mailTransactions, dispatch } = this.props;
+    const { mailTransactions, dispatch } = this.props;
     if (Object.keys(mailTransactions).length === 0) {
       try {
         await dispatch(mailActions.getMailTransactions({}));
@@ -71,8 +70,7 @@ class MailDashboard extends React.Component {
   };
 
   combinedMailsSection() {
-    const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
-    const { currentlyOpenMailData, toggleFullMailPane } = this.state;
+    const { mailTransactions } = this.props;
 
     if (Object.keys(mailTransactions).length !== 0) {
       return Object.values(mailTransactions).map((mail, index) => {
@@ -249,7 +247,7 @@ class MailDashboard extends React.Component {
   }
 
   mailOnClick = async currOpenMailData => {
-    const { toggleFullMailPane, updated } = this.state;
+    const { toggleFullMailPane } = this.state;
     const { dispatch } = this.props;
     if (toggleFullMailPane) {
       this.setState({
@@ -331,7 +329,7 @@ class MailDashboard extends React.Component {
 
   render() {
     const { toggleFullMailPane, currentlyOpenMailData, windowWidth } = this.state;
-    const { allpayHandles, mailTransactions, isLoadingMailTransactions } = this.props;
+    const { allpayHandles, isLoadingMailTransactions } = this.props;
 
     if (allpayHandles && allpayHandles.length === 0 && isLoadingMailTransactions) {
       return <Loader active />;
@@ -427,7 +425,6 @@ const mapStateToProps = state => ({
   allpayHandles: state.wallet.allpayHandles,
   isLoadingMailTransactions: mailSelectors.isLoadingMailTransactions(state),
   mailTransactions: mailSelectors.getMailTransactions(state),
-  transactions: walletSelectors.getTransactions(state),
   nextTransactionCursor: state.mail.nextTransactionCursor,
 });
 
