@@ -1113,3 +1113,8 @@ body {
 .unreadMail{
   background-color: white;
 }
+.toFromIcons{
+  display: inline;
+  width:30px;
+  vertical-align: middle;
+}
