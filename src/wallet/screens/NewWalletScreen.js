@@ -6,8 +6,15 @@ import NewWallet from '../components/NewWallet';
 
 class NewWalletScreen extends React.Component {
   onContinue = () => {
-    const { history } = this.props;
-    history.push('/wallet/password');
+    const {
+      history,
+      location: { pathname },
+    } = this.props;
+    if (pathname === '/mail/new') {
+      history.push('/mail/password');
+    } else {
+      history.push('/wallet/password');
+    }
   };
 
   render() {

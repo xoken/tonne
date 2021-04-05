@@ -8,7 +8,6 @@ import Home from './shared/components/home';
 import NoMatch from './shared/components/noMatch';
 import SettingsScreen from './settings/screens/SettingsScreen';
 import WalletRoute from './wallet/screens/WalletRoute';
-import MailRoute from './mail/screens/MailRoute';
 import Header from './shared/components/Header';
 import Footer from './shared/components/Footer';
 import TwitterAuthSuccess from './claimTwitterHandle/screens/TwitterAuthSuccess';
@@ -48,7 +47,7 @@ class App extends React.Component {
                   <ExplorerHome />
                 </Route>
                 <Route path='/mail'>
-                  <MailRoute />
+                  <WalletRoute />
                 </Route>
                 <Route exact path='/'>
                   <Home />

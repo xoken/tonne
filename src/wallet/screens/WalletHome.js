@@ -14,10 +14,19 @@ class WalletHome extends React.Component {
   }
 
   onSelectProfile = profile => () => {
-    this.props.history.push(`/wallet/login?profile=${profile}`);
+    const {
+      history,
+      location: { pathname },
+    } = this.props;
+    if (pathname === '/mail') {
+      history.push(`/mail/login?profile=${profile}`);
+    } else {
+      history.push(`/wallet/login?profile=${profile}`);
+    }
   };
 
   renderContent() {
+    const { path } = this.props.match;
     const { profiles } = this.props;
     return (
       <div style={{ marginBottom: '100px', height: '100%', verticalAlign: 'middle' }}>
@@ -41,7 +50,7 @@ class WalletHome extends React.Component {
                     <Grid.Column>
                       <Header className='purplefontcolor'>I already have a seed phrase</Header>
                       <p>Import your existing wallet using a 12 word seed phrase</p>
-                      <Link to='/wallet/existing' className='ui coral button'>
+                      <Link to={`${path}/existing`} className='ui coral button'>
                         Import Wallet
                       </Link>
                     </Grid.Column>
@@ -51,7 +60,7 @@ class WalletHome extends React.Component {
                     <Grid.Column>
                       <Header className='purplefontcolor'>Yes, let's get set up!</Header>
                       <p>This will create a new wallet and seed phrase</p>
-                      <Link to='/wallet/new' className='ui coral button'>
+                      <Link to={`${path}/new`} className='ui coral button'>
                         Create a Wallet
                       </Link>
                     </Grid.Column>

@@ -6,7 +6,6 @@ import { EditorState, ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
 import { Editor } from 'react-draft-wysiwyg';
 import TextEditor from '../components/TextEditor';
-import '../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css';
 import * as mailActions from '../mailActions';
 import { format } from 'date-fns';
 import images from '../../shared/images';
