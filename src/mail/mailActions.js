@@ -54,9 +54,9 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
   try {
     const {
       mail: { nextTransactionCursor: startkey, isLoadingMailTransactions },
-      wallet: { transactions, isLoadingTransactions },
+      wallet: { transactions },
     } = getState();
-    if (!isLoadingMailTransactions && !isLoadingTransactions) {
+    if (!isLoadingMailTransactions) {
       dispatch(getMailTransactionsRequest());
       if (startkey) {
         options.startkey = startkey;
