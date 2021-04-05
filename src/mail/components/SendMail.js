@@ -1,12 +1,10 @@
 import React from 'react';
-//import axios from 'axios';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import { Button, Grid, Input, Icon, Loader } from 'semantic-ui-react';
 import TextEditor from '../components/TextEditor';
 import * as mailActions from '../mailActions';
 import * as mailSelectors from '../mailSelectors';
-import { allPay } from 'allegory-allpay-sdk';
 
 class SendMail extends React.Component {
   constructor(props) {
@@ -375,18 +373,6 @@ class SendMail extends React.Component {
                   onMessageBodyFieldChange={this.onMessageBodyFieldChange}
                 />
               </span>
-              {
-                // <TextArea
-                //   fluid
-                //   id='files'
-                //   type='text'
-                //   className='form-control'
-                //   value={messageBodyField}
-                //   placeholder='Type your message here / Drop files here...'
-                //   style={{ width: '100%', height: '300px' }}
-                //   onChange={event => this.setState({ messageBodyField: event.target.value })}
-                // />
-              }
               <label htmlFor='email-attachments'>
                 <Icon name='paperclip' size='large' />
               </label>
@@ -400,9 +386,6 @@ class SendMail extends React.Component {
           </Grid.Row>
           <Grid.Row>
             <Grid.Column>
-              {
-                // files ? <Grid>{this.fileNameList()}</Grid> : ''
-              }
               <div className={isError ? 'colorRed' : 'colorGreen'}>{message}</div>
             </Grid.Column>
           </Grid.Row>

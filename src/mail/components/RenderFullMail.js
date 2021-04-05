@@ -411,22 +411,12 @@ class RenderFullMail extends React.Component {
   onReply = async () => {
     const { dispatch, currentlyOpenMailData } = this.props;
     const { replyMessageBodyField, files, subject, toField, toAllField, replyAll } = this.state;
-    // let subject, toField;
     const formData = new FormData();
     if (files) {
       for (let i = 0; i < files.length; i++) {
         formData.append('File', files[i], files[i].name);
       }
     }
-    // if (currentlyOpenMailData[0].additionalInfo.value.senderInfo) {
-    //   subject = currentlyOpenMailData[0].additionalInfo.value.senderInfo.commonMetaData.subject;
-    //   toField =
-    //     currentlyOpenMailData[0].additionalInfo.value.senderInfo.commonMetaData.recepient[0];
-    // } else {
-    //   subject = currentlyOpenMailData[0].additionalInfo.value.recipientInfo.commonMetaData.subject;
-    //   toField = currentlyOpenMailData[0].additionalInfo.value.recipientInfo.commonMetaData.sender;
-    // }
-
     try {
       this.setState({ isLoading: true });
       await dispatch(
@@ -586,9 +576,6 @@ class RenderFullMail extends React.Component {
           }}>
           <Grid.Row>
             <Grid.Column computer={16} mobile={16} floated='right'>
-              {
-                //close pane
-              }
               <div
                 style={{
                   color: 'lightgrey',
@@ -655,25 +642,6 @@ class RenderFullMail extends React.Component {
                         onMessageBodyFieldChange={this.onMessageBodyFieldChange}
                       />
                     </div>
-                    {
-                      // <label htmlFor='file-attach'>
-                      //   <Icon
-                      //     name='paperclip'
-                      //     size='large'
-                      //     style={{ cursor: 'pointer' }}
-                      //     //  onClick={this.toggleAttachFileModal}
-                      //   />
-                      // </label>
-                      //
-                      // <Input
-                      //   id='file-attach'
-                      //   style={{ display: 'none' }}
-                      //   type='file'
-                      //   icon='paperclip'
-                      //   multiple='multiple'
-                      //   onChange={this.onFilesAttach}
-                      // />
-                    }
                     <div className='colorRed'>{isError ? message : ''}</div>
                     <br />
                     {isLoading ? (

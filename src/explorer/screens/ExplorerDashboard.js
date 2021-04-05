@@ -42,7 +42,6 @@ class ExplorerDashboard extends React.Component {
 
   blockheiinit = () => {
     if (this.blockhei !== '') {
-      //this.selected = (this.numberofpages - Math.ceil(this.blockhei/10));
       this.selected =
         this.numberofpages - Math.ceil((this.blockhei - (this.syncedblocksheight % 20)) / 20);
       if (this.selected === 0) {
@@ -403,11 +402,6 @@ class ExplorerDashboard extends React.Component {
     const { loading } = this.state;
     return (
       <>
-        {
-          //  <button className='backspc btn btn-primary' onClick={() => this.props.history.push('/')}>
-          //  Back
-          //    </button>
-        }
         {loading ? (
           <Loader active />
         ) : (

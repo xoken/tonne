@@ -12,11 +12,6 @@ class MailContainer extends React.Component {
       <>
         <MailHeader />
         <Switch>
-          {
-            // <PublicRoute path={`${path}/dashboard`}>
-            //   <MailDashboard />
-            // </PublicRoute>
-          }
           <PrivateRoute path={`${path}/dashboard`}>
             <MailDashboard />
           </PrivateRoute>
