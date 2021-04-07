@@ -75,7 +75,7 @@ export default class ExplorerHttpsReq {
           });
         break;
       case 'getTransactionsByTxIDs':
-        tobeReturned = await wallet._getTransactions(reqparameter[1][0]);
+        tobeReturned = await wallet._getTransactions(reqparameter[1]);
         break;
       default:
         console.log('typo in request');
