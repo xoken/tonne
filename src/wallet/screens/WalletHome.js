@@ -80,7 +80,6 @@ class WalletHome extends React.Component {
   render() {
     const {
       match: { path },
-      location: { pathname },
       isLoading,
       profile,
     } = this.props;

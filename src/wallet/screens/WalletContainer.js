@@ -12,7 +12,6 @@ class WalletContainer extends React.Component {
   render() {
     const {
       match: { path },
-      location: { pathname },
     } = this.props;
     return (
       <>
