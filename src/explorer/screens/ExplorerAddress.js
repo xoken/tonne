@@ -42,6 +42,7 @@ class ExplorerAddress extends React.Component {
       this.props.history.push(`/explorer/404`);
     } else {
       this.arrayoftxs.length = 0;
+      this.selected = 1;
       var temparray = [];
       for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
         if (this.rjdecoded.outputs[v].spendInfo) {
@@ -51,7 +52,9 @@ class ExplorerAddress extends React.Component {
           temparray.push(this.rjdecoded.outputs[v].outputTxHash);
         }
       }
-      this.arrayoftxs = Array.of(temparray);
+
+      this.arrayoftxs = Array.from(new Set(temparray));
+
       this.rjdecodedtx = await ExplorerHttpsReq.httpsreq('getTransactionsByTxIDs', this.arrayoftxs);
       this.pagearrayinit();
     }
@@ -379,7 +382,8 @@ class ExplorerAddress extends React.Component {
       for (var v = 0; v < Object.keys(this.rjdecodedtx.txs).length; v++) {
         temparray[v] = this.rjdecodedtx.txs[v].txId;
       }
-      this.arrayoftxs = Array.of(temparray);
+
+      this.arrayoftxs = Array.from(new Set(temparray));
 
       for (var i = 0; i < Object.keys(this.rjdecodedtx.txs).length; i++) {
         this.addressCache[this.cachecounter] = this.rjdecodedtx.txs[i];
@@ -471,7 +475,7 @@ class ExplorerAddress extends React.Component {
     }
     if (
       this.pagearray[this.pagearrlength - 1] !== this.totalpagesavailable ||
-      this.nextcursor != null
+      (this.nextcursor != null && this.totalpagesavailable >= this.fixedpagearrlength)
     ) {
       this.pagescontainer.push(
         <li className='page-item active'>
@@ -539,7 +543,8 @@ class ExplorerAddress extends React.Component {
             }
           }
 
-          this.arrayoftxs = Array.of(temparray);
+          this.arrayoftxs = Array.from(new Set(temparray));
+
           this.rjdecodedtx = await ExplorerHttpsReq.httpsreq(
             'getTransactionsByTxIDs',
             this.arrayoftxs
