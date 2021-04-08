@@ -18,8 +18,11 @@ class WalletContainer extends React.Component {
       <>
         <WalletHeader />
         <Switch>
-          <PrivateRoute path={`${path}/dashboard`}>
-            {pathname === '/mail/dashboard' ? <MailDashboard /> : <WalletDashboard />}
+          <PrivateRoute path='/wallet/dashboard'>
+            <WalletDashboard />
+          </PrivateRoute>
+          <PrivateRoute path='/mail/dashboard'>
+            <MailDashboard />
           </PrivateRoute>
           <PrivateRoute path={`${path}/allpay/transaction`}>
             <PartiallySignTransaction />

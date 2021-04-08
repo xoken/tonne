@@ -78,10 +78,18 @@ class WalletHome extends React.Component {
   }
 
   render() {
-    const { isLoading, profile } = this.props;
+    const {
+      match: { path },
+      location: { pathname },
+      isLoading,
+      profile,
+    } = this.props;
     if (isLoading) {
       return <Loader active size='massive' />;
     } else if (profile) {
+      if (path.includes('/mail')) {
+        return <Redirect to='/mail/dashboard' />;
+      }
       return <Redirect to='/wallet/dashboard' />;
     }
     return <>{this.renderContent()}</>;
