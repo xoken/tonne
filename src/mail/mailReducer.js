@@ -34,8 +34,12 @@ export default createReducer(
     [actions.createMailTransactionRequest]: state => ({
       ...state,
     }),
-    [actions.createMailTransactionSuccess]: (state, { mailTransactions }) => ({
+    [actions.createMailTransactionSuccess]: (
+      state,
+      { mailTransactions, nextTransactionCursor }
+    ) => ({
       ...state,
+      nextTransactionCursor: nextTransactionCursor || state.nextTransactionCursor,
       mailTransactions: Object.keys(state.mailTransactions).includes(
         Object.keys(mailTransactions)[0]
       )
@@ -49,17 +53,20 @@ export default createReducer(
     [actions.getMailTransactionsSuccess]: (state, { mailTransactions, nextTransactionCursor }) => ({
       ...state,
       mailTransactions: { ...mailTransactions },
-      nextTransactionCursor:
-        nextTransactionCursor !== undefined ? nextTransactionCursor : state.nextTransactionCursor,
+      nextTransactionCursor: nextTransactionCursor || state.nextTransactionCursor,
       isLoadingMailTransactions: false,
     }),
-    [actions.getDiffMailTransactionsSuccess]: (state, { mailTransactions }) => ({
+    [actions.getDiffMailTransactionsSuccess]: (
+      state,
+      { mailTransactions, nextTransactionCursor }
+    ) => ({
       ...state,
       mailTransactions: Object.keys(state.mailTransactions).includes(
         Object.keys(mailTransactions)[0]
       )
         ? updateExistingThreadIdValue(mailTransactions, state.mailTransactions)
         : { ...mailTransactions, ...state.mailTransactions },
+      nextTransactionCursor: nextTransactionCursor || state.nextTransactionCursor,
       isLoadingMailTransactions: false,
     }),
     [actions.getMailTransactionsFailure]: state => ({

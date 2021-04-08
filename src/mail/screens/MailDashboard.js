@@ -25,8 +25,6 @@ class MailDashboard extends React.Component {
 
   async componentDidMount() {
     const { mailTransactions, dispatch } = this.props;
-    this.getWindowWidth();
-    window.addEventListener('resize', this.getWindowWidth);
     if (Object.keys(mailTransactions).length === 0) {
       try {
         await dispatch(mailActions.getMailTransactions({}));
@@ -261,7 +259,6 @@ class MailDashboard extends React.Component {
       });
     }
     if (currOpenMailData[0].txId && !currOpenMailData[0].isReadMail) {
-      debugger;
       try {
         await dispatch(
           mailActions.updateTransaction({ ...currOpenMailData[0], ...{ isReadMail: true } })
