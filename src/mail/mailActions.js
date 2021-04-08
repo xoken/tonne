@@ -55,11 +55,11 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
   try {
     const {
       mail: { nextTransactionCursor: endkey, isLoadingMailTransactions },
-      wallet: { isLoadingTransactions },
+      wallet: { transactions, isLoadingTransactions },
     } = getState();
     if (!isLoadingMailTransactions && !isLoadingTransactions) {
       dispatch(getMailTransactionsRequest());
-      if (options.diff) {
+      if (options.diff || transactions.length > 0) {
         options.endkey = endkey;
         await dispatch(walletActions.getTransactions({ diff: true }));
         await dispatch(walletActions.updateTransactionsConfirmations());
