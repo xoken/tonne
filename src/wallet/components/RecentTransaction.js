@@ -146,13 +146,26 @@ class RecentTransaction extends React.Component {
     }
   }
 
+  renderRecipientNames(recipients) {
+    return recipients.map((recipient, index) => {
+      return (
+        <span key={index.toString()}>
+          {recipient}
+          {index < recipients.length - 1 ? ', ' : ''}
+        </span>
+      );
+    });
+  }
+
   renderAllPaySendInfo({ senderInfo, recipientInfo }) {
     if (senderInfo) {
       if (typeof senderInfo === 'object') {
         return (
           <span>
             {' : '}
-            {senderInfo.commonMetaData.recepient}{' '}
+            {senderInfo.commonMetaData.recepient.length > 1
+              ? this.renderRecipientNames(senderInfo.commonMetaData.recepient)
+              : senderInfo.commonMetaData.recepient}{' '}
             <img alt='To' src={images.yellowArrow} className='toFromIcons' />{' '}
           </span>
         );
