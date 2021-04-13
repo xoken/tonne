@@ -35,7 +35,7 @@ pipeline {
     stage('Build') {
       steps {
         dir(path: 'allegory-allpay-sdk') {
-          sh 'yum install'
+          sh 'yarn'
           sh 'npm run build'
         }
         dir(path: 'tonne') {
