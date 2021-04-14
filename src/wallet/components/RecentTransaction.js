@@ -163,9 +163,7 @@ class RecentTransaction extends React.Component {
         return (
           <span>
             {' : '}
-            {senderInfo.commonMetaData.recepient.length > 1
-              ? this.renderRecipientNames(senderInfo.commonMetaData.recepient)
-              : senderInfo.commonMetaData.recepient}{' '}
+            {this.renderRecipientNames(senderInfo.commonMetaData.recepient)}
             <img alt='To' src={images.yellowArrow} className='toFromIcons' />{' '}
           </span>
         );
