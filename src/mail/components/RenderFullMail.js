@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter, Link } from 'react-router-dom';
-import { Button, Grid, Loader, Icon, Input } from 'semantic-ui-react';
+import { Button, Grid, Icon, Input } from 'semantic-ui-react';
 import { EditorState, ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
 import { Editor } from 'react-draft-wysiwyg';
@@ -107,13 +107,6 @@ class RenderFullMail extends React.Component {
     window.addEventListener('dragover', this.onDragOverEnter);
     window.addEventListener('drop', this.onFileDrop);
     document.getElementById('replyFiles').addEventListener('dragleave', this.onDragLeave);
-  }
-
-  componentWillUnmount() {
-    window.removeEventListener('dragenter', this.onDragOverEnter);
-    window.removeEventListener('dragover', this.onDragOverEnter);
-    window.removeEventListener('drop', this.onFileDrop);
-    document.getElementById('replyFiles').removeEventListener('dragleave', this.onDragLeave);
   }
 
   componentDidUpdate() {
@@ -245,36 +238,8 @@ class RenderFullMail extends React.Component {
     event.preventDefault();
   };
 
-  fileNameList = () => {
-    const { files } = this.state;
-    if (files) {
-      return Array.from(files).map((file, index) => {
-        return (
-          <Grid.Row key={index.toString()}>
-            <Grid.Column>
-              <b>{file.name} </b>
-              <span
-                style={{ color: 'blue', cursor: 'pointer' }}
-                id={index}
-                onClick={this.onRemoveAttachedFile}>
-                X
-              </span>
-            </Grid.Column>
-          </Grid.Row>
-        );
-      });
-    }
-  };
-
   replyFieldToggle = () => {
     this.setState({ replyField: true, replyAll: false });
-  };
-  replyAllFieldToggle = () => {
-    const { toAllField, replyAll } = this.state;
-    if (!replyAll) {
-      this.updateToValueHTML(toAllField);
-    }
-    this.setState({ replyField: true, replyAll: true });
   };
 
   onReplyFieldClose = () => {
@@ -334,54 +299,6 @@ class RenderFullMail extends React.Component {
     }
     this.updateToValueHTML(uniqueRecipients);
     this.setState({ replyField: false, toAllField: uniqueRecipients });
-  };
-
-  replyAllToField = () => {
-    const { replyAll, toField, toAllFieldHtml } = this.state;
-    if (replyAll) {
-      return (
-        <span className='toFieldSpanEnvelope'>
-          To:
-          <span className='word-wrap'>{toAllFieldHtml}</span>
-        </span>
-      );
-    } else {
-      return (
-        <span className='toFieldSpanEnvelope'>
-          To:
-          <span className='word-wrap'>
-            <span className='peach toFieldHighlight'>{toField}</span>
-          </span>
-        </span>
-      );
-    }
-  };
-
-  updateToValueHTML = tempToValue => {
-    let toValueHtml;
-    toValueHtml = tempToValue
-      .filter(toAddress => {
-        if (toAddress) return true;
-        return false;
-      })
-      .map((toAddress, index) => {
-        return (
-          <span key={index.toString()}>
-            <span className='peach toFieldHighlight'>{toAddress}</span>
-            {tempToValue.length > 1 ? (
-              <span
-                style={{ color: 'blue', cursor: 'pointer', margin: '0px 15px 0px 5px' }}
-                id={'toField' + index}
-                onClick={this.onToFieldRemove}>
-                x
-              </span>
-            ) : (
-              ''
-            )}
-          </span>
-        );
-      });
-    this.setState({ toAllFieldHtml: toValueHtml });
   };
 
   onToFieldRemove = event => {
@@ -478,7 +395,84 @@ class RenderFullMail extends React.Component {
     }
   };
 
-  renderFullMail = () => {
+  replyAllFieldToggle = () => {
+    const { toAllField, replyAll } = this.state;
+    if (!replyAll) {
+      this.updateToValueHTML(toAllField);
+    }
+    this.setState({ replyField: true, replyAll: true });
+  };
+
+  updateToValueHTML = tempToValue => {
+    let toValueHtml;
+    toValueHtml = tempToValue
+      .filter(toAddress => {
+        if (toAddress) return true;
+        return false;
+      })
+      .map((toAddress, index) => {
+        return (
+          <span key={index.toString()}>
+            <span className='peach toFieldHighlight'>{toAddress}</span>
+            {tempToValue.length > 1 ? (
+              <span
+                style={{ color: 'blue', cursor: 'pointer', margin: '0px 15px 0px 5px' }}
+                id={'toField' + index}
+                onClick={this.onToFieldRemove}>
+                x
+              </span>
+            ) : (
+              ''
+            )}
+          </span>
+        );
+      });
+    this.setState({ toAllFieldHtml: toValueHtml });
+  };
+
+  fileNameList() {
+    const { files } = this.state;
+    if (files) {
+      return Array.from(files).map((file, index) => {
+        return (
+          <Grid.Row key={index.toString()}>
+            <Grid.Column>
+              <b>{file.name} </b>
+              <span
+                style={{ color: 'blue', cursor: 'pointer' }}
+                id={index}
+                onClick={this.onRemoveAttachedFile}>
+                X
+              </span>
+            </Grid.Column>
+          </Grid.Row>
+        );
+      });
+    }
+  }
+
+  replyAllToField() {
+    const { replyAll, toField, toAllFieldHtml } = this.state;
+    if (replyAll) {
+      return (
+        <span className='toFieldSpanEnvelope'>
+          To:
+          <span className='word-wrap'>{toAllFieldHtml}</span>
+        </span>
+      );
+    } else {
+      return (
+        <span className='toFieldSpanEnvelope'>
+          To:
+          <span className='word-wrap'>
+            <span className='peach toFieldHighlight'>{toField}</span>
+          </span>
+        </span>
+      );
+    }
+  }
+
+  renderFullMail() {
     const { currentlyOpenMailData } = this.props;
     let paddingLeft = 0;
     return currentlyOpenMailData.map((mail, index) => {
@@ -572,26 +566,21 @@ class RenderFullMail extends React.Component {
         </div>
       );
     });
-  };
+  }
 
   render() {
     const { threadId } = this.props;
     const { isError, files, replyMessageBodyField, message, replyField, isLoading } = this.state;
     return (
       <>
-        <Grid
-          style={{
-            marginBottom: '30px',
-          }}>
+        <Grid style={{}}>
           <Grid.Row>
             <Grid.Column computer={16} mobile={16} floated='right'>
               <div
                 style={{
                   cursor: 'pointer',
-                  padding: '8px',
                   color: 'red',
                   float: 'right',
-                  marginBottom: '20px',
                 }}
                 onClick={this.props.toggleFullMailPane}>
                 X
@@ -649,7 +638,7 @@ class RenderFullMail extends React.Component {
                         toolbarHidden={!replyField}
                         onMessageBodyFieldChange={this.onMessageBodyFieldChange}
                       />
-                      <label htmlFor='file-attach'>
+                      <label htmlFor='attach-file'>
                         <Icon
                           name='paperclip'
                           size='large'
@@ -657,7 +646,7 @@ class RenderFullMail extends React.Component {
                         />
                       </label>
                       <Input
-                        id='file-attach'
+                        id='attach-file'
                         style={{ display: 'none' }}
                         type='file'
                         multiple='multiple'
@@ -666,17 +655,13 @@ class RenderFullMail extends React.Component {
                     </div>
                     <div className='colorRed'>{isError ? message : ''}</div>
                     {files ? <Grid>{this.fileNameList()}</Grid> : ''}
-                    <br />
-                    {isLoading ? (
-                      <Loader active />
-                    ) : (
-                      <Button
-                        className='coral'
-                        disabled={replyMessageBodyField ? (isError ? true : false) : true}
-                        onClick={this.onReply}>
-                        Send
-                      </Button>
-                    )}{' '}
+                    <Button
+                      className='coral'
+                      loading={isLoading}
+                      disabled={replyMessageBodyField ? (isError ? true : false) : true}
+                      onClick={this.onReply}>
+                      Send
+                    </Button>
                   </div>
                 </>
               ) : (
@@ -687,6 +672,13 @@ class RenderFullMail extends React.Component {
         </Grid>
       </>
     );
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('dragenter', this.onDragOverEnter);
+    window.removeEventListener('dragover', this.onDragOverEnter);
+    window.removeEventListener('drop', this.onFileDrop);
+    document.getElementById('replyFiles').removeEventListener('dragleave', this.onDragLeave);
   }
 }
 
