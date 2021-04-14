@@ -67,6 +67,17 @@ class MailDashboard extends React.Component {
     await dispatch(mailActions.getMailTransactions({ diff: true }));
   };
 
+  renderRecipientNames(recipients) {
+    return recipients.map((recipient, index) => {
+      return (
+        <span key={index.toString()}>
+          {recipient}
+          {index < recipients.length - 1 ? ', ' : ''}
+        </span>
+      );
+    });
+  }
+
   combinedMailsSection() {
     const { mailTransactions, isLoadingMailTransactions } = this.props;
     if (Object.keys(mailTransactions).length !== 0) {
@@ -88,17 +99,6 @@ class MailDashboard extends React.Component {
           dateTime = format(new Date(mail[0].createdAt), 'dd-MM-yyyy hh:mm:ss');
         }
 
-        function renderRecipientNames(recipients) {
-          return recipients.map((recipient, index) => {
-            return (
-              <span key={index.toString()}>
-                {recipient}
-                {index < recipients.length - 1 ? ', ' : ''}
-              </span>
-            );
-          });
-        }
-
         return (
           <Grid.Row
             key={index.toString()}
@@ -118,9 +118,7 @@ class MailDashboard extends React.Component {
                   <Grid.Column computer={8} mobile={8} floated='left'>
                     <span style={{ color: 'lightGrey' }} className='word-wrap purplefontcolor'>
                       {sentMail
-                        ? mailData.commonMetaData.recepient.length > 1
-                          ? renderRecipientNames(mailData.commonMetaData.recepient)
-                          : mailData.commonMetaData.recepient
+                        ? this.renderRecipientNames(mailData.commonMetaData.recepient)
                         : mailData.commonMetaData.sender}{' '}
                     </span>
                     <span>
