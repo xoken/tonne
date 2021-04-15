@@ -67,9 +67,19 @@ class MailDashboard extends React.Component {
     await dispatch(mailActions.getMailTransactions({ diff: true }));
   };
 
-  combinedMailsSection() {
-    const { mailTransactions } = this.props;
+  renderRecipientNames(recipients) {
+    return recipients.map((recipient, index) => {
+      return (
+        <span key={index.toString()}>
+          {recipient}
+          {index < recipients.length - 1 ? ', ' : ''}
+        </span>
+      );
+    });
+  }
 
+  combinedMailsSection() {
+    const { mailTransactions, isLoadingMailTransactions } = this.props;
     if (Object.keys(mailTransactions).length !== 0) {
       return Object.values(mailTransactions).map((mail, index) => {
         let mailData = null,
@@ -108,7 +118,7 @@ class MailDashboard extends React.Component {
                   <Grid.Column computer={8} mobile={8} floated='left'>
                     <span style={{ color: 'lightGrey' }} className='word-wrap purplefontcolor'>
                       {sentMail
-                        ? mailData.commonMetaData.recepient
+                        ? this.renderRecipientNames(mailData.commonMetaData.recepient)
                         : mailData.commonMetaData.sender}{' '}
                     </span>
                     <span>
@@ -326,9 +336,11 @@ class MailDashboard extends React.Component {
 
   render() {
     const { toggleFullMailPane, currentlyOpenMailData, windowWidth } = this.state;
-    const { allpayHandles, isLoadingMailTransactions } = this.props;
+    const { allpayHandles, isLoadingMailTransactions, mailTransactions } = this.props;
 
     if (allpayHandles && allpayHandles.length === 0 && isLoadingMailTransactions) {
+      return <Loader active />;
+    } else if (Object.keys(mailTransactions).length === 0 && isLoadingMailTransactions) {
       return <Loader active />;
     }
     if (allpayHandles && allpayHandles.length === 0) {
