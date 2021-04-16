@@ -192,7 +192,7 @@ class RenderFullMail extends React.Component {
         this.to = currentlyOpenMailData[0].additionalInfo.value.recipientInfo.commonMetaData.sender;
       }
       this.setState({
-        sentMail: false,
+        sentMail: sentMail,
         replyMessageBodyField: '',
         files: null,
         isError: false,
