@@ -491,6 +491,23 @@ class RenderFullMail extends React.Component {
     });
   }
 
+  renderAttachmentList(attachments) {
+    let attachmentsHTML = [];
+    for (let i = 1; i <= attachments.length; i++) {
+      if (attachments[i]) {
+        attachmentsHTML.push(
+          <div key={i.toString()} className='attachedFiles'>
+            <div>
+              <img alt='Attached-File' style={{ width: '40px' }} src={images.file} />
+            </div>
+            <div className='word-wrap'>{attachments[i][0]}</div>
+          </div>
+        );
+      }
+    }
+    return attachmentsHTML;
+  }
+
   renderFullMail() {
     const { currentlyOpenMailData } = this.props;
     let paddingLeft = 0;
@@ -560,6 +577,11 @@ class RenderFullMail extends React.Component {
                   toolbarClassName='hideEditorToolbar'
                   readOnly='readOnly'
                 />
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column>
+                {this.renderAttachmentList(mailData.commonMetaData.attachmentTypes)}
               </Grid.Column>
             </Grid.Row>
             <Grid.Row>

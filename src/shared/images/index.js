@@ -14,6 +14,7 @@ const images = {
   voxmail: require('./images/voxmail.png'),
   greenArrow: require('./images/greenarrow.png'),
   yellowArrow: require('./images/yellowarrow.png'),
+  file: require('./images/file.png'),
 };
 
 export default images;

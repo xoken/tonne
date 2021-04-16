@@ -533,6 +533,21 @@ input[type='number'] {
   text-align: center;
   color: #922fdf;
 }
+
+.attachedFiles{
+  width: 15%;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: top;
+  padding: 15px;
+  background-color: white;
+  text-align: center;
+}
+
+.attachedFiles:hover{
+  background-color: #fafafa;
+}
+
 .homeTextAlignRight {
   text-align: right;
 }
@@ -748,6 +763,7 @@ input[type='number'] {
   .homeSegment {
     width: 100% !important;
   }
+
 }
 @media screen and (min-width: 567px) {
   .introText {
@@ -772,6 +788,10 @@ input[type='number'] {
     padding-bottom: 0px !important;
   }
   .passinputwidth {
+    width: 100% !important;
+  }
+  .attachedFiles {
+    display: block;
     width: 100% !important;
   }
 }
@@ -838,6 +858,9 @@ input[type='number'] {
   }
   .peachPaperRocket2 {
     display: none;
+  }
+  .attachedFiles {
+    width: 20%;
   }
 }
 @media screen and (max-width: 561px) {
@@ -910,6 +933,9 @@ input[type='number'] {
   }
   .recentTxidAddress {
     padding-left: 0px !important;
+  }
+  .attachedFiles {
+    width: 30%;
   }
 }
 
