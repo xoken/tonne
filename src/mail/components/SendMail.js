@@ -332,7 +332,7 @@ class SendMail extends React.Component {
               </label>
               <Input
                 id='attach-file'
-                // style={{ display: 'none' }}
+                style={{ display: 'none' }}
                 type='file'
                 multiple='multiple'
                 onChange={this.onAttach}

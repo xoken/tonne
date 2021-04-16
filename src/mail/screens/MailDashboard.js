@@ -40,6 +40,8 @@ class MailDashboard extends React.Component {
         console.log(error);
       }
     }
+    this.getWindowWidth();
+    window.addEventListener('resize', this.getWindowWidth);
   }
 
   onRefresh = async () => {
@@ -109,13 +111,12 @@ class MailDashboard extends React.Component {
               <Grid.Row
                 key={index.toString()}
                 className={mail[0].isRead ? 'readMail' : 'unreadMail'}
-                style={{ cursor: 'pointer' }}
+                style={{ cursor: 'pointer', margin: '14px 0px 14px 0px' }}
                 onClick={() => this.mailOnClick(mail)}>
                 <Grid.Column
                   style={{
                     boxShadow: '5px 5px 5px #fafafa',
-                    paddingTop: '12px',
-                    paddingBottom: '12px',
+                    padding: '12px',
                     marginTop: '8px',
                     marginBottom: '8px',
                   }}>
@@ -224,8 +225,7 @@ class MailDashboard extends React.Component {
             className='unreadMail'
             style={{
               boxShadow: '5px 5px 5px #fafafa',
-              paddingTop: '12px',
-              paddingBottom: '12px',
+              padding: '12px',
               marginTop: '8px',
               marginBottom: '8px',
             }}>
@@ -341,7 +341,7 @@ class MailDashboard extends React.Component {
 
   renderMails() {
     const { mailTransactions } = this.props;
-    const { toggleFullMailPane, currentlyOpenMailData } = this.state;
+    const { toggleFullMailPane, currentlyOpenMailData, windowWidth } = this.state;
     if (Object.keys(mailTransactions).length === 0) {
       return <>{this.renderPlaceholderMail()}</>;
     } else {
@@ -350,24 +350,23 @@ class MailDashboard extends React.Component {
           <Grid.Column computer={toggleFullMailPane ? '6' : '16'}>
             {this.renderFullView()}
           </Grid.Column>
-          {/*toggleFullMailPane &&
-            (windowWidth >= 770 || !windowWidth ? (*/}
-          {toggleFullMailPane && (
-            <Grid.Column
-              computer='10'
-              style={{
-                boxShadow: '5px 5px 5px #fafafa',
-              }}>
-              <RenderFullMail
-                toggleFullMailPane={this.toggleFullMailPane}
-                threadId={currentlyOpenMailData[0].threadId}
-                currentlyOpenMailData={currentlyOpenMailData}
-              />
-            </Grid.Column>
-          )}
-          {/*) : (
+          {toggleFullMailPane &&
+            (windowWidth >= 770 || !windowWidth ? (
+              <Grid.Column
+                computer='10'
+                style={{
+                  boxShadow: '5px 5px 5px #fafafa',
+                }}>
+                <RenderFullMail
+                  toggleFullMailPane={this.toggleFullMailPane}
+                  threadId={currentlyOpenMailData[0].threadId}
+                  currentlyOpenMailData={currentlyOpenMailData}
+                />
+              </Grid.Column>
+            ) : (
               this.renderFullMailModal()
-            ))}*/}
+            ))}
+          }
         </Grid>
       );
     }

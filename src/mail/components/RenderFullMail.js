@@ -591,7 +591,9 @@ class RenderFullMail extends React.Component {
               <div
                 style={{
                   cursor: 'pointer',
+                  padding: '8px',
                   color: 'red',
+                  marginBottom: '20px',
                   float: 'right',
                 }}
                 onClick={this.props.toggleFullMailPane}>
@@ -650,15 +652,19 @@ class RenderFullMail extends React.Component {
                         toolbarHidden={!replyField}
                         onMessageBodyFieldChange={this.onMessageBodyFieldChange}
                       />
-                      <label htmlFor='attach-file'>
+                      <label htmlFor='attach-file-reply'>
                         <Icon
                           name='paperclip'
                           size='large'
-                          style={{ cursor: 'pointer', display: 'block', marginTop: '30px' }}
+                          style={{
+                            cursor: 'pointer',
+                            display: 'block',
+                            margin: '30px 0px 30px 0px',
+                          }}
                         />
                       </label>
                       <Input
-                        id='attach-file'
+                        id='attach-file-reply'
                         style={{ display: 'none' }}
                         type='file'
                         multiple='multiple'
