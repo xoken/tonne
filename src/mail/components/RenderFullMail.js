@@ -54,7 +54,7 @@ class RenderFullMail extends React.Component {
   }
 
   componentDidMount() {
-    const { currentlyOpenMailData, threadId, allpayHandles } = this.props;
+    const { currentlyOpenMailData, threadId } = this.props;
     let subject = '',
       sentMail = false;
     if (currentlyOpenMailData[0].additionalInfo.value.senderInfo) {
@@ -127,7 +127,7 @@ class RenderFullMail extends React.Component {
 
   componentDidUpdate() {
     if (this.props.threadId !== this.state.threadId) {
-      const { currentlyOpenMailData, threadId, allpayHandles } = this.props;
+      const { currentlyOpenMailData, threadId } = this.props;
       let sentMail = false,
         subject = '';
       if (currentlyOpenMailData[0].additionalInfo.value.senderInfo) {
@@ -248,7 +248,7 @@ class RenderFullMail extends React.Component {
 
   onReplyFieldClose = () => {
     const { sentMail } = this.state;
-    const { currentlyOpenMailData, allpayHandles } = this.props;
+    const { currentlyOpenMailData } = this.props;
     let recipientList = [];
     if (sentMail) {
       currentlyOpenMailData.forEach(openMailData => {
