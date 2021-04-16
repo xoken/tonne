@@ -29,6 +29,10 @@ class MailDashboard extends React.Component {
         const mailTransactions = await dispatch(mailActions.getMailTransactions({}));
         if (Object.keys(mailTransactions).length > 0) {
           this.setState({
+            placeholderMailVisiblity: false,
+          });
+        } else {
+          this.setState({
             placeholderMailVisiblity: true,
           });
         }
@@ -343,7 +347,32 @@ class MailDashboard extends React.Component {
     const { mailTransactions } = this.props;
     const { toggleFullMailPane, currentlyOpenMailData, windowWidth } = this.state;
     if (Object.keys(mailTransactions).length === 0) {
-      return <>{this.renderPlaceholderMail()}</>;
+      return (
+        <>
+          {' '}
+          <Grid>
+            <Grid.Column computer={toggleFullMailPane ? '6' : '16'}>
+              {this.renderPlaceholderMail()}
+            </Grid.Column>
+            {toggleFullMailPane &&
+              (windowWidth >= 770 || !windowWidth ? (
+                <Grid.Column
+                  computer='10'
+                  style={{
+                    boxShadow: '5px 5px 5px #fafafa',
+                  }}>
+                  <RenderFullMail
+                    toggleFullMailPane={this.toggleFullMailPane}
+                    threadId={currentlyOpenMailData[0].threadId}
+                    currentlyOpenMailData={currentlyOpenMailData}
+                  />
+                </Grid.Column>
+              ) : (
+                this.renderFullMailModal()
+              ))}
+          </Grid>
+        </>
+      );
     } else {
       return (
         <Grid>

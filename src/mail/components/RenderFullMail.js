@@ -119,10 +119,12 @@ class RenderFullMail extends React.Component {
       subject: subject,
     });
 
-    window.addEventListener('dragenter', this.onDragOverEnter);
-    window.addEventListener('dragover', this.onDragOverEnter);
-    window.addEventListener('drop', this.onFileDrop);
-    document.getElementById('replyFiles').addEventListener('dragleave', this.onDragLeave);
+    if (threadId !== 'welcome-mail') {
+      window.addEventListener('dragenter', this.onDragOverEnter);
+      window.addEventListener('dragover', this.onDragOverEnter);
+      window.addEventListener('drop', this.onFileDrop);
+      document.getElementById('replyFiles').addEventListener('dragleave', this.onDragLeave);
+    }
   }
 
   componentDidUpdate() {
@@ -203,6 +205,14 @@ class RenderFullMail extends React.Component {
         toField: this.to,
         subject: subject,
       });
+      const dragDropArea = document.getElementById('replyFiles');
+
+      if (dragDropArea && dragDropArea.getAttribute('listener') !== 'true') {
+        window.addEventListener('dragenter', this.onDragOverEnter);
+        window.addEventListener('dragover', this.onDragOverEnter);
+        window.addEventListener('drop', this.onFileDrop);
+        dragDropArea.addEventListener('dragleave', this.onDragLeave);
+      }
     }
   }
 
@@ -604,7 +614,7 @@ class RenderFullMail extends React.Component {
           <Grid.Row>
             <Grid.Column computer={16} mobile={16}>
               {this.renderFullMail()}
-              {threadId !== 'welcomemail' ? (
+              {threadId !== 'welcome-mail' ? (
                 <>
                   <div style={{ margin: '20px 0px 20px 0px' }}>
                     <button
@@ -693,10 +703,13 @@ class RenderFullMail extends React.Component {
   }
 
   componentWillUnmount() {
-    window.removeEventListener('dragenter', this.onDragOverEnter);
-    window.removeEventListener('dragover', this.onDragOverEnter);
-    window.removeEventListener('drop', this.onFileDrop);
-    document.getElementById('replyFiles').removeEventListener('dragleave', this.onDragLeave);
+    const dragDropArea = document.getElementById('replyFiles');
+    if (dragDropArea && dragDropArea.getAttribute('listener') === 'true') {
+      window.removeEventListener('dragenter', this.onDragOverEnter);
+      window.removeEventListener('dragover', this.onDragOverEnter);
+      window.removeEventListener('drop', this.onFileDrop);
+      document.getElementById('replyFiles').removeEventListener('dragleave', this.onDragLeave);
+    }
   }
 }
 
