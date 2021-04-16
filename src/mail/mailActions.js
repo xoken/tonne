@@ -10,10 +10,9 @@ export const createMailTransactionFailure = createAction('CREATE_MAIL_TRANSACTIO
 export const getMailTransactionsRequest = createAction('GET_MAIL_TRANSACTIONS_REQUEST');
 export const getMailTransactionsSuccess = createAction('GET_MAIL_TRANSACTIONS_SUCCESS');
 export const getMailTransactionsFailure = createAction('GET_MAIL_TRANSACTIONS_FAILURE');
+export const getDiffMailTransactionsSuccess = createAction('GET_MAIL_TRANSACTIONS_DIFF_SUCCESS');
 
 export const updateTransactionSuccess = createAction('UPDATE_TRANSACTION_SUCCESS');
-
-export const getDiffMailTransactionsSuccess = createAction('GET_MAIL_TRANSACTIONS_DIFF_SUCCESS');
 
 export const createMailTransaction = args => async (dispatch, getState, { serviceInjector }) => {
   dispatch(createMailTransactionRequest());
@@ -67,6 +66,7 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
           MailService
         ).getMailTransactions(options);
         dispatch(getDiffMailTransactionsSuccess({ mailTransactions, nextTransactionCursor }));
+        return mailTransactions;
       } else {
         await dispatch(walletActions.getTransactions({ limit: 10 }));
         await dispatch(walletActions.updateTransactionsConfirmations());
@@ -74,8 +74,10 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
           MailService
         ).getMailTransactions(options);
         dispatch(getMailTransactionsSuccess({ mailTransactions, nextTransactionCursor }));
+        return mailTransactions;
       }
     }
+    return [];
   } catch (error) {
     dispatch(getMailTransactionsFailure());
     throw error;
@@ -87,7 +89,6 @@ export const updateTransaction = transaction => async (dispatch, getState, { ser
     const updatedTransaction = await serviceInjector(MailService).updateTransaction(transaction);
     dispatch(updateTransactionSuccess(updatedTransaction));
   } catch (error) {
-    console.log(error);
     throw error;
   }
 };
