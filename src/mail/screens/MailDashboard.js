@@ -366,7 +366,6 @@ class MailDashboard extends React.Component {
             ) : (
               this.renderFullMailModal()
             ))}
-          }
         </Grid>
       );
     }
