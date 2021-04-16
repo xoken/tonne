@@ -72,6 +72,17 @@ class MailDashboard extends React.Component {
     }
   }
 
+  renderRecipientNames(recipients) {
+    return recipients.map((recipient, index) => {
+      return (
+        <span key={index.toString()}>
+          {recipient}
+          {index < recipients.length - 1 ? ', ' : ''}
+        </span>
+      );
+    });
+  }
+
   renderFullView() {
     const { mailTransactions } = this.props;
     if (Object.keys(mailTransactions).length > 0) {
@@ -97,23 +108,23 @@ class MailDashboard extends React.Component {
             return (
               <Grid.Row
                 key={index.toString()}
-                // className={mail[0].isRead ? 'readMail' : 'unreadMail'}
+                className={mail[0].isRead ? 'readMail' : 'unreadMail'}
                 style={{ cursor: 'pointer' }}
                 onClick={() => this.mailOnClick(mail)}>
                 <Grid.Column
                   style={{
                     boxShadow: '5px 5px 5px #fafafa',
-                    // paddingTop: '12px',
-                    // paddingBottom: '12px',
-                    // marginTop: '8px',
-                    // marginBottom: '8px',
+                    paddingTop: '12px',
+                    paddingBottom: '12px',
+                    marginTop: '8px',
+                    marginBottom: '8px',
                   }}>
                   <Grid>
                     <Grid.Row>
                       <Grid.Column computer={8} mobile={8} floated='left'>
                         <span style={{ color: 'lightGrey' }} className='word-wrap purplefontcolor'>
                           {sentMail
-                            ? mailData.commonMetaData.recepient
+                            ? this.renderRecipientNames(mailData.commonMetaData.recepient)
                             : mailData.commonMetaData.sender}{' '}
                         </span>
                         <span>
