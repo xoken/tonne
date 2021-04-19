@@ -534,17 +534,18 @@ input[type='number'] {
   color: #922fdf;
 }
 
-.attachedFiles{
+.attachedFiles {
   width: 15%;
   cursor: pointer;
   display: inline-block;
   vertical-align: top;
-  padding: 15px;
+  margin: 15px;
+  padding: 5px;
   background-color: white;
   text-align: center;
 }
 
-.attachedFiles:hover{
+.attachedFiles:hover {
   background-color: #fafafa;
 }
 
@@ -763,7 +764,6 @@ input[type='number'] {
   .homeSegment {
     width: 100% !important;
   }
-
 }
 @media screen and (min-width: 567px) {
   .introText {

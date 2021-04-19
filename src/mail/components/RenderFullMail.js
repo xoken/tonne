@@ -6,10 +6,10 @@ import { EditorState, ContentState } from 'draft-js';
 import htmlToDraft from 'html-to-draftjs';
 import { Editor } from 'react-draft-wysiwyg';
 import TextEditor from '../components/TextEditor';
-import * as mailActions from '../mailActions';
 import { format } from 'date-fns';
+import { wallet } from 'allegory-allpay-sdk';
 import images from '../../shared/images';
-
+import * as mailActions from '../mailActions';
 class RenderFullMail extends React.Component {
   constructor(props) {
     super(props);
@@ -403,6 +403,10 @@ class RenderFullMail extends React.Component {
     }
   };
 
+  onDownload = args => () => {
+    wallet.downloadAttachment(args);
+  };
+
   replyAllFieldToggle = () => {
     const { toAllField, replyAll } = this.state;
     if (!replyAll) {
@@ -491,21 +495,29 @@ class RenderFullMail extends React.Component {
     });
   }
 
-  renderAttachmentList(attachments) {
-    let attachmentsHTML = [];
-    for (let i = 1; i <= attachments.length; i++) {
-      if (attachments[i]) {
-        attachmentsHTML.push(
-          <div key={i.toString()} className='attachedFiles'>
+  renderAttachmentList(attachments, txId) {
+    return attachments
+      .map((attachment, index) => ({ attachmentDetail: attachment, attachmentIndex: index }))
+      .filter((attachment, index) => {
+        if (index === 0 && attachment.attachmentDetail[1] === 'text/html') return false;
+        return true;
+      })
+      .map((attachment, index) => {
+        return (
+          <div
+            key={index.toString()}
+            className='attachedFiles'
+            onClick={this.onDownload({
+              txId,
+              attachmentIndex: attachment.attachmentIndex,
+            })}>
             <div>
               <img alt='Attached-File' style={{ width: '40px' }} src={images.file} />
             </div>
-            <div className='word-wrap'>{attachments[i][0]}</div>
+            <div className='word-wrap'>{attachment.attachmentDetail[0]}</div>
           </div>
         );
-      }
-    }
-    return attachmentsHTML;
+      });
   }
 
   renderFullMail() {
@@ -581,7 +593,7 @@ class RenderFullMail extends React.Component {
             </Grid.Row>
             <Grid.Row>
               <Grid.Column>
-                {this.renderAttachmentList(mailData.commonMetaData.attachmentTypes)}
+                {this.renderAttachmentList(mailData.commonMetaData.attachmentTypes, mail.txId)}
               </Grid.Column>
             </Grid.Row>
             <Grid.Row>
