@@ -15,7 +15,7 @@ class RenderFullMail extends React.Component {
     super(props);
     this.state = {
       replyMessageBodyField: '',
-      files: null,
+      files: [],
       isError: false,
       message: '',
       replyField: false,
@@ -361,13 +361,13 @@ class RenderFullMail extends React.Component {
           threadId: currentlyOpenMailData[0].threadId,
           subject: subject,
           body: replyMessageBodyField,
-          attachments: [],
+          attachments: files,
         })
       );
       this.setState({
         isLoading: false,
         replyMessageBodyField: '',
-        files: null,
+        files: [],
         isError: false,
         message: 'Mail Sent Successfully!',
       });
@@ -382,24 +382,17 @@ class RenderFullMail extends React.Component {
 
   onFilesAttach = event => {
     const { files } = this.state;
-    const newFiles = event.target.files;
-    let tempFiles = Array.from(newFiles),
-      updatedFiles = [],
-      totalSizeOfFiles = 0;
-
-    if (files) {
-      updatedFiles = Array.from(files);
-    }
-    for (let z = 0; z < tempFiles.length; z++) {
-      updatedFiles.push(tempFiles[z]);
-    }
-    this.setState({ files: updatedFiles });
-    for (let i = 0; i < updatedFiles.length; i++) {
-      totalSizeOfFiles += parseInt(updatedFiles[i].size);
-    }
-
-    if (totalSizeOfFiles > 10485760) {
-      this.setState({ message: 'Total size of all files cannot be larger than 10MB' });
+    const newFiles = [...files, ...event.target.files];
+    const fileSize = newFiles.reduce((acc, currFile) => {
+      return acc + currFile.size;
+    }, 0);
+    if (fileSize > 1000000) {
+      this.setState({
+        isError: true,
+        message: 'Total size of all files cannot be larger than 1MB',
+      });
+    } else {
+      this.setState({ files: newFiles, isError: false, message: '' });
     }
   };
 
@@ -442,24 +435,23 @@ class RenderFullMail extends React.Component {
     this.setState({ toAllFieldHtml: toValueHtml });
   };
 
-  fileNameList() {
+  renderAttachments() {
     const { files } = this.state;
-    if (files) {
-      return Array.from(files).map((file, index) => {
-        return (
-          <Grid.Row key={index.toString()}>
-            <Grid.Column>
-              <b>{file.name} </b>
-              <span
-                style={{ color: 'blue', cursor: 'pointer' }}
-                id={index}
-                onClick={this.onRemoveAttachedFile}>
-                X
-              </span>
-            </Grid.Column>
-          </Grid.Row>
-        );
-      });
+    if (files.length > 0) {
+      return (
+        <Grid.Row>
+          <Grid.Column>
+            {files.map((file, index) => {
+              return (
+                <div className='ui label attachment' key={index.toString()}>
+                  {file.name}
+                  <i className='delete icon' onClick={this.onRemoveAttachedFile}></i>
+                </div>
+              );
+            })}
+          </Grid.Column>
+        </Grid.Row>
+      );
     }
   }
 
@@ -514,7 +506,13 @@ class RenderFullMail extends React.Component {
             <div>
               <img alt='Attached-File' style={{ width: '40px' }} src={images.file} />
             </div>
-            <div className='word-wrap'>{attachment.attachmentDetail[0]}</div>
+            <div className='word-wrap'>
+              {attachment.attachmentDetail[0].length > 20
+                ? attachment.attachmentDetail[0].substr(0, 19) +
+                  '...' +
+                  attachment.attachmentDetail[0].substr(attachment.attachmentDetail[0].length - 5)
+                : attachment.attachmentDetail[0]}
+            </div>
           </div>
         );
       });
@@ -716,7 +714,7 @@ class RenderFullMail extends React.Component {
                       />
                     </div>
                     <div className='colorRed'>{isError ? message : ''}</div>
-                    {files ? <Grid>{this.fileNameList()}</Grid> : ''}
+                    {files && files.length > 0 ? <Grid>{this.renderAttachments()}</Grid> : ''}
                     <Button
                       className='coral'
                       loading={isLoading}
