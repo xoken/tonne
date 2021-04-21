@@ -349,7 +349,6 @@ class MailDashboard extends React.Component {
     if (Object.keys(mailTransactions).length === 0) {
       return (
         <>
-          {' '}
           <Grid>
             <Grid.Column computer={toggleFullMailPane ? '6' : '16'}>
               {this.renderPlaceholderMail()}
@@ -403,9 +402,11 @@ class MailDashboard extends React.Component {
   render() {
     const { allpayHandles, isLoadingMailTransactions } = this.props;
     const { placeholderMailVisiblity } = this.state;
+
     if (allpayHandles && allpayHandles.length === 0) {
-      if (isLoadingMailTransactions) return <Loader active />;
-      else {
+      if (isLoadingMailTransactions) {
+        return <Loader active />;
+      } else {
         return (
           <Grid>
             <Grid.Row>
@@ -419,9 +420,10 @@ class MailDashboard extends React.Component {
           </Grid>
         );
       }
-    } else {
-      if (isLoadingMailTransactions && !placeholderMailVisiblity) return <Loader active />;
-      else {
+    } else if (allpayHandles && allpayHandles.length > 0) {
+      if (isLoadingMailTransactions && !placeholderMailVisiblity) {
+        return <Loader active />;
+      } else {
         return (
           <>
             {this.renderSubHeader()}
