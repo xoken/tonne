@@ -403,8 +403,12 @@ class RenderFullMail extends React.Component {
     }
   };
 
-  onDownload = args => () => {
-    wallet.downloadAttachment(args);
+  onDownload = args => async () => {
+    try {
+      await wallet.downloadAttachment(args);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   replyAllFieldToggle = () => {
