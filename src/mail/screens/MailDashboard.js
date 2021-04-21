@@ -19,6 +19,7 @@ class MailDashboard extends React.Component {
       placeholderMailVisiblity: false,
       currentlyOpenMailData: null,
       windowWidth: null,
+      initLoader: true,
     };
   }
 
@@ -30,6 +31,7 @@ class MailDashboard extends React.Component {
         if (Object.keys(mailTransactions).length > 0) {
           this.setState({
             placeholderMailVisiblity: false,
+            initLoader: false,
           });
         } else {
           this.setState({
@@ -401,7 +403,7 @@ class MailDashboard extends React.Component {
 
   render() {
     const { allpayHandles, isLoadingMailTransactions } = this.props;
-    const { placeholderMailVisiblity } = this.state;
+    const { placeholderMailVisiblity, initLoader } = this.state;
 
     if (allpayHandles && allpayHandles.length === 0) {
       if (isLoadingMailTransactions) {
@@ -421,7 +423,7 @@ class MailDashboard extends React.Component {
         );
       }
     } else if (allpayHandles && allpayHandles.length > 0) {
-      if (isLoadingMailTransactions && !placeholderMailVisiblity) {
+      if (isLoadingMailTransactions && !placeholderMailVisiblity && initLoader) {
         return <Loader active />;
       } else {
         return (
