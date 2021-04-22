@@ -305,7 +305,12 @@ class RenderFullMail extends React.Component {
       this.findUniqueRecipients(recipientList, false);
     }
     this.updateToValueHTML(this.uniqueRecipients);
-    this.setState({ replyField: false, toAllField: this.uniqueRecipients });
+    this.setState({
+      replyField: false,
+      isError: false,
+      message: '',
+      toAllField: this.uniqueRecipients,
+    });
   };
 
   onToFieldRemove = event => {

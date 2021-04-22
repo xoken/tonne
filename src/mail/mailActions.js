@@ -36,11 +36,12 @@ export const createMailTransaction = args => async (dispatch, getState, { servic
     const mailTransactionsGroupByThreadId = _.groupBy(mailTransactions, mailTransaction => {
       return mailTransaction.threadId;
     });
+
     await dispatch(walletActions.getBalance());
     dispatch(walletActions.createTransactionSuccess({ transactions: transactions }));
     dispatch(
       createMailTransactionSuccess({
-        mailTransactions: mailTransactionsGroupByThreadId,
+        mailTransactions: Object.values(mailTransactionsGroupByThreadId),
         nextTransactionCursor: transactions[0].txId,
       })
     );
@@ -65,7 +66,10 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
         const { mailTransactions, nextTransactionCursor } = await serviceInjector(
           MailService
         ).getMailTransactions(options);
-        dispatch(getDiffMailTransactionsSuccess({ mailTransactions, nextTransactionCursor }));
+
+        if (mailTransactions.length > 0) {
+          dispatch(getDiffMailTransactionsSuccess({ mailTransactions, nextTransactionCursor }));
+        }
         return mailTransactions;
       } else {
         await dispatch(walletActions.getTransactions({ limit: 10 }));
@@ -73,7 +77,10 @@ export const getMailTransactions = options => async (dispatch, getState, { servi
         const { mailTransactions, nextTransactionCursor } = await serviceInjector(
           MailService
         ).getMailTransactions(options);
-        dispatch(getMailTransactionsSuccess({ mailTransactions, nextTransactionCursor }));
+
+        if (mailTransactions.length > 0) {
+          dispatch(getMailTransactionsSuccess({ mailTransactions, nextTransactionCursor }));
+        }
         return mailTransactions;
       }
     }
