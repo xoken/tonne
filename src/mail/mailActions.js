@@ -33,19 +33,17 @@ export const createMailTransaction = args => async (dispatch, getState, { servic
             mailTransaction.additionalInfo.value.recipientInfo?.threadId,
         };
       });
-    const mailTransactionsGroupByThreadId = _.groupBy(mailTransactions, mailTransaction => {
-      return mailTransaction.threadId;
-    });
 
     await dispatch(walletActions.getBalance());
     dispatch(walletActions.createTransactionSuccess({ transactions: transactions }));
     dispatch(
       createMailTransactionSuccess({
-        mailTransactions: Object.values(mailTransactionsGroupByThreadId),
+        mailTransactions: [mailTransactions],
         nextTransactionCursor: transactions[0].txId,
       })
     );
   } catch (error) {
+    console.log(error);
     dispatch(createMailTransactionFailure());
     throw error;
   }
