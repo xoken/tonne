@@ -33,26 +33,6 @@ class RenderFullMail extends React.Component {
   to = '';
   uniqueRecipients = [];
 
-  findUniqueRecipients(recipientList, updateTo) {
-    const { allpayHandles } = this.props;
-    this.uniqueRecipients = Array.from(new Set(recipientList));
-
-    let u = this.uniqueRecipients.indexOf(allpayHandles[0]);
-
-    if (u > -1 && this.uniqueRecipients.length !== 1) {
-      this.uniqueRecipients.splice(u, 1);
-      if (updateTo) {
-        if (this.uniqueRecipients[0] === allpayHandles[0]) {
-          this.to = this.uniqueRecipients[1];
-        } else {
-          this.to = this.uniqueRecipients[0];
-        }
-      }
-    } else if (updateTo) {
-      this.to = this.uniqueRecipients[0];
-    }
-  }
-
   componentDidMount() {
     const { currentlyOpenMailData, threadId } = this.props;
     let subject = '',
@@ -194,7 +174,7 @@ class RenderFullMail extends React.Component {
       this.setState({
         sentMail: sentMail,
         replyMessageBodyField: '',
-        files: null,
+        files: [],
         isError: false,
         message: '',
         replyField: false,
@@ -213,6 +193,26 @@ class RenderFullMail extends React.Component {
         window.addEventListener('drop', this.onFileDrop);
         dragDropArea.addEventListener('dragleave', this.onDragLeave);
       }
+    }
+  }
+
+  findUniqueRecipients(recipientList, updateTo) {
+    const { allpayHandles } = this.props;
+    this.uniqueRecipients = Array.from(new Set(recipientList));
+
+    let u = this.uniqueRecipients.indexOf(allpayHandles[0]);
+
+    if (u > -1 && this.uniqueRecipients.length !== 1) {
+      this.uniqueRecipients.splice(u, 1);
+      if (updateTo) {
+        if (this.uniqueRecipients[0] === allpayHandles[0]) {
+          this.to = this.uniqueRecipients[1];
+        } else {
+          this.to = this.uniqueRecipients[0];
+        }
+      }
+    } else if (updateTo) {
+      this.to = this.uniqueRecipients[0];
     }
   }
 
@@ -250,10 +250,6 @@ class RenderFullMail extends React.Component {
       });
     }
     event.preventDefault();
-  };
-
-  replyFieldToggle = () => {
-    this.setState({ replyField: true, replyAll: false });
   };
 
   onReplyFieldClose = () => {
@@ -349,15 +345,34 @@ class RenderFullMail extends React.Component {
     }
   };
 
-  onReply = async () => {
+  onFilesAttach = event => {
+    const { files } = this.state;
+    const newFiles = [...files, ...event.target.files];
+    const fileSize = newFiles.reduce((acc, currFile) => {
+      return acc + currFile.size;
+    }, 0);
+    if (fileSize > 1048576) {
+      this.setState({
+        files: newFiles,
+        isError: true,
+        message: 'Total size of all files cannot be larger than 1MB',
+      });
+    } else {
+      this.setState({ files: newFiles, isError: false, message: '' });
+    }
+  };
+
+  onDownload = args => async () => {
+    try {
+      await wallet.downloadAttachment(args);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  onSend = async () => {
     const { dispatch, currentlyOpenMailData } = this.props;
     const { replyMessageBodyField, files, subject, toField, toAllField, replyAll } = this.state;
-    const formData = new FormData();
-    if (files) {
-      for (let i = 0; i < files.length; i++) {
-        formData.append('File', files[i], files[i].name);
-      }
-    }
     try {
       this.setState({ isLoading: true });
       await dispatch(
@@ -385,32 +400,11 @@ class RenderFullMail extends React.Component {
     }
   };
 
-  onFilesAttach = event => {
-    const { files } = this.state;
-    const newFiles = [...files, ...event.target.files];
-    const fileSize = newFiles.reduce((acc, currFile) => {
-      return acc + currFile.size;
-    }, 0);
-    if (fileSize > 1048576) {
-      this.setState({
-        files: newFiles,
-        isError: true,
-        message: 'Total size of all files cannot be larger than 1MB',
-      });
-    } else {
-      this.setState({ files: newFiles, isError: false, message: '' });
-    }
+  onReply = () => {
+    this.setState({ replyField: true, replyAll: false });
   };
 
-  onDownload = args => async () => {
-    try {
-      await wallet.downloadAttachment(args);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  replyAllFieldToggle = () => {
+  onReplyAll = () => {
     const { toAllField, replyAll } = this.state;
     if (!replyAll) {
       this.updateToValueHTML(toAllField);
@@ -660,7 +654,7 @@ class RenderFullMail extends React.Component {
                 <>
                   <div style={{ margin: '20px 0px 20px 0px' }}>
                     <button
-                      onClick={this.replyFieldToggle}
+                      onClick={this.onReply}
                       style={{
                         padding: '10px',
                         cursor: 'pointer',
@@ -671,7 +665,7 @@ class RenderFullMail extends React.Component {
                       Reply
                     </button>
                     <button
-                      onClick={this.replyAllFieldToggle}
+                      onClick={this.onReplyAll}
                       style={{
                         padding: '10px',
                         cursor: 'pointer',
@@ -729,7 +723,7 @@ class RenderFullMail extends React.Component {
                       className='coral'
                       loading={isLoading}
                       disabled={replyMessageBodyField ? (isError ? true : false) : true}
-                      onClick={this.onReply}>
+                      onClick={this.onSend}>
                       Send
                     </Button>
                   </div>

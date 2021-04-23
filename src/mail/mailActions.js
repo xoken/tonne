@@ -33,7 +33,6 @@ export const createMailTransaction = args => async (dispatch, getState, { servic
             mailTransaction.additionalInfo.value.recipientInfo?.threadId,
         };
       });
-
     await dispatch(walletActions.getBalance());
     dispatch(walletActions.createTransactionSuccess({ transactions: transactions }));
     dispatch(
