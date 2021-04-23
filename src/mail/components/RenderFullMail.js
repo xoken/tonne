@@ -492,34 +492,34 @@ class RenderFullMail extends React.Component {
   }
 
   renderAttachmentList(attachments, txId) {
-    return attachments
+    const attachedDocuments = attachments
       .map((attachment, index) => ({ attachmentDetail: attachment, attachmentIndex: index }))
       .filter((attachment, index) => {
-        if (index === 0 && attachment.attachmentDetail[1] === 'text/html') return false;
+        if (index === 0 && attachment.attachmentDetail === 'text/html') return false;
         return true;
-      })
-      .map((attachment, index) => {
-        return (
-          <div
-            key={index.toString()}
-            className='attachedFiles'
-            onClick={this.onDownload({
-              txId,
-              attachmentIndex: attachment.attachmentIndex,
-            })}>
-            <div>
-              <img alt='Attached-File' style={{ width: '40px' }} src={images.file} />
-            </div>
-            <div className='word-wrap'>
-              {attachment.attachmentDetail[0].length > 20
-                ? attachment.attachmentDetail[0].substr(0, 19) +
-                  '...' +
-                  attachment.attachmentDetail[0].substr(attachment.attachmentDetail[0].length - 5)
-                : attachment.attachmentDetail[0]}
-            </div>
-          </div>
-        );
       });
+    return attachedDocuments.map((attachment, index) => {
+      return (
+        <div
+          key={index.toString()}
+          className='attachedFiles'
+          onClick={this.onDownload({
+            txId,
+            attachmentIndex: attachment.attachmentIndex,
+          })}>
+          <div>
+            <img alt='Attached-File' style={{ width: '40px' }} src={images.file} />
+          </div>
+          <div className='word-wrap'>
+            {attachment.attachmentDetail[0].length > 20
+              ? attachment.attachmentDetail[0].substr(0, 19) +
+                '...' +
+                attachment.attachmentDetail[0].substr(attachment.attachmentDetail[0].length - 5)
+              : attachment.attachmentDetail[0]}
+          </div>
+        </div>
+      );
+    });
   }
 
   renderFullMail() {
