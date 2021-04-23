@@ -59,7 +59,7 @@ class ExplorerDashboard extends React.Component {
     this.syncedblocksheight = this.rjdecoded.chainInfo.blocksSynced;
     this.numberofpages = Math.ceil(this.syncedblocksheight / 20);
     this.pagearray = [1, 2, 3, 4, 5, 6, 7, '-', this.numberofpages];
-    this.summarysection.push(
+    this.summarysection = (
       <>
         <Grid className='dashboardSummaryForMobile'>
           <Grid.Row columns={2}>
@@ -283,6 +283,7 @@ class ExplorerDashboard extends React.Component {
     this.resultsrow.length = 0;
     this.resultsrow.push(
       <Segment.Group
+        key={-1}
         horizontal
         className='nosegmentmargin'
         style={{ overflow: 'auto', minWidth: '800px' }}>
@@ -358,6 +359,7 @@ class ExplorerDashboard extends React.Component {
       }
       this.resultsrow.push(
         <Segment.Group
+          key={i.toString()}
           horizontal
           className='nosegmentmargin removesegmentborder'
           style={{ overflow: 'auto', minWidth: '800px' }}>
