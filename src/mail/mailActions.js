@@ -1,4 +1,3 @@
-import * as _ from 'lodash';
 import { createAction } from 'redux-act';
 import * as walletActions from '../wallet/walletActions';
 import MailService from './mailService';

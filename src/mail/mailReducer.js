@@ -9,8 +9,7 @@ const INITIAL_STATE = {
 };
 
 function updateExistingThreadIdValue(newMailTx, existingMailTxs) {
-  let tempExistingMailTx = existingMailTxs,
-    breakFlag = false;
+  let tempExistingMailTx = existingMailTxs;
 
   for (let i = 0; i < existingMailTxs.length; i++) {
     for (let k = newMailTx.length - 1; k >= 0; k--) {
