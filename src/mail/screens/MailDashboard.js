@@ -19,17 +19,19 @@ class MailDashboard extends React.Component {
       placeholderMailVisiblity: false,
       currentlyOpenMailData: null,
       windowWidth: null,
+      initLoader: true,
     };
   }
 
   async componentDidMount() {
     const { mailTransactions, dispatch } = this.props;
-    if (Object.keys(mailTransactions).length === 0) {
+    if (mailTransactions.length === 0) {
       try {
         const mailTransactions = await dispatch(mailActions.getMailTransactions({}));
-        if (Object.keys(mailTransactions).length > 0) {
+        if (mailTransactions.length > 0) {
           this.setState({
             placeholderMailVisiblity: false,
+            initLoader: false,
           });
         } else {
           this.setState({
@@ -62,16 +64,19 @@ class MailDashboard extends React.Component {
   componentDidUpdate() {
     const { mailTransactions } = this.props;
     const { toggleFullMailPane, currentlyOpenMailData } = this.state;
-    if (Object.keys(mailTransactions).length !== 0) {
+    if (mailTransactions.length !== 0) {
       if (
         toggleFullMailPane &&
-        Object.keys(mailTransactions).includes(currentlyOpenMailData[0].threadId)
+        mailTransactions.find(mTxs =>
+          mTxs.find(mTx => mTx.threadId === currentlyOpenMailData[0].threadId)
+        )
       ) {
-        if (
-          mailTransactions[currentlyOpenMailData[0].threadId].length > currentlyOpenMailData.length
-        ) {
+        let mTxIndex = mailTransactions.findIndex(mTxs =>
+          mTxs.find(mTx => mTx.threadId === currentlyOpenMailData[0].threadId)
+        );
+        if (mailTransactions[mTxIndex].length > currentlyOpenMailData.length) {
           this.setState({
-            currentlyOpenMailData: mailTransactions[currentlyOpenMailData[0].threadId],
+            currentlyOpenMailData: mailTransactions[mTxIndex],
           });
         }
       }
@@ -91,10 +96,10 @@ class MailDashboard extends React.Component {
 
   renderFullView() {
     const { mailTransactions } = this.props;
-    if (Object.keys(mailTransactions).length > 0) {
+    if (mailTransactions.length > 0) {
       return (
         <>
-          {Object.values(mailTransactions).map((mail, index) => {
+          {mailTransactions.map((mail, index) => {
             let mailData = null,
               sentMail = false,
               numberOfMails = mail.length;
@@ -345,8 +350,10 @@ class MailDashboard extends React.Component {
 
   renderMails() {
     const { mailTransactions } = this.props;
+
     const { toggleFullMailPane, currentlyOpenMailData, windowWidth } = this.state;
-    if (Object.keys(mailTransactions).length === 0) {
+
+    if (mailTransactions.length === 0) {
       return (
         <>
           <Grid>
@@ -401,7 +408,7 @@ class MailDashboard extends React.Component {
 
   render() {
     const { allpayHandles, isLoadingMailTransactions } = this.props;
-    const { placeholderMailVisiblity } = this.state;
+    const { placeholderMailVisiblity, initLoader } = this.state;
 
     if (allpayHandles && allpayHandles.length === 0) {
       if (isLoadingMailTransactions) {
@@ -421,7 +428,7 @@ class MailDashboard extends React.Component {
         );
       }
     } else if (allpayHandles && allpayHandles.length > 0) {
-      if (isLoadingMailTransactions && !placeholderMailVisiblity) {
+      if (isLoadingMailTransactions && !placeholderMailVisiblity && initLoader) {
         return <Loader active />;
       } else {
         return (
@@ -443,10 +450,10 @@ class MailDashboard extends React.Component {
 
 MailDashboard.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  mailTransactions: PropTypes.objectOf(PropTypes.array),
+  mailTransactions: PropTypes.arrayOf(PropTypes.array),
 };
 
-MailDashboard.defaultProps = { mailTransactions: {} };
+MailDashboard.defaultProps = { mailTransactions: [] };
 
 const mapStateToProps = state => ({
   allpayHandles: state.wallet.allpayHandles,

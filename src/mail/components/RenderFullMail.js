@@ -243,7 +243,7 @@ class RenderFullMail extends React.Component {
       totalSizeOfFiles += parseInt(updatedFiles[i].size);
     }
 
-    if (totalSizeOfFiles > 10485760) {
+    if (totalSizeOfFiles > 1048576) {
       this.setState({
         isError: true,
         message: 'Total size of all files cannot be larger than 10MB',
@@ -305,7 +305,12 @@ class RenderFullMail extends React.Component {
       this.findUniqueRecipients(recipientList, false);
     }
     this.updateToValueHTML(this.uniqueRecipients);
-    this.setState({ replyField: false, toAllField: this.uniqueRecipients });
+    this.setState({
+      replyField: false,
+      isError: false,
+      message: '',
+      toAllField: this.uniqueRecipients,
+    });
   };
 
   onToFieldRemove = event => {
@@ -325,7 +330,7 @@ class RenderFullMail extends React.Component {
     for (let i = 0; i < tempFiles.length; i++) {
       totalSizeOfFiles += tempFiles[i].size;
     }
-    if (totalSizeOfFiles <= 10485760) {
+    if (totalSizeOfFiles <= 1048576) {
       this.setState({ files: tempFiles, isError: false, message: '' });
     } else {
       this.setState({ files: tempFiles });
@@ -386,8 +391,9 @@ class RenderFullMail extends React.Component {
     const fileSize = newFiles.reduce((acc, currFile) => {
       return acc + currFile.size;
     }, 0);
-    if (fileSize > 1000000) {
+    if (fileSize > 1048576) {
       this.setState({
+        files: newFiles,
         isError: true,
         message: 'Total size of all files cannot be larger than 1MB',
       });
