@@ -92,23 +92,30 @@ class WalletHeader extends React.Component {
   }
 
   renderAllpayAction() {
-    const { allpayHandles, unregisteredNames } = this.props;
-    if (unregisteredNames && unregisteredNames.length > 0) {
-      return (
-        <NavLink
-          className='buyallpaybutton'
-          activeClassName='buyallpaybuttonactive'
-          to={`/wallet/allpay/register?progressTotalSteps=3&activeStep=1`}>
-          Register AllPay Name
-        </NavLink>
-      );
-    } else if (allpayHandles && allpayHandles.length === 0) {
-      return (
-        <Button className='buyallpaybutton' onClick={this.onBuyAllpayName}>
-          Buy AllPay Name
-        </Button>
-      );
+    const {
+      allpayHandles,
+      unregisteredNames,
+      match: { path },
+    } = this.props;
+    if (path.includes('/wallet')) {
+      if (unregisteredNames && unregisteredNames.length > 0) {
+        return (
+          <NavLink
+            className='buyallpaybutton'
+            activeClassName='buyallpaybuttonactive'
+            to={`/wallet/allpay/register?progressTotalSteps=3&activeStep=1`}>
+            Register AllPay Name
+          </NavLink>
+        );
+      } else if (allpayHandles && allpayHandles.length === 0) {
+        return (
+          <Button className='buyallpaybutton' onClick={this.onBuyAllpayName}>
+            Buy AllPay Name
+          </Button>
+        );
+      }
     }
+    return null;
   }
 
   render() {

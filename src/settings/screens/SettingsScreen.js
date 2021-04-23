@@ -61,7 +61,7 @@ class SettingsScreen extends React.Component {
   render() {
     const { nexaURI, userName, password, hasError, isValidSettings } = this.state;
     return (
-      <Grid verticalAlign='middle' style={{ height: '100%' }} centered>
+      <Grid centered verticalAlign='middle' style={{ height: '100%' }}>
         <Grid.Row columns={2}>
           <Grid.Column>
             <Segment>

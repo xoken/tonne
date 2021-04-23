@@ -533,6 +533,22 @@ input[type='number'] {
   text-align: center;
   color: #922fdf;
 }
+
+.attachedFiles {
+  width: 15%;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: top;
+  margin: 15px;
+  padding: 5px;
+  background-color: white;
+  text-align: center;
+}
+
+.attachedFiles:hover {
+  background-color: #fafafa;
+}
+
 .homeTextAlignRight {
   text-align: right;
 }
@@ -571,7 +587,7 @@ input[type='number'] {
   height: 150px;
   border: 1px solid rgba(34, 36, 38, 0.15);
 }
-.headerIcons{
+.headerIcons {
   display: block;
   height: 26px !important;
   width: 28px !important;
@@ -774,6 +790,10 @@ input[type='number'] {
   .passinputwidth {
     width: 100% !important;
   }
+  .attachedFiles {
+    display: block;
+    width: 100% !important;
+  }
 }
 @media screen and (max-width: 767px) {
   .walletHomeDividerHorizontal {
@@ -838,6 +858,9 @@ input[type='number'] {
   }
   .peachPaperRocket2 {
     display: none;
+  }
+  .attachedFiles {
+    width: 20%;
   }
 }
 @media screen and (max-width: 561px) {
@@ -908,8 +931,11 @@ input[type='number'] {
     margin-left: none;
     float: right;
   }
-  .recentTxidAddress{
+  .recentTxidAddress {
     padding-left: 0px !important;
+  }
+  .attachedFiles {
+    width: 30%;
   }
 }
 
@@ -1098,23 +1124,45 @@ body {
 .ui.basic.transparent-button:hover {
   color: #ff7f7f !important;
 }
-.displayBlock{
+.displayBlock {
   display: block;
 }
-.visibilityHidden{
-  visibility:hidden !important;
+.visibilityHidden {
+  visibility: hidden !important;
 }
-.fullMailBorder{
-  border-left:2px solid #fafafa;
+.fullMailBorder {
+  border-left: 2px solid #fafafa;
 }
-.readMail{
+.readMail {
   background-color: #fafafa;
 }
-.unreadMail{
+.unreadMail {
   background-color: white;
 }
-.toFromIcons{
+.toFromIcons {
   display: inline;
-  width:30px;
+  width: 30px;
   vertical-align: middle;
+}
+.ui.label.attachment {
+  display: block;
+  position: relative;
+  margin: 0 0 10px 0px;
+  padding-right: 20px;
+  width: 266px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ui.label.attachment > .delete.icon {
+  margin: 0;
+  position: absolute;
+  right: 10px;
+}
+.attach-file {
+  cursor: pointer;
+  display: inline-block;
+}
+.attach-file .icon {
+  margin: 0;
 }

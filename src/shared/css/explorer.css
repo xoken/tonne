@@ -104,7 +104,7 @@
   padding: 15px;
   border-radius: 5px;
   margin: 10px;
-  color: #922FDF;
+  color: #922fdf;
   vertical-align: middle;
   font-size: 18px;
   width: 57px;
@@ -117,7 +117,7 @@
 }
 .wordlist {
   text-align: center;
-  background-color: #922FDF;
+  background-color: #922fdf;
   cursor: pointer;
   display: inline-block;
   padding: 5px 10px 5px 10px;
@@ -189,7 +189,6 @@
   font-weight: 400;
   color: white !important;
   text-align: center;
-  /* margin: 15px !important; */
   width: 150px;
   vertical-align: middle;
   -webkit-user-select: none;
@@ -212,7 +211,7 @@
   background-color: grey;
 }
 
-.buttonAnimation{
+.buttonAnimation {
   animation-name: buttonslide;
 }
 
@@ -288,16 +287,6 @@
     opacity: 1;
   }
 }
-/* tr,
-th,
-td {
-  padding: 10px;
-  text-align: center;
-}
-table {
-  width: 100%;
-  padding: 10px;
-} */
 .tablerowbottom {
   border-bottom: 1pt solid lightgrey;
 }
@@ -321,15 +310,15 @@ table {
   padding: 0.5rem 0.75rem;
   margin-left: -1px;
   line-height: 1.25;
-  color: #FF7F7F;
+  color: #ff7f7f;
   background-color: #fff;
   border: 1px solid #dee2e6;
 }
 .page-item.active .page-link {
   z-index: 3;
   color: #fff;
-  background-color: #FF7F7F;
-  border-color: #FF7F7F;
+  background-color: #ff7f7f;
+  border-color: #ff7f7f;
 }
 .emptypagelink {
   position: relative;
@@ -337,7 +326,7 @@ table {
   padding: 0.5rem 0.75rem;
   margin-left: -1px;
   line-height: 1.25;
-  color: #FF7F7F;
+  color: #ff7f7f;
   background-color: #fff;
   border: 1px solid #dee2e6;
   cursor: not-allowed;
@@ -401,35 +390,35 @@ table {
   padding-bottom: 25px !important;
 }
 
-.searchBoxAndButtons{
-  margin-top:15px !important;
+.searchBoxAndButtons {
+  margin-top: 15px !important;
 }
-.noPaddingTopBottomFormobiles{
+.noPaddingTopBottomFormobiles {
   padding-top: 0px !important;
   padding-bottom: 0px !important;
 }
-.dashboardSummaryForMobile{
+.dashboardSummaryForMobile {
   display: none !important;
 }
-.dashboardSummaryForOtherScreens{
+.dashboardSummaryForOtherScreens {
   display: block !important;
 }
 @media screen and (max-width: 767px) {
-  .alignLeftOnMobile{
+  .alignLeftOnMobile {
     text-align: left;
   }
-  .dashboardSummaryForMobile{
+  .dashboardSummaryForMobile {
     display: block !important;
   }
-  .dashboardSummaryForOtherScreens{
+  .dashboardSummaryForOtherScreens {
     display: none !important;
   }
 }
 
-#searchnegative{
+#searchnegative {
   padding-bottom: 60px;
 }
 
-.paddingBottom100px{
+.paddingBottom100px {
   padding-bottom: 100px !important;
 }

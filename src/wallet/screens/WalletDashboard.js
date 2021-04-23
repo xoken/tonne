@@ -6,8 +6,9 @@ import { Button, Icon, Loader, Modal } from 'semantic-ui-react';
 import SendTransaction from '../components/SendTransaction';
 import ReceiveTransaction from '../components/ReceiveTransaction';
 import RecentTransaction from '../components/RecentTransaction';
-import { utils, wallet } from 'allegory-allpay-sdk';
+import { utils } from 'allegory-allpay-sdk';
 import * as walletActions from '../walletActions';
+import * as claimTwitterHandleActions from '../../claimTwitterHandle/claimTwitterHandleActions';
 import * as walletSelectors from '../walletSelectors';
 
 class WalletDashboard extends React.Component {
@@ -66,7 +67,14 @@ class WalletDashboard extends React.Component {
   }
 
   runScript = async () => {
-    wallet.runScript();
+    const { dispatch } = this.props;
+    const { success } = await dispatch(
+      claimTwitterHandleActions.getCoin({
+        faucetURI: process.env.REACT_APP_PROXY_URI,
+        address: 'msCFTpmVXVJtEL6zzuaZz92XiRrALgmVR3',
+      })
+    );
+    console.log(success);
   };
 
   render() {

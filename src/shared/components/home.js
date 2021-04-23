@@ -60,7 +60,7 @@ class Home extends React.Component {
     return (
       <Grid verticalAlign='middle' className='homeMainGrid'>
         <Grid.Row centered>
-          <Grid.Column verticalAlign='middle' centered className='introImage'>
+          <Grid.Column verticalAlign='middle' className='introImage'>
             <div className='introText'>
               Bitcoin wallet, self-sovereign handles,
               <br className='breakDisplay' /> explorer & gateway to Bitcoin apps.
