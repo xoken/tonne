@@ -6,7 +6,15 @@ import ImportWallet from '../components/ImportWallet';
 
 class ImportWalletScreen extends React.Component {
   onContinue = () => {
-    this.props.history.push('/wallet/password');
+    const {
+      history,
+      location: { pathname },
+    } = this.props;
+    if (pathname === '/mail/existing') {
+      history.push('/mail/password');
+    } else {
+      history.push('/wallet/password');
+    }
   };
 
   render() {

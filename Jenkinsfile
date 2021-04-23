@@ -35,7 +35,7 @@ pipeline {
     stage('Build') {
       steps {
         dir(path: 'allegory-allpay-sdk') {
-          sh 'npm install'
+          sh 'yarn'
           sh 'npm run build'
         }
         dir(path: 'tonne') {
@@ -56,7 +56,7 @@ pipeline {
 
             echo '****** Starting Regtest Web Build ******'
             dir(path: 'tonne') {
-              sh 'npm run build:regtest'
+              sh 'CI=false npm run build:regtest'
               sh 'mv build tonne-web-regtest'
               sh 'git log -n 1 >> commit.log'
               sh 'mv commit.log tonne-web-regtest'
@@ -66,7 +66,7 @@ pipeline {
 
             echo '****** Starting Testnet Web Build ******'
             dir(path: 'tonne') {
-              sh 'npm run build:testnet'
+              sh 'CI=false npm run build:testnet'
               sh 'mv build tonne-web-testnet'
               sh 'git log -n 1 >> commit.log'
               sh 'mv commit.log tonne-web-testnet'

@@ -220,7 +220,6 @@ class SendTransaction extends React.Component {
         transactionFee: 0,
       });
     }
-    // }
   };
 
   render() {

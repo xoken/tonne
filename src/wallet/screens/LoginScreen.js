@@ -7,7 +7,15 @@ import Login from '../components/Login';
 
 class LoginScreen extends React.Component {
   onSuccess = () => {
-    this.props.history.push('/wallet/dashboard');
+    const {
+      history,
+      location: { pathname },
+    } = this.props;
+    if (pathname === '/mail/login') {
+      history.push('/mail/dashboard');
+    } else {
+      history.push('/wallet/dashboard');
+    }
   };
 
   render() {

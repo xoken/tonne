@@ -372,8 +372,6 @@ class ExplorerAddress extends React.Component {
       this.printpagination();
 
       this.printresults();
-    } else {
-      //
     }
   };
 

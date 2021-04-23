@@ -42,7 +42,6 @@ class ExplorerDashboard extends React.Component {
 
   blockheiinit = () => {
     if (this.blockhei !== '') {
-      //this.selected = (this.numberofpages - Math.ceil(this.blockhei/10));
       this.selected =
         this.numberofpages - Math.ceil((this.blockhei - (this.syncedblocksheight % 20)) / 20);
       if (this.selected === 0) {
@@ -60,7 +59,7 @@ class ExplorerDashboard extends React.Component {
     this.syncedblocksheight = this.rjdecoded.chainInfo.blocksSynced;
     this.numberofpages = Math.ceil(this.syncedblocksheight / 20);
     this.pagearray = [1, 2, 3, 4, 5, 6, 7, '-', this.numberofpages];
-    this.summarysection.push(
+    this.summarysection = (
       <>
         <Grid className='dashboardSummaryForMobile'>
           <Grid.Row columns={2}>
@@ -284,6 +283,7 @@ class ExplorerDashboard extends React.Component {
     this.resultsrow.length = 0;
     this.resultsrow.push(
       <Segment.Group
+        key={-1}
         horizontal
         className='nosegmentmargin'
         style={{ overflow: 'auto', minWidth: '800px' }}>
@@ -359,6 +359,7 @@ class ExplorerDashboard extends React.Component {
       }
       this.resultsrow.push(
         <Segment.Group
+          key={i.toString()}
           horizontal
           className='nosegmentmargin removesegmentborder'
           style={{ overflow: 'auto', minWidth: '800px' }}>
@@ -403,11 +404,6 @@ class ExplorerDashboard extends React.Component {
     const { loading } = this.state;
     return (
       <>
-        {
-          //  <button className='backspc btn btn-primary' onClick={() => this.props.history.push('/')}>
-          //  Back
-          //    </button>
-        }
         {loading ? (
           <Loader active />
         ) : (

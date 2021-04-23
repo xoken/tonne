@@ -1,20 +1,19 @@
 import React from 'react';
-//import axios from 'axios';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Grid, Input, Icon, Loader } from 'semantic-ui-react';
+import { Button, Grid, Input, Icon } from 'semantic-ui-react';
 import TextEditor from '../components/TextEditor';
 import * as mailActions from '../mailActions';
 import * as mailSelectors from '../mailSelectors';
-import { allPay } from 'allegory-allpay-sdk';
 
 class SendMail extends React.Component {
   constructor(props) {
     super(props);
     this.maxWidthRef = React.createRef();
     this.toFieldWidthRef = React.createRef();
+    this.maxWidth = 0;
     this.state = {
-      files: null,
+      files: [],
       attachFileModal: false,
       toField: [],
       subjectField: '',
@@ -27,7 +26,11 @@ class SendMail extends React.Component {
       isLoading: false,
     };
   }
-  maxWidth = 0;
+
+  componentDidMount() {
+    this.setState({ toFieldWidth: this.maxWidthRef.current.offsetWidth - 27 });
+    this.maxWidth = this.maxWidthRef.current.offsetWidth;
+  }
 
   onCancel = () => {
     this.props.onCancel();
@@ -38,44 +41,22 @@ class SendMail extends React.Component {
     this.setState({ attachFileModal: !attachFileModal });
   };
 
-  onFilesAttach = event => {
+  onAttach = event => {
     const { files } = this.state;
-    const newFiles = event.target.files;
-    let tempFiles = Array.from(newFiles),
-      updatedFiles = [],
-      totalSizeOfFiles = 0;
-
-    if (files) {
-      updatedFiles = Array.from(files);
-    }
-    for (var z = 0; z < tempFiles.length; z++) {
-      updatedFiles.push(tempFiles[z]);
-    }
-    this.setState({ files: updatedFiles });
-    for (let i = 0; i < updatedFiles.length; i++) {
-      totalSizeOfFiles += parseInt(updatedFiles[i].size);
-    }
-
-    if (totalSizeOfFiles > 10485760) {
-      this.setState({ message: 'Total size of all files cannot be larger than 10MB' });
+    const newFiles = [...files, ...event.target.files];
+    const fileSize = newFiles.reduce((acc, currFile) => {
+      return acc + currFile.size;
+    }, 0);
+    if (fileSize > 1048576) {
+      this.setState({
+        files: newFiles,
+        isError: true,
+        message: 'Total size of all files cannot be larger than 1MB',
+      });
+    } else {
+      this.setState({ files: newFiles, isError: false, message: '' });
     }
   };
-
-  componentDidMount() {
-    // window.addEventListener('dragenter', this.onDragOverEnter);
-    // window.addEventListener('dragover', this.onDragOverEnter);
-    // window.addEventListener('drop', this.onFileDrop);
-    // document.getElementById('files').addEventListener('dragleave', this.onDragLeave);
-    this.setState({ toFieldWidth: this.maxWidthRef.current.offsetWidth - 27 });
-    this.maxWidth = this.maxWidthRef.current.offsetWidth;
-  }
-
-  componentWillUnmount() {
-    // window.removeEventListener('dragenter', this.onDragOverEnter);
-    // window.removeEventListener('dragover', this.onDragOverEnter);
-    // window.removeEventListener('drop', this.onFileDrop);
-    // document.getElementById('file-attach').removeEventListener('dragleave', this.onDragLeave);
-  }
 
   onDragOverEnter = event => {
     event.preventDefault();
@@ -84,54 +65,6 @@ class SendMail extends React.Component {
   onDragLeave = event => {
     event.stopPropagation();
     event.preventDefault();
-  };
-
-  onFileDrop = event => {
-    const { files } = this.state;
-    const newFiles = event.dataTransfer.files;
-    let tempFiles = Array.from(newFiles),
-      updatedFiles = [],
-      totalSizeOfFiles = 0;
-
-    if (files) {
-      updatedFiles = Array.from(files);
-    }
-    for (var z = 0; z < tempFiles.length; z++) {
-      updatedFiles.push(tempFiles[z]);
-    }
-    this.setState({ files: updatedFiles });
-    for (let i = 0; i < updatedFiles.length; i++) {
-      totalSizeOfFiles += parseInt(updatedFiles[i].size);
-    }
-
-    if (totalSizeOfFiles > 10485760) {
-      this.setState({
-        isError: true,
-        message: 'Total size of all files cannot be larger than 10MB',
-      });
-    }
-    event.preventDefault();
-  };
-
-  fileNameList = () => {
-    const { files } = this.state;
-    if (files) {
-      return Array.from(files).map((file, index) => {
-        return (
-          <Grid.Row key={index.toString()}>
-            <Grid.Column>
-              <b>{file.name} </b>
-              <span
-                style={{ color: 'blue', cursor: 'pointer' }}
-                id={index}
-                onClick={this.onRemoveAttachedFile}>
-                X
-              </span>
-            </Grid.Column>
-          </Grid.Row>
-        );
-      });
-    }
   };
 
   onRemoveAttachedFile = event => {
@@ -143,7 +76,7 @@ class SendMail extends React.Component {
     for (let i = 0; i < tempFiles.length; i++) {
       totalSizeOfFiles += tempFiles[i].size;
     }
-    if (totalSizeOfFiles <= 10485760) {
+    if (totalSizeOfFiles <= 1048576) {
       this.setState({ files: tempFiles, isError: false, message: '' });
     } else {
       this.setState({ files: tempFiles });
@@ -160,7 +93,7 @@ class SendMail extends React.Component {
   };
 
   onToFieldChange = event => {
-    const { toField, toFieldRows, toFieldTemp } = this.state;
+    const { toField } = this.state;
     let eventTargetValue = event.target.value.toLowerCase();
     let uniqueRecipients = [];
     let maxWidthOfInput = this.maxWidthRef.current.offsetWidth;
@@ -194,7 +127,7 @@ class SendMail extends React.Component {
         tempToValue.push(temp[i]);
       }
       uniqueRecipients = tempToValue.filter(function (item, position, self) {
-        return self.indexOf(item) == position;
+        return self.indexOf(item) === position;
       });
     }
 
@@ -215,8 +148,12 @@ class SendMail extends React.Component {
 
   updateToValueHTML = tempToValue => {
     let toValueHtml;
-    toValueHtml = tempToValue.map((toAddress, index) => {
-      if (toAddress) {
+    toValueHtml = tempToValue
+      .filter(toAddress => {
+        if (toAddress) return true;
+        return false;
+      })
+      .map((toAddress, index) => {
         return (
           <span key={index.toString()}>
             <span className='peach toFieldHighlight'>{toAddress}</span>
@@ -228,8 +165,7 @@ class SendMail extends React.Component {
             </span>
           </span>
         );
-      }
-    });
+      });
     this.setState({ toFieldHtml: toValueHtml });
   };
 
@@ -250,22 +186,14 @@ class SendMail extends React.Component {
   };
 
   onSend = async () => {
-    const { dispatch, isLoadingMailTransactions } = this.props;
-    const { toField, subjectField, messageBodyField, files, toFieldTemp } = this.state;
-    let filteredToField = [],
-      closeModalTimer = 0;
-    const formData = new FormData();
-    if (files) {
-      for (let i = 0; i < files.length; i++) {
-        formData.append('File', files[i], files[i].name);
-      }
-    }
+    const { dispatch } = this.props;
+    const { toField, subjectField, messageBodyField, files } = this.state;
     if (toField.length > 0) {
-      filteredToField = toField.filter(function (addressName) {
+      const filteredToField = toField.filter(function (addressName) {
         return addressName !== '';
       });
 
-      if (filteredToField.length !== 0) {
+      if (filteredToField.length > 0) {
         try {
           this.setState({ isLoading: true });
           await dispatch(
@@ -274,6 +202,7 @@ class SendMail extends React.Component {
               threadId: null,
               subject: subjectField,
               body: messageBodyField,
+              attachments: files,
             })
           );
 
@@ -284,15 +213,13 @@ class SendMail extends React.Component {
             toField: [],
             toFieldHtml: [],
             toFieldTemp: '',
-            files: null,
+            files: [],
             isError: false,
             message: 'Mail Sent Successfully!',
           });
 
-          closeModalTimer = setTimeout(this.onCancel, 1500);
+          this.dismissModal = setTimeout(this.onCancel, 1500);
         } catch (error) {
-          clearTimeout(closeModalTimer);
-          closeModalTimer = 0;
           this.setState({
             isError: true,
             message: error.response && error.response.data ? error.response.data : error.message,
@@ -318,21 +245,37 @@ class SendMail extends React.Component {
     }
   };
 
+  renderAttachments() {
+    const { files } = this.state;
+    if (files.length > 0) {
+      return (
+        <Grid.Row>
+          <Grid.Column>
+            {files.map((file, index) => {
+              return (
+                <div className='ui label attachment' key={index.toString()}>
+                  {file.name}
+                  <i className='delete icon' onClick={this.onRemoveAttachedFile}></i>
+                </div>
+              );
+            })}
+          </Grid.Column>
+        </Grid.Row>
+      );
+    }
+  }
+
   render() {
     const {
-      files,
       message,
       toField,
       toFieldTemp,
       toFieldHtml,
       subjectField,
-      messageBodyField,
       toFieldWidth,
-      toFieldRows,
       isError,
       isLoading,
     } = this.state;
-    const { isLoadingMailTransactions } = this.props;
     return (
       <>
         <Grid>
@@ -375,68 +318,45 @@ class SendMail extends React.Component {
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width='16'>
-              <span
-                id='files'
-                style={{ minHeight: '20%', display: 'block' }}
-                ref={this.maxWidthRef}>
+              <div ref={this.maxWidthRef}>
                 <TextEditor
                   toolbarHidden={false}
                   onMessageBodyFieldChange={this.onMessageBodyFieldChange}
                 />
-              </span>
-              {
-                // <TextArea
-                //   fluid
-                //   id='files'
-                //   type='text'
-                //   className='form-control'
-                //   value={messageBodyField}
-                //   placeholder='Type your message here / Drop files here...'
-                //   style={{ width: '100%', height: '300px' }}
-                //   onChange={event => this.setState({ messageBodyField: event.target.value })}
-                // />
-              }
-              <br />
-              {
-                // <label htmlFor='file-attach'>
-                //   <Icon
-                //     name='paperclip'
-                //     size='large'
-                //     style={{ cursor: 'pointer' }}
-                //     //  onClick={this.toggleAttachFileModal}
-                //   />
-                // </label>
-                // <Input
-                //   id='file-attach'
-                //   style={{ display: 'none' }}
-                //   type='file'
-                //   icon='paperclip'
-                //   multiple='multiple'
-                //   onChange={this.onFilesAttach}
-                // />
-              }
+              </div>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
-            <Grid.Column>
-              {
-                // files ? <Grid>{this.fileNameList()}</Grid> : ''
-              }
-              <div className={isError ? 'colorRed' : 'colorGreen'}>{message}</div>
+            <Grid.Column width='16'>
+              <label htmlFor='attach-file' className='attach-file'>
+                <Icon name='paperclip' size='large' />
+              </label>
+              <Input
+                id='attach-file'
+                style={{ display: 'none' }}
+                type='file'
+                multiple='multiple'
+                onChange={this.onAttach}
+              />
             </Grid.Column>
           </Grid.Row>
+          {isError && (
+            <Grid.Row>
+              <Grid.Column>
+                <div className='colorRed'>{message}</div>
+              </Grid.Column>
+            </Grid.Row>
+          )}
+          {this.renderAttachments()}
           <Grid.Row centered>
             <Grid.Column>
-              {isLoading ? (
-                <Loader active />
-              ) : (
-                <Button
-                  className='coral'
-                  disabled={toField ? (subjectField ? (isError ? true : false) : true) : true}
-                  onClick={this.onSend}>
-                  Send
-                </Button>
-              )}{' '}
+              <Button
+                className='coral'
+                loading={isLoading}
+                disabled={toField ? (subjectField ? (isError ? true : false) : true) : true}
+                onClick={this.onSend}>
+                Send
+              </Button>
               <Button className='peach' onClick={this.onCancel}>
                 Cancel
               </Button>
@@ -446,6 +366,8 @@ class SendMail extends React.Component {
       </>
     );
   }
+
+  componentWillUnmount() {}
 }
 
 SendMail.propTypes = {};
