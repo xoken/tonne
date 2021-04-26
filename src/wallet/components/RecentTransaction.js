@@ -426,11 +426,11 @@ class RecentTransaction extends React.Component {
   }
 
   renderPagination() {
-    const { nextTransactionCursor } = this.props;
+    const { nextTransactionCursor, isLoading } = this.props;
     if (nextTransactionCursor) {
       return (
         <Segment basic textAlign='center'>
-          <Button className='coral' onClick={this.onNextPage}>
+          <Button className='coral' loading={isLoading} onClick={this.onNextPage}>
             Next Page
           </Button>
         </Segment>
