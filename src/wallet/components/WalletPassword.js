@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import * as authActions from '../../auth/authActions';
 import { Button, Input, Grid, Header, Loader } from 'semantic-ui-react';
+import * as walletSelectors from '../walletSelectors';
 
 class WalletPassword extends React.Component {
   constructor(props) {
@@ -40,7 +41,9 @@ class WalletPassword extends React.Component {
             </Grid.Row>
             <Grid.Row>
               <Grid.Column textAlign='center'>
-                {isLoading ? <Loader active /> : <Button className='coral'>Next</Button>}
+                <Button className='coral' loading={isLoading}>
+                  Next
+                </Button>
               </Grid.Column>
             </Grid.Row>
           </>
@@ -143,6 +146,6 @@ WalletPassword.propTypes = {
 
 WalletPassword.defaultProps = {};
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({ isLoading: walletSelectors.isLoadingTransactions(state) });
 
 export default withRouter(connect(mapStateToProps)(WalletPassword));

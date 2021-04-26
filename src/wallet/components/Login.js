@@ -8,7 +8,7 @@ import { Button, Form, Grid, Input } from 'semantic-ui-react';
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { password: '', error: '' };
+    this.state = { password: '', error: '', isLoading: false };
   }
 
   handleContinue = async event => {
@@ -17,13 +17,15 @@ class Login extends React.Component {
       dispatch,
       location: { search },
     } = this.props;
-    const { password } = this.state;
+    const { password, isLoading } = this.state;
     if (password) {
+      this.setState({ isLoading: true });
       const queryParams = new URLSearchParams(search);
       const profileId = queryParams.get('profile');
       try {
         await dispatch(authActions.login(profileId, password));
         this.props.onSuccess();
+        this.setState({ isLoading: false });
       } catch (error) {
         this.setState({ error: 'Login error: Enter correct password.' });
       }
@@ -31,7 +33,7 @@ class Login extends React.Component {
   };
 
   render() {
-    const { password, error } = this.state;
+    const { password, error, isLoading } = this.state;
     return (
       <Grid>
         <Grid.Row>
@@ -64,7 +66,7 @@ class Login extends React.Component {
                 )}
               </Form.Field>
               <Form.Field>
-                <Button className='coral' disabled={error ? true : false}>
+                <Button className='coral' loading={isLoading} disabled={error ? true : false}>
                   Continue
                 </Button>
               </Form.Field>
