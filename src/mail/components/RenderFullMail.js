@@ -492,12 +492,21 @@ class RenderFullMail extends React.Component {
   }
 
   renderAttachmentList(attachments, txId) {
-    const attachedDocuments = attachments
-      .map((attachment, index) => ({ attachmentDetail: attachment, attachmentIndex: index }))
-      .filter((attachment, index) => {
-        if (index === 0 && attachment.attachmentDetail === 'text/html') return false;
-        return true;
-      });
+    const allAttachments = attachments.map((attachment, index) => ({
+      attachmentDetail: attachment,
+      attachmentIndex: index,
+    }));
+    const attachedDocuments = allAttachments.filter((attachment, index) => {
+      if (
+        index === 0 &&
+        ((Array.isArray(attachment.attachmentDetail) &&
+          attachment.attachmentDetail[1] === 'text/html') ||
+          attachment.attachmentDetail === 'text/html')
+      ) {
+        return false;
+      }
+      return true;
+    });
     return attachedDocuments.map((attachment, index) => {
       return (
         <div
