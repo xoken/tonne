@@ -21,6 +21,7 @@ class SendTransaction extends React.Component {
       // maxSliderValue: Math.floor(Math.log(1000000000) / Math.log(1.05)),
       maxSliderValue: 20,
       sliderDisabled: true,
+      isLoading: false,
     };
   }
 
@@ -117,6 +118,7 @@ class SendTransaction extends React.Component {
     if (receiverAddress && amountInSatoshi) {
       if (isAllpayName) {
         try {
+          this.setState({ isLoading: true });
           await dispatch(
             walletActions.createAllpayTransaction({
               allpayName: receiverAddress,
@@ -124,7 +126,7 @@ class SendTransaction extends React.Component {
               feeRate: Number(feeRate),
             })
           );
-          this.setState({ isError: false, message: 'Transaction Successful' });
+          this.setState({ isError: false, isLoading: false, message: 'Transaction Successful' });
         } catch (error) {
           this.setState({
             isError: true,
@@ -223,7 +225,14 @@ class SendTransaction extends React.Component {
   };
 
   render() {
-    const { receiverAddress, amountInSatoshi, transactionFee, feeRate, sliderValue } = this.state;
+    const {
+      receiverAddress,
+      amountInSatoshi,
+      transactionFee,
+      feeRate,
+      sliderValue,
+      isLoading,
+    } = this.state;
     return (
       <Grid stackable>
         <Grid.Row>
@@ -289,6 +298,7 @@ class SendTransaction extends React.Component {
             <Button
               className='coral'
               onClick={this.onSend}
+              loading={isLoading}
               disabled={receiverAddress === '' ? true : false}>
               Send
             </Button>
