@@ -1,4 +1,4 @@
-# nipkow
+# tonne
 
 ## Setup on ubuntu machine
 
@@ -11,14 +11,18 @@ sudo apt install npm
 **Step 2:**
 
 ```bash
-git clone https://github.com/xoken/nipkow.git
+git clone https://github.com/xoken/tonne.git
+```
+
+```bash
+git clone https://github.com/xoken/allegory-allpay-sdk.git
 ```
 
 **Step 3:**
-cd into the nipkow-sdk directory and run the following command.
+cd into the allegory-allpay-sdk directory and run the following command.
 
 ```bash
-cd lib/nipkow-sdk
+cd allegory-allpay-sdk
 ```
 
 ```bash
@@ -26,24 +30,24 @@ npm install
 ```
 
 **Step 4:**
-cd into the nipkow repo directory and run the following command.
+cd into the tonne repo directory and run the following command.
 
 ```bash
-cd nipkow
+cd tonne
 ```
 
 ```bash
 npm install
 ```
 
-## To launch nipkow
+## To launch tonne
 
 **Step 1:**
 Open a new terminal.
-If you are not already in nipkow repo directory, cd into nipkow repo directory and run the following commands.
+If you are not already in tonne repo directory, cd into tonne repo directory and run the following commands.
 
 ```bash
-cd lib/nipkow-sdk
+cd allegory-allpay-sdk
 ```
 
 ```bash
@@ -54,10 +58,10 @@ Keep this terminal window open.
 
 **Step 2:**
 Open a new terminal.
-If you are not already in nipkow repo directory, cd into nipkow repo directory and run the following command.
+If you are not already in tonne repo directory, cd into tonne repo directory and run the following command.
 
 ```bash
-cd nipkow
+cd tonne
 ```
 
 ```bash
@@ -68,10 +72,10 @@ Keep this terminal window open.
 
 **Step 3:**
 Open a new terminal.
-If you are not already in nipkow repo directory, cd into nipkow repo directory and run the following command.
+If you are not already in tonne repo directory, cd into tonne repo directory and run the following command.
 
 ```bash
-cd nipkow
+cd tonne
 ```
 
 ```bash
@@ -79,31 +83,3 @@ npm run electron
 ```
 
 Keep this terminal window open.
-
-## To update nipkow
-
-**Step 1:**
-Open a new terminal.
-If you are not already in nipkow repo directory, cd into nipkow repo directory and run the following commands.
-
-```bash
-git pull
-```
-
-```bash
-cd lib/nipkow-sdk
-```
-
-```bash
-npm install
-```
-
-```bash
-cd nipkow
-```
-
-```bash
-npm install
-```
-
-To launch updated nipkow, refer to the previous section titled "To launch nipkow".

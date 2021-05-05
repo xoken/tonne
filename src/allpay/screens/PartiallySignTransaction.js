@@ -29,7 +29,7 @@ class PartiallySignTransaction extends React.Component {
         );
         if (txBroadcast) {
           this.setState({ isError: false, message: 'Transaction signed and relayed successfully' });
-          setTimeout(() => {
+          this.timerID = setTimeout(() => {
             this.props.history.push('/wallet/dashboard');
           }, 3000);
         }
@@ -45,13 +45,13 @@ class PartiallySignTransaction extends React.Component {
       if (isError) {
         return (
           <div className='ui negative message'>
-            <p>{message}</p>
+            <p className='word-wrap'>{message}</p>
           </div>
         );
       } else {
         return (
           <div className='ui success message'>
-            <p>{message}</p>
+            <p className='word-wrap'>{message}</p>
           </div>
         );
       }
@@ -62,14 +62,14 @@ class PartiallySignTransaction extends React.Component {
     return (
       <>
         <Header as='h2' textAlign='center'>
-          Partially Signed Transaction
+          Signed Transaction
         </Header>
         <RenderTransaction />
         <Grid>
           <Grid.Row>
             <Grid.Column textAlign='right'>
-              <Button color='yellow' onClick={this.onSignRelay}>
-                Sign & Relay
+              <Button className='coral' onClick={this.onSignRelay}>
+                Send
               </Button>
             </Grid.Column>
           </Grid.Row>
@@ -81,6 +81,10 @@ class PartiallySignTransaction extends React.Component {
         </Grid>
       </>
     );
+  }
+
+  componentWillUnmount() {
+    clearTimeout(this.timerID);
   }
 }
 
@@ -96,8 +100,6 @@ const mapStateToProps = state => ({
   inputs: state.allpay.inputs,
   ownOutputs: state.allpay.ownOutputs,
   snv: state.allpay.snv,
-  addressCommitment: state.allpay.addressCommitment,
-  utxoCommitment: state.allpay.utxoCommitment,
 });
 
 export default withRouter(connect(mapStateToProps)(PartiallySignTransaction));

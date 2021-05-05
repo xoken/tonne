@@ -6,9 +6,9 @@ import { Button, Icon, Loader, Modal } from 'semantic-ui-react';
 import SendTransaction from '../components/SendTransaction';
 import ReceiveTransaction from '../components/ReceiveTransaction';
 import RecentTransaction from '../components/RecentTransaction';
-import { satoshiToBSV } from '../../shared/utils';
-import { wallet } from 'nipkow-sdk';
+import { utils } from 'allegory-allpay-sdk';
 import * as walletActions from '../walletActions';
+import * as claimTwitterHandleActions from '../../claimTwitterHandle/claimTwitterHandleActions';
 import * as walletSelectors from '../walletSelectors';
 
 class WalletDashboard extends React.Component {
@@ -16,7 +16,6 @@ class WalletDashboard extends React.Component {
     super(props);
     this.state = {
       sendTransactionModal: false,
-      receiveTransactionModal: false,
     };
   }
 
@@ -25,18 +24,21 @@ class WalletDashboard extends React.Component {
     this.setState({ sendTransactionModal: !sendTransactionModal });
   };
 
-  toggleReceiveTransactionModal = () => {
+  openReceiveTransactionModal = () => {
     const { dispatch } = this.props;
-    const { receiveTransactionModal } = this.state;
-    if (receiveTransactionModal) dispatch(walletActions.clearUsedUnusedAddresses());
-    this.setState({ receiveTransactionModal: !receiveTransactionModal });
+    dispatch(walletActions.showReceiveModal());
+  };
+
+  closeReceiveTransactionModal = () => {
+    const { dispatch } = this.props;
+    dispatch(walletActions.hideReceiveModal());
   };
 
   renderSendTransactionModal() {
     const { sendTransactionModal } = this.state;
     return (
       <Modal open={sendTransactionModal}>
-        <Modal.Header>Send Transactions</Modal.Header>
+        <Modal.Header className='purplefontcolor'>Send Transactions</Modal.Header>
         <Modal.Content>
           <Modal.Description>
             <SendTransaction onClose={this.toggleSendTransactionModal} />
@@ -47,47 +49,56 @@ class WalletDashboard extends React.Component {
   }
 
   renderReceiveTransactionModal() {
-    const { receiveTransactionModal } = this.state;
+    const { receiveModalVisiblity } = this.props;
     return (
-      <Modal className='receive-modal' open={receiveTransactionModal}>
-        <i className='close icon' onClick={this.toggleReceiveTransactionModal}></i>
-        <Modal.Header>My Addresses</Modal.Header>
+      <Modal className='receive-modal' open={receiveModalVisiblity}>
+        <i className='close icon' onClick={this.closeReceiveTransactionModal}></i>
+        <Modal.Header className='purplefontcolor'>My Addresses</Modal.Header>
         <Modal.Content>
           <Modal.Description>
-            <ReceiveTransaction onClose={this.toggleReceiveTransactionModal} />
+            <ReceiveTransaction onClose={this.closeReceiveTransactionModal} />
           </Modal.Description>
         </Modal.Content>
         <Modal.Actions>
-          <Button content='Close' onClick={this.toggleReceiveTransactionModal} />
+          <Button className='peach' content='Close' onClick={this.closeReceiveTransactionModal} />
         </Modal.Actions>
       </Modal>
     );
   }
 
-  runScript = () => {
-    wallet.runScript();
+  runScript = async () => {
+    const { dispatch } = this.props;
+    const { success } = await dispatch(
+      claimTwitterHandleActions.getCoin({
+        faucetURI: process.env.REACT_APP_PROXY_URI,
+        address: 'msCFTpmVXVJtEL6zzuaZz92XiRrALgmVR3',
+      })
+    );
+    console.log(success);
   };
 
   render() {
     const { isLoading, balance } = this.props;
     return (
-      <>
-        {/* <Button onClick={this.runScript}>Run</Button> */}
+      <div className='paddingBottom100px' style={{ paddingTop: '30px' }}>
+        {process.env.REACT_APP_ENVIRONMENT === 'development' && (
+          <Button onClick={this.runScript}>Run</Button>
+        )}
         <div className='ui center aligned segment'>
           <div className='ui center aligned icon header'>
             <Icon name='btc' size='big' alt='BitcoinSV' />
             <div className='content'>
               Your Current Balance is
-              <div className='sub header'>
-                {isLoading ? <Loader inline active /> : satoshiToBSV(balance)}
+              <div className='balance purplefontcolor'>
+                {isLoading ? <Loader inline active /> : utils.satoshiToBSV(balance)}
               </div>
             </div>
           </div>
           <div className='inline'>
-            <Button color='yellow' onClick={this.toggleSendTransactionModal}>
+            <Button className='coral' onClick={this.toggleSendTransactionModal}>
               Send
             </Button>
-            <Button color='yellow' onClick={this.toggleReceiveTransactionModal}>
+            <Button className='coral' onClick={this.openReceiveTransactionModal}>
               Receive
             </Button>
           </div>
@@ -95,7 +106,7 @@ class WalletDashboard extends React.Component {
         <RecentTransaction />
         {this.renderSendTransactionModal()}
         {this.renderReceiveTransactionModal()}
-      </>
+      </div>
     );
   }
 }
@@ -110,8 +121,9 @@ WalletDashboard.defaultProps = {
 };
 
 const mapStateToProps = state => ({
-  isLoading: walletSelectors.isLoading(state),
+  isLoading: walletSelectors.isLoadingTransactions(state),
   balance: walletSelectors.getBalance(state),
+  receiveModalVisiblity: state.wallet.receiveModalVisiblity,
 });
 
 export default withRouter(connect(mapStateToProps)(WalletDashboard));

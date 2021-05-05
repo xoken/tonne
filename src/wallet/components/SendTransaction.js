@@ -2,9 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Button, Grid, Input } from 'semantic-ui-react';
-import { satoshiToBSV } from '../../shared/utils';
-import * as walletSelectors from '../walletSelectors';
+import { Button, Grid, Input, Divider } from 'semantic-ui-react';
+import { utils } from 'allegory-allpay-sdk';
 import * as walletActions from '../walletActions';
 
 class SendTransaction extends React.Component {
@@ -12,14 +11,15 @@ class SendTransaction extends React.Component {
     super(props);
     this.state = {
       receiverAddress: '',
-      amountInSatoshi: '',
+      amountInSatoshi: 600,
       transactionFee: '',
       message: '',
-      feeRate: 5,
+      feeRate: 1,
       isAllpayName: false,
       isError: false,
       sliderValue: 1,
-      maxSliderValue: Math.floor(Math.log(1000000000) / Math.log(1.05)),
+      // maxSliderValue: Math.floor(Math.log(1000000000) / Math.log(1.05)),
+      maxSliderValue: 20,
       sliderDisabled: true,
     };
   }
@@ -39,18 +39,51 @@ class SendTransaction extends React.Component {
       receiverAllpayNameOrAddress.substring(0, 1) === 'm' ||
       receiverAllpayNameOrAddress.substring(0, 1) === 'n'
     ) {
-      this.setState({ receiverAddress: receiverAllpayNameOrAddress, isAllpayName: false });
+      this.setState({
+        isError: false,
+        receiverAddress: receiverAllpayNameOrAddress,
+        isAllpayName: false,
+      });
     } else {
-      this.setState({ receiverAddress: receiverAllpayNameOrAddress, isAllpayName: true });
+      if (
+        receiverAllpayNameOrAddress.substring(
+          0,
+          receiverAllpayNameOrAddress.length <= 3 ? receiverAllpayNameOrAddress.length : 3
+        ) ===
+          (receiverAllpayNameOrAddress.length <= 3
+            ? 'aa/'.substring(0, receiverAllpayNameOrAddress.length)
+            : 'aa/') ||
+        receiverAllpayNameOrAddress.substring(
+          0,
+          receiverAllpayNameOrAddress.length <= 3 ? receiverAllpayNameOrAddress.length : 3
+        ) ===
+          (receiverAllpayNameOrAddress.length <= 3
+            ? 'tw/'.substring(0, receiverAllpayNameOrAddress.length)
+            : 'tw/')
+      ) {
+        this.setState({
+          isError: false,
+          receiverAddress: receiverAllpayNameOrAddress,
+          isAllpayName: true,
+          message: '',
+        });
+      } else {
+        this.setState({
+          isError: true,
+          receiverAddress: receiverAllpayNameOrAddress,
+          isAllpayName: false,
+          message: "Namespace should be either 'aa/' or 'tw/'",
+        });
+      }
     }
   };
 
   onAmountChange = async event => {
     const { dispatch } = this.props;
     const { receiverAddress, feeRate, sliderValue } = this.state;
-    this.setState({ amountInSatoshi: event.target.value });
+    this.setState({ amountInSatoshi: Number(event.target.value) });
     if (event.target.value <= 0) {
-      this.setState({ sliderValue: 1, sliderDisabled: true, feeRate: 5, transactionFee: 0 });
+      this.setState({ sliderValue: 1, sliderDisabled: true, feeRate: 1, transactionFee: 0 });
     } else {
       this.setState({ sliderDisabled: false });
       try {
@@ -63,7 +96,7 @@ class SendTransaction extends React.Component {
             message: '',
             transactionFee: 50000000,
             maxSliderValue: sliderValue,
-            feeRate: Math.floor(Math.pow(1.05, sliderValue)),
+            feeRate: parseInt(sliderValue),
           });
         } else {
           this.setState({
@@ -85,26 +118,35 @@ class SendTransaction extends React.Component {
       if (isAllpayName) {
         try {
           await dispatch(
-            walletActions.createAllpaySendTransaction({
+            walletActions.createAllpayTransaction({
               allpayName: receiverAddress,
               amountInSatoshi,
               feeRate: Number(feeRate),
             })
           );
-          this.props.history.push('/wallet/allpay/transaction');
-          // this.setState({ isError: false, message: 'Transaction Successful' });
+          this.setState({ isError: false, message: 'Transaction Successful' });
         } catch (error) {
-          console.log(error);
-          // this.setState({ isError: true, message: error.message });
+          this.setState({
+            isError: true,
+            message: error.response && error.response.data ? error.response.data : error.message,
+          });
         }
       } else {
         try {
           await dispatch(
-            walletActions.createSendTransaction(receiverAddress, amountInSatoshi, Number(feeRate))
+            walletActions.createTransaction({
+              receiverAddress,
+              amountInSatoshi,
+              feeRate: Number(feeRate),
+              relay: true,
+            })
           );
           this.setState({ isError: false, message: 'Transaction Successful' });
         } catch (error) {
-          this.setState({ isError: true, message: error.message });
+          this.setState({
+            isError: true,
+            message: error.response && error.response.data ? error.response.data : error.message,
+          });
         }
       }
     } else {
@@ -139,91 +181,56 @@ class SendTransaction extends React.Component {
     const { dispatch } = this.props;
     const sliderVal = event.target.value;
     const { receiverAddress, amountInSatoshi } = this.state;
-    const tempFeeRate = Math.floor(Math.pow(1.05, sliderVal));
-    if (tempFeeRate <= 5) {
-      if (Number(amountInSatoshi) > 0) {
-        try {
-          const transactionFee = await dispatch(
-            walletActions.getTransactionFee(receiverAddress, amountInSatoshi, 5)
-          );
+    const tempFeeRate = parseInt(sliderVal);
+
+    this.setState({
+      feeRate: tempFeeRate,
+      sliderValue: sliderVal,
+    });
+
+    if (amountInSatoshi > 0) {
+      try {
+        const transactionFee = await dispatch(
+          walletActions.getTransactionFee(receiverAddress, amountInSatoshi, tempFeeRate)
+        );
+        if (Number(transactionFee) >= 50000000) {
           this.setState({
             isError: false,
             message: '',
-            feeRate: 5,
-            sliderValue: sliderVal,
-            transactionFee: transactionFee,
+            transactionFee: 50000000,
+            //  sliderDisabled: true,
+            maxSliderValue: sliderVal,
+            //sliderValue: feeRate
           });
-        } catch (error) {
-          this.setState({ isError: true, message: error.message });
+        } else {
+          this.setState({
+            isError: false,
+            message: '',
+            //  sliderDisabled: false,
+            transactionFee,
+          });
         }
-      } else {
-        this.setState({
-          isError: false,
-          message: '',
-          transactionFee: 0,
-        });
+      } catch (error) {
+        this.setState({ isError: true, message: error.message });
       }
-    }
-    // else if (tempFeeRate >= 1000000000) {
-    //   this.setState({
-    //     feeRate: 1000000000,
-    //     sliderValue: event.target.value
-    //   });
-    // }
-    else {
+    } else {
       this.setState({
-        feeRate: Math.floor(Math.pow(1.05, sliderVal)),
-        sliderValue: sliderVal,
+        isError: false,
+        message: '',
+        transactionFee: 0,
       });
-
-      if (Number(amountInSatoshi) > 0) {
-        try {
-          const transactionFee = await dispatch(
-            walletActions.getTransactionFee(
-              receiverAddress,
-              amountInSatoshi,
-              Math.floor(Math.pow(1.05, Number(sliderVal)))
-            )
-          );
-          if (Number(transactionFee) >= 50000000) {
-            this.setState({
-              isError: false,
-              message: '',
-              transactionFee: 50000000,
-              //  sliderDisabled: true,
-              maxSliderValue: sliderVal,
-              //sliderValue: feeRate
-            });
-          } else {
-            this.setState({
-              isError: false,
-              message: '',
-              //  sliderDisabled: false,
-              transactionFee,
-            });
-          }
-        } catch (error) {
-          this.setState({ isError: true, message: error.message });
-        }
-      } else {
-        this.setState({
-          isError: false,
-          message: '',
-          transactionFee: 0,
-        });
-      }
     }
   };
 
   render() {
     const { receiverAddress, amountInSatoshi, transactionFee, feeRate, sliderValue } = this.state;
     return (
-      <Grid>
+      <Grid stackable>
         <Grid.Row>
           <Grid.Column width={4} verticalAlign='middle'>
-            Pay to
+            <b>Pay to</b>
           </Grid.Column>
-          <Grid.Column width={6}>
+          <Grid.Column width={7}>
             <Input
               fluid
               type='text'
@@ -232,16 +239,13 @@ class SendTransaction extends React.Component {
               onChange={this.onPaytoNameAddressChange}
             />
           </Grid.Column>
-          <Grid.Column width={6}>
-            {/* <Input fluid readOnly id='receiverAddress' placeholder='xxxxxxxxxxxxxxxxxxxxxxxxx' /> */}
-            {/* <p>{receiverAddress}</p> */}
-          </Grid.Column>
         </Grid.Row>
+        <Divider className='walletHomeDividerHorizontal' />
         <Grid.Row>
           <Grid.Column width={4} verticalAlign='middle'>
-            Amount
+            <b>Amount</b>
           </Grid.Column>
-          <Grid.Column width={6}>
+          <Grid.Column width={7}>
             <Input
               fluid
               type='number'
@@ -252,15 +256,16 @@ class SendTransaction extends React.Component {
               onChange={this.onAmountChange}
             />
           </Grid.Column>
-          <Grid.Column width={6}>
-            <p className='form-control-plaintext'>{satoshiToBSV(Number(amountInSatoshi))}</p>
+          <Grid.Column width={5}>
+            <p className='form-control-plaintext'>{utils.satoshiToBSV(amountInSatoshi)}</p>
           </Grid.Column>
         </Grid.Row>
+        <Divider className='walletHomeDividerHorizontal' />
         <Grid.Row>
           <Grid.Column width={4} verticalAlign='middle'>
-            Network Fee (Satoshis/byte)
+            <b>Network Fee (Satoshis/byte)</b>
           </Grid.Column>
-          <Grid.Column width={6} verticalAlign='middle'>
+          <Grid.Column width={7} verticalAlign='middle'>
             <input
               id='feerate'
               type='range'
@@ -271,37 +276,26 @@ class SendTransaction extends React.Component {
               style={{ width: '100%' }}
             />
           </Grid.Column>
-          <Grid.Column width={6}>
-            <p>{`${satoshiToBSV(Number(transactionFee))} (${feeRate} satoshis/byte)`}</p>
+          <Grid.Column width={5}>
+            <p>{`${utils.satoshiToBSV(Number(transactionFee))} (${feeRate} satoshis/byte)`}</p>
           </Grid.Column>
         </Grid.Row>
+        <Divider className='walletHomeDividerHorizontal' />
         <Grid.Row>
-          <Grid.Column width={16}>
-            {this.renderMessage()}
-            {/* {receiverAddress === '' ? (
-              <div className='ui negative message'>
-                <p>Enter correct Address or Allpay Name</p>
-              </div>
-            ) : (
-              <></>
-            )}{' '} */}
-          </Grid.Column>
+          <Grid.Column width={16}>{this.renderMessage()}</Grid.Column>
         </Grid.Row>
         <Grid.Row centered>
-          <center>
-            <Grid.Column>
-              <Button
-                color='yellow'
-                onClick={this.onSend}
-                disabled={receiverAddress === '' ? true : false}>
-                Send
-              </Button>
-
-              <Button color='yellow' onClick={this.onClose}>
-                Close
-              </Button>
-            </Grid.Column>
-          </center>
+          <Grid.Column>
+            <Button
+              className='coral'
+              onClick={this.onSend}
+              disabled={receiverAddress === '' ? true : false}>
+              Send
+            </Button>
+            <Button className='peach' onClick={this.onClose}>
+              Close
+            </Button>
+          </Grid.Column>
         </Grid.Row>
       </Grid>
     );
@@ -314,8 +308,6 @@ SendTransaction.propTypes = {
 
 SendTransaction.defaultProps = {};
 
-const mapStateToProps = state => ({
-  isLoading: walletSelectors.isLoading(state),
-});
+const mapStateToProps = state => ({});
 
 export default withRouter(connect(mapStateToProps)(SendTransaction));

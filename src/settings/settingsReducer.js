@@ -2,36 +2,25 @@ import { createReducer } from 'redux-act';
 import * as actions from './settingsActions';
 
 const INITIAL_STATE = {
-  nexaHost: '',
-  nexaPort: null,
+  nexaURI: '',
   userName: '',
   password: '',
-  sessionKey: '',
+  token: '',
 };
 
 export default createReducer(
   {
-    [actions.changeConfigSuccess]: (
-      state,
-      { nexaHost, nexaPort, userName, password, sessionKey }
-    ) => ({
+    [actions.changeConfigSuccess]: (state, { nexaURI, userName, password, token }) => ({
       ...state,
-      nexaHost,
-      nexaPort,
+      nexaURI,
       userName,
       password,
-      sessionKey,
+      token,
     }),
-    [actions.setDefaultConfigSuccess]: (
-      state,
-      { nexaHost, nexaPort, userName, password, sessionKey }
-    ) => ({
+    [actions.setConfigSuccess]: (state, { nexaURI, token }) => ({
       ...state,
-      nexaHost,
-      nexaPort,
-      userName,
-      password,
-      sessionKey,
+      nexaURI,
+      token,
     }),
   },
   INITIAL_STATE

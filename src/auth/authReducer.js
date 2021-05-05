@@ -23,6 +23,10 @@ export default createReducer(
       ...state,
       isLoading: false,
     }),
+    [actions.updateProfileNameSuccess]: (state, { profile }) => ({
+      ...state,
+      profile,
+    }),
     [actions.setMnemonicSuccess]: (state, { bip39Mnemonic }) => ({
       ...state,
       bip39Mnemonic,
@@ -33,11 +37,13 @@ export default createReducer(
     }),
     [actions.loginSuccess]: (state, { profile }) => ({
       ...state,
+      bip39Mnemonic: null,
       isLoading: false,
       profile,
     }),
     [actions.loginFailure]: state => ({
       ...state,
+      bip39Mnemonic: null,
       isLoading: false,
     }),
     [actions.logoutSuccess]: state => ({

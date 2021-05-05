@@ -44,20 +44,21 @@ export const buyName = data => async (dispatch, getState, { serviceInjector }) =
   }
 };
 
-export const registerName = ({ proxyHost, proxyPort, name, addressCount }) => async (
-  dispatch,
-  getState,
-  { serviceInjector }
-) => {
+export const registerName = ({ name }) => async (dispatch, getState, { serviceInjector }) => {
   dispatch(registerNameRequest());
   try {
-    const { psbt, inputs, ownOutputs } = await serviceInjector(AllpayService).registerName({
-      proxyHost,
-      proxyPort,
+    const { transaction, txBroadcast } = await serviceInjector(AllpayService).registerName({
       name,
-      addressCount,
     });
-    dispatch(registerNameSuccess({ psbt, inputs, ownOutputs }));
+    if (txBroadcast) {
+      dispatch(registerNameSuccess());
+      await dispatch(walletActions.getAllpayHandles());
+      await dispatch(walletActions.getUnregisteredNames());
+      await dispatch(walletActions.getBalance());
+      dispatch(walletActions.createTransactionSuccess({ transactions: [transaction] }));
+    } else {
+      throw new Error('Failed to broadcast transaction');
+    }
   } catch (error) {
     dispatch(registerNameFailure());
     throw error;
@@ -79,8 +80,8 @@ export const signRelayTransaction = data => async (dispatch, getState, { service
       data
     );
     dispatch(signRelayTransactionSuccess());
-    dispatch(walletActions.createSendTransactionSuccess({ transaction }));
     await dispatch(walletActions.getBalance());
+    dispatch(walletActions.createTransactionSuccess({ transactions: [transaction] }));
     return { txBroadcast };
   } catch (error) {
     dispatch(signRelayTransactionFailure());
@@ -88,7 +89,7 @@ export const signRelayTransaction = data => async (dispatch, getState, { service
   }
 };
 
-export const updateProgressStep = createAction('UPDATE_PROGRESS_STEP');
+export const updateProgressStep = createAction('ALLPAY_UPDATE_PROGRESS_STEP');
 export const updateProgress = payload => dispatch => {
   dispatch(updateProgressStep(payload));
 };

@@ -1,5 +1,7 @@
 import { createAction } from 'redux-act';
+import * as walletActions from '../wallet/walletActions';
 import AuthService from './authService';
+import { sleep } from '../shared/utils';
 
 export const getProfileRequest = createAction('GET_PROFILE_REQUEST');
 export const getProfileSuccess = createAction('GET_PROFILE_SUCCESS');
@@ -74,7 +76,7 @@ export const createProfile = password => async (dispatch, getState, { serviceInj
     } = getState();
     const { profile } = await serviceInjector(AuthService).createProfile(bip39Mnemonic, password);
     dispatch(createProfileSuccess());
-    await dispatch(login(profile, password));
+    await dispatch(login(profile.screenName, password));
   } catch (error) {
     dispatch(createProfileFailure());
     throw error;
@@ -93,10 +95,10 @@ export const updateProfileName = (currentProfileName, newProfileName) => async (
       newProfileName
     );
     dispatch(updateProfileNameSuccess({ profile }));
-    return false;
+    return true;
   } catch (error) {
     dispatch(updateProfileNameFailure());
-    return true;
+    throw error;
   }
 };
 
@@ -106,20 +108,32 @@ export const login = (profileId, password) => async (dispatch, getState, { servi
     const { profile } = await serviceInjector(AuthService).login(profileId, password);
     if (profile) {
       dispatch(loginSuccess({ profile }));
+      await dispatch(walletActions.getAllpayHandles());
+      await dispatch(walletActions.getUnregisteredNames());
     } else {
       dispatch(loginFailure());
     }
   } catch (error) {
     dispatch(loginFailure());
+    throw error;
   }
 };
 
 export const logout = () => async (dispatch, getState, { serviceInjector }) => {
-  dispatch(logoutRequest());
-  try {
-    await serviceInjector(AuthService).logout();
-    dispatch(logoutSuccess());
-  } catch (error) {
-    dispatch(logoutFailure());
+  const {
+    wallet: { isLoadingTransactions },
+    mail: { isLoadingMailTransactions },
+  } = getState();
+  if (!isLoadingTransactions && !isLoadingMailTransactions) {
+    dispatch(logoutRequest());
+    try {
+      await serviceInjector(AuthService).logout();
+      dispatch(logoutSuccess());
+    } catch (error) {
+      dispatch(logoutFailure());
+    }
+  } else {
+    await sleep(1000);
+    dispatch(logout());
   }
 };

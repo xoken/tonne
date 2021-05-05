@@ -1,15 +1,14 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Grid, Form, Button, Message } from 'semantic-ui-react';
+import { Grid, Form, Button, Message, Segment } from 'semantic-ui-react';
 import * as settingsActions from '../settingsActions';
 
 class SettingsScreen extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      nexaHost: '',
-      nexaPort: '',
+      nexaURI: '',
       userName: '',
       password: '',
       hasError: false,
@@ -20,13 +19,12 @@ class SettingsScreen extends React.Component {
 
   onSubmit = async () => {
     const { dispatch } = this.props;
-    const { nexaHost, nexaPort, userName, password } = this.state;
-    if (nexaHost && nexaPort && userName && password) {
+    const { nexaURI, userName, password } = this.state;
+    if (nexaURI && userName && password) {
       try {
-        await dispatch(settingsActions.changeConfig(nexaHost, nexaPort, userName, password));
+        await dispatch(settingsActions.changeConfig(nexaURI, userName, password));
         this.setState({ hasError: false, message: 'Success! New settings applied' });
       } catch (error) {
-        dispatch(settingsActions.initHttp());
         this.setState({ hasError: true, message: error.message });
       }
     } else {
@@ -36,18 +34,16 @@ class SettingsScreen extends React.Component {
 
   onTestConnection = async () => {
     const { dispatch } = this.props;
-    const { nexaHost, nexaPort, userName, password } = this.state;
-    if (nexaHost && nexaPort && userName && password) {
+    const { nexaURI, userName, password } = this.state;
+    if (nexaURI && userName && password) {
       try {
-        await dispatch(settingsActions.testConfig(nexaHost, nexaPort, userName, password));
-        dispatch(settingsActions.initHttp());
+        await dispatch(settingsActions.testConfig(nexaURI, userName, password));
         this.setState({
           hasError: false,
           isValidSettings: true,
           message: 'Connection test successful! Click the Save button to save your settings',
         });
       } catch (error) {
-        dispatch(settingsActions.initHttp());
         this.setState({ hasError: true, message: error.message });
       }
     } else {
@@ -63,28 +59,20 @@ class SettingsScreen extends React.Component {
   }
 
   render() {
-    const { nexaHost, nexaPort, userName, password, hasError, isValidSettings } = this.state;
+    const { nexaURI, userName, password, hasError, isValidSettings } = this.state;
     return (
-      <div className='ui segment'>
-        <Grid centered>
-          <Grid.Row centered columns={2}>
-            <Grid.Column>
+      <Grid centered verticalAlign='middle' style={{ height: '100%' }}>
+        <Grid.Row columns={2}>
+          <Grid.Column>
+            <Segment>
               <Form success={!hasError} error={hasError}>
-                <h4 className='ui dividing header'>Nipkow Settings</h4>
+                <h4 className='ui dividing header'>Tonne Settings</h4>
                 <Form.Field required>
-                  <label>Enter Nexa IP Address or hostname</label>
+                  <label>Enter Nexa URL</label>
                   <input
-                    placeholder='0.0.0.0 or www.example.com'
-                    value={nexaHost}
-                    onChange={event => this.setState({ nexaHost: event.target.value })}
-                  />
-                </Form.Field>
-                <Form.Field required>
-                  <label>Enter Port Number</label>
-                  <input
-                    placeholder='0000'
-                    value={nexaPort}
-                    onChange={event => this.setState({ nexaPort: event.target.value })}
+                    placeholder='example.com'
+                    value={nexaURI}
+                    onChange={event => this.setState({ nexaURI: event.target.value })}
                   />
                 </Form.Field>
                 <Form.Field required>
@@ -105,17 +93,17 @@ class SettingsScreen extends React.Component {
                   />
                 </Form.Field>
                 {this.renderError()}
-                <Button color='yellow' onClick={this.onTestConnection}>
+                <Button className='coral' onClick={this.onTestConnection}>
                   Test Connection
                 </Button>
-                <Button color='yellow' disabled={!isValidSettings} onClick={this.onSubmit}>
+                <Button className='coral' disabled={!isValidSettings} onClick={this.onSubmit}>
                   Save
                 </Button>
               </Form>
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </div>
+            </Segment>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
     );
   }
 }

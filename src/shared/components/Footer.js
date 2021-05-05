@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { chainAPI } from 'nipkow-sdk';
+import { chainAPI } from 'allegory-allpay-sdk';
 import { Button } from 'semantic-ui-react';
+import images from '../images';
 
 class Footer extends React.Component {
   constructor(props) {
@@ -15,17 +16,17 @@ class Footer extends React.Component {
   }
 
   componentDidMount() {
-    this.getChainInfo();
-    const autoRefreshTimeInSecs = 1 * 60 * 1000;
-    this.autoRefresh = setInterval(() => {
-      this.getChainInfo();
-    }, autoRefreshTimeInSecs);
+    // this.getChainInfo();
+    // const autoRefreshTimeInSecs = 1 * 60 * 1000;
+    // this.autoRefresh = setInterval(() => {
+    //   this.getChainInfo();
+    // }, autoRefreshTimeInSecs);
   }
 
   async getChainInfo() {
-    const { nexaHost } = this.props;
+    const { nexaURI } = this.props;
     try {
-      if (nexaHost) {
+      if (nexaURI) {
         const { chainInfo } = await chainAPI.getChainInfo();
         if (chainInfo) {
           const { chain, chainTip, blocksSynced } = chainInfo;
@@ -42,13 +43,13 @@ class Footer extends React.Component {
   }
 
   componentDidUpdate(prevProps) {
-    if (this.props.nexaHost !== prevProps.nexaHost) {
-      this.getChainInfo();
-    }
+    // if (this.props.nexaURI !== prevProps.nexaURI) {
+    //   this.getChainInfo();
+    // }
   }
 
-  onStatusButtonHover = () => {
-    const { nexaHost } = this.props;
+  renderFooter() {
+    const { nexaURI } = this.props;
     const { statusButton, blocksSynced, chain, chainTip } = this.state;
     if (statusButton) {
       return (
@@ -62,18 +63,18 @@ class Footer extends React.Component {
                 ? 'page-footer page-footer-displayed'
                 : 'page-footer page-footer-hidden'
             }
-            style={{ backgroundColor: '#fcd04a' }}>
+            style={{ backgroundColor: '#fff3f3', color: '#922FDF' }}>
             <div className='ui container'>
-              <div className='ui transparent label'>
-                Nexa Host: <div className='detail'>{nexaHost || 'UNKNOWN'}</div>
+              <div className='ui transparent label' style={{ color: '#922FDF' }}>
+                Nexa Host: <div className='detail'>{nexaURI || 'UNKNOWN'}</div>
               </div>
-              <div className='ui transparent label'>
+              <div className='ui transparent label' style={{ color: '#922FDF' }}>
                 Chain: <div className='detail'>{chain}</div>
               </div>
-              <div className='ui transparent label'>
+              <div className='ui transparent label' style={{ color: '#922FDF' }}>
                 BlocksSynced: <div className='detail'>{blocksSynced}</div>
               </div>
-              <div className='ui transparent label'>
+              <div className='ui transparent label' style={{ color: '#922FDF' }}>
                 ChainTip: <div className='detail'>{chainTip}</div>
               </div>
             </div>
@@ -83,33 +84,48 @@ class Footer extends React.Component {
     } else {
       return (
         <>
-          <footer className='page-footer'>
-            <div className='ui container'>
-              <Button onClick={this.onStatusButtonToggle} className='statusbuttontext'>
-                <div>Connection status &gt;&gt;</div>
-              </Button>
-            </div>
+          <footer className='page-footer peach newpagefooter'>
+            <span className='footerLeftCol'>
+              <a href='https://www.xoken.org' className='peach' style={{ whiteSpace: 'nowrap' }}>
+                Powered by{' '}
+                <span style={{ fontFamily: 'Didact Gothic', color: '#2f355b' }}>Xoken</span>{' '}
+                <img
+                  alt='Xoken Labs'
+                  src={images.xokenFooterLogo}
+                  style={{
+                    width: 22,
+                    verticalAlign: 'middle',
+                    backgroundColor: 'white',
+                    padding: '0px',
+                    borderRadius: '100px',
+                  }}
+                />
+              </a>
+            </span>
+            <span className='footerRightCol'>
+              Network: <span className='indicator peach'>{`${process.env.REACT_APP_NETWORK}`}</span>
+            </span>
           </footer>
         </>
       );
     }
-  };
+  }
 
   onStatusButtonToggle = () => {
     this.setState({ statusButton: !this.state.statusButton });
   };
 
   render() {
-    return <>{this.onStatusButtonHover()}</>;
+    return <>{this.renderFooter()}</>;
   }
 
   componentWillUnmount() {
-    clearInterval(this.autoRefresh);
+    // clearInterval(this.autoRefresh);
   }
 }
 
 const mapStateToProps = state => ({
-  nexaHost: state.settings.nexaHost,
+  nexaURI: state.settings.nexaURI,
 });
 
 export default connect(mapStateToProps)(Footer);

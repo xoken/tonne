@@ -1,8 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { satoshiToBSV } from '../../shared/utils';
-import { Button, Divider, Icon, Label, Table } from 'semantic-ui-react';
+import { Button, Divider, Icon, Label, Table, Message } from 'semantic-ui-react';
+import { utils } from 'allegory-allpay-sdk';
 import * as walletSelectors from '../walletSelectors';
 import * as walletActions from '../walletActions';
 
@@ -39,38 +39,97 @@ class ReceiveTransaction extends React.Component {
     dispatch(walletActions.getUnusedAddresses());
   };
 
+  renderAllpayHandle() {
+    const { allpayHandles } = this.props;
+    const { copiedAddress } = this.state;
+    return (
+      <>
+        {allpayHandles && allpayHandles.length > 0 && (
+          <>
+            <div className='ui grid stackable'>
+              <div className='left floated six wide middle aligned column'>
+                <h4>My AllPay handle</h4>
+              </div>
+            </div>
+            <Message color='yellow' className='modal-message'>
+              <p>
+                AllPay enabled wallets can send you BSV directly to your AllPay handle
+                <b>{` "${allpayHandles[0]}" `}</b>. The addresses are generated from on-chain
+                registrations and hence provably correct.
+              </p>
+            </Message>
+            {allpayHandles.map((allpayHandle, index) => (
+              <div className='ui two column grid stackable' key={index.toString()}>
+                <div className='column'>
+                  <div className='ui fluid action input'>
+                    <input
+                      type='text'
+                      className='purple'
+                      style={{ fontWeight: 'bold' }}
+                      readOnly
+                      value={allpayHandle}
+                    />
+
+                    <button className='ui coral button' onClick={this.onCopy(allpayHandle)}>
+                      Copy
+                    </button>
+                  </div>
+                </div>
+                {copiedAddress && copiedAddress === allpayHandle ? (
+                  <div className='column middle aligned'>
+                    <Label>
+                      <Icon name='check' color='green' />
+                      Copied!
+                    </Label>
+                  </div>
+                ) : null}
+              </div>
+            ))}
+          </>
+        )}
+      </>
+    );
+  }
+
   renderUnusedAddresses() {
     const { unusedAddresses } = this.props;
     const { copiedAddress } = this.state;
     if (unusedAddresses && unusedAddresses.length > 0) {
       return (
         <>
-          <div className='ui grid'>
-            <div className='left floated six wide middle aligned column'>
+          <div className='ui grid stackable mobile reversed'>
+            <div className='left floated eight wide middle aligned column'>
               <h4>Unused Addresses</h4>
             </div>
-            <div className='right floated right aligned six wide column'>
-              <Button
-                color='yellow'
-                disabled={unusedAddresses.length > 10 ? true : false}
-                onClick={this.onNewUnusedAddress}>
-                Get new Addresses
-              </Button>
+            <div className='right floated right aligned eight wide column'>
+              <div className='floatRightOnComp'>
+                <Button
+                  className='coral'
+                  disabled={unusedAddresses.length > 10 ? true : false}
+                  onClick={this.onNewUnusedAddress}>
+                  Get new Addresses
+                </Button>
+              </div>
             </div>
           </div>
           <Divider />
           {unusedAddresses.map((unusedAddress, index) => (
-            <div className='ui two column grid' key={index.toString()}>
-              <div className='column'>
+            <div className='ui two column grid stackable' key={index.toString()}>
+              <div className='twelve wide column'>
                 <div className='ui fluid action input'>
-                  <input type='text' className='monospace' readOnly value={unusedAddress} />
-                  <button className='ui yellow button' onClick={this.onCopy(unusedAddress)}>
+                  <input
+                    type='text'
+                    className='monospace inputWidth'
+                    readOnly
+                    value={unusedAddress}
+                  />
+                  <button className='ui coral button' onClick={this.onCopy(unusedAddress)}>
                     Copy
                   </button>
                 </div>
               </div>
-              {copiedAddress === unusedAddress ? (
-                <div className='column middle aligned'>
+              {copiedAddress && copiedAddress === unusedAddress ? (
+                <div className='column three wide middle aligned'>
                   <Label>
                     <Icon name='check' color='green' />
                     Copied!
@@ -109,17 +168,17 @@ class ReceiveTransaction extends React.Component {
                     <Table.Cell className='monospace'>
                       <div>
                         {incomingBalance !== null
-                          ? `Total Incoming: ${satoshiToBSV(Number(incomingBalance))}`
+                          ? `Total Incoming: ${utils.satoshiToBSV(Number(incomingBalance))}`
                           : ''}
                       </div>
                       <div>
                         {outgoingBalance !== null
-                          ? `Total Outgoing: ${satoshiToBSV(Number(outgoingBalance))}`
+                          ? `Total Outgoing: ${utils.satoshiToBSV(Number(outgoingBalance))}`
                           : ''}
                       </div>
                       <div>
                         {currentBalance !== null
-                          ? `Current Balance: ${satoshiToBSV(Number(currentBalance))}`
+                          ? `Current Balance: ${utils.satoshiToBSV(Number(currentBalance))}`
                           : ''}
                       </div>
                     </Table.Cell>
@@ -138,6 +197,7 @@ class ReceiveTransaction extends React.Component {
   render() {
     return (
       <>
+        {this.renderAllpayHandle()}
         {this.renderUnusedAddresses()}
         {this.renderUsedAddresses()}
       </>
@@ -158,9 +218,10 @@ ReceiveTransaction.propTypes = {
 ReceiveTransaction.defaultProps = {};
 
 const mapStateToProps = state => ({
-  isLoading: walletSelectors.isLoading(state),
+  isLoading: walletSelectors.isLoadingAddresses(state),
   usedAddresses: state.wallet.usedAddresses,
   unusedAddresses: state.wallet.unusedAddresses,
+  allpayHandles: state.wallet.allpayHandles,
 });
 
 export default connect(mapStateToProps)(ReceiveTransaction);

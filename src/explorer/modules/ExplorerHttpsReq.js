@@ -1,4 +1,4 @@
-import { addressAPI, blockAPI, chainAPI, transactionAPI } from 'nipkow-sdk';
+import { addressAPI, blockAPI, chainAPI, transactionAPI, wallet } from 'allegory-allpay-sdk';
 
 export default class ExplorerHttpsReq {
   static async httpsreq(...reqparameter) {
@@ -75,14 +75,7 @@ export default class ExplorerHttpsReq {
           });
         break;
       case 'getTransactionsByTxIDs':
-        tobeReturned = transactionAPI
-          .getTransactionsByTxIDs(reqparameter[1])
-          .then(data => {
-            return data;
-          })
-          .catch(err => {
-            console.log(err);
-          });
+        tobeReturned = await wallet.getTransactionsByTxIds(reqparameter[1]);
         break;
       default:
         console.log('typo in request');

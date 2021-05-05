@@ -3,88 +3,114 @@ import * as actions from './walletActions';
 import * as authActions from '../auth/authActions';
 
 const INITIAL_STATE = {
-  isLoading: false,
+  receiveModalVisiblity: false,
+  isLoadingTransactions: false,
   transactions: [],
   nextTransactionCursor: null,
   balance: 0,
+  isLoadingAddresses: false,
   usedAddresses: null,
   unusedAddresses: [],
+  allpayHandles: null,
+  unregisteredNames: null,
 };
 
 export default createReducer(
   {
-    [actions.getBalanceRequest]: state => ({
-      ...state,
-      isLoading: true,
-    }),
     [actions.getBalanceSuccess]: (state, { balance }) => ({
       ...state,
-      isLoading: false,
       balance,
-    }),
-    [actions.getBalanceFailure]: state => ({
-      ...state,
-      isLoading: false,
     }),
     [actions.getTransactionsRequest]: state => ({
       ...state,
-      isLoading: true,
+      isLoadingTransactions: true,
     }),
     [actions.getTransactionsSuccess]: (state, { transactions, nextTransactionCursor }) => ({
       ...state,
       transactions: [...state.transactions, ...transactions],
       nextTransactionCursor:
         nextTransactionCursor !== undefined ? nextTransactionCursor : state.nextTransactionCursor,
-      isLoading: false,
+      isLoadingTransactions: false,
     }),
     [actions.getTransactionsFailure]: state => ({
       ...state,
-      isLoading: false,
+      isLoadingTransactions: false,
     }),
     [actions.getDiffTransactionsSuccess]: (state, { transactions }) => ({
       ...state,
       transactions: [...transactions, ...state.transactions],
-      isLoading: false,
+      isLoadingTransactions: false,
     }),
-    [actions.updateTransactionsConfirmationsSuccess]: (state, { updatedTransactions }) => ({
+    [actions.updateTransactionsConfirmationsSuccess]: (
+      state,
+      { updatedTransactions, deletedTransactions }
+    ) => ({
       ...state,
-      transactions: state.transactions.map(transaction => {
-        const isUpdated = updatedTransactions.find(
-          updatedTransaction => updatedTransaction.txId === transaction.txId
-        );
-        if (isUpdated) {
-          return isUpdated;
-        }
-        return transaction;
-      }),
+      transactions: (() => {
+        const remainingTransactions = state.transactions.filter(transaction => {
+          const isDeleted = deletedTransactions.find(deletedTransaction => {
+            return deletedTransaction.txId === transaction.txId;
+          });
+          if (isDeleted) {
+            return false;
+          }
+          return true;
+        });
+        const newTransactions = remainingTransactions.map(transaction => {
+          const isUpdated = updatedTransactions.find(
+            updatedTransaction => updatedTransaction.txId === transaction.txId
+          );
+          if (isUpdated) {
+            return isUpdated;
+          }
+          return transaction;
+        });
+        return newTransactions;
+      })(),
     }),
-    [actions.createSendTransactionSuccess]: (state, { transaction }) => ({
+    [actions.createTransactionSuccess]: (state, { transactions }) => ({
       ...state,
-      transactions: [transaction, ...state.transactions],
+      transactions: [...transactions, ...state.transactions],
     }),
     [actions.getUsedAddressesRequest]: state => ({
       ...state,
-      isLoading: true,
+      isLoadingAddresses: true,
     }),
     [actions.getUsedAddressesSuccess]: (state, { usedAddresses }) => ({
       ...state,
-      isLoading: false,
+      isLoadingAddresses: false,
       usedAddresses,
     }),
     [actions.getUsedAddressesFailure]: state => ({
       ...state,
-      isLoading: true,
+      isLoadingAddresses: true,
     }),
     [actions.getUnusedAddressesSuccess]: (state, { unusedAddresses }) => ({
       ...state,
       unusedAddresses: state.unusedAddresses
-        ? [...state.unusedAddresses, ...unusedAddresses]
+        ? [...unusedAddresses, ...state.unusedAddresses]
         : unusedAddresses,
+    }),
+    [actions.getUnregisteredNameSuccess]: (state, { unregisteredNames }) => ({
+      ...state,
+      unregisteredNames,
+    }),
+    [actions.getAllpayHandlesSuccess]: (state, { allpayHandles }) => ({
+      ...state,
+      allpayHandles: allpayHandles,
     }),
     [actions.CLEAR_USED_UNUSED_ADDRESS]: state => ({
       ...state,
       usedAddresses: null,
       unusedAddresses: [],
+    }),
+    [actions.SHOW_RECEIVE_MODAL]: state => ({
+      ...state,
+      receiveModalVisiblity: true,
+    }),
+    [actions.HIDE_RECEIVE_MODAL]: state => ({
+      ...state,
+      receiveModalVisiblity: null,
     }),
     [authActions.logoutSuccess]: state => ({
       ...INITIAL_STATE,

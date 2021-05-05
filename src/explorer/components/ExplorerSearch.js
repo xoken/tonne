@@ -9,20 +9,20 @@ class ExplorerSearch extends React.Component {
     this.state = { searchterm: '' };
   }
 
-  onSearchClick = () => {
+  onSearchClick = event => {
+    event.preventDefault();
     if (this.state.searchterm !== '') {
       if (this.state.searchterm.length < 26) {
-        this.props.history.push('/explorer/blockheight/' + this.state.searchterm + '/""');
+        this.props.history.push(`/explorer/blockheight/${this.state.searchterm}`);
       } else if (this.state.searchterm.length >= 26 && this.state.searchterm.length <= 35) {
         this.props.history.push(`/explorer/address/${this.state.searchterm}`);
       } else if (this.state.searchterm.length === 64) {
         if (this.state.searchterm.substring(0, 4) === '0000') {
-          this.props.history.push(`/explorer/blockhash/${this.state.searchterm}/""`);
+          this.props.history.push(`/explorer/blockhash/${this.state.searchterm}`);
         } else {
           this.props.history.push(`/explorer/transaction/${this.state.searchterm}`);
         }
       } else {
-        console.log(this.props.history + 'this.props.history');
         this.props.history.push(`/explorer/404`);
       }
     }
@@ -36,22 +36,22 @@ class ExplorerSearch extends React.Component {
             <form onSubmit={this.onSearchClick}>
               <div className='ui form'>
                 <div className='inline fields'>
-                  <div className='three wide field'></div>
-                  <div className='nine wide field'>
+                  <div
+                    className='ten wide field'
+                    style={{ marginLeft: 'auto', marginRight: 'auto' }}>
                     <input
                       type='text'
                       placeholder='TXID / Address / BlockHeight / BlockHash'
+                      className='searchBoxAndButtons'
                       onChange={event =>
                         this.setState({ searchterm: event.target.value.replace(/\s/g, '') })
                       }
                     />
-                  </div>
-                  <div className='one wide field'>
-                    <Button type='submit' className='explorerbuttoncolor'>
+
+                    <Button type='submit' className='coral searchBoxAndButtons'>
                       Search
                     </Button>
                   </div>
-                  <div className='three wide field'></div>
                 </div>
               </div>
             </form>

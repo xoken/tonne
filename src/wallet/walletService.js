@@ -1,4 +1,4 @@
-import { wallet, allPay } from 'nipkow-sdk';
+import { wallet, allPay } from 'allegory-allpay-sdk';
 
 class WalletService {
   constructor(store) {
@@ -21,12 +21,12 @@ class WalletService {
     return await wallet.getBalance();
   }
 
-  async createSendTransaction(receiverAddress, amountInSatoshi, satoshisPerByte) {
-    return await wallet.createSendTransaction(receiverAddress, amountInSatoshi, satoshisPerByte);
+  async createTransaction(args) {
+    return await wallet.createTransaction(args);
   }
 
-  async createAllpaySendTransaction(args) {
-    return await allPay.createTransaction(args);
+  async createAllpayTransaction(args) {
+    return await allPay.createAllpayTransaction(args);
   }
 
   async getUsedAddresses() {
@@ -35,6 +35,14 @@ class WalletService {
 
   async getUnusedAddresses(options) {
     return await wallet.getUnusedAddresses(options);
+  }
+
+  async getUnregisteredNames() {
+    return await wallet.getUnregisteredNames();
+  }
+
+  async getAllpayHandles() {
+    return await wallet.getAllpayHandles();
   }
 }
 

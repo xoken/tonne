@@ -1,7 +1,0 @@
-[Desktop Entry]
-Name=Nipkow
-Exec=./nipkow
-Terminal=false
-Type=Application
-StartupNotify=true
-Encoding=UTF-8

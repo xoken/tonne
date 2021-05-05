@@ -1,7 +1,6 @@
-const { app, BrowserWindow } = require('electron');
-
-// const path = require('path');
-
+const { app, BrowserWindow, nativeImage } = require('electron');
+const path = require('path');
+const { join } = require('path');
 // var widthHeight;
 function createWindow() {
   // Create the browser window.
@@ -15,6 +14,7 @@ function createWindow() {
       webSecurity: false,
     },
   });
+  win.setIcon(path.join(__dirname, '/../public/logo512.png'));
   win.maximize();
   win.show();
   // and load the index.html of the app.

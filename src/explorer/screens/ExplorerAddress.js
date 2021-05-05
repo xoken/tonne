@@ -29,10 +29,11 @@ class ExplorerAddress extends React.Component {
   batches;
   totalpagesavailable;
   currentbatchnum = 1;
-  nextcursor = '';
+  nextcursor = null;
   pagescontainer = [];
 
   initAddress = async () => {
+    this.setState({ isLoading: true });
     if (this.props.match.params.address !== undefined) {
       this.address = this.props.match.params.address;
     }
@@ -41,13 +42,43 @@ class ExplorerAddress extends React.Component {
       this.props.history.push(`/explorer/404`);
     } else {
       this.arrayoftxs.length = 0;
+      this.selected = 1;
       var temparray = [];
       for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
-        temparray[v] = this.rjdecoded.outputs[v].outputTxHash;
+        if (this.rjdecoded.outputs[v].spendInfo) {
+          temparray.push(this.rjdecoded.outputs[v].spendInfo.spendingTxId);
+          temparray.push(this.rjdecoded.outputs[v].outputTxHash);
+        } else {
+          temparray.push(this.rjdecoded.outputs[v].outputTxHash);
+        }
       }
-      this.arrayoftxs = Array.of(temparray);
+
+      this.arrayoftxs = Array.from(new Set(temparray));
+
       this.rjdecodedtx = await ExplorerHttpsReq.httpsreq('getTransactionsByTxIDs', this.arrayoftxs);
       this.pagearrayinit();
+    }
+  };
+
+  calculateSatoshisForEachTx = valueSet => {
+    let inputSats = 0,
+      outputSats = 0;
+    for (let i = 0; i < Object.keys(valueSet.tx.txInps).length; i++) {
+      if (valueSet.tx.txInps[i].address === this.address) {
+        inputSats += valueSet.tx.txInps[i].value;
+      }
+    }
+    for (let index = 0; index < Object.keys(valueSet.tx.txOuts).length; index++) {
+      if (valueSet.tx.txOuts[index].address === this.address) {
+        outputSats += valueSet.tx.txOuts[index].value;
+      }
+    }
+    if (outputSats - inputSats > 0) {
+      return <span className='colorGreen'>+{(outputSats - inputSats).toString()}</span>;
+    } else if (outputSats - inputSats < 0) {
+      return <span className='colorRed'>{(outputSats - inputSats).toString()}</span>;
+    } else {
+      return 'No change in value';
     }
   };
 
@@ -55,38 +86,66 @@ class ExplorerAddress extends React.Component {
     this.txlist.length = 0;
     var printbreaker = 1;
     var txnumber = (this.selected - 1) * this.outputsperpage;
-    console.log(this.selected + 'this.selected');
 
     for (var i = txnumber; i < this.addressCache.length; i++) {
       this.txlist.push(
         <>
           <Grid>
-            <Grid.Row columns={1} className='nopadding'>
-              <Grid.Column className='txslnum'>
+            <Grid.Row columns={1} className=' txslnum'>
+              <Grid.Column computer={1} tablet={1} mobile={2}>
+                <h4>#({i + 1})</h4>
+              </Grid.Column>
+              <Grid.Column computer={15} tablet={15} mobile={14}>
                 <h4>
-                  #({i + 1})&nbsp;
-                  <Link to={'/explorer/transaction/' + this.addressCache[i].outputTxHash}>
-                    {this.addressCache[i].outputTxHash}
+                  <Link
+                    to={'/explorer/transaction/' + this.addressCache[i].txId}
+                    className='word-wrap'>
+                    {this.addressCache[i].txId}
                   </Link>
                 </h4>
               </Grid.Column>
             </Grid.Row>
-            <Grid.Row columns={1} className='nopaddingtop'>
+            <Grid.Row columns={1} className=''>
               <Grid.Column>
                 <Grid>
-                  <Grid.Row columns={1}>
+                  <Grid.Row columns={2}>
+                    <Grid.Column computer={1} tablet={2} mobile={4}>
+                      <b>Satoshis: </b>
+                    </Grid.Column>
+                    <Grid.Column computer={15} tablet={14} mobile={12}>
+                      {this.calculateSatoshisForEachTx(this.addressCache[i])}
+                    </Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row className='nopaddingtop'>
+                    <Grid.Column computer={1} tablet={2} mobile={4}>
+                      <b>Block:</b>
+                    </Grid.Column>
+                    <Grid.Column computer={15} tablet={14} mobile={12}>
+                      <span className='tdwordbreak'>
+                        <Link to={'/explorer/blockhash/' + this.addressCache[i].blockHash}>
+                          {this.addressCache[i].blockHash}
+                        </Link>
+                      </span>
+                      {'   '}&nbsp; (#
+                      <Link to={'/explorer/blockheight/' + this.addressCache[i].blockHeight}>
+                        {this.addressCache[i].blockHeight}
+                      </Link>
+                      )
+                    </Grid.Column>
+                  </Grid.Row>
+                  <Grid.Row columns={1} className='nopaddingtop'>
                     <Grid.Column style={{ padding: '0px' }}>
-                      <Segment>
-                        <Grid>
-                          <Grid.Row columns={2} divided>
+                      <Segment className='nopaddingtop removesegmentborder'>
+                        <Grid stackable>
+                          <Grid.Row columns={2}>
                             <Grid.Column>
                               <Grid>
                                 <Grid.Row columns={1} className='cen'>
                                   <Grid.Column>
-                                    <h5>Inputs</h5>
+                                    <h5 className='purplefontcolor'>Inputs</h5>
                                   </Grid.Column>
                                 </Grid.Row>
-                                <Grid.Row columns={1}>
+                                <Grid.Row columns={1} className='nopaddingtop'>
                                   <Grid.Column
                                     width='16'
                                     style={{
@@ -100,14 +159,14 @@ class ExplorerAddress extends React.Component {
                                 </Grid.Row>
                               </Grid>
                             </Grid.Column>
-                            <Grid.Column>
+                            <Grid.Column className='verticaldivider'>
                               <Grid>
                                 <Grid.Row columns={1} className='cen'>
                                   <Grid.Column>
-                                    <h5>Outputs</h5>
+                                    <h5 className='purplefontcolor'>Outputs</h5>
                                   </Grid.Column>
                                 </Grid.Row>
-                                <Grid.Row columns={1}>
+                                <Grid.Row columns={1} className='nopaddingtop'>
                                   <Grid.Column
                                     style={{
                                       maxHeight: '1350px',
@@ -123,25 +182,6 @@ class ExplorerAddress extends React.Component {
                           </Grid.Row>
                         </Grid>
                       </Segment>
-                    </Grid.Column>
-                  </Grid.Row>
-                  <Grid.Row columns={3}>
-                    <Grid.Column width='3'>
-                      <b>Satoshis: </b>
-                      {this.addressCache[i].value}
-                    </Grid.Column>
-                    <Grid.Column width='2'>
-                      <b>Block Height: </b>
-                      <Link
-                        to={'/explorer/blockheight/' + this.addressCache[i].blockHeight + '/""'}>
-                        {this.addressCache[i].blockHeight}
-                      </Link>
-                    </Grid.Column>
-                    <Grid.Column className='tdwordbreak' width='11'>
-                      <b>Block Hash: </b>
-                      <Link to={'/explorer/blockhash/' + this.addressCache[i].blockHash + '/""'}>
-                        {this.addressCache[i].blockHash}
-                      </Link>
                     </Grid.Column>
                   </Grid.Row>
                 </Grid>
@@ -178,22 +218,28 @@ class ExplorerAddress extends React.Component {
         outputsjsx.push(
           <Grid>
             <Grid.Row columns={2}>
-              <Grid.Column width={1}>({b + 1}).</Grid.Column>
-              <Grid.Column width={15}>
+              <Grid.Column width={2}>({b + 1}).</Grid.Column>
+              <Grid.Column width={14}>
                 <Grid>
-                  <Grid.Row columns={2}>
-                    <Grid.Column width={3}>
+                  <Grid.Row columns={2} className='paddtopbottom5px'>
+                    <Grid.Column computer={3} mobile={5} style={{ marginTop: '10px' }}>
                       <b>Address</b>
                     </Grid.Column>
-                    <Grid.Column className='tdwordbreak' width={13}>
+                    <Grid.Column
+                      className='tdwordbreak'
+                      computer={13}
+                      mobile={11}
+                      style={{ marginTop: '10px' }}>
                       {checkforemptyaddress(output.tx.txOuts[b].address)}
                     </Grid.Column>
                   </Grid.Row>
-                  <Grid.Row columns={2}>
-                    <Grid.Column width={3}>
+                  <Grid.Row columns={2} className='paddtopbottom5px'>
+                    <Grid.Column computer={3} mobile={5}>
                       <b>Satoshis</b>
                     </Grid.Column>
-                    <Grid.Column width={13}>{output.tx.txOuts[b].value}</Grid.Column>
+                    <Grid.Column computer={13} mobile={11}>
+                      {output.tx.txOuts[b].value}
+                    </Grid.Column>
                   </Grid.Row>
                 </Grid>
               </Grid.Column>
@@ -204,9 +250,7 @@ class ExplorerAddress extends React.Component {
           outputsjsx.push(
             <Grid>
               <Grid.Row columns={1}>
-                <Grid.Column width={16}>
-                  <div className='horizontaldivider'></div>
-                </Grid.Column>
+                <Grid.Column width={16}></Grid.Column>
               </Grid.Row>
             </Grid>
           );
@@ -224,18 +268,24 @@ class ExplorerAddress extends React.Component {
       if (txaddress) {
         return (
           <>
-            <Grid.Column width={3}>
+            <Grid.Column computer={3} mobile={5} style={{ marginTop: '10px' }}>
               <b>Address</b>
             </Grid.Column>
-            <Grid.Column className='tdwordbreak' width={13}>
-              <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>{' '}
+            <Grid.Column
+              className='tdwordbreak'
+              computer={13}
+              mobile={11}
+              style={{ marginTop: '10px' }}>
+              <Link to={'/explorer/address/' + txaddress}>{txaddress}</Link>
             </Grid.Column>
           </>
         );
       } else {
         return (
           <>
-            <Grid.Column width={16}>Newly minted coins</Grid.Column>
+            <Grid.Column width={16} style={{ marginTop: '10px' }} className='paddtopbottom5px'>
+              Newly minted coins
+            </Grid.Column>
           </>
         );
       }
@@ -244,11 +294,13 @@ class ExplorerAddress extends React.Component {
       if (outpointindex >= 0) {
         return (
           <>
-            <Grid.Row columns={2}>
-              <Grid.Column width={3}>
+            <Grid.Row columns={2} className='paddtopbottom5px'>
+              <Grid.Column computer={3} mobile={5}>
                 <b>Outpoint Index</b>
               </Grid.Column>
-              <Grid.Column width={13}>{outpointindex}</Grid.Column>
+              <Grid.Column computer={13} mobile={11}>
+                {outpointindex}
+              </Grid.Column>
             </Grid.Row>
           </>
         );
@@ -260,17 +312,19 @@ class ExplorerAddress extends React.Component {
       inputsjsx.push(
         <Grid>
           <Grid.Row columns={2}>
-            <Grid.Column width={1}>({a + 1}). </Grid.Column>
-            <Grid.Column width={15}>
+            <Grid.Column width={2}>({a + 1}).</Grid.Column>
+            <Grid.Column width={14}>
               <Grid>
-                <Grid.Row columns={2}>
+                <Grid.Row columns={2} className='paddtopbottom5px'>
                   {checkforinvalidaddress(input.tx.txInps[a].address)}
                 </Grid.Row>
-                <Grid.Row columns={2}>
-                  <Grid.Column width={3}>
+                <Grid.Row columns={2} className='paddtopbottom5px'>
+                  <Grid.Column computer={3} mobile={5}>
                     <b>Satoshis</b>
                   </Grid.Column>
-                  <Grid.Column width={13}>{input.tx.txInps[a].value}</Grid.Column>
+                  <Grid.Column computer={13} mobile={11}>
+                    {input.tx.txInps[a].value}
+                  </Grid.Column>
                 </Grid.Row>
                 {checkforinvalidoutpointindex(input.tx.txInps[a].outpointIndex)}
               </Grid>
@@ -282,9 +336,7 @@ class ExplorerAddress extends React.Component {
         inputsjsx.push(
           <Grid>
             <Grid.Row columns={1}>
-              <Grid.Column width={16}>
-                <div className='horizontaldivider'></div>
-              </Grid.Column>
+              <Grid.Column width={16}></Grid.Column>
             </Grid.Row>
           </Grid>
         );
@@ -298,11 +350,13 @@ class ExplorerAddress extends React.Component {
     this.txCache.length = 0;
     this.cachecounter = 0;
     this.caching();
-    console.log(this.addressCache.length + 'this.addressCache.length');
     if (this.addressCache.length > 0) {
       var tempindex = 1;
       if (this.addressCache.length > this.outputsperpage) {
         this.totalpagesavailable = Math.ceil(this.addressCache.length / this.outputsperpage);
+        if (this.totalpagesavailable < this.fixedpagearrlength) {
+          this.nextcursor = null;
+        }
       } else {
         this.totalpagesavailable = 1;
       }
@@ -316,9 +370,8 @@ class ExplorerAddress extends React.Component {
       this.batches = Math.ceil(this.totalpagesavailable / this.fixedpagearrlength);
       this.currentbatchnum = Math.ceil(this.selected / this.fixedpagearrlength);
       this.printpagination();
+
       this.printresults();
-    } else {
-      //
     }
   };
 
@@ -326,23 +379,21 @@ class ExplorerAddress extends React.Component {
     if (Object.keys(this.rjdecoded.outputs).length > 0) {
       this.arrayoftxs.length = 0;
       var temparray = [];
-      for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
-        temparray[v] = this.rjdecoded.outputs[v].outputTxHash;
+      for (var v = 0; v < Object.keys(this.rjdecodedtx.txs).length; v++) {
+        temparray[v] = this.rjdecodedtx.txs[v].txId;
       }
-      this.arrayoftxs = Array.of(temparray);
 
-      for (var i = 0; i < Object.keys(this.rjdecoded.outputs).length; i++) {
-        this.addressCache[this.cachecounter] = this.rjdecoded.outputs[i];
+      this.arrayoftxs = Array.from(new Set(temparray));
+
+      for (var i = 0; i < Object.keys(this.rjdecodedtx.txs).length; i++) {
+        this.addressCache[this.cachecounter] = this.rjdecodedtx.txs[i];
         this.txCache[this.cachecounter] = this.rjdecodedtx.txs[i];
         this.cachecounter += 1;
       }
-      this.nextcursor = this.rjdecoded.nextCursor;
+      this.nextcursor = parseInt(this.rjdecoded.nextCursor);
     } else {
       this.nextcursor = null;
     }
-    console.log(this.addressCache.length + 'addressCache.length');
-    console.log(this.arrayoftxs.length + 'this.arrayoftxs.length');
-    console.log(this.txCache.length + 'this.txCache.length');
   };
 
   adddataupdatepagearray = () => {
@@ -351,15 +402,33 @@ class ExplorerAddress extends React.Component {
     if (this.nextcursor != null) {
       this.totalpagesavailable = Math.ceil(this.addressCache.length / this.outputsperpage);
       this.batches = Math.ceil(this.totalpagesavailable / this.fixedpagearrlength);
-      var pagenum = this.pagearray[this.pagearray.length - 1];
-      this.currentbatchnum = Math.ceil(this.pagearray[0] / this.fixedpagearrlength);
-      this.currentbatchnum += 1;
-      var numpagesincurbatch = Math.ceil(
-        (this.cachecounter - prevcounterval) / this.outputsperpage
-      );
-      for (var t = 0; t < numpagesincurbatch; t++) {
-        pagenum += 1;
-        this.pagearray[t] = pagenum;
+      if (this.currentbatchnum === this.batches) {
+        var pagenum = this.pagearray[this.pagearray.length - 1];
+        this.currentbatchnum = Math.ceil(this.pagearray[0] / this.fixedpagearrlength);
+        this.currentbatchnum += 1;
+        var numpagesincurbatch = Math.ceil(
+          (this.cachecounter - prevcounterval) / this.outputsperpage
+        );
+        for (let t = 0; t < numpagesincurbatch; t++) {
+          pagenum += 1;
+          this.pagearray[t] = pagenum;
+        }
+      } else {
+        this.currentbatchnum += 1;
+        var tindex = this.pagearray[this.pagearray.length - 1];
+
+        if (
+          this.pagearray[this.pagearray.length - 1] + this.fixedpagearrlength >
+          this.totalpagesavailable
+        ) {
+          this.pagearrlength = this.totalpagesavailable % this.fixedpagearrlength;
+        } else {
+          this.pagearrlength = this.fixedpagearrlength;
+        }
+        for (let t = 0; t < this.pagearrlength; t++) {
+          tindex += 1;
+          this.pagearray[t] = tindex;
+        }
       }
     }
     this.printpagination();
@@ -406,7 +475,7 @@ class ExplorerAddress extends React.Component {
     }
     if (
       this.pagearray[this.pagearrlength - 1] !== this.totalpagesavailable ||
-      this.nextcursor != null
+      (this.nextcursor != null && this.totalpagesavailable >= this.fixedpagearrlength)
     ) {
       this.pagescontainer.push(
         <li className='page-item active'>
@@ -420,9 +489,7 @@ class ExplorerAddress extends React.Component {
   };
 
   addlistener = event => {
-    this.selected = event.target.value;
-    console.log(this.selected + 'this.selected addlistener');
-    console.log(event.target.value + 'event.target.value addlistener');
+    this.selected = parseInt(event.target.value);
     this.printpagination();
     this.printresults();
   };
@@ -434,7 +501,6 @@ class ExplorerAddress extends React.Component {
 
       for (var t = 0; t < this.fixedpagearrlength; t++) {
         this.pagearray[t] = ltindex;
-        console.log(this.pagearray[t] + 'this.pagearray[t]');
         ltindex += 1;
       }
 
@@ -449,33 +515,43 @@ class ExplorerAddress extends React.Component {
       this.pagearray[this.pagearray.length - 1] !== this.totalpagesavailable ||
       this.nextcursor != null
     ) {
-      console.log('right arrow clicked');
-      //  console.log(this.pagearray[this.pagearray.length-1]+"this.pagearray[this.pagearray.length-1]");
-      console.log(this.totalpagesavailable + 'totalpagesavailable');
       this.currentbatchnum = Math.ceil(this.pagearray[0] / this.fixedpagearrlength);
       if (
-        this.pagearray[this.pagearray.length - 1] === this.totalpagesavailable &&
-        this.nextcursor != null
+        (this.pagearray[this.pagearray.length - 1] === this.totalpagesavailable &&
+          this.nextcursor != null &&
+          this.currentbatchnum === this.batches) ||
+        (this.nextcursor != null &&
+          this.pagearray[this.pagearray.length - 1] >=
+            this.totalpagesavailable - this.fixedpagearrlength)
       ) {
+        this.setState({ isLoading: true });
         this.rjdecoded = await ExplorerHttpsReq.httpsreq(
           'getOutputsByAddress',
+          this.address,
           100,
           this.nextcursor
         );
+        if (Object.keys(this.rjdecoded.outputs).length > 0) {
+          this.arrayoftxs.length = 0;
+          var temparray = [];
+          for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
+            if (this.rjdecoded.outputs[v].spendInfo) {
+              temparray.push(this.rjdecoded.outputs[v].spendInfo.spendingTxId);
+              temparray.push(this.rjdecoded.outputs[v].outputTxHash);
+            } else {
+              temparray.push(this.rjdecoded.outputs[v].outputTxHash);
+            }
+          }
 
-        this.arrayoftxs.length = 0;
-        var temparray = [];
-        for (var v = 0; v < Object.keys(this.rjdecoded.outputs).length; v++) {
-          temparray[v] = this.rjdecoded.outputs[v].outputTxHash;
+          this.arrayoftxs = Array.from(new Set(temparray));
+
+          this.rjdecodedtx = await ExplorerHttpsReq.httpsreq(
+            'getTransactionsByTxIDs',
+            this.arrayoftxs
+          );
         }
-        this.arrayoftxs = Array.of(temparray);
-        this.rjdecodedtx = await ExplorerHttpsReq.httpsreq(
-          'getTransactionsByTxIDs',
-          this.arrayoftxs
-        );
         this.adddataupdatepagearray();
       } else {
-        console.log('elseblock');
         this.currentbatchnum += 1;
         var tindex = this.pagearray[this.pagearray.length - 1];
 
@@ -490,7 +566,6 @@ class ExplorerAddress extends React.Component {
         for (var t = 0; t < this.pagearrlength; t++) {
           tindex += 1;
           this.pagearray[t] = tindex;
-          console.log(this.pagearray[t] + 'this.pagearray[t]');
         }
         this.printpagination();
       }
@@ -514,26 +589,41 @@ class ExplorerAddress extends React.Component {
   render() {
     return (
       <>
+        {this.state.isLoading ? (
+          <Loader
+            active
+            style={{
+              position: 'absolute',
+              top: '50%',
+              zIndex: '999',
+            }}
+          />
+        ) : (
+          ''
+        )}
         <Segment className='noborder'>
-          <Button onClick={this.onBack} className='explorerbuttoncolor'>
+          <Button onClick={this.onBack} className='backspace'>
             Back
           </Button>
         </Segment>
+
         <div className='opacitywhileload'>
-          <Segment.Group>
+          <Segment.Group className='removesegmentborder'>
             <Segment>
               <h4>
-                Address &nbsp;
-                <Link to={'/explorer/address/' + this.address}>{this.address}</Link>
+                <span className='purplefontcolor'>Address</span> &nbsp;
+                <Link to={'/explorer/address/' + this.address} className='word-wrap'>
+                  {this.address}
+                </Link>
               </h4>
             </Segment>
             <Segment>
-              <h4>
+              <h4 className='purplefontcolor'>
                 <div id='nooftransactions'></div>Transactions
               </h4>
             </Segment>
-            <Segment>{this.state.isLoading ? <Loader active /> : this.txlist}</Segment>
-            <Segment>
+            <Segment>{this.state.isLoading ? '' : this.txlist}</Segment>
+            <Segment textAlign='center'>
               <nav aria-label='transactions navigation'>
                 <ul className='pagination justify-content-center' id='pagination'>
                   {this.pagescontainer}

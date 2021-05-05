@@ -7,15 +7,14 @@ const INITIAL_STATE = {
   ui: {
     activeStep: 1,
     title: null,
-    progressTotalSteps: 6,
+    progressTotalSteps: 4,
   },
+  requestInProgress: false,
   psbt: null,
   outpoint: null,
   inputs: null,
   ownOutputs: null,
   snv: null,
-  addressCommitment: null,
-  utxoCommitment: null,
 };
 
 export default createReducer(
@@ -36,45 +35,76 @@ export default createReducer(
         name,
       },
     }),
+    [allpayActions.getResellerURIRequest]: state => ({
+      ...state,
+      requestInProgress: true,
+    }),
+    [allpayActions.getResellerURISuccess]: state => ({
+      ...state,
+      requestInProgress: false,
+    }),
+    [allpayActions.getResellerURIFailure]: state => ({
+      ...state,
+      requestInProgress: false,
+    }),
+    [allpayActions.buyNameRequest]: state => ({
+      ...state,
+      requestInProgress: true,
+    }),
     [allpayActions.buyNameSuccess]: (state, { psbt, outpoint, inputs, ownOutputs, snv }) => ({
       ...state,
+      requestInProgress: false,
       psbt,
       outpoint,
       inputs,
       ownOutputs,
       snv,
     }),
+    [allpayActions.buyNameFailure]: state => ({
+      ...state,
+      requestInProgress: false,
+    }),
     [allpayActions.registerNameRequest]: state => ({
       ...state,
+      requestInProgress: true,
       psbt: null,
       inputs: null,
       ownOutputs: null,
       snv: null,
-      addressCommitment: null,
-      utxoCommitment: null,
     }),
-    [allpayActions.registerNameSuccess]: (state, { psbt, inputs, ownOutputs }) => ({
+    // [allpayActions.registerNameSuccess]: (state, { psbt, inputs, ownOutputs }) => ({
+    //   ...state,
+    //   psbt,
+    //   inputs,
+    //   ownOutputs,
+    // }),
+    [allpayActions.registerNameSuccess]: state => ({
       ...state,
-      psbt,
-      inputs,
-      ownOutputs,
+      requestInProgress: false,
+      snv: null,
+    }),
+    [allpayActions.registerNameFailure]: state => ({
+      ...state,
+      requestInProgress: false,
+    }),
+    [allpayActions.signRelayTransactionRequest]: state => ({
+      ...state,
+      requestInProgress: true,
     }),
     [allpayActions.signRelayTransactionSuccess]: state => ({
       ...state,
+      requestInProgress: false,
       snv: null,
-      addressCommitment: null,
-      utxoCommitment: null,
     }),
-    [walletActions.createAllpaySendTransactionSuccess]: (
-      state,
-      { psbt, inputs, ownOutputs, addressCommitment, utxoCommitment }
-    ) => ({
+    [allpayActions.signRelayTransactionFailure]: state => ({
+      ...state,
+      requestInProgress: false,
+    }),
+    [walletActions.createAllpayTransactionSuccess]: (state, { psbt, inputs, ownOutputs }) => ({
       ...state,
       psbt,
       inputs,
       ownOutputs,
-      addressCommitment,
-      utxoCommitment,
     }),
     [authActions.logoutSuccess]: state => ({
       ...INITIAL_STATE,

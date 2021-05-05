@@ -1,25 +1,21 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { Button, Form, Grid, Header, Input } from 'semantic-ui-react';
+import { Button, Checkbox, Form, Grid, Header, Message, Modal } from 'semantic-ui-react';
 import * as allpayActions from '../allpayActions';
-import { wallet, utils } from 'nipkow-sdk';
+import * as walletActions from '../../wallet/walletActions';
+import { utils } from 'allegory-allpay-sdk';
 
 class ProxyRegistration extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      proxyProvider: undefined,
-      addressCount: 10,
       unregisteredNames: [],
-      showProxyProviders: false,
       showRegistrationOptions: this.props.outpoint?.name ? false : true,
       name: this.props.outpoint?.name || [],
-      proxyProviders: [
-        { name: 'Proxy Provider 1', proxyHost: '127.0.0.1', proxyPort: 8000 },
-        { name: 'Proxy Provider 2', proxyHost: '127.0.0.1', proxyPort: 8000 },
-        { name: 'Proxy Provider 3', proxyHost: '127.0.0.1', proxyPort: 8000 },
-      ],
+      skipRegistrationModal: false,
+      message: '',
+      isError: false,
     };
   }
 
@@ -34,7 +30,6 @@ class ProxyRegistration extends React.Component {
     if (progressTotalSteps && activeStep) {
       dispatch(
         allpayActions.updateScreenProps({
-          title: 'Register Name',
           progressTotalSteps: Number(progressTotalSteps),
           activeStep: Number(activeStep),
         })
@@ -42,194 +37,187 @@ class ProxyRegistration extends React.Component {
     } else {
       dispatch(
         allpayActions.updateScreenProps({
-          title: 'Register Name',
-          activeStep: 4,
+          activeStep: 3,
         })
       );
     }
-    this.setState({
-      proxyProvider: this.state.proxyProviders[0],
-    });
-    const { names } = await wallet.getUnregisteredName();
+    const { names } = await dispatch(walletActions.getUnregisteredNames());
     const unregisteredNames = names.map(unregisteredName => ({
       text: unregisteredName,
       value: unregisteredName,
     }));
     this.setState({ unregisteredNames });
+    if (this.state.name.length === 0 && unregisteredNames.length > 0) {
+      const nameCodePoint = utils.getCodePoint(unregisteredNames[0].value);
+      this.setState({ name: nameCodePoint });
+      dispatch(allpayActions.setName({ name: nameCodePoint }));
+    }
   }
 
   onRegister = async () => {
-    const {
-      proxyProvider: { proxyHost, proxyPort },
-      name,
-      addressCount,
-    } = this.state;
+    const { name } = this.state;
     if (name.length > 0) {
       const { dispatch } = this.props;
       try {
         await dispatch(
           allpayActions.registerName({
-            proxyHost,
-            proxyPort,
             name: utils.codePointToName(name),
-            addressCount,
           })
         );
-        this.props.history.push('/wallet/allpay/confirm-register');
+        this.props.history.push('/wallet/allpay/register-success');
       } catch (error) {
-        this.setState({ isError: true, message: error.message });
+        this.setState({
+          isError: true,
+          message: error.response && error.response.data ? error.response.data : error.message,
+        });
       }
     } else {
       this.setState({ isError: true, message: 'Please select a name to register' });
     }
   };
 
-  onSelect = proxyProvider => async () => {
+  onToggle = () => {
+    const { skipRegistrationModal } = this.state;
     this.setState({
-      proxyProvider: proxyProvider,
+      skipRegistrationModal: !skipRegistrationModal,
     });
+  };
+
+  onSkipAnyWay = () => {
+    this.props.history.push('/wallet');
   };
 
   renderMessage() {
     const { isError, message } = this.state;
     if (message) {
-      if (isError) {
-        return (
-          <div className='ui negative message'>
-            <p>{message}</p>
-          </div>
-        );
-      } else {
-        return (
-          <div className='ui success message'>
-            <p>{message}</p>
-          </div>
-        );
-      }
+      return (
+        <Grid.Row>
+          <Grid.Column>
+            <Message positive={!isError} negative={isError}>
+              {message}
+            </Message>
+          </Grid.Column>
+        </Grid.Row>
+      );
     }
   }
 
-  renderProxyProviders() {
-    const { showProxyProviders, proxyProviders } = this.state;
-    if (showProxyProviders) {
-      return proxyProviders.map((proxyProvider, index) => {
-        const { name } = proxyProvider;
-        return (
-          <div key={index.toString()} className='ui clearing segment'>
-            <div className='ui grid'>
-              <div className='row'>
-                <div className='nine wide middle aligned column'>
-                  <h4 className='ui header'>{name}</h4>
-                </div>
-                <div className='seven wide middle aligned column'>
-                  <div className='ui grid'>
-                    <div className='six wide column middle aligned'></div>
-                    <div className='ten wide column'>
-                      <div className='ui form'>
-                        <div className='field'>
-                          <Button fluid color='yellow' onClick={this.onSelect(proxyProvider)}>
-                            Select
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      });
-    }
+  renderHeader() {
+    const { name } = this.state;
+    return (
+      <>
+        <Header as='h3' textAlign='center' className='word-wrap'>
+          Register{' '}
+          {name.length > 0 ? (
+            <span className='purplefontcolor'>{utils.codePointToName(name)} </span>
+          ) : (
+            <span className='purplefontcolor'>name</span>
+          )}
+        </Header>
+        <Header textAlign='center'>
+          <Header.Subheader>{/* Header message placeholder */}</Header.Subheader>
+        </Header>
+      </>
+    );
   }
 
   renderRegistrationOption() {
     const { dispatch } = this.props;
     const { showRegistrationOptions, unregisteredNames } = this.state;
     if (showRegistrationOptions) {
-      const { addressCount } = this.state;
       return (
-        <div className='ui grid'>
-          <div className='sixteen wide column'>
-            <Grid>
-              <Grid.Row>
-                <Grid.Column width={3} verticalAlign='middle'>
-                  Name
-                </Grid.Column>
-                <Grid.Column width={6}>
-                  <Form.Select
-                    options={unregisteredNames}
-                    placeholder='Allegory Name'
-                    onChange={(e, { value }) => {
-                      const nameCodePoint = utils.getCodePoint(value);
-                      this.setState({ name: nameCodePoint });
-                      dispatch(allpayActions.setName({ name: nameCodePoint }));
-                    }}
-                  />
-                </Grid.Column>
-              </Grid.Row>
-              <Grid.Row>
-                <Grid.Column width={3} verticalAlign='middle'>
-                  No of Address
-                </Grid.Column>
-                <Grid.Column width={6}>
-                  <Input
-                    type='number'
-                    className='form-control'
-                    value={addressCount}
-                    onChange={event => this.setState({ addressCount: event.target.value })}
-                  />
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
-          </div>
-        </div>
+        <>
+          <Grid.Row>
+            <Grid.Column width={3} verticalAlign='middle'>
+              Name
+            </Grid.Column>
+            <Grid.Column width={6}>
+              <Form.Select
+                options={unregisteredNames}
+                placeholder='Allegory Name'
+                value={utils.codePointToName(this.state.name)}
+                onChange={(e, { value }) => {
+                  const nameCodePoint = utils.getCodePoint(value);
+                  this.setState({ name: nameCodePoint });
+                  dispatch(allpayActions.setName({ name: nameCodePoint }));
+                }}
+              />
+            </Grid.Column>
+          </Grid.Row>
+        </>
       );
     }
     return null;
   }
 
+  renderSkipModal() {
+    const { skipRegistrationModal } = this.state;
+    return (
+      <Modal open={skipRegistrationModal}>
+        <Modal.Content>
+          <Modal.Description>
+            <p>
+              If you skip you will not be able to receive BitcoinSV by AllPay name. Click Cancel to
+              proceed with proxy registration.
+            </p>
+          </Modal.Description>
+        </Modal.Content>
+        <Modal.Actions>
+          <Button className='coral' onClick={this.onToggle}>
+            Cancel
+          </Button>
+          <Button basic className='borderless' onClick={this.onSkipAnyWay}>
+            Skip Anyway
+          </Button>
+        </Modal.Actions>
+      </Modal>
+    );
+  }
+
   render() {
-    const { name, proxyProvider, showRegistrationOptions, showProxyProviders } = this.state;
+    const { requestInProgress } = this.props;
+    const { showRegistrationOptions } = this.state;
     return (
       <>
-        <Grid>
+        <Grid stackable>
           <Grid.Row>
-            <Grid.Column width='12'>
-              <Header as='h4'>
-                {`Register ${
-                  name.length > 0 ? `"${utils.codePointToName(name)}"` : 'name'
-                } with default proxy provider "${proxyProvider && proxyProvider.name}"`}
-              </Header>
-              {this.renderMessage()}
-              {this.renderProxyProviders()}
-              {this.renderRegistrationOption()}
-            </Grid.Column>
-            <Grid.Column width='4' className='middle aligned'>
-              <Button fluid color='yellow' onClick={this.onRegister}>
-                Register
-              </Button>
-              <button
-                className='fluid ui basic borderless button'
+            <Grid.Column>{this.renderHeader()}</Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column textAlign='center'>
+              <Checkbox
+                toggle
+                label={`${showRegistrationOptions ? 'Hide' : 'Show'} Advanced Options`}
                 onClick={() =>
-                  this.setState({ showRegistrationOptions: !showRegistrationOptions })
-                }>
-                {`${!showRegistrationOptions ? 'Show' : 'Hide'} Registration Options`}
-              </button>
-              <button
-                className='fluid ui basic borderless button'
-                onClick={() => this.setState({ showProxyProviders: !showProxyProviders })}>
-                {`${!showProxyProviders ? 'Show' : 'Hide'} Proxy Providers`}
-              </button>
+                  this.setState({
+                    showRegistrationOptions: !showRegistrationOptions,
+                  })
+                }
+                checked={showRegistrationOptions}
+              />
             </Grid.Column>
           </Grid.Row>
+          {this.renderRegistrationOption()}
+          <Grid.Row>
+            <Grid.Column width='16' textAlign='center'>
+              <Button className='coral' loading={requestInProgress} onClick={this.onRegister}>
+                Continue
+              </Button>
+              <Button basic className='borderless' onClick={this.onToggle}>
+                Skip
+              </Button>
+            </Grid.Column>
+          </Grid.Row>
+          {this.renderMessage()}
         </Grid>
+        {this.renderSkipModal()}
       </>
     );
   }
 }
 
 const mapStateToProps = state => ({
+  requestInProgress: state.allpay.requestInProgress,
   outpoint: state.allpay.outpoint,
 });
 

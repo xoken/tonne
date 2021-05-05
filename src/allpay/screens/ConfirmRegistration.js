@@ -1,8 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { withRouter } from 'react-router-dom';
-import { utils } from 'nipkow-sdk';
-import { satoshiToBSV } from '../../shared/utils';
+import { utils } from 'allegory-allpay-sdk';
 import RenderTransaction from '../components/RenderTransaction';
 import * as allpayActions from '../allpayActions';
 
@@ -20,8 +19,8 @@ class ConfirmRegistration extends React.Component {
     const { dispatch } = this.props;
     dispatch(
       allpayActions.updateScreenProps({
-        title: 'Confirm Allpay Name Registration',
-        activeStep: 5,
+        title: 'Confirm AllPay Name Registration',
+        activeStep: 4,
       })
     );
   }
@@ -56,13 +55,13 @@ class ConfirmRegistration extends React.Component {
       if (isError) {
         return (
           <div className='ui negative message'>
-            <p>{message}</p>
+            <p className='word-wrap'>{message}</p>
           </div>
         );
       } else {
         return (
           <div className='ui success message'>
-            <p>{message}</p>
+            <p className='word-wrap'>{message}</p>
           </div>
         );
       }
@@ -88,7 +87,7 @@ class ConfirmRegistration extends React.Component {
         return false;
       });
       if (nameOutpoint) {
-        return satoshiToBSV(nameOutpoint.value);
+        return utils.satoshiToBSV(nameOutpoint.value);
       }
     }
     return null;
@@ -116,7 +115,7 @@ class ConfirmRegistration extends React.Component {
         return acc;
       }, 0);
 
-      return satoshiToBSV(totalOwnInput - totalOwnOutput);
+      return utils.satoshiToBSV(totalOwnInput - totalOwnOutput);
     }
     return null;
   }
@@ -128,12 +127,12 @@ class ConfirmRegistration extends React.Component {
     const { showTxDetails } = this.state;
     return (
       <>
-        <div className='ui grid'>
+        <div className='ui grid stackable'>
           <div className='twelve wide column'>
             <div className='ui list'>
               <div className='item'>
                 <div className='ui large custom label'>
-                  Allpay Name:
+                  AllPay Name:
                   <div className='detail'>{utils.codePointToName(name)}</div>
                 </div>
               </div>
@@ -159,7 +158,7 @@ class ConfirmRegistration extends React.Component {
           </div>
           <div className='four wide middle aligned column'>
             <h4 className='ui center aligned header'>{this.renderPurchaseCost()}</h4>
-            <button className='fluid ui yellow button' onClick={this.onSignRelay}>
+            <button className='fluid ui coral button' onClick={this.onSignRelay}>
               Confirm Registration
             </button>
             <button

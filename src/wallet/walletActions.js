@@ -25,19 +25,13 @@ export const getTransactionFeeRequest = createAction('GET_TRANSACTION_FEE_REQUES
 export const getTransactionFeeSuccess = createAction('GET_TRANSACTION_FEE_SUCCESS');
 export const getTransactionFeeFailure = createAction('GET_TRANSACTION_FEE_FAILURE');
 
-export const createSendTransactionRequest = createAction('CREATE_SEND_TRANSACTION_REQUEST');
-export const createSendTransactionSuccess = createAction('CREATE_SEND_TRANSACTION_SUCCESS');
-export const createSendTransactionFailure = createAction('CREATE_SEND_TRANSACTION_FAILURE');
+export const createTransactionRequest = createAction('CREATE_TRANSACTION_REQUEST');
+export const createTransactionSuccess = createAction('CREATE_TRANSACTION_SUCCESS');
+export const createTransactionFailure = createAction('CREATE_TRANSACTION_FAILURE');
 
-export const createAllpaySendTransactionRequest = createAction(
-  'CREATE_ALLPAY_SEND_TRANSACTION_REQUEST'
-);
-export const createAllpaySendTransactionSuccess = createAction(
-  'CREATE_ALLPAY_SEND_TRANSACTION_SUCCESS'
-);
-export const createAllpaySendTransactionFailure = createAction(
-  'CREATE_ALLPAY_SEND_TRANSACTION_FAILURE'
-);
+export const createAllpayTransactionRequest = createAction('CREATE_ALLPAY_TRANSACTION_REQUEST');
+export const createAllpayTransactionSuccess = createAction('CREATE_ALLPAY_TRANSACTION_SUCCESS');
+export const createAllpayTransactionFailure = createAction('CREATE_ALLPAY_TRANSACTION_FAILURE');
 
 export const getUsedAddressesRequest = createAction('GET_USED_ADDRESSES_REQUEST');
 export const getUsedAddressesSuccess = createAction('GET_USED_ADDRESSES_SUCCESS');
@@ -47,27 +41,42 @@ export const getUnusedAddressesRequest = createAction('GET_UNUSED_ADDRESSES_REQU
 export const getUnusedAddressesSuccess = createAction('GET_UNUSED_ADDRESSES_SUCCESS');
 export const getUnusedAddressesFailure = createAction('GET_UNUSED_ADDRESSES_FAILURE');
 
+export const getUnregisteredNameRequest = createAction('GET_UNREGISTERED_NAMES_REQUEST');
+export const getUnregisteredNameSuccess = createAction('GET_UNREGISTERED_NAMES_SUCCESS');
+export const getUnregisteredNameFailure = createAction('GET_UNREGISTERED_NAMES_FAILURE');
+
+export const getAllpayHandlesRequest = createAction('GET_ALLPAY_HANDLES_REQUEST');
+export const getAllpayHandlesSuccess = createAction('GET_ALLPAY_HANDLES_SUCCESS');
+export const getAllpayHandlesFailure = createAction('GET_ALLPAY_HANDLES_FAILURE');
+
 export const getTransactions = options => async (dispatch, getState, { serviceInjector }) => {
-  dispatch(getTransactionsRequest());
   try {
     const {
-      wallet: { nextTransactionCursor: startkey },
+      wallet: { nextTransactionCursor: startkey, isLoadingTransactions, transactions },
     } = getState();
-    if (startkey) {
-      options.startkey = startkey;
-    }
-    if (options.diff) {
-      const { transactions } = await serviceInjector(WalletService).getTransactions(options);
-      dispatch(getDiffTransactionsSuccess({ transactions }));
-      if (transactions.length > 0) {
-        await dispatch(getBalance());
+    if (!isLoadingTransactions) {
+      dispatch(getTransactionsRequest());
+      if (startkey) {
+        options.startkey = startkey;
       }
-    } else {
-      const { transactions, nextTransactionCursor } = await serviceInjector(
-        WalletService
-      ).getTransactions(options);
-      await dispatch(getBalance());
-      dispatch(getTransactionsSuccess({ transactions, nextTransactionCursor }));
+      if (options.diff) {
+        options.endkey = transactions.length > 0 ? transactions[0].txId : null;
+        const { transactions: diffTransactions } = await serviceInjector(
+          WalletService
+        ).getTransactions(options);
+        await dispatch(getBalance());
+        await dispatch(getAllpayHandles());
+        await dispatch(getUnregisteredNames());
+        dispatch(getDiffTransactionsSuccess({ transactions: diffTransactions }));
+      } else {
+        const { transactions, nextTransactionCursor } = await serviceInjector(
+          WalletService
+        ).getTransactions(options);
+        await dispatch(getBalance());
+        await dispatch(getAllpayHandles());
+        await dispatch(getUnregisteredNames());
+        dispatch(getTransactionsSuccess({ transactions, nextTransactionCursor }));
+      }
     }
   } catch (error) {
     dispatch(getTransactionsFailure());
@@ -82,10 +91,10 @@ export const updateTransactionsConfirmations = () => async (
 ) => {
   dispatch(updateTransactionsConfirmationsRequest());
   try {
-    const { updatedTransactions } = await serviceInjector(
+    const { updatedTransactions, deletedTransactions } = await serviceInjector(
       WalletService
     ).updateTransactionsConfirmations();
-    dispatch(updateTransactionsConfirmationsSuccess({ updatedTransactions }));
+    dispatch(updateTransactionsConfirmationsSuccess({ updatedTransactions, deletedTransactions }));
   } catch (error) {
     dispatch(updateTransactionsConfirmationsFailure());
     throw error;
@@ -97,6 +106,7 @@ export const getBalance = () => async (dispatch, getState, { serviceInjector }) 
   try {
     const { balance } = await serviceInjector(WalletService).getBalance();
     dispatch(getBalanceSuccess({ balance }));
+    return { balance };
   } catch (error) {
     dispatch(getBalanceFailure());
     throw error;
@@ -121,47 +131,29 @@ export const getTransactionFee = (receiverAddress, amountInSatoshi, feeRate) => 
   }
 };
 
-export const createSendTransaction = (receiverAddress, amountInSatoshi, satoshisPerByte) => async (
-  dispatch,
-  getState,
-  { serviceInjector }
-) => {
-  dispatch(createSendTransactionRequest());
+export const createTransaction = args => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(createTransactionRequest());
   try {
-    const { transaction } = await serviceInjector(WalletService).createSendTransaction(
-      receiverAddress,
-      amountInSatoshi,
-      satoshisPerByte
-    );
-    dispatch(createSendTransactionSuccess({ transaction }));
+    const { transaction } = await serviceInjector(WalletService).createTransaction(args);
     await dispatch(getBalance());
+    dispatch(createTransactionSuccess({ transactions: [transaction] }));
   } catch (error) {
-    dispatch(createSendTransactionFailure());
+    dispatch(createTransactionFailure());
     throw error;
   }
 };
 
-export const createAllpaySendTransaction = args => async (
-  dispatch,
-  getState,
-  { serviceInjector }
-) => {
-  dispatch(createAllpaySendTransactionRequest());
+export const createAllpayTransaction = args => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(createAllpayTransactionRequest());
   try {
-    const { inputs, ownOutputs, psbt, addressCommitment, utxoCommitment } = await serviceInjector(
-      WalletService
-    ).createAllpaySendTransaction(args);
+    const { transactions } = await serviceInjector(WalletService).createAllpayTransaction(args);
     dispatch(
-      createAllpaySendTransactionSuccess({
-        inputs,
-        ownOutputs,
-        psbt,
-        addressCommitment,
-        utxoCommitment,
+      createTransactionSuccess({
+        transactions,
       })
     );
   } catch (error) {
-    dispatch(createAllpaySendTransactionFailure());
+    dispatch(createAllpayTransactionFailure());
     throw error;
   }
 };
@@ -188,8 +180,32 @@ export const getUnusedAddresses = () => async (dispatch, getState, { serviceInje
       excludeAddresses,
     });
     dispatch(getUnusedAddressesSuccess({ unusedAddresses }));
+    return { unusedAddresses };
   } catch (error) {
     dispatch(getUnusedAddressesFailure());
+    throw error;
+  }
+};
+
+export const getUnregisteredNames = () => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(getUnregisteredNameRequest());
+  try {
+    const { names } = await serviceInjector(WalletService).getUnregisteredNames();
+    dispatch(getUnregisteredNameSuccess({ unregisteredNames: names }));
+    return { names };
+  } catch (error) {
+    dispatch(getUnregisteredNameFailure());
+    throw error;
+  }
+};
+
+export const getAllpayHandles = () => async (dispatch, getState, { serviceInjector }) => {
+  dispatch(getAllpayHandlesRequest());
+  try {
+    const { allpayHandles } = await serviceInjector(WalletService).getAllpayHandles();
+    dispatch(getAllpayHandlesSuccess({ allpayHandles }));
+  } catch (error) {
+    dispatch(getAllpayHandlesFailure());
     throw error;
   }
 };
@@ -198,5 +214,20 @@ export const CLEAR_USED_UNUSED_ADDRESS = 'CLEAR_USED_UNUSED_ADDRESS';
 export const clearUsedUnusedAddresses = () => (dispatch, getState, { serviceInjector }) => {
   dispatch({
     type: CLEAR_USED_UNUSED_ADDRESS,
+  });
+};
+
+export const SHOW_RECEIVE_MODAL = 'SHOW_RECEIVE_MODAL';
+export const showReceiveModal = () => (dispatch, getState, { serviceInjector }) => {
+  dispatch(clearUsedUnusedAddresses());
+  dispatch({
+    type: SHOW_RECEIVE_MODAL,
+  });
+};
+
+export const HIDE_RECEIVE_MODAL = 'HIDE_RECEIVE_MODAL';
+export const hideReceiveModal = () => (dispatch, getState, { serviceInjector }) => {
+  dispatch({
+    type: HIDE_RECEIVE_MODAL,
   });
 };

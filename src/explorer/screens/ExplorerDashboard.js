@@ -1,13 +1,13 @@
 import React from 'react';
 import { Link, withRouter } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { Segment, Grid, Button } from 'semantic-ui-react';
+import { Segment, Grid, Button, Loader } from 'semantic-ui-react';
 import ExplorerHttpsReq from '../modules/ExplorerHttpsReq.js';
 
 class ExplorerDashboard extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { selectnum: '' };
+    this.state = { selectnum: '', loading: 'true' };
     this.addlistener = this.addlistener.bind(this);
     this.pagebutton = this.pagebutton.bind(this);
   }
@@ -32,23 +32,21 @@ class ExplorerDashboard extends React.Component {
       !isNaN(this.props.match.params.blockheight)
     ) {
       this.blockhei = this.props.match.params.blockheight;
-      console.log(this.blockhei + 'this.blockhei');
     }
     this.rjdecoded = await ExplorerHttpsReq.httpsreq('getChainInfo');
     if (this.rjdecoded !== undefined) {
+      this.setState({ loading: false });
       this.summary();
     }
   };
 
   blockheiinit = () => {
     if (this.blockhei !== '') {
-      //this.selected = (this.numberofpages - Math.ceil(this.blockhei/10));
       this.selected =
         this.numberofpages - Math.ceil((this.blockhei - (this.syncedblocksheight % 20)) / 20);
       if (this.selected === 0) {
         this.selected = 1;
       }
-      console.log(this.selected + 'this.selected');
       if (this.selected <= this.pagearrlength - 2) {
         this.index = 1;
       } else if (this.selected >= this.numberofpages - (this.pagearrlength - 2)) {
@@ -59,13 +57,69 @@ class ExplorerDashboard extends React.Component {
 
   summary = () => {
     this.syncedblocksheight = this.rjdecoded.chainInfo.blocksSynced;
-    console.log('summary' + this.syncedblocksheight);
     this.numberofpages = Math.ceil(this.syncedblocksheight / 20);
     this.pagearray = [1, 2, 3, 4, 5, 6, 7, '-', this.numberofpages];
-    console.log('summary' + this.pagearray);
-    this.summarysection.push(
+    this.summarysection = (
       <>
-        <Grid>
+        <Grid className='dashboardSummaryForMobile'>
+          <Grid.Row columns={2}>
+            <Grid.Column className='alignLeftOnMobile' computer={4} mobile={5}>
+              <b>Chainwork</b>
+            </Grid.Column>
+            <Grid.Column className='alignLeftOnMobile' computer={12} mobile={11}>
+              {this.rjdecoded.chainInfo.chainwork}
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column className='alignLeftOnMobile' computer={4} mobile={5}>
+              <b>Blocks Synced</b>
+            </Grid.Column>
+            <Grid.Column className='alignLeftOnMobile' computer={12} mobile={11}>
+              <Link to={'/explorer/blockheight/' + this.rjdecoded.chainInfo.blocksSynced}>
+                {this.rjdecoded.chainInfo.blocksSynced}
+              </Link>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column className='alignLeftOnMobile' computer={4} mobile={5}>
+              <b>Chain Tip</b>
+            </Grid.Column>
+            <Grid.Column className='alignLeftOnMobile' computer={12} mobile={11}>
+              <Link to={'/explorer/blockheight/' + this.rjdecoded.chainInfo.chainTip}>
+                {this.rjdecoded.chainInfo.chainTip}
+              </Link>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column className='alignLeftOnMobile' computer={4} mobile={5}>
+              <b>Chain</b>
+            </Grid.Column>
+            <Grid.Column className='alignLeftOnMobile' computer={12} mobile={11}>
+              {this.rjdecoded.chainInfo.chain}
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column className='alignLeftOnMobile' computer={4} mobile={5}>
+              <b>Synced Block Hash</b>
+            </Grid.Column>
+            <Grid.Column className='alignLeftOnMobile' computer={12} mobile={11}>
+              <Link to={'/explorer/blockhash/' + this.rjdecoded.chainInfo.syncedBlockHash}>
+                <div className='wordbreak'>{this.rjdecoded.chainInfo.syncedBlockHash}</div>
+              </Link>
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row columns={2}>
+            <Grid.Column className='alignLeftOnMobile' computer={4} mobile={5}>
+              <b>Chain Tip Hash</b>
+            </Grid.Column>
+            <Grid.Column className='alignLeftOnMobile' computer={12} mobile={11}>
+              <Link to={'/explorer/blockhash/' + this.rjdecoded.chainInfo.chainTipHash}>
+                <div className='wordbreak'>{this.rjdecoded.chainInfo.chainTipHash}</div>
+              </Link>
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+        <Grid className='dashboardSummaryForOtherScreens'>
           <Grid.Row columns={4}>
             <Grid.Column>
               <b>Chainwork : </b>
@@ -73,13 +127,13 @@ class ExplorerDashboard extends React.Component {
             </Grid.Column>
             <Grid.Column>
               <b>Blocks Synced : </b>
-              <Link to={'/explorer/blockheight/' + this.rjdecoded.chainInfo.blocksSynced + '/""'}>
+              <Link to={'/explorer/blockheight/' + this.rjdecoded.chainInfo.blocksSynced}>
                 {this.rjdecoded.chainInfo.blocksSynced}
               </Link>
             </Grid.Column>
             <Grid.Column>
               <b>Chain Tip : </b>
-              <Link to={'/explorer/blockheight/' + this.rjdecoded.chainInfo.chainTip + '/""'}>
+              <Link to={'/explorer/blockheight/' + this.rjdecoded.chainInfo.chainTip}>
                 {this.rjdecoded.chainInfo.chainTip}
               </Link>
             </Grid.Column>
@@ -91,13 +145,13 @@ class ExplorerDashboard extends React.Component {
           <Grid.Row columns={2}>
             <Grid.Column>
               <b>Synced Block Hash</b>
-              <Link to={'/explorer/blockhash/' + this.rjdecoded.chainInfo.syncedBlockHash + '/""'}>
+              <Link to={'/explorer/blockhash/' + this.rjdecoded.chainInfo.syncedBlockHash}>
                 <div className='wordbreak'>{this.rjdecoded.chainInfo.syncedBlockHash}</div>
               </Link>
             </Grid.Column>
             <Grid.Column>
               <b>Chain Tip Hash</b>
-              <Link to={'/explorer/blockhash/' + this.rjdecoded.chainInfo.chainTipHash + '/""'}>
+              <Link to={'/explorer/blockhash/' + this.rjdecoded.chainInfo.chainTipHash}>
                 <div className='wordbreak'>{this.rjdecoded.chainInfo.chainTipHash}</div>
               </Link>
             </Grid.Column>
@@ -105,7 +159,6 @@ class ExplorerDashboard extends React.Component {
         </Grid>
       </>
     );
-    console.table(this.summarysection);
     this.blockheiinit();
     this.updatepagearray();
     this.updateheightlist();
@@ -131,10 +184,9 @@ class ExplorerDashboard extends React.Component {
       this.state.selectnum > 0 &&
       /^\d+$/.test(this.state.selectnum)
     ) {
-      this.selected = this.state.selectnum;
+      this.selected = parseInt(this.state.selectnum);
       this.updateheightlist();
       this.callsec();
-      console.log(this.selected);
       if (this.selected <= this.pagearrlength - 2) {
         this.index = 1;
       } else if (this.selected >= this.numberofpages - (this.pagearrlength - 2)) {
@@ -154,7 +206,7 @@ class ExplorerDashboard extends React.Component {
   };
 
   addlistener = event => {
-    this.selected = event.target.value;
+    this.selected = parseInt(event.target.value);
     this.updateheightlist();
     this.updatepagearray();
     this.callsec();
@@ -230,10 +282,14 @@ class ExplorerDashboard extends React.Component {
   printresults = () => {
     this.resultsrow.length = 0;
     this.resultsrow.push(
-      <Segment.Group horizontal className='nosegmentmargin'>
+      <Segment.Group
+        key={-1}
+        horizontal
+        className='nosegmentmargin'
+        style={{ overflow: 'auto', minWidth: '800px' }}>
         <Segment className='cen'>
           <Grid columns={6}>
-            <Grid.Row>
+            <Grid.Row key='0'>
               <Grid.Column>
                 <b>Height</b>
               </Grid.Column>
@@ -244,13 +300,13 @@ class ExplorerDashboard extends React.Component {
                 <b>Age</b>
               </Grid.Column>
               <Grid.Column>
-                <b>Block Version</b>
+                <b>Coinbase / Miner</b>
               </Grid.Column>
               <Grid.Column>
                 <b>Transactions</b>
               </Grid.Column>
               <Grid.Column>
-                <b>Size(Bytes)</b>
+                <b>Size</b>
               </Grid.Column>
             </Grid.Row>
           </Grid>
@@ -258,37 +314,77 @@ class ExplorerDashboard extends React.Component {
       </Segment.Group>
     );
     this.size = Object.keys(this.rjdecoded.blocks).length;
-    var todaysdate, age, tempColor;
+    var timeDifference, age, tempColor, years, days, hours, minutes;
     for (var i = this.size - 1; i >= 0; i--) {
       this.date = new Date(this.rjdecoded.blocks[i].header.blockTimestamp * 1000);
-      todaysdate = Date.now() - this.rjdecoded.blocks[i].header.blockTimestamp * 1000;
-      age = new Date(todaysdate);
+      timeDifference = Date.now() - this.rjdecoded.blocks[i].header.blockTimestamp * 1000;
+      timeDifference /= 1000;
+      years = Math.floor(timeDifference / (24 * 3600 * 365));
+      timeDifference = timeDifference % (24 * 3600 * 365);
+      days = Math.floor(timeDifference / (24 * 3600));
+      timeDifference = timeDifference % (24 * 3600);
+      hours = Math.floor(timeDifference / 3600);
+      timeDifference %= 3600;
+      minutes = Math.floor(timeDifference / 60);
+
+      if (years > 0) {
+        age = `${years} ${years > 1 ? 'years' : 'year'}, ${days} ${days > 1 ? 'days' : 'day'}, ${
+          hours > 9 ? hours : '0' + hours
+        }:${minutes > 9 ? minutes : '0' + minutes}`;
+      } else if (days > 0) {
+        age = `${days} ${days > 1 ? 'days' : 'day'}, ${hours > 9 ? hours : '0' + hours}:${
+          minutes > 9 ? minutes : '0' + minutes
+        }`;
+      } else {
+        age = `${hours > 9 ? hours : '0' + hours}:${minutes > 9 ? minutes : '0' + minutes}`;
+      }
+      let kb = 1024,
+        mb = kb * kb,
+        gb = mb * kb;
+      let size = 0;
+      if (this.rjdecoded.blocks[i].size < kb) {
+        size = this.rjdecoded.blocks[i].size + ' Bytes';
+      } else if (this.rjdecoded.blocks[i].size < mb) {
+        size = (this.rjdecoded.blocks[i].size / kb).toFixed(2) + ' KB';
+      } else if (this.rjdecoded.blocks[i].size < gb) {
+        size = (this.rjdecoded.blocks[i].size / mb).toFixed(2) + ' MB';
+      } else {
+        size = this.rjdecoded.blocks[i].size / gb.toFixed(2) + ' GB';
+      }
+
       if (i % 2 === 0) {
         tempColor = 'white';
       } else {
-        tempColor = '#eeeded';
+        tempColor = '#FAFAFA';
       }
       this.resultsrow.push(
-        <Segment.Group horizontal className='nosegmentmargin'>
-          <Segment className='cen'>
-            <Grid columns={6} verticalAlign='middle'>
+        <Segment.Group
+          key={i.toString()}
+          horizontal
+          className='nosegmentmargin removesegmentborder'
+          style={{ overflow: 'auto', minWidth: '800px' }}>
+          <Segment className='cen removesegmentborder'>
+            <Grid columns={6} verticalAlign='middle' key={i + 10000001}>
               <Grid.Row style={{ backgroundColor: tempColor }}>
                 <Grid.Column>
-                  <Link to={'/explorer/blockheight/' + this.rjdecoded.blocks[i].height + '/""'}>
+                  <Link to={'/explorer/blockheight/' + this.rjdecoded.blocks[i].height}>
                     {this.rjdecoded.blocks[i].height}
                   </Link>
                 </Grid.Column>
                 <Grid.Column>
-                  {this.date.getDate()}/{this.date.getMonth() + 1}/{this.date.getFullYear()}
-                  <br />
-                  {this.date.getHours()}:{this.date.getMinutes()}:{this.date.getSeconds()}
+                  <div>
+                    {this.date.getDate()}/{this.date.getMonth() + 1}/{this.date.getFullYear()}
+                  </div>
+                  <div>
+                    {this.date.getHours()}:{this.date.getMinutes()}:{this.date.getSeconds()}
+                  </div>
                 </Grid.Column>
-                <Grid.Column>
-                  {age.getHours()}:{age.getMinutes()}:{age.getSeconds()}
+                <Grid.Column className='word-wrap'>{age}</Grid.Column>
+                <Grid.Column style={{ wordBreak: 'break-all' }}>
+                  {this.rjdecoded.blocks[i].coinbaseMessage.replace(/[^\x20-\x7E]+/g, '')}
                 </Grid.Column>
-                <Grid.Column>{this.rjdecoded.blocks[i].header.blockVersion} </Grid.Column>
                 <Grid.Column>{this.rjdecoded.blocks[i].txCount} </Grid.Column>
-                <Grid.Column>{this.rjdecoded.blocks[i].size} </Grid.Column>
+                <Grid.Column>{size} </Grid.Column>
               </Grid.Row>
             </Grid>
           </Segment>
@@ -305,60 +401,66 @@ class ExplorerDashboard extends React.Component {
   }
 
   render() {
+    const { loading } = this.state;
     return (
       <>
-        {
-          //  <button className='backspc btn btn-primary' onClick={() => this.props.history.push('/')}>
-          //  Back
-          //    </button>
-        }
-        <div className='opacitywhileload'>
-          <Segment.Group>
-            <Segment>
-              <h4>Summary</h4>
+        {loading ? (
+          <Loader active />
+        ) : (
+          <div className='opacitywhileload' style={{ minWidth: '100%' }}>
+            <Segment className='removesegmentborder nosegmentmargin removepaddingbottom'>
+              <h4 className='purplefontcolor'>Summary</h4>
             </Segment>
-            <Segment className='cen'>{this.summarysection}</Segment>
-            <Segment>
-              <h4>Latest Blocks</h4>
+            <Segment className='cen' style={{ overflow: 'auto' }}>
+              <div>{this.summarysection}</div>
             </Segment>
-            <Segment>
-              <div className='latestblocks'>{this.resultsrow}</div>
-              <br />
+            <Segment className='removesegmentborder'>
+              <h4 className='purplefontcolor'>Latest Blocks</h4>
             </Segment>
-          </Segment.Group>
-          <center>
-            <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
-          </center>
-
-          <form onSubmit={this.pagebutton}>
-            <div className='ui form'>
-              <div className='inline fields'>
-                <div className='five wide field'></div>
-                <div className='two wide field'>
-                  <h5>Enter page number</h5>
+            <Grid>
+              <Grid.Row>
+                <Grid.Column>
+                  <div className='latestblocks'>{this.resultsrow}</div>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+            <Grid>
+              <Grid.Row>
+                <Grid.Column textAlign='center' style={{ overflow: 'auto' }}>
+                  <ul className='pagination justify-content-center'>{this.pagescontainer}</ul>
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+            <form onSubmit={this.pagebutton}>
+              <div className='ui form'>
+                <div className='inline fields'>
+                  <div className='five wide field'></div>
+                  <div className='two wide field'>
+                    <h5>Enter page number</h5>
+                  </div>
+                  <div className='three wide field'>
+                    <input
+                      className='pagenuminput searchBoxAndButtons'
+                      size='5'
+                      type='text'
+                      onChange={event =>
+                        this.setState({
+                          selectnum: event.target.value.replace(/\s/g, ''),
+                        })
+                      }
+                    />
+                  </div>
+                  <div className='one wide field'>
+                    <Button type='submit' className='explorerbuttoncolor coral searchBoxAndButtons'>
+                      Go
+                    </Button>
+                  </div>
+                  <div className='five wide field'></div>
                 </div>
-                <div className='three wide field'>
-                  <input
-                    className='pagenuminput'
-                    size='5'
-                    type='text'
-                    onChange={event =>
-                      this.setState({
-                        selectnum: event.target.value.replace(/\s/g, ''),
-                      })
-                    }
-                  />
-                </div>
-                <div className='one wide field'>
-                  <Button type='submit' className='explorerbuttoncolor'>
-                    Go
-                  </Button>
-                </div>
-                <div className='five wide field'></div>
               </div>
-            </div>
-          </form>
-        </div>
+            </form>
+          </div>
+        )}
       </>
     );
   }
