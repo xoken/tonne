@@ -139,9 +139,9 @@ class MailDashboard extends React.Component {
                         </span>
                         <span>
                           {sentMail ? (
-                            <img alt='To' src={images.yellowArrow} className='toFromIcons' />
+                            <img alt='To' src={images.yellowArrow.default} className='toFromIcons' />
                           ) : (
-                            <img alt='From' src={images.greenArrow} className='toFromIcons' />
+                            <img alt='From' src={images.greenArrow.default} className='toFromIcons' />
                           )}
                         </span>
                       </Grid.Column>
@@ -245,7 +245,7 @@ class MailDashboard extends React.Component {
                     {welcomeMail[0].additionalInfo.value.recipientInfo.commonMetaData.sender}{' '}
                   </span>
                   <span>
-                    <img alt='From' src={images.greenArrow} className='toFromIcons' />
+                    <img alt='From' src={images.greenArrow.default} className='toFromIcons' />
                   </span>
                 </Grid.Column>
                 <Grid.Column computer={4} mobile={8} floated='right'>

@@ -92,7 +92,7 @@ class Home extends React.Component {
                           <div className='ui icon header purplefontcolor'>
                             <img
                               alt='Bitcoin SV Blockchain'
-                              src={images.explorerLogo}
+                              src={images.explorerLogo.default}
                               style={{
                                 display: 'block',
                                 height: 53,
@@ -113,7 +113,7 @@ class Home extends React.Component {
                           <div className='ui icon header purplefontcolor'>
                             <img
                               alt='Bitcoin SV Wallet'
-                              src={images.wallet}
+                              src={images.wallet.default}
                               style={{
                                 display: 'block',
                                 height: 53,
@@ -134,7 +134,7 @@ class Home extends React.Component {
                           <div className='ui icon header purplefontcolor'>
                             <img
                               alt='Twitter handle'
-                              src={images.twitterLogo}
+                              src={images.twitterLogo.default}
                               className='icon'
                               style={{
                                 display: 'block',
@@ -158,7 +158,7 @@ class Home extends React.Component {
                           <div className='ui icon header purplefontcolor'>
                             <img
                               alt='voxMail'
-                              src={images.voxmail}
+                              src={images.voxmail.default}
                               className='icon'
                               style={{
                                 display: 'block',
@@ -243,7 +243,7 @@ class Home extends React.Component {
                     <h2 className='h2homepage'>Develop powerful self-sovereign apps</h2>
                     <img
                       alt='Xoken Labs'
-                      src={images.xokenFooterLogo}
+                      src={images.xokenFooterLogo.default}
                       style={{
                         width: 'max-content',
                         verticalAlign: 'middle',

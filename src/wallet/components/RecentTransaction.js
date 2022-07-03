@@ -164,13 +164,13 @@ class RecentTransaction extends React.Component {
           <span>
             {' : '}
             {this.renderRecipientNames(senderInfo.commonMetaData.recepient)}
-            <img alt='To' src={images.yellowArrow} className='toFromIcons' />{' '}
+            <img alt='To' src={images.yellowArrow.default} className='toFromIcons' />{' '}
           </span>
         );
       } else {
         return (
           <span>
-            {senderInfo} <img alt='To' src={images.yellowArrow} className='toFromIcons' />{' '}
+            {senderInfo} <img alt='To' src={images.yellowArrow.default} className='toFromIcons' />{' '}
           </span>
         );
       }
@@ -180,13 +180,13 @@ class RecentTransaction extends React.Component {
           <span>
             {' : '}
             {recipientInfo.commonMetaData.sender}{' '}
-            <img alt='From' src={images.greenArrow} className='toFromIcons' />{' '}
+            <img alt='From' src={images.greenArrow.default} className='toFromIcons' />{' '}
           </span>
         );
       } else {
         return (
           <span>
-            {recipientInfo} <img alt='From' src={images.greenArrow} className='toFromIcons' />{' '}
+            {recipientInfo} <img alt='From' src={images.greenArrow.default} className='toFromIcons' />{' '}
           </span>
         );
       }
@@ -203,7 +203,7 @@ class RecentTransaction extends React.Component {
         if (input.isMine) {
           returnArray.push(
             <span key={index.toString()}>
-              <img alt='To' src={images.yellowArrow} className='toFromIcons' />{' '}
+              <img alt='To' src={images.yellowArrow.default} className='toFromIcons' />{' '}
             </span>
           );
           throw breakException;
@@ -218,7 +218,7 @@ class RecentTransaction extends React.Component {
         if (output.isMine) {
           returnArray.push(
             <span key={index.toString()}>
-              <img alt='From' src={images.greenArrow} className='toFromIcons' />{' '}
+              <img alt='From' src={images.greenArrow.default} className='toFromIcons' />{' '}
             </span>
           );
           throw breakException;

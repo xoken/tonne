@@ -68,7 +68,7 @@ class Header extends React.Component {
               <Link to='/' className='' style={{ display: 'block' }}>
                 <span className='tonneLogo'>T0NNE</span>
                 {
-                  // <img src={images.logo} className='headerLogo' alt='Tonne' />
+                  // <img src={images.logo.default} className='headerLogo' alt='Tonne' />
                 }
               </Link>
             </div>
@@ -79,7 +79,7 @@ class Header extends React.Component {
                 className='item headertabitems headerExplorer'>
                 <img
                   alt='Bitcoin SV Explorer'
-                  src={images.explorerLogo}
+                  src={images.explorerLogo.default}
                   className='icon headerIcons'
                 />
                 Explorer
@@ -88,14 +88,14 @@ class Header extends React.Component {
                 to='/wallet'
                 activeClassName='activeheader'
                 className='item headertabitems headerWallet'>
-                <img alt='Bitcoin SV Wallet' src={images.wallet} className='icon headerIcons' />
+                <img alt='Bitcoin SV Wallet' src={images.wallet.default} className='icon headerIcons' />
                 Wallet
               </NavLink>
               <NavLink
                 to='/mail'
                 activeClassName='activeheader'
                 className='item headertabitems headerVoxMail'>
-                <img alt='voxMail' src={images.voxmail} className='icon headerIcons' />
+                <img alt='voxMail' src={images.voxmail.default} className='icon headerIcons' />
                 voxMail
               </NavLink>
               {/* <NavLink

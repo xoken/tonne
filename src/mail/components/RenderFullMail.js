@@ -562,9 +562,9 @@ class RenderFullMail extends React.Component {
                 </span>
                 <span>
                   {sentMail ? (
-                    <img alt='To' src={images.yellowArrow} className='toFromIcons' />
+                    <img alt='To' src={images.yellowArrow.default} className='toFromIcons' />
                   ) : (
-                    <img alt='From' src={images.greenArrow} className='toFromIcons' />
+                    <img alt='From' src={images.greenArrow.default} className='toFromIcons' />
                   )}
                 </span>
               </Grid.Column>

@@ -91,7 +91,7 @@ class Footer extends React.Component {
                 <span style={{ fontFamily: 'Didact Gothic', color: '#2f355b' }}>Xoken</span>{' '}
                 <img
                   alt='Xoken Labs'
-                  src={images.xokenFooterLogo}
+                  src={images.xokenFooterLogo.default}
                   style={{
                     width: 22,
                     verticalAlign: 'middle',
